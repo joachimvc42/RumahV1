@@ -2,147 +2,130 @@ import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <>
+    <main className="page">
+
+      {/* HERO */}
       <section className="hero">
         <div className="container">
-          <div className="hero-content">
-            <h1>
-              Invest in Lombok with clarity,<br />
-              local expertise and verified processes
-            </h1>
-            <p className="hero-subtitle">
-              RumahYa supports foreign investors and expatriates in Lombok by sourcing
-              villas and land opportunities and securing each project with local
-              due diligence, legal verification and on-the-ground property management.
-            </p>
-            <div className="hero-actions">
-              <Link href="/land" className="btn-primary">Explore land opportunities</Link>
-              <Link href="/rentals" className="btn-secondary">View villas &amp; rentals</Link>
-            </div>
+          <h1>
+            Secure long-term rentals <br />
+            and land opportunities in Lombok
+          </h1>
+
+          <p className="hero-subtitle">
+            RumahYa assists expatriates and investors with verified properties,
+            structured processes, and secure payment coordination through a local notary.
+          </p>
+
+          <div className="hero-actions">
+            <Link href="/rentals" className="btn btn-primary">
+              Long-term rentals
+            </Link>
+            <Link href="/land" className="btn btn-secondary">
+              Land opportunities
+            </Link>
           </div>
         </div>
       </section>
 
-      <section className="section">
+      {/* TRUST SECTION */}
+      <section className="trust">
         <div className="container">
-          <div className="section-header">
-            <h2>A structured approach to real estate investment in Lombok</h2>
-            <p>
-              Investing in Indonesia requires more than attractive prices.
-              It requires local presence, document verification and a clear operational model.
-            </p>
-          </div>
+          <h2>A safer way to commit in Lombok</h2>
 
-          <div className="grid-3">
-            <div className="card">
-              <h3>Local sourcing &amp; market access</h3>
-              <p>
-                We work directly with trusted local partners to identify villas and land
-                that match long-term investment strategies. Every opportunity is sourced
-                on the ground, not scraped from public listings.
-              </p>
-            </div>
+          <p>
+            Long-term rentals in Lombok often require one to three years paid upfront.
+            For expatriates, sending such amounts before arrival involves uncertainty.
+          </p>
 
-            <div className="card">
-              <h3>Legal &amp; notarial verification</h3>
-              <p>
-                For investors who require it, we coordinate independent lawyers and notaries
-                to review land titles, lease structures and contracts—helping reduce legal
-                uncertainty before any commitment.
-              </p>
-            </div>
-
-            <div className="card">
-              <h3>Property management &amp; execution</h3>
-              <p>
-                From tenant placement to maintenance and reporting, our local team ensures
-                assets are managed professionally—especially for owners living abroad.
-              </p>
-            </div>
-          </div>
+          <p>
+            RumahYa introduces a structured approach where verification, contract review,
+            and payment execution are coordinated locally, with funds held by an independent notary
+            until agreed conditions are met.
+          </p>
         </div>
       </section>
 
-      <section className="section section-light">
+      {/* SERVICES */}
+      <section className="services">
         <div className="container">
-          <div className="section-header">
-            <h2>Our services</h2>
-            <p>
-              RumahYa is not a marketplace. We act as an operational partner
-              for investors who value structure, transparency and long-term viability.
-            </p>
-          </div>
+          <h2>Our services</h2>
 
-          <div className="grid-3">
-            <div className="card">
-              <h3>Land acquisition support</h3>
+          <div className="services-grid">
+
+            <div className="service-card">
+              <h3>Long-term rentals (1–10 years)</h3>
               <p>
-                Identification of suitable land, zoning context, access analysis and
-                guidance on the appropriate legal structure for foreign investors.
+                For expatriates seeking stability without exposing themselves
+                to upfront payment risks.
               </p>
-              <Link href="/land" className="text-link">View land listings</Link>
+              <ul>
+                <li>Property and ownership verification</li>
+                <li>Lease terms reviewed before execution</li>
+                <li>Payment coordinated through a local notary</li>
+                <li>On-site confirmation before fund release</li>
+              </ul>
             </div>
 
-            <div className="card">
-              <h3>Villas &amp; long-term rentals</h3>
+            <div className="service-card">
+              <h3>Land opportunities</h3>
               <p>
-                Villas selected for long-term rental strategies or private use,
-                with optional management to ensure consistency and asset preservation.
+                Carefully selected land plots for residential or investment projects,
+                with clear documentation and local guidance.
               </p>
-              <Link href="/rentals" className="text-link">View villas</Link>
+              <ul>
+                <li>Land status verification</li>
+                <li>Buildability assessment</li>
+                <li>Local zoning insights</li>
+                <li>Independent transaction coordination</li>
+              </ul>
             </div>
 
-            <div className="card">
-              <h3>Property management</h3>
+            <div className="service-card">
+              <h3>Local coordination</h3>
               <p>
-                Operational management for owners abroad: tenants, staff coordination,
-                maintenance and periodic reporting for full visibility.
+                Acting as a neutral intermediary between foreign clients,
+                local owners, and trusted professionals.
               </p>
-              <Link href="/property-management" className="text-link">Learn more</Link>
+              <ul>
+                <li>Local presence</li>
+                <li>Clear communication</li>
+                <li>Process transparency</li>
+              </ul>
             </div>
+
           </div>
         </div>
       </section>
 
-      <section className="section">
+      {/* TRANSPARENCY */}
+      <section className="transparency">
         <div className="container">
-          <div className="section-header">
-            <h2>Who we work with</h2>
-          </div>
+          <h2>Transparency & role</h2>
 
-          <div className="grid-2">
-            <div className="card">
-              <h3>Foreign investors</h3>
-              <p>
-                Investors seeking exposure to Lombok&apos;s growth while minimizing
-                operational and legal risk through local execution.
-              </p>
-            </div>
-
-            <div className="card">
-              <h3>Expatriates living in Indonesia</h3>
-              <p>
-                Residents looking to acquire land, secure a long-term lease or
-                delegate property management to a trusted local team.
-              </p>
-            </div>
-          </div>
+          <p>
+            RumahYa does not hold client funds directly.
+            All payments are coordinated through an independent notary,
+            ensuring neutrality, traceability, and clear execution steps.
+          </p>
         </div>
       </section>
 
-      <section className="section section-cta">
+      {/* CTA */}
+      <section className="cta">
         <div className="container">
-          <div className="cta-box">
-            <h2>Discuss your project</h2>
-            <p>
-              Whether you are evaluating an opportunity or already own property in Lombok,
-              we can help you structure the next steps with clarity.
-            </p>
-            <Link href="/contact" className="btn-primary">Contact RumahYa</Link>
-          </div>
+          <h2>Discuss your project</h2>
+          <p>
+            Whether you are relocating, settling long-term, or exploring land opportunities,
+            we help you move forward with clarity.
+          </p>
+
+          <Link href="/contact" className="btn btn-primary">
+            Contact RumahYa
+          </Link>
         </div>
       </section>
-    </>
+
+    </main>
   );
 }
-
