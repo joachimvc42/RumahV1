@@ -1,0 +1,1497 @@
+/*
+ * RumahYa – Styles principaux (front)
+ * Palette pastel + Nunito + menu responsive
+ */
+
+/* -------------------- */
+/*    Variables globales */
+/* -------------------- */
+
+:root {
+    --bg: #f5f1ea;           /* beige crème */
+    --bg-alt: #ffffff;
+    --bg-card: #ffffff;
+
+    --primary: #3b82f6;      /* bleu pastel */
+    --primary-soft: #dbeafe;
+
+    --accent: #22c55e;       /* vert doux */
+    --accent-soft: #dcfce7;
+
+    --border-subtle: #e5e7eb;
+
+    --text-main: #111827;
+    --text-muted: #6b7280;
+
+    --shadow-soft: 0 14px 30px rgba(15, 23, 42, 0.06);
+}
+
+/* -------------------- */
+/*       Reset & base    */
+/* -------------------- */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Nunito", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.6;
+    color: var(--text-main);
+    background-color: var(--bg);
+}
+
+/* Images */
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+/* Liens */
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+/* Layout principal */
+
+.container {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.page-main {
+    padding: 28px 0 40px;
+}
+
+/* Typographie générique */
+
+h1, h2, h3 {
+    margin: 0 0 10px 0;
+    color: var(--text-main);
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 1em;
+    color: var(--text-muted);
+}
+
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.section-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+/* -------------------- */
+/*   Header & navigation */
+/* -------------------- */
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(245, 241, 234, 0.96);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+/* Logo / marque */
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.brand-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 14px;
+    background: radial-gradient(circle at 20% 20%, #ffffff 0, #e0f2fe 22%, #a5b4fc 45%, #22c55e 100%);
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.45);
+    position: relative;
+}
+
+.brand-logo::before {
+    content: "";
+    position: absolute;
+    inset: 8px 7px 9px 7px;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-name {
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    font-size: 1.15rem;
+    color: var(--text-main);
+}
+
+.brand-name span {
+    color: var(--primary);
+}
+
+.brand-tagline {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+}
+
+/* Nav desktop */
+
+.nav-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-main a {
+    text-decoration: none;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    padding: 6px 12px;
+    border-radius: 999px;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.nav-main a:hover {
+    background: rgba(148, 163, 184, 0.18);
+    color: var(--text-main);
+    transform: translateY(-1px);
+}
+
+.nav-main a.nav-active {
+    background: linear-gradient(120deg, var(--primary), var(--accent));
+    color: #ffffff;
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.45);
+}
+
+/* Bouton hamburger (mobile uniquement) */
+
+.nav-toggle {
+    display: none; /* sera affiché en mobile */
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    background: rgba(248, 250, 252, 0.98);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.nav-toggle span {
+    width: 18px;
+    height: 2px;
+    border-radius: 999px;
+    background: #0f172a;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Animation burger → croix */
+
+.nav-toggle.is-open span:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+}
+.nav-toggle.is-open span:nth-child(2) {
+    opacity: 0;
+}
+.nav-toggle.is-open span:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+}
+
+/* -------------------- */
+/*          Hero Home    */
+/* -------------------- */
+
+.hero {
+    padding: 32px 0 18px;
+}
+
+.hero-content {
+    max-width: 700px;
+}
+
+.hero-content h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    color: var(--text-main);
+}
+
+.hero-subtitle {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.hero-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2.2fr);
+    gap: 40px;
+}
+
+.hero-kicker {
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+.hero-title {
+    font-size: 2.3rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 12px;
+}
+
+.hero-lead {
+    font-size: 0.98rem;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+}
+
+/* Petits blocs "Local partners / Legal / Long-term" */
+
+.hero-pill-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 6px;
+}
+
+.hero-pill {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.04);
+}
+
+.hero-pill h3 {
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+
+.hero-pill p {
+    font-size: 0.86rem;
+    margin-bottom: 0;
+}
+
+/* Hero visuel à droite */
+
+.hero-right-card {
+    background: var(--bg-card);
+    border-radius: 22px;
+    padding: 18px 20px;
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 230px;
+}
+
+.hero-badge {
+    font-size: 0.76rem;
+    background: var(--accent-soft);
+    color: #166534;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 9px;
+    border-radius: 999px;
+    margin-bottom: 8px;
+}
+
+.hero-quote {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+}
+
+.hero-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* ------------------------ */
+/*  Sections "What we do" etc */
+/* ------------------------ */
+
+.section {
+    padding: 40px 0;
+}
+
+.section-light {
+    background: var(--bg-card);
+}
+
+.section-cta {
+    padding: 48px 0;
+}
+
+.section-header {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 32px;
+}
+
+.section-header h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.section-header p {
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.section-block {
+    background: var(--bg-card);
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+    padding: 22px 20px 22px;
+    border: 1px solid var(--border-subtle);
+    margin-bottom: 24px;
+}
+
+.section-block h2 {
+    margin-bottom: 8px;
+}
+
+.section-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    margin-top: 16px;
+}
+
+.service-card {
+    border-radius: 18px;
+    border: 1px solid var(--border-subtle);
+    padding: 16px 14px 14px;
+    background: #fdfdfb;
+}
+
+.service-card h3 {
+    font-size: 1.02rem;
+    margin-bottom: 6px;
+}
+
+/* CTA Box */
+.cta-box {
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 32px;
+    text-align: center;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-subtle);
+}
+
+.cta-box h2 {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+}
+
+.cta-box p {
+    max-width: 500px;
+    margin: 0 auto 20px;
+}
+
+/* -------------------- */
+/*  Boutons génériques  */
+/* -------------------- */
+
+.btn-primary,
+.btn-secondary,
+.button,
+.button-outline,
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.btn-primary,
+.button {
+    background: linear-gradient(120deg, var(--primary), var(--accent));
+    color: #ffffff;
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.45);
+}
+
+.btn-primary:hover,
+.button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 26px rgba(37, 99, 235, 0.6);
+}
+
+.btn-secondary,
+.button-outline {
+    border-color: var(--border-subtle);
+    color: var(--text-main);
+    background: var(--bg-card);
+}
+
+.btn-secondary:hover,
+.button-outline:hover {
+    background: rgba(148, 163, 184, 0.16);
+}
+
+.text-link {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.text-link:hover {
+    text-decoration: underline;
+}
+
+/* -------------------- */
+/*   Listings villas/lands */
+/* -------------------- */
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 22px;
+    margin-top: 16px;
+}
+
+.card {
+    background: var(--bg-card);
+    border-radius: 18px;
+    box-shadow: var(--shadow-soft);
+    padding: 16px;
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+}
+
+.card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.card p {
+    font-size: 0.9rem;
+    flex: 1;
+}
+
+/* Bande de miniatures sur les cards */
+
+.card-thumb-strip {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+    height: 60px;
+    overflow: hidden;
+}
+
+.card-thumb {
+    flex: 1;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #e5e7eb;
+}
+
+/* contenus card */
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: var(--text-main);
+}
+
+.card-subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    color: var(--text-muted);
+}
+
+.badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.badge {
+    font-size: 0.76rem;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    color: #1d4ed8;
+}
+
+.badge-soft {
+    background: var(--accent-soft);
+    color: #166534;
+}
+
+.card-price {
+    font-weight: 600;
+    font-size: 0.96rem;
+    margin-bottom: 4px;
+    color: var(--text-main);
+}
+
+.price-duration {
+    font-weight: 400;
+    font-size: 0.86rem;
+    color: var(--text-muted);
+}
+
+.card-footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    gap: 8px;
+}
+
+/* -------------------- */
+/*   Détails / galerie   */
+/* -------------------- */
+
+.detail-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: none;
+}
+
+.detail-modal.is-open {
+    display: block;
+}
+
+.detail-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.7);
+}
+
+.detail-modal-dialog {
+    position: absolute;
+    inset: 6%;
+    max-width: 980px;
+    margin: auto;
+    background: #f9fafb;
+    border-radius: 22px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55);
+    padding: 18px 20px 20px;
+    overflow-y: auto;
+}
+
+.detail-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    border: none;
+    background: transparent;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #0f172a;
+}
+
+.detail-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.1fr);
+    gap: 18px;
+}
+
+.detail-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 24px;
+}
+
+.detail-info h2 {
+    margin-bottom: 6px;
+}
+
+.detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.detail-description {
+    font-size: 0.9rem;
+    margin-top: 10px;
+    color: var(--text-muted);
+}
+
+.description {
+    margin-top: 16px;
+}
+
+.gallery img {
+    width: 100%;
+    border-radius: 16px;
+}
+
+/* galerie interne */
+
+.detail-gallery {
+    background: var(--bg-card);
+    border-radius: 18px;
+    border: 1px solid var(--border-subtle);
+    padding: 14px 14px 16px;
+    box-shadow: var(--shadow-soft);
+}
+
+.gallery-thumbs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 6px;
+}
+
+.gallery-thumb {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #e5e7eb;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.gallery-thumb:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.25);
+    opacity: 0.96;
+}
+
+/* -------------------- */
+/*       Footer          */
+/* -------------------- */
+
+.site-footer {
+    margin-top: 32px;
+    border-top: 1px solid var(--border-subtle);
+    padding: 22px 0 16px;
+    background: #f4ede2;
+}
+
+.footer-inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    font-size: 0.86rem;
+    color: var(--text-muted);
+}
+
+.footer-inner h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+    color: var(--text-main);
+}
+
+.footer-bottom {
+    margin-top: 10px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+/* -------------------- */
+/* Land page styles     */
+/* -------------------- */
+
+.land-intro {
+    margin-top: 32px;
+    margin-bottom: 8px;
+}
+
+.land-shell {
+    margin-top: 16px;
+    margin-bottom: 32px;
+}
+
+.land-layout {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+}
+
+/* Sidebar pleine hauteur */
+.land-sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+    padding: 20px 18px;
+    font-size: 0.95rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.land-sidebar h2 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
+.land-sidebar .filter-checkbox,
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.land-sidebar .filter-checkbox input,
+.filter-checkbox input {
+    margin-right: 8px;
+}
+
+/* Colonne droite */
+.land-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Barre de filtres en pill */
+.land-filters-pill {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    background: #ffffff;
+    border-radius: 999px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+}
+
+.land-filter-segment {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 10px 16px;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+/* WHERE un peu plus large pour éviter que "Lombok" soit coupé */
+.land-filter-segment-where {
+    flex: 1.4 1 0;
+}
+
+.land-filter-segment:last-of-type {
+    border-right: none;
+}
+
+.land-filter-label-top {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6b7280;
+    margin-bottom: 2px;
+}
+
+.land-filter-input-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #111827;
+}
+
+/* Champs bien visibles */
+.land-filter-input-line input {
+    border: 1px solid #e5e7eb;
+    outline: none;
+    background: #f9fafb;
+    padding: 6px 10px;
+    margin: 0;
+    font-size: 0.9rem;
+    width: 100%;
+    border-radius: 999px;
+    box-sizing: border-box;
+}
+
+.land-filter-input-line input:focus {
+    border-color: #2563eb;
+    background: #ffffff;
+}
+
+/* Prix min / max */
+.land-price-range {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+}
+
+.land-price-range input {
+    flex: 1 1 0;
+}
+
+/* Bouton Apply sur la même ligne */
+.land-filter-actions {
+    flex: 0 0 auto;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.land-filter-actions button {
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+/* Cartes */
+.land-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.property-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.property-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+}
+
+.property-card-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.property-card-body {
+    padding: 12px 14px 14px 14px;
+}
+
+.property-card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.property-card-location {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.property-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #374151;
+    margin-bottom: 4px;
+}
+
+.property-card-price {
+    font-weight: 600;
+    margin-top: 4px;
+}
+
+/* Suggestions de localisation */
+.location-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 16px;
+    right: 16px;
+    margin-top: 4px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.18);
+    max-height: 260px;
+    overflow-y: auto;
+    z-index: 20;
+}
+
+.location-suggestion-item {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.location-suggestion-item:hover {
+    background: #f3f4f6;
+}
+
+/* -------------------- */
+/* Rentals page styles  */
+/* -------------------- */
+
+.rentals-intro {
+    margin-top: 32px;
+    margin-bottom: 8px;
+}
+
+.rentals-shell {
+    margin-top: 16px;
+    margin-bottom: 32px;
+}
+
+.rentals-layout {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+}
+
+/* Sidebar pleine hauteur */
+.rentals-sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+    padding: 20px 18px;
+    font-size: 0.95rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.rentals-sidebar h2 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
+.rentals-sidebar .filter-checkbox {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.rentals-sidebar .filter-checkbox input {
+    margin-right: 8px;
+}
+
+/* Colonne droite : barre de filtres + liste */
+.rentals-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Barre de filtres style Airbnb */
+.filters-pill {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    background: #ffffff;
+    border-radius: 999px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+}
+
+.filter-segment {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 10px 16px;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+/* WHERE un peu plus large pour éviter que le placeholder soit coupé mais sans être énorme */
+.filter-segment-where {
+    flex: 1.2 1 0;
+}
+
+.filter-segment:last-of-type {
+    border-right: none;
+}
+
+.filter-label-top {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6b7280;
+    margin-bottom: 2px;
+}
+
+.filter-input-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #111827;
+}
+
+/* Variante colonne (pour WHEN) */
+.filter-input-column {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Champs textuels clairement visibles (petites box) */
+.filter-input-line input {
+    border: 1px solid #e5e7eb;
+    outline: none;
+    background: #f9fafb;
+    padding: 6px 10px;
+    margin: 0;
+    font-size: 0.9rem;
+    width: 100%;
+    border-radius: 999px;
+    box-sizing: border-box;
+}
+
+.filter-input-line input:focus {
+    border-color: #2563eb;
+    background: #ffffff;
+}
+
+/* labels inline dans WHEN */
+.filter-field-label {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-bottom: 2px;
+}
+
+/* Ligne prix : 2 inputs côte à côte */
+.price-range {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+}
+
+.price-range input {
+    flex: 1 1 0;
+}
+
+/* Segment action : bouton sur la même ligne */
+.filter-segment-actions {
+    flex: 0 0 auto;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-segment-actions button {
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+/* Liste des villas */
+.rentals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.rental-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.rental-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+}
+
+/* Galerie vignettes sur la carte */
+.rental-card-gallery {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: #000;
+}
+
+.rental-card-thumb {
+    flex: 1 1 0;
+    height: 90px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #1f2933;
+}
+
+.rental-card-thumb img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    display: block;
+}
+
+.rental-card-body {
+    padding: 12px 14px 14px 14px;
+}
+
+.rental-card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.rental-card-location {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.rental-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #374151;
+    margin-bottom: 4px;
+}
+
+.rental-pill {
+    background: #f3f4f6;
+    border-radius: 999px;
+    padding: 3px 8px;
+}
+
+/* -------------------- */
+/* Villa detail styles  */
+/* -------------------- */
+
+.villa-hero {
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+.villa-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+/* Chaque vignette a une taille fixe ~140x100 px */
+.villa-gallery-item {
+    flex: 0 0 140px;
+    max-width: 140px;
+    height: 100px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+    background: #e5e7eb;
+}
+
+/* On force la taille ici pour écraser les styles globaux type img {height:auto;} */
+.villa-gallery-item img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    display: block;
+}
+
+/* Meta / info blocs */
+.villa-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.villa-meta-item {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+}
+
+.villa-meta-label {
+    font-weight: 600;
+    color: #6b7280;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.villa-meta-value {
+    color: #111827;
+}
+
+/* Calendrier front */
+#availability-calendar {
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    padding: 16px;
+    margin: 24px 0 40px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.av-cal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.av-cal-header button {
+    border: none;
+    background: #e5e7eb;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+.av-cal-header button:hover {
+    background: #d1d5db;
+}
+.av-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    font-size: 12px;
+}
+.av-cal-dayname {
+    text-align: center;
+    font-weight: 600;
+    color: #6b7280;
+}
+.av-cal-cell {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 12px;
+}
+.av-cal-cell-empty {
+    background: transparent;
+}
+.av-cal-cell-available {
+    background: #ecfdf5;
+    color: #065f46;
+}
+.av-cal-cell-unavailable {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+/* -------------------- */
+/* Contact page styles  */
+/* -------------------- */
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+/* -------------------- */
+/*   Responsive global   */
+/* -------------------- */
+
+@media (max-width: 900px) {
+    .hero-inner {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 28px;
+    }
+
+    .detail-layout,
+    .detail-container {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .land-layout,
+    .rentals-layout {
+        flex-direction: column;
+    }
+
+    .land-sidebar,
+    .rentals-sidebar {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .land-filters-pill,
+    .filters-pill {
+        border-radius: 16px;
+        flex-direction: column;
+        flex-wrap: nowrap;
+    }
+
+    .land-filter-segment,
+    .filter-segment {
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .land-filter-segment:last-of-type,
+    .filter-segment:last-of-type {
+        border-bottom: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .villa-gallery-item {
+        flex: 0 0 48%;
+        max-width: 48%;
+    }
+
+    .header-inner {
+        padding: 8px 0;
+    }
+
+    .nav-toggle {
+        display: inline-flex;
+    }
+
+    .nav-main {
+        position: fixed;
+        top: 60px;
+        left: 16px;
+        right: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 12px 10px 10px;
+        background: var(--bg-card);
+        border-radius: 18px;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid var(--border-subtle);
+
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-8px);
+        transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    .nav-main.is-open {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+    }
+
+    .nav-main a {
+        width: 100%;
+        padding: 8px 10px;
+    }
+
+    .hero {
+        padding-top: 22px;
+    }
+
+    .section-block {
+        padding: 18px 16px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .villa-gallery-item {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+/* Utility classes */
+.mt-3 { margin-top: 12px; }
+.mt-4 { margin-top: 16px; }
+.mt-5 { margin-top: 24px; }
+.mb-3 { margin-bottom: 12px; }
+.fade-in-up {
+    animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
