@@ -1,12 +1,7 @@
 import Link from 'next/link';
 
-// NOTE: Database functionality has been stubbed.
-// In the original PHP version, land details were fetched from a MySQL database.
-// To restore this functionality, implement an API route or server component
-// that connects to your database and returns land details.
-
-interface LandDetail {
-  id: number;
+type Land = {
+  id: string;
   title: string;
   location: string;
   area: string;
@@ -18,99 +13,168 @@ interface LandDetail {
   isRawLand: boolean;
   description: string;
   image: string;
-}
+};
 
-// Placeholder function - replace with actual API/database call
-async function getLandById(id: string): Promise<LandDetail | null> {
-  // TODO: Implement database lookup
-  // For now, return placeholder data
-  return {
-    id: parseInt(id),
-    title: 'Sample Land Plot',
-    location: 'Kuta, Lombok',
-    area: '10 are',
-    price: '150',
-    distanceFromBeach: '500m',
-    isBuildable: true,
-    hasElectricity: true,
-    hasWater: true,
-    isRawLand: false,
-    description: 'Beautiful plot of land with ocean views, perfect for villa development. Easy access to main road and all utilities available.',
-    image: '/assets/lombok.jpg',
-  };
+function getLandById(id: string): Land | null {
+  // Placeholder data - replace with database integration
+  if (id === '1') {
+    return {
+      id: '1',
+      title: 'Prime Beachside Development Land',
+      location: 'Kuta, Lombok',
+      area: '10 are',
+      price: '150',
+      distanceFromBeach: '500m',
+      isBuildable: true,
+      hasElectricity: true,
+      hasWater: true,
+      isRawLand: false,
+      description:
+        'Beautiful plot of land with ocean views, perfect for villa development. Easy access to main road and all utilities available.',
+      image: '/assets/lombok.jpg',
+    };
+  }
+
+  if (id === '2') {
+    return {
+      id: '2',
+      title: 'Mountain View Investment Plot',
+      location: 'Sembalun, Lombok',
+      area: '15 are',
+      price: '80',
+      distanceFromBeach: '30km',
+      isBuildable: true,
+      hasElectricity: false,
+      hasWater: true,
+      isRawLand: true,
+      description:
+        'Large land plot with stunning mountain views. Perfect for eco-resort or private villa development. Natural water source nearby.',
+      image: '/assets/lombok.jpg',
+    };
+  }
+
+  return null;
 }
 
 function formatPrice(value: string): string {
   if (!value) return '';
-  return `${value} Mio IDR / month`;
+  return `${value} Mio IDR / are`;
 }
 
-function BooleanBadge({ value, label }: { value: boolean; label: string }) {
-  if (!value) return null;
-  return <span className="badge">{label}</span>;
+function formatBoolean(value: boolean): string {
+  return value ? 'Yes' : 'No';
 }
 
-export default async function LandDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const land = await getLandById(id);
+export default function LandDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
+  const land = getLandById(id);
 
   if (!land) {
     return (
-      <div className="container">
-        <h1>Land Not Found</h1>
-        <p>Sorry, the land listing you are looking for does not exist.</p>
-        <Link href="/land" className="btn btn-primary mt-3">
-          Back to land listings
-        </Link>
-      </div>
+      <main className="page">
+        <section className="section">
+          <div className="container">
+            <h1 className="h1">Land not found</h1>
+            <p className="muted">The requested land listing does not exist.</p>
+            <div style={{ marginTop: 16 }}>
+              <Link className="btn btn-primary" href="/land">
+                Back to Land Listings
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
     );
   }
 
   return (
-    <section className="container fade-in-up">
-      <h1 className="section-title">{land.title}</h1>
-      <div className="detail-container">
-        <div className="gallery">
-          <img
-            src={land.image || '/assets/lombok.jpg'}
-            alt="Land image"
-          />
-        </div>
-        <div className="detail-info">
-          <h2>Land Details</h2>
-          <div className="detail-meta">
-            {land.distanceFromBeach && (
-              <span className="badge">Beach: {land.distanceFromBeach}</span>
-            )}
-            {land.location && (
-              <span className="badge">Area: {land.location}</span>
-            )}
-            {land.area && (
-              <span className="badge">Size: {land.area}</span>
-            )}
-            <BooleanBadge value={land.isBuildable} label="Buildable" />
-            <BooleanBadge value={land.hasElectricity} label="Electricity" />
-            <BooleanBadge value={land.hasWater} label="Water" />
-            <BooleanBadge value={land.isRawLand} label="Raw Land" />
+    <main className="page">
+      <section className="hero hero--compact">
+        <div className="container">
+          <div className="breadcrumbs">
+            <Link href="/land">Land</Link>
+            <span className="sep">/</span>
+            <span>{land.title}</span>
           </div>
-          {land.price && (
-            <p>
-              <strong>Price:</strong> {formatPrice(land.price)}
-            </p>
-          )}
-          <div className="description">
-            <p>{land.description}</p>
+
+          <h1 className="h1">{land.title}</h1>
+          <p className="lead">{land.location}</p>
+
+          <div className="hero-actions">
+            <Link className="btn btn-primary" href="/contact">
+              Request a viewing
+            </Link>
+            <Link className="btn btn-ghost" href="/legal-verification">
+              Legal verification
+            </Link>
           </div>
-          <Link href="/contact" className="btn btn-primary">
-            Contact Us
-          </Link>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section className="section">
+        <div className="container grid grid-2">
+          <div className="card">
+            <div className="card-media">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={land.image} alt={land.title} />
+            </div>
+            <div className="card-body">
+              <h2 className="h2">Overview</h2>
+              <p className="text">{land.description}</p>
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="card-body">
+              <h2 className="h2">Key details</h2>
+
+              <dl className="details">
+                <div className="row">
+                  <dt>Location</dt>
+                  <dd>{land.location}</dd>
+                </div>
+                <div className="row">
+                  <dt>Area</dt>
+                  <dd>{land.area}</dd>
+                </div>
+                <div className="row">
+                  <dt>Price</dt>
+                  <dd>{formatPrice(land.price)}</dd>
+                </div>
+                <div className="row">
+                  <dt>Distance to beach</dt>
+                  <dd>{land.distanceFromBeach}</dd>
+                </div>
+                <div className="row">
+                  <dt>Buildable</dt>
+                  <dd>{formatBoolean(land.isBuildable)}</dd>
+                </div>
+                <div className="row">
+                  <dt>Electricity</dt>
+                  <dd>{formatBoolean(land.hasElectricity)}</dd>
+                </div>
+                <div className="row">
+                  <dt>Water</dt>
+                  <dd>{formatBoolean(land.hasWater)}</dd>
+                </div>
+                <div className="row">
+                  <dt>Raw land</dt>
+                  <dd>{formatBoolean(land.isRawLand)}</dd>
+                </div>
+              </dl>
+
+              <div className="card-actions">
+                <Link className="btn btn-primary" href="/contact">
+                  Contact us
+                </Link>
+                <Link className="btn btn-ghost" href="/land">
+                  Back to listings
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
-

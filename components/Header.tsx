@@ -2,72 +2,90 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 export default function Header() {
   const pathname = usePathname();
+  const [navOpen, setNavOpen] = useState(false);
 
-  const isActive = (path: string) => {
-    if (path === '/') return pathname === '/';
-    return pathname.startsWith(path);
+  const isActive = (href: string) => {
+    if (href === '/') return pathname === '/';
+    return pathname?.startsWith(href);
   };
 
   return (
     <header className="site-header">
       <div className="container header-inner">
-        {/* Logo / brand */}
-        <Link href="/" className="brand">
-          <div className="brand-logo"></div>
+        <Link href="/" className="brand" onClick={() => setNavOpen(false)}>
           <div className="brand-text">
-            <div className="brand-name"><span>Rumah</span>Ya</div>
+            <div className="brand-name">
+              <span>Rumah</span>Ya
+            </div>
             <div className="brand-tagline">Lombok long-term rentals &amp; land</div>
           </div>
         </Link>
 
         {/* Mobile hamburger button */}
         <button
-          className="nav-toggle"
+          className={`nav-toggle${navOpen ? ' is-open' : ''}`}
+          aria-expanded={navOpen}
           type="button"
           aria-label="Toggle navigation"
           id="navToggle"
-          onClick={() => {
-            const nav = document.getElementById('primaryNav');
-            if (nav) nav.classList.toggle('is-open');
-          }}
+          onClick={() => setNavOpen((v) => !v)}
         >
-          <span></span>
-          <span></span>
-          <span></span>
+          <span />
+          <span />
+          <span />
         </button>
 
-        {/* Main navigation */}
-        <nav className="nav-main" id="primaryNav">
+        <nav className={`nav-main${navOpen ? ' is-open' : ''}`} id="primaryNav">
           <Link
             href="/"
-            className={isActive('/') && pathname === '/' ? 'nav-active' : ''}
+            className={`nav-link ${isActive('/') ? 'active' : ''}`}
+            onClick={() => setNavOpen(false)}
           >
             Home
           </Link>
           <Link
+            href="/villa"
+            className={`nav-link ${isActive('/villa') ? 'active' : ''}`}
+            onClick={() => setNavOpen(false)}
+          >
+            Villas
+          </Link>
+          <Link
             href="/rentals"
-            className={isActive('/rentals') ? 'nav-active' : ''}
+            className={`nav-link ${isActive('/rentals') ? 'active' : ''}`}
+            onClick={() => setNavOpen(false)}
           >
             Rentals
           </Link>
           <Link
             href="/land"
-            className={isActive('/land') ? 'nav-active' : ''}
+            className={`nav-link ${isActive('/land') ? 'active' : ''}`}
+            onClick={() => setNavOpen(false)}
           >
             Land
           </Link>
           <Link
             href="/property-management"
-            className={isActive('/property-management') ? 'nav-active' : ''}
+            className={`nav-link ${isActive('/property-management') ? 'active' : ''}`}
+            onClick={() => setNavOpen(false)}
           >
             Property Management
           </Link>
           <Link
+            href="/legal-verification"
+            className={`nav-link ${isActive('/legal-verification') ? 'active' : ''}`}
+            onClick={() => setNavOpen(false)}
+          >
+            Legal Verification
+          </Link>
+          <Link
             href="/contact"
-            className={isActive('/contact') ? 'nav-active' : ''}
+            className={`nav-link ${isActive('/contact') ? 'active' : ''}`}
+            onClick={() => setNavOpen(false)}
           >
             Contact
           </Link>
@@ -76,4 +94,3 @@ export default function Header() {
     </header>
   );
 }
-
