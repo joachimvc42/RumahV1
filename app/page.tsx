@@ -8,105 +8,91 @@ export default function HomePage() {
       <section className="hero">
         <div className="container">
           <h1>
-            Secure long-term rentals <br />
-            and land opportunities in Lombok
+            Settle or invest in Lombok<br />
+            with local execution and verified processes
           </h1>
 
           <p className="hero-subtitle">
-            RumahYa assists expatriates and investors with verified properties,
-            structured processes, and secure payment coordination through a local notary.
-          </p>
-
-          <div className="hero-actions">
-            <Link href="/rentals" className="btn btn-primary">
-              Long-term rentals
-            </Link>
-            <Link href="/land" className="btn btn-secondary">
-              Land opportunities
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* TRUST SECTION */}
-      <section className="trust">
-        <div className="container">
-          <h2>A safer way to commit in Lombok</h2>
-
-          <p>
-            Long-term rentals in Lombok often require one to three years paid upfront.
-            For expatriates, sending such amounts before arrival involves uncertainty.
-          </p>
-
-          <p>
-            RumahYa introduces a structured approach where verification, contract review,
-            and payment execution are coordinated locally, with funds held by an independent notary
-            until agreed conditions are met.
+            RumahYa assists expatriates and foreign investors by securing long-term rentals
+            and structuring real estate investments through on-the-ground verification
+            and notarial coordination.
           </p>
         </div>
       </section>
 
-      {/* SERVICES */}
-      <section className="services">
-        <div className="container">
-          <h2>Our services</h2>
+      {/* TWO PILLARS */}
+      <section className="section">
+        <div className="container grid grid-2">
 
-          <div className="services-grid">
+          {/* LIVING */}
+          <div className="card">
+            <div className="card-body">
+              <h2 className="h2">Living in Lombok</h2>
 
-            <div className="service-card">
-              <h3>Long-term rentals (1–10 years)</h3>
               <p>
-                For expatriates seeking stability without exposing themselves
-                to upfront payment risks.
+                For expatriates and families looking to live in Lombok under
+                long-term rental agreements.
               </p>
-              <ul>
-                <li>Property and ownership verification</li>
-                <li>Lease terms reviewed before execution</li>
-                <li>Payment coordinated through a local notary</li>
-                <li>On-site confirmation before fund release</li>
-              </ul>
-            </div>
 
-            <div className="service-card">
-              <h3>Land opportunities</h3>
               <p>
-                Carefully selected land plots for residential or investment projects,
-                with clear documentation and local guidance.
+                Long-term rentals often require one to three years paid upfront.
+                RumahYa helps reduce this risk by verifying properties, owners,
+                and coordinating payments through a local notary.
               </p>
-              <ul>
-                <li>Land status verification</li>
-                <li>Buildability assessment</li>
-                <li>Local zoning insights</li>
-                <li>Independent transaction coordination</li>
-              </ul>
-            </div>
 
-            <div className="service-card">
-              <h3>Local coordination</h3>
-              <p>
-                Acting as a neutral intermediary between foreign clients,
-                local owners, and trusted professionals.
-              </p>
-              <ul>
-                <li>Local presence</li>
-                <li>Clear communication</li>
-                <li>Process transparency</li>
+              <ul className="bullets">
+                <li>Long-term villas & houses (1–10 years)</li>
+                <li>Owner & document verification</li>
+                <li>Payment coordination via notary</li>
+                <li>Local presence before and after arrival</li>
               </ul>
-            </div>
 
+              <Link href="/rentals" className="btn btn-primary">
+                Explore long-term rentals
+              </Link>
+            </div>
           </div>
+
+          {/* INVESTING */}
+          <div className="card">
+            <div className="card-body">
+              <h2 className="h2">Investing in Lombok</h2>
+
+              <p>
+                For investors seeking exposure to Lombok real estate without
+                operational burden.
+              </p>
+
+              <p>
+                We assist with land and villa investments by coordinating
+                verification, transaction structuring and long-term management.
+              </p>
+
+              <ul className="bullets">
+                <li>Land acquisition & long-term leases</li>
+                <li>Villas for investment</li>
+                <li>Legal & notarial coordination</li>
+                <li>Property management & reporting</li>
+              </ul>
+
+              <Link href="/land" className="btn btn-secondary">
+                Explore investment opportunities
+              </Link>
+            </div>
+          </div>
+
         </div>
       </section>
 
       {/* TRANSPARENCY */}
-      <section className="transparency">
+      <section className="section section-muted">
         <div className="container">
-          <h2>Transparency & role</h2>
+          <h2 className="h2">A neutral and structured approach</h2>
 
           <p>
             RumahYa does not hold client funds directly.
-            All payments are coordinated through an independent notary,
-            ensuring neutrality, traceability, and clear execution steps.
+            Payments are coordinated through independent notaries to ensure
+            neutrality, traceability and proper execution.
           </p>
         </div>
       </section>
@@ -116,7 +102,7 @@ export default function HomePage() {
         <div className="container">
           <h2>Discuss your project</h2>
           <p>
-            Whether you are relocating, settling long-term, or exploring land opportunities,
+            Whether you plan to live in Lombok or invest long-term,
             we help you move forward with clarity.
           </p>
 
