@@ -1,0 +1,109 @@
+=== New request 2025-12-02T04:27:11+00:00 ===
+Step 0: script ENTER, method=GET
+Step 1: common.php loaded
+Step 2: ensure_admin_logged_in passed
+Step 3: default form values initialised
+Step 12: rendering HTML form
+=== New request 2025-12-02T04:27:35+00:00 ===
+Step 0: script ENTER, method=POST
+Step 1: common.php loaded
+Step 2: ensure_admin_logged_in passed
+Step 3: default form values initialised
+Step 4: POST detected
+Step 5: validation done, errors_count=0
+Step 6: uploads dir exists
+Step 7: no upload for index 0, error=4
+Step 8: no errors, preparing DB insert
+Step 9: db_connect loaded
+=== New request 2025-12-02T04:29:36+00:00 ===
+Step 0: script ENTER, method=GET
+Step 1: common.php loaded
+Step 2: ensure_admin_logged_in passed
+Step 3: default form values initialised
+Step 12: rendering HTML form
+=== New request 2025-12-02T04:29:49+00:00 ===
+Step 0: script ENTER, method=POST
+Step 1: common.php loaded
+Step 2: ensure_admin_logged_in passed
+Step 3: default form values initialised
+Step 4: POST detected
+Step 5: validation done, errors_count=0
+Step 6: uploads dir exists
+Step 7: no upload for index 0, error=4
+Step 8: no errors, preparing DB insert
+Step 9: db_connect loaded
+=== New request 2025-12-02T04:33:17+00:00 ===
+Step 0: script ENTER, method=POST
+Step 1: common.php loaded
+Step 2: ensure_admin_logged_in passed
+Step 3: default form values initialised
+Step 4: POST detected
+Step 5: validation done, errors_count=0
+Step 6: uploads dir exists
+Step 7: no upload for index 0, error=4
+Step 8: no errors, preparing DB insert
+Step 9: db_connect loaded
+=== New request 2025-12-02T04:33:21+00:00 ===
+Step 0: script ENTER, method=GET
+Step 1: common.php loaded
+Step 2: ensure_admin_logged_in passed
+Step 3: default form values initialised
+Step 12: rendering HTML form
+=== New request 2025-12-02T04:33:34+00:00 ===
+Step 0: script ENTER, method=POST
+Step 1: common.php loaded
+Step 2: ensure_admin_logged_in passed
+Step 3: default form values initialised
+Step 4: POST detected
+Step 5: validation done, errors_count=0
+Step 6: uploads dir exists
+Step 7: no upload for index 0, error=4
+Step 8: no errors, preparing DB insert
+Step 9: db_connect loaded
+=== New request 2025-12-02T04:36:13+00:00 ===
+Step 0: script ENTER, method=POST
+Step 1: common.php loaded
+Step 2: ensure_admin_logged_in passed
+Step 3: default form values initialised
+Step 4: POST detected
+Step 5: validation done, errors_count=0
+Step 6: uploads dir exists
+Step 7: no upload for index 0, error=4
+Step 8: no errors, preparing DB insert
+Step 9: db_connect loaded
+=== New request 2025-12-02T04:36:15+00:00 ===
+Step 0: script ENTER, method=GET
+Step 1: common.php loaded
+Step 2: ensure_admin_logged_in passed
+Step 3: default form values initialised
+Step 12: rendering HTML form
+=== New request 2025-12-02T04:36:25+00:00 ===
+Step 0: script ENTER, method=POST
+Step 1: common.php loaded
+Step 2: ensure_admin_logged_in passed
+Step 3: default form values initialised
+Step 4: POST detected
+Step 5: validation done, errors_count=0
+Step 6: uploads dir exists
+Step 7: no upload for index 0, error=4
+Step 8: no errors, preparing DB insert
+Step 9: db_connect loaded
+=== New request 2025-12-02T04:37:41+00:00 ===
+Step 0: script ENTER, method=GET
+Step 1: common.php loaded
+Step 2: ensure_admin_logged_in passed
+Step 3: default form values initialised
+Step 12: rendering HTML form
+=== New request 2025-12-02T04:37:49+00:00 ===
+Step 0: script ENTER, method=POST
+Step 1: common.php loaded
+Step 2: ensure_admin_logged_in passed
+Step 3: default form values initialised
+Step 4: POST detected
+Step 5: validation done, errors_count=0
+Step 6: uploads dir exists
+Step 7: no upload for index 0, error=4
+Step 8: no errors, preparing DB insert
+Step 9: db_connect loaded
+=== New request 2025-12-02T04:40:54+00:00 ===
+Step 0: script ENTER, method=POST
