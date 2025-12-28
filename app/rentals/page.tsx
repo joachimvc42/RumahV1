@@ -3,11 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-// NOTE: Database functionality has been stubbed.
-// In the original PHP version, villa listings were fetched from a MySQL database.
-// To restore this functionality, implement an API route or server component
-// that connects to your database and returns villa listings.
-
 interface Villa {
   id: number;
   title: string;
@@ -21,7 +16,7 @@ interface Villa {
   images: string[];
 }
 
-// Placeholder data - replace with actual API call
+// Placeholder data
 const sampleVillas: Villa[] = [
   {
     id: 1,
@@ -60,38 +55,36 @@ export default function RentalsPage() {
   const [finishedFilter, setFinishedFilter] = useState(false);
   const [unfinishedFilter, setUnfinishedFilter] = useState(false);
 
-  // In production, this would filter based on API response
   const villas = sampleVillas;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement filtering logic via API call
-    console.log('Filters applied:', {
-      locationFilter,
-      startDateFilter,
-      minDurationFilter,
-      minPriceFilter,
-      maxPriceFilter,
-      poolFilter,
-      gardenFilter,
-      finishedFilter,
-      unfinishedFilter,
-    });
+    // Filtering logic will be implemented via API later
   };
 
   return (
     <>
+      {/* INTRO */}
       <section className="rentals-intro">
-        <h1>Long-term rentals</h1>
-        <p>Browse villas and houses available for long-term rentals across Lombok. Click a card to see full details.</p>
+        <h1>Long-term rentals in Lombok</h1>
+        <p>
+          RumahYa assists expatriates seeking long-term rentals (1 to 10 years)
+          by verifying properties locally and coordinating secure rental execution.
+        </p>
+        <p className="muted">
+          Many rentals require one to three years paid upfront. We help reduce
+          this risk by acting as a trusted local intermediary.
+        </p>
       </section>
 
       <section className="rentals-shell">
         <form onSubmit={handleSubmit}>
           <div className="rentals-layout">
-            {/* Sidebar */}
+
+            {/* SIDEBAR */}
             <aside className="rentals-sidebar">
-              <h2>Extra filters</h2>
+              <h2>Additional criteria</h2>
+
               <div className="filter-checkbox">
                 <input
                   type="checkbox"
@@ -101,6 +94,7 @@ export default function RentalsPage() {
                 />
                 <label htmlFor="filter-pool">Swimming pool</label>
               </div>
+
               <div className="filter-checkbox">
                 <input
                   type="checkbox"
@@ -110,6 +104,7 @@ export default function RentalsPage() {
                 />
                 <label htmlFor="filter-garden">Garden</label>
               </div>
+
               <div className="filter-checkbox">
                 <input
                   type="checkbox"
@@ -119,6 +114,7 @@ export default function RentalsPage() {
                 />
                 <label htmlFor="filter-finished">Finished</label>
               </div>
+
               <div className="filter-checkbox">
                 <input
                   type="checkbox"
@@ -126,87 +122,86 @@ export default function RentalsPage() {
                   checked={unfinishedFilter}
                   onChange={(e) => setUnfinishedFilter(e.target.checked)}
                 />
-                <label htmlFor="filter-unfinished">Unfinished</label>
+                <label htmlFor="filter-unfinished">Under construction</label>
               </div>
             </aside>
 
-            {/* Main content */}
+            {/* MAIN */}
             <section className="rentals-main">
-              {/* Filter bar */}
+
+              {/* FILTER BAR */}
               <div className="filters-pill">
-                {/* WHERE */}
+
                 <div className="filter-segment filter-segment-where">
-                  <div className="filter-label-top">Where</div>
+                  <div className="filter-label-top">Location</div>
                   <div className="filter-input-line">
                     <input
                       type="text"
-                      id="filter-location"
-                      autoComplete="off"
-                      placeholder="Search destinations"
+                      placeholder="Area or village"
                       value={locationFilter}
                       onChange={(e) => setLocationFilter(e.target.value)}
                     />
                   </div>
                 </div>
 
-                {/* WHEN */}
                 <div className="filter-segment">
-                  <div className="filter-label-top">When</div>
+                  <div className="filter-label-top">Timing</div>
+
                   <div className="filter-input-line filter-input-column">
                     <span className="filter-field-label">Start date</span>
                     <input
                       type="date"
-                      id="filter-start-date"
                       value={startDateFilter}
                       onChange={(e) => setStartDateFilter(e.target.value)}
                     />
                   </div>
-                  <div className="filter-input-line filter-input-column" style={{ marginTop: '6px' }}>
-                    <span className="filter-field-label">Min duration (months)</span>
+
+                  <div className="filter-input-line filter-input-column" style={{ marginTop: 6 }}>
+                    <span className="filter-field-label">Minimum duration (months)</span>
                     <input
                       type="number"
-                      id="filter-min-duration"
                       min="1"
-                      max="60"
+                      max="120"
                       value={minDurationFilter}
                       onChange={(e) => setMinDurationFilter(e.target.value)}
                     />
                   </div>
                 </div>
 
-                {/* PRICE */}
                 <div className="filter-segment">
-                  <div className="filter-label-top">Price</div>
-                  <div className="filter-input-line filter-input-column">
-                    <span className="filter-field-label">Per month (M IDR)</span>
-                    <div className="price-range" style={{ marginTop: '4px', width: '100%' }}>
-                      <input
-                        type="number"
-                        step="0.1"
-                        placeholder="Min"
-                        value={minPriceFilter}
-                        onChange={(e) => setMinPriceFilter(e.target.value)}
-                      />
-                      <input
-                        type="number"
-                        step="0.1"
-                        placeholder="Max"
-                        value={maxPriceFilter}
-                        onChange={(e) => setMaxPriceFilter(e.target.value)}
-                      />
-                    </div>
+                  <div className="filter-label-top">Budget</div>
+                  <span className="filter-field-label">Monthly rent (M IDR)</span>
+
+                  <div className="price-range">
+                    <input
+                      type="number"
+                      step="0.1"
+                      placeholder="Min"
+                      value={minPriceFilter}
+                      onChange={(e) => setMinPriceFilter(e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      step="0.1"
+                      placeholder="Max"
+                      value={maxPriceFilter}
+                      onChange={(e) => setMaxPriceFilter(e.target.value)}
+                    />
                   </div>
                 </div>
 
-                {/* ACTION */}
                 <div className="filter-segment-actions">
-                  <button type="submit" className="btn btn-primary">Apply filters</button>
+                  <button type="submit" className="btn btn-primary">
+                    Apply filters
+                  </button>
                 </div>
               </div>
 
-              {/* Results */}
+              {/* RESULTS */}
               {villas.length === 0 ? (
-                <p style={{ marginTop: '16px' }}>No villas match your criteria.</p>
+                <p className="muted" style={{ marginTop: 20 }}>
+                  No properties match your criteria.
+                </p>
               ) : (
                 <section className="rentals-grid">
                   {villas.map((villa) => (
@@ -223,32 +218,29 @@ export default function RentalsPage() {
                             </div>
                           ))}
                         </div>
+
                         <div className="rental-card-body">
                           <h2 className="rental-card-title">{villa.title}</h2>
-                          {villa.location && (
-                            <div className="rental-card-location">
-                              Location: {villa.location}
-                            </div>
-                          )}
+
+                          <div className="rental-card-location">
+                            {villa.location}
+                          </div>
+
                           <div className="rental-card-meta">
-                            {villa.price && (
-                              <span className="rental-pill">Price {villa.price}</span>
-                            )}
-                            {villa.duration && (
-                              <span className="rental-pill">Min {villa.duration} months</span>
-                            )}
-                            {villa.bedrooms && (
-                              <span className="rental-pill">{villa.bedrooms} bedrooms</span>
-                            )}
-                            {villa.bathrooms && (
-                              <span className="rental-pill">{villa.bathrooms} bathrooms</span>
-                            )}
-                            {villa.pool && (
-                              <span className="rental-pill">Pool</span>
-                            )}
-                            {villa.garden && (
-                              <span className="rental-pill">Garden</span>
-                            )}
+                            <span className="rental-pill">
+                              {villa.price} Mio IDR / month
+                            </span>
+                            <span className="rental-pill">
+                              Min. {villa.duration} months
+                            </span>
+                            <span className="rental-pill">
+                              {villa.bedrooms} bedrooms
+                            </span>
+                            <span className="rental-pill">
+                              {villa.bathrooms} bathrooms
+                            </span>
+                            {villa.pool && <span className="rental-pill">Pool</span>}
+                            {villa.garden && <span className="rental-pill">Garden</span>}
                           </div>
                         </div>
                       </article>
@@ -263,4 +255,3 @@ export default function RentalsPage() {
     </>
   );
 }
-
