@@ -6,69 +6,59 @@ import { usePathname } from 'next/navigation';
 export default function Header() {
   const pathname = usePathname();
 
-  const isActive = (path: string) =>
-    pathname === path || pathname.startsWith(path + '/');
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(href + '/');
 
   return (
     <header className="site-header">
-      <div className="container header-inner">
-
-        {/* BRAND */}
+      <div className="header-inner">
+        {/* Brand */}
         <Link href="/" className="brand">
           <span className="brand-name">
-            <strong>Rumah</strong>Ya
+            Rumah<span>Ya</span>
           </span>
           <span className="brand-tagline">
-            Lombok · Living & Investing
+            Lombok rentals & investments
           </span>
         </Link>
 
-        {/* NAVIGATION */}
-        <nav className="primary-nav" id="primaryNav">
-          <ul>
-            <li className={isActive('/rentals') ? 'active' : ''}>
-              <Link href="/rentals">
-                Living in Lombok
-              </Link>
-            </li>
+        {/* Navigation */}
+        <nav className="primary-nav">
+          <Link
+            href="/"
+            className={isActive('/') ? 'nav-link is-active' : 'nav-link'}
+          >
+            Home
+          </Link>
 
-            <li className={isActive('/land') || isActive('/villa') ? 'active' : ''}>
-              <Link href="/land">
-                Investing in Lombok
-              </Link>
-            </li>
+          <Link
+            href="/rentals"
+            className={isActive('/rentals') ? 'nav-link is-active' : 'nav-link'}
+          >
+            Rentals
+          </Link>
 
-            <li className={isActive('/about') ? 'active' : ''}>
-              <Link href="/about">
-                About
-              </Link>
-            </li>
+          <Link
+            href="/investments"
+            className={isActive('/investments') || isActive('/land') ? 'nav-link is-active' : 'nav-link'}
+          >
+            Investments
+          </Link>
 
-            <li className={isActive('/contact') ? 'active' : ''}>
-              <Link href="/contact" className="btn btn-primary btn-small">
-                Contact
-              </Link>
-            </li>
-          </ul>
+          <Link
+            href="/about"
+            className={isActive('/about') ? 'nav-link is-active' : 'nav-link'}
+          >
+            About
+          </Link>
+
+          <Link
+            href="/contact"
+            className={isActive('/contact') ? 'nav-link nav-cta is-active' : 'nav-link nav-cta'}
+          >
+            Contact
+          </Link>
         </nav>
-
-        {/* MOBILE TOGGLE */}
-        <button
-          className="nav-toggle"
-          type="button"
-          aria-label="Toggle navigation"
-          onClick={() => {
-            const nav = document.getElementById('primaryNav');
-            if (nav) {
-              nav.classList.toggle('is-open');
-            }
-          }}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
-
       </div>
     </header>
   );

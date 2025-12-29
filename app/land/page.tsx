@@ -2,11 +2,6 @@
 
 import { useState } from 'react';
 
-// NOTE: Database functionality has been stubbed.
-// In the original PHP version, land listings were fetched from a MySQL database.
-// To restore this functionality, implement an API route or server component
-// that connects to your database and returns land listings.
-
 interface Land {
   id: number;
   title: string;
@@ -21,14 +16,14 @@ interface Land {
   image: string;
 }
 
-// Placeholder data - replace with actual API call
+// Placeholder data
 const sampleLands: Land[] = [
   {
     id: 1,
-    title: 'Beachfront plot in Kuta',
+    title: 'Beachfront investment plot',
     location: 'Kuta, Lombok',
     area: 10,
-    price: '150M',
+    price: '150',
     tenure: 'leasehold',
     hasWater: true,
     hasElectricity: true,
@@ -41,7 +36,7 @@ const sampleLands: Land[] = [
     title: 'Hillside land with ocean view',
     location: 'Selong Belanak',
     area: 15,
-    price: '120M',
+    price: '120',
     tenure: 'freehold',
     hasWater: true,
     hasElectricity: false,
@@ -62,41 +57,36 @@ export default function LandPage() {
   const [freeholdFilter, setFreeholdFilter] = useState(false);
   const [leaseholdFilter, setLeaseholdFilter] = useState(false);
 
-  // In production, this would filter based on API response
   const lands = sampleLands;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement filtering logic via API call
-    console.log('Filters applied:', {
-      locationFilter,
-      minAreaFilter,
-      minPriceFilter,
-      maxPriceFilter,
-      waterFilter,
-      electricityFilter,
-      roadFilter,
-      freeholdFilter,
-      leaseholdFilter,
-    });
+    // Filtering logic will be implemented via API later
   };
 
   return (
     <>
+      {/* INTRO */}
       <section className="land-intro">
-        <h1>Land</h1>
+        <h1>Investing in land in Lombok</h1>
         <p className="section-subtitle">
-          Hand-picked plots of land across Lombok. Click a card to see key details
-          about size, tenure and utilities.
+          Selected land opportunities for long-term investment projects.
+          All plots are reviewed locally and suitable for structured transactions.
+        </p>
+        <p className="muted">
+          RumahYa assists investors by coordinating verification, tenure review,
+          and transaction execution through local professionals.
         </p>
       </section>
 
       <section className="land-shell">
         <form onSubmit={handleSubmit}>
           <div className="land-layout">
-            {/* Sidebar */}
+
+            {/* SIDEBAR */}
             <aside className="land-sidebar">
-              <h2>Extra filters</h2>
+              <h2>Investment criteria</h2>
+
               <div className="filter-checkbox">
                 <input
                   type="checkbox"
@@ -104,8 +94,9 @@ export default function LandPage() {
                   checked={waterFilter}
                   onChange={(e) => setWaterFilter(e.target.checked)}
                 />
-                <label htmlFor="filter-water">Water</label>
+                <label htmlFor="filter-water">Water access</label>
               </div>
+
               <div className="filter-checkbox">
                 <input
                   type="checkbox"
@@ -115,6 +106,7 @@ export default function LandPage() {
                 />
                 <label htmlFor="filter-electricity">Electricity</label>
               </div>
+
               <div className="filter-checkbox">
                 <input
                   type="checkbox"
@@ -124,6 +116,7 @@ export default function LandPage() {
                 />
                 <label htmlFor="filter-road">Road access</label>
               </div>
+
               <div className="filter-checkbox">
                 <input
                   type="checkbox"
@@ -133,6 +126,7 @@ export default function LandPage() {
                 />
                 <label htmlFor="filter-freehold">Freehold</label>
               </div>
+
               <div className="filter-checkbox">
                 <input
                   type="checkbox"
@@ -144,30 +138,27 @@ export default function LandPage() {
               </div>
             </aside>
 
-            {/* Main content */}
+            {/* MAIN */}
             <section className="land-main">
-              {/* Filter bar */}
+
+              {/* FILTER BAR */}
               <div className="land-filters-pill">
-                {/* WHERE */}
+
                 <div className="land-filter-segment land-filter-segment-where">
-                  <div className="land-filter-label-top">Where</div>
+                  <div className="land-filter-label-top">Location</div>
                   <div className="land-filter-input-line">
                     <input
                       type="text"
-                      id="land-filter-location"
-                      autoComplete="off"
-                      placeholder="Search areas in Lombok"
+                      placeholder="Area or region"
                       value={locationFilter}
                       onChange={(e) => setLocationFilter(e.target.value)}
                     />
                   </div>
                 </div>
 
-                {/* AREA */}
                 <div className="land-filter-segment">
-                  <div className="land-filter-label-top">Area</div>
+                  <div className="land-filter-label-top">Minimum size</div>
                   <div className="land-filter-input-line">
-                    <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>Minimum size</span>
                     <input
                       type="number"
                       min="0"
@@ -175,45 +166,44 @@ export default function LandPage() {
                       value={minAreaFilter}
                       onChange={(e) => setMinAreaFilter(e.target.value)}
                     />
-                    <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>are</span>
+                    <span className="unit">are</span>
                   </div>
                 </div>
 
-                {/* PRICE */}
                 <div className="land-filter-segment">
-                  <div className="land-filter-label-top">Price</div>
-                  <div className="land-filter-input-line">
-                    <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>Per are (M IDR)</span>
-                  </div>
-                  <div className="land-filter-input-line" style={{ marginTop: '4px' }}>
-                    <div className="land-price-range">
-                      <input
-                        type="number"
-                        step="0.1"
-                        placeholder="Min"
-                        value={minPriceFilter}
-                        onChange={(e) => setMinPriceFilter(e.target.value)}
-                      />
-                      <input
-                        type="number"
-                        step="0.1"
-                        placeholder="Max"
-                        value={maxPriceFilter}
-                        onChange={(e) => setMaxPriceFilter(e.target.value)}
-                      />
-                    </div>
+                  <div className="land-filter-label-top">Price range</div>
+                  <span className="filter-field-label">Per are (M IDR)</span>
+
+                  <div className="land-price-range">
+                    <input
+                      type="number"
+                      step="0.1"
+                      placeholder="Min"
+                      value={minPriceFilter}
+                      onChange={(e) => setMinPriceFilter(e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      step="0.1"
+                      placeholder="Max"
+                      value={maxPriceFilter}
+                      onChange={(e) => setMaxPriceFilter(e.target.value)}
+                    />
                   </div>
                 </div>
 
-                {/* ACTION */}
                 <div className="land-filter-actions">
-                  <button type="submit" className="btn btn-primary">Apply filters</button>
+                  <button type="submit" className="btn btn-primary">
+                    Apply filters
+                  </button>
                 </div>
               </div>
 
-              {/* Results */}
+              {/* RESULTS */}
               {lands.length === 0 ? (
-                <p style={{ marginTop: '16px' }}>No land plots match your criteria yet.</p>
+                <p className="muted" style={{ marginTop: 20 }}>
+                  No land opportunities currently match your criteria.
+                </p>
               ) : (
                 <section className="land-grid">
                   {lands.map((land) => (
@@ -223,33 +213,25 @@ export default function LandPage() {
                         alt={land.title}
                         className="property-card-img"
                       />
+
                       <div className="property-card-body">
                         <h2 className="property-card-title">{land.title}</h2>
-                        {land.location && (
-                          <div className="property-card-location">{land.location}</div>
-                        )}
-                        <div className="property-card-meta">
-                          {land.area > 0 && (
-                            <span className="badge-soft">{land.area} are</span>
-                          )}
-                          {land.tenure && (
-                            <span className="badge-soft">{land.tenure}</span>
-                          )}
-                          {land.hasElectricity && (
-                            <span className="badge-soft">Electricity</span>
-                          )}
-                          {land.hasWater && (
-                            <span className="badge-soft">Water</span>
-                          )}
-                          {land.hasRoad && (
-                            <span className="badge-soft">Road access</span>
-                          )}
-                          {land.isVirgin && (
-                            <span className="badge-soft">Virgin land</span>
-                          )}
+
+                        <div className="property-card-location">
+                          {land.location}
                         </div>
+
+                        <div className="property-card-meta">
+                          <span className="badge-soft">{land.area} are</span>
+                          <span className="badge-soft">{land.tenure}</span>
+                          {land.hasWater && <span className="badge-soft">Water</span>}
+                          {land.hasElectricity && <span className="badge-soft">Electricity</span>}
+                          {land.hasRoad && <span className="badge-soft">Road access</span>}
+                          {land.isVirgin && <span className="badge-soft">Virgin land</span>}
+                        </div>
+
                         <div className="property-card-price">
-                          {land.price && <>Price {land.price} / are</>}
+                          {land.price} Mio IDR / are
                         </div>
                       </div>
                     </article>
@@ -263,4 +245,3 @@ export default function LandPage() {
     </>
   );
 }
-

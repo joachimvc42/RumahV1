@@ -1495,3 +1495,69 @@ p {
     }
 }
 
+/* RENTALS – Search pill */
+
+.section-soft {
+    background: #f6f4ef;
+  }
+  
+  .search-pill {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 999px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  }
+  
+  .search-segment {
+    display: flex;
+    flex-direction: column;
+    min-width: 160px;
+  }
+  
+  .search-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b7280;
+    margin-bottom: 4px;
+  }
+  
+  .search-segment input {
+    border: none;
+    background: transparent;
+    font-size: 0.95rem;
+    padding: 6px 4px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .search-segment input:focus {
+    outline: none;
+    border-bottom-color: #111827;
+  }
+  
+  .price-range {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .search-action {
+    padding-left: 8px;
+  }
+  
+  .extra-filters {
+    margin-top: 14px;
+    display: flex;
+    gap: 24px;
+    font-size: 0.9rem;
+  }
+  
+  .extra-filters label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
