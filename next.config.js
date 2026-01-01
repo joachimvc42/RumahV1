@@ -1,12 +1,5 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  experimental: {
-    turbo: false,
-  },
-  webpack: (config) => {
-    config.resolve.alias['@'] = __dirname;
-    return config;
-  },
-};
+const nextConfig = {};
 
 module.exports = nextConfig;
+
