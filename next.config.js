@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Preserve existing URL structure
-  trailingSlash: false,
+  webpack: (config) => {
+    config.resolve.alias['@'] = __dirname;
+    return config;
+  }
 };
 
 module.exports = nextConfig;
-
