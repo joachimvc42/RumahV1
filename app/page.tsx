@@ -7,13 +7,12 @@ export default function HomePage() {
       <section className="section hero">
         <div className="container hero-inner">
           <h1 className="h1">
-            A trusted local partner<br />
-            for living and investing in Lombok
+            A local point of contact for long-term living<br />
+            and investment in Lombok
           </h1>
           <p className="lead">
-            RumahYa helps expatriates secure long-term rentals safely,
-            and investors access verified land and villa opportunities
-            with local insight and clarity.
+            RumahYa acts as a local intermediary for expatriates seeking long-term rentals
+            and investors exploring land or villa opportunities in Lombok.
           </p>
         </div>
       </section>
@@ -27,13 +26,13 @@ export default function HomePage() {
               <h2 className="h2">Live in Lombok</h2>
               <p className="text">
                 Long-term rentals for expatriates who want to live in Lombok
-                without taking unnecessary risks.
+                while reducing uncertainty and unnecessary upfront exposure.
               </p>
               <ul className="bullets">
-                <li>Rent from 1 month to 10 years</li>
-                <li>Reduced upfront exposure</li>
-                <li>Verified local contacts</li>
-                <li>Ideal before or after relocation</li>
+                <li>Rental terms from 1 month to 10 years</li>
+                <li>Local intermediary support</li>
+                <li>Reduced upfront risk</li>
+                <li>Suitable before or after relocation</li>
               </ul>
               <Link href="/rentals" className="btn btn-primary">
                 Browse rentals
@@ -46,12 +45,12 @@ export default function HomePage() {
             <div className="card-body">
               <h2 className="h2">Invest in Lombok</h2>
               <p className="text">
-                Carefully selected land and villas for long-term investors
-                looking for exposure to Lombok with local oversight.
+                Land and villa opportunities for long-term investors
+                looking for local context, coordination and clarity.
               </p>
               <ul className="bullets">
-                <li>Land & villas (purchase or long-term lease)</li>
-                <li>Due diligence & document review</li>
+                <li>Land and villa investment opportunities</li>
+                <li>Purchase or long-term lease structures</li>
                 <li>Local coordination</li>
                 <li>Optional property management</li>
               </ul>
@@ -73,16 +72,21 @@ export default function HomePage() {
 
           <div className="grid grid-2">
             <ul className="bullets">
-              <li>Based in Lombok, not remote</li>
+              <li>Based in Lombok</li>
               <li>Local partners and on-the-ground presence</li>
-              <li>Clear communication, no hidden agenda</li>
+              <li>Clear and direct communication</li>
             </ul>
             <ul className="bullets">
               <li>Independent verification possible</li>
-              <li>Focus on long-term relationships</li>
-              <li>Human-scale, not mass-market</li>
+              <li>Long-term relationship focus</li>
+              <li>Human-scale approach</li>
             </ul>
           </div>
+
+          <p className="muted" style={{ marginTop: '16px' }}>
+            RumahYa does not replace legal, notarial or tax professionals.
+            Independent verification is always recommended.
+          </p>
         </div>
       </section>
 
@@ -92,7 +96,7 @@ export default function HomePage() {
           <h2 className="h2">Start with a conversation</h2>
           <p className="text">
             Whether you plan to live in Lombok or invest long-term,
-            we start with understanding your situation.
+            we begin by understanding your situation.
           </p>
           <Link href="/contact" className="btn btn-primary">
             Contact RumahYa

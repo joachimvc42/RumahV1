@@ -7,8 +7,8 @@ interface Villa {
   id: number;
   title: string;
   location: string;
-  price: string; // Mio IDR / month
-  minDuration: number; // months
+  price: string;
+  duration: string;
   bedrooms: number;
   bathrooms: number;
   pool: boolean;
@@ -16,14 +16,13 @@ interface Villa {
   images: string[];
 }
 
-// Placeholder data
 const sampleVillas: Villa[] = [
   {
     id: 1,
     title: 'Modern Villa with Pool',
     location: 'Kuta, Lombok',
     price: '25',
-    minDuration: 3,
+    duration: '6',
     bedrooms: 3,
     bathrooms: 2,
     pool: true,
@@ -32,167 +31,140 @@ const sampleVillas: Villa[] = [
   },
   {
     id: 2,
-    title: 'Quiet Long-term Villa',
-    location: 'Senggigi, Lombok',
-    price: '18',
-    minDuration: 1,
-    bedrooms: 2,
-    bathrooms: 2,
-    pool: false,
+    title: 'Beachfront Retreat',
+    location: 'Selong Belanak',
+    price: '35',
+    duration: '12',
+    bedrooms: 4,
+    bathrooms: 3,
+    pool: true,
     garden: true,
     images: ['/assets/lombok.jpg'],
   },
 ];
 
 export default function RentalsPage() {
-  const [location, setLocation] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [minDuration, setMinDuration] = useState('');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [pool, setPool] = useState(false);
-  const [garden, setGarden] = useState(false);
+  const [locationFilter, setLocationFilter] = useState('');
+  const [startDateFilter, setStartDateFilter] = useState('');
+  const [minDurationFilter, setMinDurationFilter] = useState('');
+  const [minPriceFilter, setMinPriceFilter] = useState('');
+  const [maxPriceFilter, setMaxPriceFilter] = useState('');
+  const [poolFilter, setPoolFilter] = useState(false);
+  const [gardenFilter, setGardenFilter] = useState(false);
 
   const villas = sampleVillas;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // API filtering later
   };
 
   return (
-    <main className="page">
-      {/* INTRO */}
-      <section className="section section-soft">
-        <div className="container">
-          <h1 className="h1">Long-term rentals in Lombok</h1>
-          <p className="lead">
-            Many rentals in Lombok require <strong>1 to 2 years paid upfront</strong>.
-            We help reduce this risk by acting as a trusted local intermediary,
-            verifying owners and documents before you commit.
-          </p>
-          <p className="muted">
-            Ideal for expatriates looking to rent for <strong>1 month up to 10 years</strong>,
-            including those securing a home before arriving in Indonesia.
-          </p>
-        </div>
+    <>
+      <section className="rentals-intro">
+        <h1>Long-term rentals in Lombok</h1>
+        <p>
+          Long-term rentals in Lombok often require significant upfront payments.
+          RumahYa helps expatriates reduce uncertainty by acting as a local intermediary
+          before and during the rental process.
+        </p>
+        <p className="muted">
+          Minimum rental duration starts from one month and can extend up to ten years,
+          depending on the property and agreement structure.
+        </p>
       </section>
 
-      {/* SEARCH */}
-      <section className="section">
-        <div className="container">
-          <form onSubmit={handleSubmit} className="search-pill">
-            {/* WHERE */}
-            <div className="search-segment">
-              <span className="search-label">Location</span>
-              <input
-                type="text"
-                placeholder="Area or village"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-              />
-            </div>
-
-            {/* WHEN */}
-            <div className="search-segment">
-              <span className="search-label">Start</span>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-            </div>
-
-            {/* DURATION */}
-            <div className="search-segment">
-              <span className="search-label">Minimum stay</span>
-              <input
-                type="number"
-                min="1"
-                max="120"
-                placeholder="Months"
-                value={minDuration}
-                onChange={(e) => setMinDuration(e.target.value)}
-              />
-            </div>
-
-            {/* PRICE */}
-            <div className="search-segment">
-              <span className="search-label">Budget (M IDR / month)</span>
-              <div className="price-range">
+      <section className="rentals-shell">
+        <form onSubmit={handleSubmit}>
+          <div className="rentals-layout">
+            {/* Sidebar */}
+            <aside className="rentals-sidebar">
+              <h2>Extra filters</h2>
+              <div className="filter-checkbox">
                 <input
-                  type="number"
-                  placeholder="Min"
-                  value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
+                  type="checkbox"
+                  checked={poolFilter}
+                  onChange={(e) => setPoolFilter(e.target.checked)}
                 />
-                <input
-                  type="number"
-                  placeholder="Max"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
-                />
+                <label>Swimming pool</label>
               </div>
-            </div>
+              <div className="filter-checkbox">
+                <input
+                  type="checkbox"
+                  checked={gardenFilter}
+                  onChange={(e) => setGardenFilter(e.target.checked)}
+                />
+                <label>Garden</label>
+              </div>
+            </aside>
 
-            {/* ACTION */}
-            <div className="search-action">
-              <button className="btn btn-primary" type="submit">
-                Apply filters
-              </button>
-            </div>
-          </form>
+            {/* Main */}
+            <section className="rentals-main">
+              <div className="filters-pill">
+                <div className="filter-segment">
+                  <div className="filter-label-top">Where</div>
+                  <input
+                    type="text"
+                    placeholder="Search locations"
+                    value={locationFilter}
+                    onChange={(e) => setLocationFilter(e.target.value)}
+                  />
+                </div>
 
-          {/* EXTRA FILTERS */}
-          <div className="extra-filters">
-            <label>
-              <input
-                type="checkbox"
-                checked={pool}
-                onChange={(e) => setPool(e.target.checked)}
-              />
-              Swimming pool
-            </label>
+                <div className="filter-segment">
+                  <div className="filter-label-top">When</div>
+                  <input
+                    type="date"
+                    value={startDateFilter}
+                    onChange={(e) => setStartDateFilter(e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Minimum rental duration (months)"
+                    value={minDurationFilter}
+                    onChange={(e) => setMinDurationFilter(e.target.value)}
+                  />
+                </div>
 
-            <label>
-              <input
-                type="checkbox"
-                checked={garden}
-                onChange={(e) => setGarden(e.target.checked)}
-              />
-              Garden
-            </label>
-          </div>
-        </div>
-      </section>
+                <div className="filter-segment">
+                  <div className="filter-label-top">Monthly rent (M IDR)</div>
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    value={minPriceFilter}
+                    onChange={(e) => setMinPriceFilter(e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    value={maxPriceFilter}
+                    onChange={(e) => setMaxPriceFilter(e.target.value)}
+                  />
+                </div>
 
-      {/* RESULTS */}
-      <section className="section">
-        <div className="container grid grid-3">
-          {villas.map((villa) => (
-            <Link
-              key={villa.id}
-              href={`/villa/${villa.id}`}
-              className="card property-card"
-            >
-              <img src={villa.images[0]} alt={villa.title} />
-              <div className="card-body">
-                <h2 className="h3">{villa.title}</h2>
-                <p className="muted">{villa.location}</p>
-
-                <div className="badges">
-                  <span>{villa.price} M IDR / month</span>
-                  <span>Min {villa.minDuration} month(s)</span>
-                  <span>{villa.bedrooms} bd</span>
-                  <span>{villa.bathrooms} ba</span>
-                  {villa.pool && <span>Pool</span>}
-                  {villa.garden && <span>Garden</span>}
+                <div className="filter-segment-actions">
+                  <button type="submit" className="btn btn-primary">
+                    Apply filters
+                  </button>
                 </div>
               </div>
-            </Link>
-          ))}
-        </div>
+
+              <section className="rentals-grid">
+                {villas.map((villa) => (
+                  <Link
+                    key={villa.id}
+                    href={`/villa/${villa.id}`}
+                    className="rental-card"
+                  >
+                    <img src={villa.images[0]} alt={villa.title} />
+                    <h2>{villa.title}</h2>
+                    <p>{villa.location}</p>
+                  </Link>
+                ))}
+              </section>
+            </section>
+          </div>
+        </form>
       </section>
-    </main>
+    </>
   );
 }

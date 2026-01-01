@@ -3,92 +3,98 @@
 import { useState } from 'react';
 
 export default function ContactPage() {
-  const [sent, setSent] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: '',
-  });
+  const [type, setType] = useState('');
+  const [message, setMessage] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // NOTE: Form submission logic has been stubbed.
-    // In production, implement an API route to handle form submissions
-    // (e.g., send email via SendGrid, store in database, etc.)
-    console.log('Form submitted:', formData);
-    setSent(true);
+    // API / email integration later
+    console.log({ type, message });
   };
 
   return (
-    <div className="container">
-      <div className="section-header">
-        <h1 className="section-title">Contact</h1>
-        <p className="section-subtitle">
-          Tell us what you&apos;re looking for and we&apos;ll get back to you with options or next steps.
-        </p>
-      </div>
-
-      {sent && (
-        <div className="section-block" style={{ borderLeft: '4px solid var(--primary)' }}>
-          <h2>Thank you!</h2>
-          <p>
-            We&apos;ve received your message. We&apos;ll get back to you as soon as possible.
+    <main className="page">
+      {/* INTRO */}
+      <section className="section hero hero--compact">
+        <div className="container">
+          <h1 className="h1">Start with a conversation</h1>
+          <p className="lead">
+            Whether you plan to live in Lombok or invest long-term,
+            we begin by understanding your situation.
           </p>
         </div>
-      )}
+      </section>
 
-      <div className="section-block">
-        <h2>Send us a message</h2>
-        <form onSubmit={handleSubmit}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
-            <div>
-              <label htmlFor="c-name" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Name</label><br />
-              <input
-                id="c-name"
-                type="text"
-                name="name"
-                required
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                style={{ width: '100%', padding: '8px 10px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}
-              />
-            </div>
-            <div>
-              <label htmlFor="c-email" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Email</label><br />
-              <input
-                id="c-email"
-                type="email"
-                name="email"
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                style={{ width: '100%', padding: '8px 10px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}
-              />
-            </div>
-          </div>
-          <div style={{ marginTop: '10px' }}>
-            <label htmlFor="c-message" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Message</label><br />
-            <textarea
-              id="c-message"
-              name="message"
-              rows={5}
-              required
-              value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              style={{ width: '100%', padding: '8px 10px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}
-            ></textarea>
-          </div>
-          <button className="button" type="submit" style={{ marginTop: '12px' }}>Send message</button>
-        </form>
-      </div>
+      {/* FORM */}
+      <section className="section">
+        <div className="container grid grid-2">
+          {/* LEFT */}
+          <div>
+            <h2 className="h2">How can we help?</h2>
+            <p className="text">
+              This first contact is informal. There is no commitment and no obligation.
+              The goal is simply to understand what you are looking for
+              and see whether RumahYa can be relevant for you.
+            </p>
 
-      <div className="section-block">
-        <h2>Other ways to reach us</h2>
-        <p><strong>WhatsApp:</strong> +62 812 3456 7890</p>
-        <p><strong>Email:</strong> info@rumahya.com</p>
-        <p><strong>Location:</strong> Kuta, Lombok – Indonesia</p>
-      </div>
-    </div>
+            <ul className="bullets">
+              <li>Long-term rental in Lombok</li>
+              <li>Relocation planning</li>
+              <li>Land or villa investment</li>
+              <li>Property management discussion</li>
+            </ul>
+
+            <p className="muted">
+              If relevant, next steps are discussed transparently.
+            </p>
+          </div>
+
+          {/* RIGHT */}
+          <form onSubmit={handleSubmit} className="card">
+            <div className="card-body">
+              <div className="form-group">
+                <label className="form-label">I am contacting you about</label>
+                <select
+                  value={type}
+                  onChange={(e) => setType(e.target.value)}
+                  required
+                >
+                  <option value="">Select an option</option>
+                  <option value="rentals">Living in Lombok (rentals)</option>
+                  <option value="investment">Investing in Lombok</option>
+                  <option value="other">Other / not sure yet</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Message</label>
+                <textarea
+                  rows={6}
+                  placeholder="Briefly describe your situation, timeline, and expectations."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  required
+                />
+              </div>
+
+              <button type="submit" className="btn btn-primary">
+                Send message
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      {/* REASSURANCE */}
+      <section className="section section-soft">
+        <div className="container">
+          <p className="text">
+            RumahYa is based in Lombok and works with local partners.
+            We do not act as agents pushing transactions.
+            Our role is to provide clarity, context and local coordination.
+          </p>
+        </div>
+      </section>
+    </main>
   );
 }
-
