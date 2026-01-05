@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '../../../../lib/supabaseClient';
 import { useParams, useRouter } from 'next/navigation';
 import ImageUploader from '@/components/admin/ImageUploader';
 
