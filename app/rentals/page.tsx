@@ -2,46 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-
-interface Villa {
-  id: number;
-  title: string;
-  location: string;
-  price: string;
-  duration: string;
-  bedrooms: number;
-  bathrooms: number;
-  pool: boolean;
-  garden: boolean;
-  images: string[];
-}
-
-const sampleVillas: Villa[] = [
-  {
-    id: 1,
-    title: 'Modern Villa with Pool',
-    location: 'Kuta, Lombok',
-    price: '25',
-    duration: '6',
-    bedrooms: 3,
-    bathrooms: 2,
-    pool: true,
-    garden: true,
-    images: ['/assets/lombok.jpg'],
-  },
-  {
-    id: 2,
-    title: 'Beachfront Retreat',
-    location: 'Selong Belanak',
-    price: '35',
-    duration: '12',
-    bedrooms: 4,
-    bathrooms: 3,
-    pool: true,
-    garden: true,
-    images: ['/assets/lombok.jpg'],
-  },
-];
+import { rentals } from '@/data/rentals';
 
 export default function RentalsPage() {
   const [locationFilter, setLocationFilter] = useState('');
@@ -52,15 +13,13 @@ export default function RentalsPage() {
   const [poolFilter, setPoolFilter] = useState(false);
   const [gardenFilter, setGardenFilter] = useState(false);
 
-  const villas = sampleVillas;
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
   };
 
   return (
     <>
-      <section className="rentals-intro">
+      <section className="rentals-intro container">
         <h1>Long-term rentals in Lombok</h1>
         <p>
           Long-term rentals in Lombok often require significant upfront payments.
@@ -73,7 +32,7 @@ export default function RentalsPage() {
         </p>
       </section>
 
-      <section className="rentals-shell">
+      <section className="rentals-shell container">
         <form onSubmit={handleSubmit}>
           <div className="rentals-layout">
             {/* Sidebar */}
@@ -149,15 +108,29 @@ export default function RentalsPage() {
               </div>
 
               <section className="rentals-grid">
-                {villas.map((villa) => (
+                {rentals.map((rental) => (
                   <Link
-                    key={villa.id}
-                    href={`/villa/${villa.id}`}
+                    key={rental.id}
+                    href={`/rentals/${rental.id}`}
                     className="rental-card"
                   >
-                    <img src={villa.images[0]} alt={villa.title} />
-                    <h2>{villa.title}</h2>
-                    <p>{villa.location}</p>
+                    <div className="rental-card-image">
+                      <img src={rental.images[0]} alt={rental.title} />
+                      <div className="rental-card-overlay">
+                        <span className="rental-card-badge">{rental.duration}+ months</span>
+                      </div>
+                    </div>
+                    <div className="rental-card-content">
+                      <h2 className="rental-card-title">{rental.title}</h2>
+                      <p className="rental-card-location">{rental.location}</p>
+                      <div className="rental-card-features">
+                        <span>{rental.bedrooms} bed</span>
+                        <span>{rental.bathrooms} bath</span>
+                        {rental.pool && <span>Pool</span>}
+                        {rental.garden && <span>Garden</span>}
+                      </div>
+                      <p className="rental-card-price">{rental.price} M IDR<span>/month</span></p>
+                    </div>
                   </Link>
                 ))}
               </section>

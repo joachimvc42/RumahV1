@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
 
 interface Land {
   id: number;
@@ -57,7 +58,24 @@ export default function LandPage() {
   const [freeholdFilter, setFreeholdFilter] = useState(false);
   const [leaseholdFilter, setLeaseholdFilter] = useState(false);
 
+  const [investmentIds, setInvestmentIds] = useState<Set<string>>(new Set());
+
   const lands = sampleLands;
+
+  useEffect(() => {
+    const loadInvestments = async () => {
+      const { data } = await supabase
+        .from('investments')
+        .select('asset_id')
+        .eq('asset_type', 'land');
+
+      if (data) {
+        setInvestmentIds(new Set(data.map((i: any) => String(i.asset_id))));
+      }
+    };
+
+    loadInvestments();
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -228,6 +246,12 @@ export default function LandPage() {
                           {land.hasElectricity && <span className="badge-soft">Electricity</span>}
                           {land.hasRoad && <span className="badge-soft">Road access</span>}
                           {land.isVirgin && <span className="badge-soft">Virgin land</span>}
+
+                          {investmentIds.has(String(land.id)) && (
+                            <span className="badge-soft badge-investment">
+                              Investment
+                            </span>
+                          )}
                         </div>
 
                         <div className="property-card-price">

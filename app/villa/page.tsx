@@ -1,52 +1,59 @@
-import Link from 'next/link';
+'use client';
 
-type VillaInvestment = {
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { supabase } from '@/lib/supabaseClient';
+
+interface Villa {
   id: string;
   title: string;
   location: string;
-  price: string;
-  yield: string;
-};
+  price: number;
+}
 
-const sampleVillas: VillaInvestment[] = [
-  {
-    id: '1',
-    title: 'Luxury Beachfront Villa',
-    location: 'Kuta, Lombok',
-    price: '450,000 USD',
-    yield: '8–10%',
-  },
-  {
-    id: '2',
-    title: 'Hillside Investment Villa',
-    location: 'Selong Belanak',
-    price: '320,000 USD',
-    yield: '7–9%',
-  },
-];
+export default function VillaPage() {
+  const [villas, setVillas] = useState<Villa[]>([]);
+  const [investmentIds, setInvestmentIds] = useState<Set<string>>(new Set());
 
-export default function VillaInvestmentPage() {
+  useEffect(() => {
+    const load = async () => {
+      const [{ data: villas }, { data: investments }] = await Promise.all([
+        supabase.from('properties').select('id,title,location,price'),
+        supabase
+          .from('investments')
+          .select('asset_id')
+          .eq('asset_type', 'property'),
+      ]);
+
+      setVillas(villas || []);
+      setInvestmentIds(new Set(investments?.map((i) => i.asset_id)));
+    };
+
+    load();
+  }, []);
+
   return (
     <main className="page">
       <section className="section">
-        <div className="container">
-          <h1 className="h1">Villa investments</h1>
-          <p className="lead">
-            Curated villa investment opportunities in Lombok, with optional
-            property management and legal due diligence.
-          </p>
+        <h1>Villa investments</h1>
 
-          <div className="grid grid-2" style={{ marginTop: 32 }}>
-            {sampleVillas.map((villa) => (
+        <div className="grid grid-2">
+          {villas.map((villa) => {
+            const isInvestment = investmentIds.has(villa.id);
+
+            return (
               <div key={villa.id} className="card">
                 <div className="card-body">
                   <h3>{villa.title}</h3>
                   <p className="muted">{villa.location}</p>
 
-                  <ul className="bullets" style={{ marginTop: 12 }}>
-                    <li>Price: {villa.price}</li>
-                    <li>Expected yield: {villa.yield}</li>
-                  </ul>
+                  <p className="strong">{villa.price} USD</p>
+
+                  {isInvestment && (
+                    <span className="badge-soft badge-investment">
+                      Investment
+                    </span>
+                  )}
 
                   <div style={{ marginTop: 16 }}>
                     <Link
@@ -58,8 +65,8 @@ export default function VillaInvestmentPage() {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </section>
     </main>

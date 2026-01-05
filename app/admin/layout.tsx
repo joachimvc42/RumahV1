@@ -1,29 +1,29 @@
-import Link from 'next/link';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+import { useRouter } from 'next/navigation';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <aside
-        style={{
-          width: 220,
-          padding: 20,
-          borderRight: '1px solid #e5e7eb',
-        }}
-      >
-        <h2 style={{ marginBottom: 20 }}>RumahYa Admin</h2>
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <Link href="/admin">Dashboard</Link>
-          <Link href="/admin/rentals">Rentals</Link>
-          <Link href="/admin/investments">Investments</Link>
-          <Link href="/admin/lands">Land</Link>
-        </nav>
-      </aside>
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
-      <main style={{ flex: 1, padding: 32 }}>{children}</main>
-    </div>
-  );
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      const user = data.user;
+      if (!user || user.user_metadata?.role !== 'admin') {
+        router.replace('/admin/login');
+      } else {
+        setLoading(false);
+      }
+    });
+  }, [router]);
+
+  if (loading) return null;
+
+  return <>{children}</>;
 }

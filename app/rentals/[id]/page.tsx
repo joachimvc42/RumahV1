@@ -1,24 +1,28 @@
 import Link from 'next/link';
-import { getVillaById } from '@/data/villas';
+import { getRentalById } from '@/data/rentals';
 
-export default function VillaDetailPage({
+function formatPrice(value: string): string {
+  return `${value} Mio IDR / month`;
+}
+
+export default function RentalDetailPage({
   params,
 }: {
   params: { id: string };
 }) {
-  const villa = getVillaById(params.id);
+  const rental = getRentalById(params.id);
 
-  if (!villa) {
+  if (!rental) {
     return (
       <main className="page">
         <section className="section">
           <div className="container">
-            <h1 className="h1">Villa not found</h1>
+            <h1 className="h1">Rental not found</h1>
             <p className="muted">
-              This investment opportunity is no longer available.
+              This rental property is no longer available.
             </p>
-            <Link href="/villa" className="btn btn-primary">
-              Back to investment listings
+            <Link href="/rentals" className="btn btn-primary">
+              Back to rental listings
             </Link>
           </div>
         </section>
@@ -33,13 +37,13 @@ export default function VillaDetailPage({
       <section className="hero hero--compact">
         <div className="container">
           <div className="breadcrumbs">
-            <Link href="/villa">Villa investments</Link>
+            <Link href="/rentals">Long-term rentals</Link>
             <span className="sep">/</span>
-            <span>{villa.title}</span>
+            <span>{rental.title}</span>
           </div>
 
-          <h1 className="h1">{villa.title}</h1>
-          <p className="lead">{villa.location}</p>
+          <h1 className="h1">{rental.title}</h1>
+          <p className="lead">{rental.location}</p>
         </div>
       </section>
 
@@ -50,53 +54,57 @@ export default function VillaDetailPage({
           {/* IMAGE */}
           <div className="card">
             <div className="card-media">
-              <img src={villa.images[0]} alt={villa.title} />
+              <img src={rental.images[0]} alt={rental.title} />
             </div>
           </div>
 
           {/* DETAILS */}
           <div className="card">
             <div className="card-body">
-              <h2 className="h2">Investment overview</h2>
+              <h2 className="h2">Rental details</h2>
 
               <dl className="details">
                 <div className="row">
                   <dt>Location</dt>
-                  <dd>{villa.location}</dd>
+                  <dd>{rental.location}</dd>
                 </div>
                 <div className="row">
                   <dt>Bedrooms</dt>
-                  <dd>{villa.bedrooms}</dd>
+                  <dd>{rental.bedrooms}</dd>
                 </div>
                 <div className="row">
                   <dt>Bathrooms</dt>
-                  <dd>{villa.bathrooms}</dd>
+                  <dd>{rental.bathrooms}</dd>
                 </div>
                 <div className="row">
-                  <dt>Structure</dt>
-                  <dd>{villa.leaseType}</dd>
+                  <dt>Monthly rent</dt>
+                  <dd>{formatPrice(rental.price)}</dd>
                 </div>
                 <div className="row">
-                  <dt>Investment price</dt>
-                  <dd>{villa.priceUSD}</dd>
+                  <dt>Minimum duration</dt>
+                  <dd>{rental.duration} months</dd>
                 </div>
                 <div className="row">
-                  <dt>Expected yield</dt>
-                  <dd>{villa.yield}</dd>
+                  <dt>Swimming pool</dt>
+                  <dd>{rental.pool ? 'Yes' : 'No'}</dd>
+                </div>
+                <div className="row">
+                  <dt>Garden</dt>
+                  <dd>{rental.garden ? 'Yes' : 'No'}</dd>
                 </div>
               </dl>
 
               <p className="muted" style={{ marginTop: 16 }}>
-                Legal structure, tenure and payment execution are coordinated
-                locally with independent professionals.
+                RumahYa acts as your local intermediary to help secure and
+                manage your rental agreement.
               </p>
 
               <div className="card-actions">
                 <Link href="/contact" className="btn btn-primary">
-                  Discuss this investment
+                  Enquire about this rental
                 </Link>
-                <Link href="/villa" className="btn btn-secondary">
-                  Back to investments
+                <Link href="/rentals" className="btn btn-secondary">
+                  Back to rentals
                 </Link>
               </div>
             </div>
@@ -109,21 +117,21 @@ export default function VillaDetailPage({
         <div className="container">
           <div className="card">
             <div className="card-body">
-              <h2 className="h2">Project description</h2>
-              <p>{villa.description}</p>
+              <h2 className="h2">Property description</h2>
+              <p>{rental.description}</p>
 
               <h3 className="h3" style={{ marginTop: 20 }}>
-                Key characteristics
+                Features included
               </h3>
               <ul className="bullets">
-                {villa.features.map((f, i) => (
+                {rental.features.map((f, i) => (
                   <li key={i}>{f}</li>
                 ))}
               </ul>
 
               <p className="muted" style={{ marginTop: 20 }}>
-                Property management services can be provided for investors
-                seeking a passive setup.
+                Long-term rentals in Lombok often require significant upfront
+                payments. We help you navigate this process safely.
               </p>
             </div>
           </div>
@@ -133,3 +141,4 @@ export default function VillaDetailPage({
     </main>
   );
 }
+

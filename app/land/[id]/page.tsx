@@ -104,7 +104,7 @@ export default function LandDetailPage({ params }: { params: { id: string } }) {
             <Link className="btn btn-primary" href="/contact">
               Request a viewing
             </Link>
-            <Link className="btn btn-ghost" href="/legal-verification">
+            <Link className="btn btn-secondary" href="/legal-verification">
               Legal verification
             </Link>
           </div>
@@ -167,7 +167,7 @@ export default function LandDetailPage({ params }: { params: { id: string } }) {
                 <Link className="btn btn-primary" href="/contact">
                   Contact us
                 </Link>
-                <Link className="btn btn-ghost" href="/land">
+                <Link className="btn btn-secondary" href="/land">
                   Back to listings
                 </Link>
               </div>

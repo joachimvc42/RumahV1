@@ -1,89 +1,217 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabaseClient';
+
+type Item = {
+  id: string;
+  type: 'land' | 'villa';
+  title: string;
+  location: string;
+  price: string;
+  legal_checked: boolean | null;
+  management_available: boolean | null;
+  href: string;
+};
 
 export default function InvestmentsPage() {
+  const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  /* filters */
+  const [typeFilter, setTypeFilter] = useState<'all' | 'land' | 'villa'>('all');
+  const [locationFilter, setLocationFilter] = useState('');
+  const [legalFilter, setLegalFilter] = useState(false);
+  const [managementFilter, setManagementFilter] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+
+      const { data: investments, error } = await supabase
+        .from('investments')
+        .select('*');
+
+      if (error || !investments) {
+        setItems([]);
+        setLoading(false);
+        return;
+      }
+
+      const landIds = investments
+        .filter((i) => i.asset_type === 'land')
+        .map((i) => i.asset_id);
+
+      const propertyIds = investments
+        .filter((i) => i.asset_type === 'property')
+        .map((i) => i.asset_id);
+
+      const [{ data: lands }, { data: properties }] = await Promise.all([
+        landIds.length
+          ? supabase
+              .from('lands')
+              .select('id,title,location,price_per_are')
+              .in('id', landIds)
+          : Promise.resolve({ data: [] }),
+        propertyIds.length
+          ? supabase
+              .from('properties')
+              .select('id,title,location,price')
+              .in('id', propertyIds)
+          : Promise.resolve({ data: [] }),
+      ]);
+
+      const merged: Item[] = [];
+
+      for (const inv of investments) {
+        if (inv.asset_type === 'land') {
+          const land = lands?.find((l) => l.id === inv.asset_id);
+          if (land) {
+            merged.push({
+              id: inv.id,
+              type: 'land',
+              title: land.title,
+              location: land.location,
+              price: `${land.price_per_are} Mio IDR / are`,
+              legal_checked: inv.legal_checked,
+              management_available: inv.management_available,
+              href: '/land',
+            });
+          }
+        }
+
+        if (inv.asset_type === 'property') {
+          const prop = properties?.find((p) => p.id === inv.asset_id);
+          if (prop) {
+            merged.push({
+              id: inv.id,
+              type: 'villa',
+              title: prop.title,
+              location: prop.location,
+              price: `${prop.price} USD`,
+              legal_checked: inv.legal_checked,
+              management_available: inv.management_available,
+              href: `/villa/${prop.id}`,
+            });
+          }
+        }
+      }
+
+      setItems(merged);
+      setLoading(false);
+    };
+
+    load();
+  }, []);
+
+  const filtered = items.filter((i) => {
+    if (typeFilter !== 'all' && i.type !== typeFilter) return false;
+    if (
+      locationFilter &&
+      !i.location.toLowerCase().includes(locationFilter.toLowerCase())
+    )
+      return false;
+    if (legalFilter && !i.legal_checked) return false;
+    if (managementFilter && !i.management_available) return false;
+    return true;
+  });
+
   return (
     <main className="page">
-      <section className="section hero">
-        <div className="container hero-inner">
-          <h1 className="h1">
-            Invest in Lombok<br />
-            with local insight and clarity
-          </h1>
-          <p className="lead">
-            RumahYa works with long-term investors by providing local context,
-            access to opportunities, and on-the-ground coordination in Lombok.
-          </p>
-        </div>
-      </section>
-
+      {/* INTRO */}
       <section className="section">
-        <div className="container">
-          <h2 className="h2">A local partner for serious investors</h2>
-          <p className="text">
-            Investing in Lombok requires local understanding.
-            RumahYa acts as a local intermediary to help investors
-            assess opportunities and move forward with clarity.
-          </p>
-        </div>
+        <h1>Investment opportunities in Lombok</h1>
+        <p className="muted">
+          Land and villa assets identified as suitable for long-term investment.
+        </p>
       </section>
 
-      <section className="section section-soft">
-        <div className="container grid grid-3">
-          <div className="card">
-            <h3>Land investment</h3>
-            <ul className="bullets">
-              <li>Freehold or long-term lease</li>
-              <li>Zoning and buildability review</li>
-              <li>Access and utilities</li>
-            </ul>
-            <Link href="/land" className="btn btn-ghost">
-              View land
-            </Link>
+      {/* FILTERS */}
+      <section className="section">
+        <div className="filters-pill">
+          <div className="filter-segment">
+            <div className="filter-label-top">Asset type</div>
+            <select
+              value={typeFilter}
+              onChange={(e) =>
+                setTypeFilter(e.target.value as 'all' | 'land' | 'villa')
+              }
+            >
+              <option value="all">All</option>
+              <option value="land">Land</option>
+              <option value="villa">Villa</option>
+            </select>
           </div>
 
-          <div className="card">
-            <h3>Villa investment</h3>
-            <ul className="bullets">
-              <li>Purchase or lease structures</li>
-              <li>Rental potential assessment</li>
-              <li>Existing or off-plan projects</li>
-            </ul>
-            <Link href="/villa" className="btn btn-ghost">
-              View villas
-            </Link>
+          <div className="filter-segment">
+            <div className="filter-label-top">Location</div>
+            <input
+              type="text"
+              placeholder="Search location"
+              value={locationFilter}
+              onChange={(e) => setLocationFilter(e.target.value)}
+            />
           </div>
 
-          <div className="card">
-            <h3>Property management</h3>
-            <ul className="bullets">
-              <li>Local supervision</li>
-              <li>Maintenance coordination</li>
-              <li>Tenant interface</li>
-            </ul>
+          <div className="filter-segment checkbox">
+            <label>
+              <input
+                type="checkbox"
+                checked={legalFilter}
+                onChange={(e) => setLegalFilter(e.target.checked)}
+              />
+              Legal checked
+            </label>
+          </div>
+
+          <div className="filter-segment checkbox">
+            <label>
+              <input
+                type="checkbox"
+                checked={managementFilter}
+                onChange={(e) => setManagementFilter(e.target.checked)}
+              />
+              Management available
+            </label>
           </div>
         </div>
       </section>
 
+      {/* RESULTS */}
       <section className="section">
-        <div className="container">
-          <h2 className="h2">Important note</h2>
-          <p className="text">
-            RumahYa facilitates access to information but does not provide legal advice
-            and does not act as a notary or legal representative.
-          </p>
-        </div>
-      </section>
+        {loading ? (
+          <p className="muted">Loading…</p>
+        ) : filtered.length === 0 ? (
+          <p className="muted">No investment opportunities match your criteria.</p>
+        ) : (
+          <div className="grid grid-3">
+            {filtered.map((item) => (
+              <Link key={item.id} href={item.href} className="card">
+                <div className="card-body">
+                  <h3>{item.title}</h3>
+                  <p className="muted">{item.location}</p>
 
-      <section className="section">
-        <div className="container cta-center">
-          <h2 className="h2">Discuss an investment</h2>
-          <p className="text">
-            Each situation is different. We start with a conversation.
-          </p>
-          <Link href="/contact" className="btn btn-primary">
-            Contact RumahYa
-          </Link>
-        </div>
+                  <p className="strong">{item.price}</p>
+
+                  <div className="card-meta">
+                    <span className="badge-soft">
+                      {item.type === 'land' ? 'Land' : 'Villa'}
+                    </span>
+
+                    {item.legal_checked && (
+                      <span className="badge-soft">Legal checked</span>
+                    )}
+
+                    {item.management_available && (
+                      <span className="badge-soft">Management</span>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
     </main>
   );

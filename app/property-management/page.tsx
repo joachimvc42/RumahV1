@@ -64,7 +64,7 @@ export default function PropertyManagementPage() {
           If that sounds like you, let&apos;s start with a short call to understand your property, your expectations
           and the type of guests you want to attract.
         </p>
-        <Link href="/contact" className="button" style={{ marginTop: '10px' }}>
+        <Link href="/contact" className="btn btn-primary" style={{ marginTop: '10px' }}>
           Talk to us about management
         </Link>
       </div>
