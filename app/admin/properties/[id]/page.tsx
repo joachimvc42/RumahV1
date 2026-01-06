@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { supabase } from '../../lib/supabase';
-import { uploadImage } from '@/lib/supabaseStorage';
+import { supabase } from '../../../../lib/supabaseClient';
+import { uploadImage } from '../../../../lib/supabaseStorage';
 
 export default function EditVillaPage() {
   const { id } = useParams<{ id: string }>();
