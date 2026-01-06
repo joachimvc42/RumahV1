@@ -13,14 +13,29 @@ export default function AdminLayout({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      const user = data.user;
-      if (!user || user.user_metadata?.role !== 'admin') {
+    const checkAdmin = async () => {
+      const { data: auth } = await supabase.auth.getUser();
+
+      if (!auth.user) {
         router.replace('/admin/login');
-      } else {
-        setLoading(false);
+        return;
       }
-    });
+
+      const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', auth.user.id)
+        .single();
+
+      if (!profile || profile.role !== 'admin') {
+        router.replace('/admin/login');
+        return;
+      }
+
+      setLoading(false);
+    };
+
+    checkAdmin();
   }, [router]);
 
   if (loading) return null;
