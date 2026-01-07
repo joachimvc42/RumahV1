@@ -7,8 +7,8 @@ type LandRow = {
   id: string;
   title: string;
   location: string | null;
-  area_are: number;
-  price_per_are_idr: number;
+  area: number;
+  price_per_are: number;
   tenure: 'freehold' | 'leasehold';
   has_water: boolean;
   has_electricity: boolean;
@@ -32,8 +32,8 @@ export default function AdminLandsPage() {
           id,
           title,
           location,
-          area_are,
-          price_per_are_idr,
+          area,
+          price_per_are,
           tenure,
           has_water,
           has_electricity,
@@ -70,7 +70,7 @@ export default function AdminLandsPage() {
               <th align="left">Title</th>
               <th align="left">Location</th>
               <th align="left">Area</th>
-              <th align="left">Price / are</th>
+              <th align="left">Price / are (M IDR)</th>
               <th align="left">Tenure</th>
               <th align="left">Owner</th>
             </tr>
@@ -80,8 +80,8 @@ export default function AdminLandsPage() {
               <tr key={land.id} style={{ borderTop: '1px solid #e5e7eb' }}>
                 <td>{land.title}</td>
                 <td>{land.location ?? '—'}</td>
-                <td>{land.area_are} are</td>
-                <td>{land.price_per_are_idr.toLocaleString()} IDR</td>
+                <td>{land.area} are</td>
+                <td>{land.price_per_are}</td>
                 <td>{land.tenure}</td>
                 <td>
                   {land.owners
