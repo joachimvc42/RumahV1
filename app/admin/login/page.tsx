@@ -77,7 +77,7 @@ export default function AdminLoginPage() {
   );
 }
 
-const container = {
+const container: React.CSSProperties = {
   minHeight: '80vh',
   display: 'flex',
   flexDirection: 'column',
@@ -85,20 +85,20 @@ const container = {
   justifyContent: 'center',
 };
 
-const form = {
+const form: React.CSSProperties = {
   width: 320,
   display: 'flex',
   flexDirection: 'column',
   gap: 12,
 };
 
-const input = {
+const input: React.CSSProperties = {
   padding: 12,
   borderRadius: 6,
   border: '1px solid #bbb',
 };
 
-const button = {
+const button: React.CSSProperties = {
   padding: 12,
   borderRadius: 6,
   border: 'none',
