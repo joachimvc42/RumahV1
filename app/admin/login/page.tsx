@@ -1,57 +1,109 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '../../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import { supabase } from '../../../lib/supabaseClient';
 
 export default function AdminLoginPage() {
   const router = useRouter();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const login = async (e: React.FormEvent) => {
+  const submit = async (e) => {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) {
-      setError(error.message);
-    } else {
-      router.replace('/admin');
+    if (error || !data.user) {
+      setError('Invalid credentials');
+      setLoading(false);
+      return;
     }
+
+    const { data: userRow } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', data.user.id)
+      .single();
+
+    if (!userRow || userRow.role !== 'admin') {
+      await supabase.auth.signOut();
+      setError('Not authorized');
+      setLoading(false);
+      return;
+    }
+
+    router.push('/admin');
   };
 
   return (
-    <main style={{ padding: 48, maxWidth: 420, margin: '0 auto' }}>
-      <h1>Admin login</h1>
+    <main style={container}>
+      <h1 style={{ marginBottom: 20 }}>Admin login</h1>
 
-      <form onSubmit={login}>
-        <label>Email</label>
+      {error && <p style={{ color: 'red', marginBottom: 10 }}>{error}</p>}
+
+      <form onSubmit={submit} style={form}>
         <input
           type="email"
+          placeholder="Email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           required
+          style={input}
         />
 
-        <label>Password</label>
         <input
           type="password"
+          placeholder="Password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           required
+          style={input}
         />
 
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-
-        <button className="btn btn-primary" style={{ marginTop: 16 }}>
-          Login
+        <button type="submit" disabled={loading} style={button}>
+          {loading ? 'Signing in…' : 'Login'}
         </button>
       </form>
     </main>
   );
 }
+
+const container = {
+  minHeight: '80vh',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+const form = {
+  width: 320,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 12,
+};
+
+const input = {
+  padding: 12,
+  borderRadius: 6,
+  border: '1px solid #bbb',
+};
+
+const button = {
+  padding: 12,
+  borderRadius: 6,
+  border: 'none',
+  background: '#2563eb',
+  color: 'white',
+  fontWeight: 800,
+  cursor: 'pointer',
+};

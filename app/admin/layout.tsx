@@ -1,33 +1,37 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { supabase } from '../../lib/supabaseClient';
-import { useRouter } from 'next/navigation';
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminLayout({ children }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAdmin = async () => {
-      const { data: auth } = await supabase.auth.getUser();
+    // ⛔ NE PAS PROTÉGER LA PAGE LOGIN
+    if (pathname === '/admin/login') {
+      setLoading(false);
+      return;
+    }
 
-      if (!auth.user) {
+    const checkAuth = async () => {
+      const { data } = await supabase.auth.getUser();
+
+      if (!data.user) {
         router.replace('/admin/login');
         return;
       }
 
-      const { data: profile } = await supabase
+      const { data: userRow, error } = await supabase
         .from('users')
         .select('role')
-        .eq('id', auth.user.id)
+        .eq('id', data.user.id)
         .single();
 
-      if (!profile || profile.role !== 'admin') {
+      if (error || userRow?.role !== 'admin') {
+        await supabase.auth.signOut();
         router.replace('/admin/login');
         return;
       }
@@ -35,10 +39,12 @@ export default function AdminLayout({
       setLoading(false);
     };
 
-    checkAdmin();
-  }, [router]);
+    checkAuth();
+  }, [pathname, router]);
 
-  if (loading) return null;
+  if (loading) {
+    return <div style={{ padding: 40 }}>Checking admin access…</div>;
+  }
 
   return <>{children}</>;
 }
