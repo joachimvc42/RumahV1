@@ -280,7 +280,7 @@ export default function InvestmentsPage() {
                 {/* Badges */}
                 <div style={styles.badges}>
                   {item.legalChecked && (
-                    <span style={styles.badge}>✅ Vérifié</span>
+                    <span style={styles.badge}>✅ Verified</span>
                   )}
                   {item.managementAvailable && (
                     <span style={styles.badge}>🏢 Gestion dispo</span>

@@ -343,7 +343,7 @@ export default function NewRentalPage() {
 
           <label style={styles.checkbox}>
             <input type="checkbox" checked={legalChecked} onChange={e => setLegalChecked(e.target.checked)} />
-            <span>✅ Documents légaux vérifiés</span>
+            <span>✅ Legal documents verified</span>
           </label>
         </section>
 

@@ -222,7 +222,7 @@ export default function RentalsPage() {
 
                 {/* Badges */}
                 {rental.legal_checked && (
-                  <div style={styles.verifiedBadge}>✓ Vérifié</div>
+                  <div style={styles.verifiedBadge}>✓ Verified</div>
                 )}
 
                 {/* Image count */}

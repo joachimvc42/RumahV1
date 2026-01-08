@@ -136,7 +136,7 @@ export default function AdminRentalsPage() {
                   ...styles.badge,
                   background: rental.legal_checked ? '#059669' : '#f59e0b',
                 }}>
-                  {rental.legal_checked ? '✓ Vérifié' : '⏳ En attente'}
+                  {rental.legal_checked ? '✓ Verified' : '⏳ Pending'}
                 </div>
 
                 {/* Image count */}

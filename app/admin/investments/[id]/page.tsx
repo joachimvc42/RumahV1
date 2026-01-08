@@ -477,7 +477,7 @@ export default function EditInvestmentPage() {
           <div style={styles.checkboxRow}>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={legalChecked} onChange={e => setLegalChecked(e.target.checked)} />
-              <span>✅ Documents légaux vérifiés</span>
+              <span>✅ Legal documents verified</span>
             </label>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={managementAvailable} onChange={e => setManagementAvailable(e.target.checked)} />

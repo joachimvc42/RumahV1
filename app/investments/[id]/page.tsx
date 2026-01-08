@@ -218,7 +218,7 @@ export default function InvestmentDetailPage() {
           <div style={styles.header}>
             <div style={styles.badges}>
               {data.legalChecked && (
-                <span style={styles.verifiedBadge}>✓ Vérifié par RumahYa</span>
+                <span style={styles.verifiedBadge}>✓ Verified by RumahYa</span>
               )}
               {data.managementAvailable && (
                 <span style={styles.mgmtBadge}>🏢 Gestion locative disponible</span>

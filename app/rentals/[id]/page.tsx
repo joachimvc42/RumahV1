@@ -169,7 +169,7 @@ export default function RentalDetailPage() {
           {/* Header */}
           <div style={styles.header}>
             {rental.legal_checked && (
-              <span style={styles.verifiedBadge}>✓ Vérifié par RumahYa</span>
+              <span style={styles.verifiedBadge}>✓ Verified by RumahYa</span>
             )}
             <h1 style={styles.title}>{p.title}</h1>
             <p style={styles.location}>📍 {p.location || 'Lombok'}</p>

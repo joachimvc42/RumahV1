@@ -10,7 +10,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // ⛔ NE PAS PROTÉGER LA PAGE LOGIN
+    // ⛔ DO NOT PROTECT THE LOGIN PAGE
     if (pathname === '/admin/login') {
       setLoading(false);
       return;

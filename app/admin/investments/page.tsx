@@ -198,7 +198,7 @@ export default function AdminInvestmentsPage() {
 
                 {/* Status */}
                 <div style={styles.statusRow}>
-                  {inv.legal_checked && <span style={styles.statusBadge}>✅ Vérifié</span>}
+                  {inv.legal_checked && <span style={styles.statusBadge}>✅ Verified</span>}
                   {inv.management_available && <span style={styles.statusBadge}>🏢 Gestion</span>}
                 </div>
 
