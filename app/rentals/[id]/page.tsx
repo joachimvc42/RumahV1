@@ -79,7 +79,7 @@ export default function RentalDetailPage() {
   if (loading) {
     return (
       <main style={styles.container}>
-        <div style={styles.loading}>Chargement...</div>
+        <div style={styles.loading}>Loading...</div>
       </main>
     );
   }
@@ -88,10 +88,10 @@ export default function RentalDetailPage() {
     return (
       <main style={styles.container}>
         <div style={styles.notFound}>
-          <h1>Bien non trouvé</h1>
-          <p>Ce bien n'existe pas ou n'est plus disponible.</p>
+          <h1>Property not found</h1>
+          <p>This property does not exist or is no longer available.</p>
           <Link href="/rentals" style={styles.backBtn}>
-            ← Retour aux locations
+            ← Back to rentals
           </Link>
         </div>
       </main>
@@ -159,7 +159,7 @@ export default function RentalDetailPage() {
           ) : (
             <div style={styles.noImages}>
               <span style={{ fontSize: 64 }}>🏠</span>
-              <p>Pas de photos disponibles</p>
+              <p>No photos available</p>
             </div>
           )}
         </div>
@@ -179,17 +179,17 @@ export default function RentalDetailPage() {
           <div style={styles.priceCard}>
             <div style={styles.priceMain}>
               <span style={styles.priceValue}>{fmtIDR(rental.monthly_price_idr)}</span>
-              <span style={styles.pricePer}>IDR / mois</span>
+              <span style={styles.pricePer}>IDR / month</span>
             </div>
             <div style={styles.priceDetails}>
-              <span>{rental.min_duration_months}–{rental.max_duration_months} mois</span>
+              <span>{rental.min_duration_months}–{rental.max_duration_months} months</span>
               {rental.upfront_months > 0 && (
-                <span> • {rental.upfront_months} mois d'avance</span>
+                <span> • {rental.upfront_months} months upfront</span>
               )}
             </div>
             {rental.available_from && (
               <p style={styles.available}>
-                Disponible à partir du {new Date(rental.available_from).toLocaleDateString('fr-FR')}
+                Available from {new Date(rental.available_from).toLocaleDateString('en-US')}
               </p>
             )}
           </div>
@@ -199,13 +199,13 @@ export default function RentalDetailPage() {
             {p.bedrooms && (
               <div style={styles.featureItem}>
                 <span style={styles.featureIcon}>🛏️</span>
-                <span>{p.bedrooms} chambre{p.bedrooms > 1 ? 's' : ''}</span>
+                <span>{p.bedrooms} bedroom{p.bedrooms > 1 ? 's' : ''}</span>
               </div>
             )}
             {p.bathrooms && (
               <div style={styles.featureItem}>
                 <span style={styles.featureIcon}>🚿</span>
-                <span>{p.bathrooms} salle{p.bathrooms > 1 ? 's' : ''} de bain</span>
+                <span>{p.bathrooms} bathroom{p.bathrooms > 1 ? 's' : ''}</span>
               </div>
             )}
             {p.built_area && (
@@ -217,17 +217,17 @@ export default function RentalDetailPage() {
             {p.land_area && (
               <div style={styles.featureItem}>
                 <span style={styles.featureIcon}>🌍</span>
-                <span>{p.land_area} are de terrain</span>
+                <span>{p.land_area} are of land</span>
               </div>
             )}
           </div>
 
           {/* Amenities */}
           <div style={styles.amenities}>
-            {p.pool && <span style={styles.amenity}>🏊 Piscine</span>}
-            {p.garden && <span style={styles.amenity}>🌳 Jardin</span>}
-            {p.furnished && <span style={styles.amenity}>🛋️ Meublé</span>}
-            {p.aircon && <span style={styles.amenity}>❄️ Climatisation</span>}
+            {p.pool && <span style={styles.amenity}>🏊 Pool</span>}
+            {p.garden && <span style={styles.amenity}>🌳 Garden</span>}
+            {p.furnished && <span style={styles.amenity}>🛋️ Furnished</span>}
+            {p.aircon && <span style={styles.amenity}>❄️ Air conditioning</span>}
             {p.wifi && <span style={styles.amenity}>📶 WiFi</span>}
             {p.parking && <span style={styles.amenity}>🚗 Parking</span>}
           </div>
@@ -243,13 +243,13 @@ export default function RentalDetailPage() {
           {/* CTA */}
           <div style={styles.cta}>
             <a
-              href={`mailto:contact@rumahya.com?subject=Intéressé par ${p.title}`}
+              href={`mailto:contact@rumahya.com?subject=Interested in ${p.title}`}
               style={styles.ctaBtn}
             >
-              📧 Contacter RumahYa
+              📧 Contact RumahYa
             </a>
             <a
-              href={`https://wa.me/6281234567890?text=Bonjour, je suis intéressé par ${encodeURIComponent(p.title)}`}
+              href={`https://wa.me/6281234567890?text=Hello, I am interested in ${encodeURIComponent(p.title)}`}
               target="_blank"
               rel="noopener noreferrer"
               style={styles.ctaBtnWhatsapp}

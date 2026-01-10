@@ -239,7 +239,7 @@ export default function EditInvestmentPage() {
   };
 
   const handleDelete = async () => {
-    if (!confirm('Supprimer cet investissement ? Cette action est irréversible.')) return;
+    if (!confirm('Delete this investment? This action is irreversible.')) return;
 
     setSaving(true);
     try {
@@ -252,13 +252,13 @@ export default function EditInvestmentPage() {
   };
 
   if (loading) {
-    return <div style={{ padding: 40 }}>Chargement...</div>;
+    return <div style={{ padding: 40 }}>Loading...</div>;
   }
 
   return (
     <main style={styles.container}>
       <div style={styles.header}>
-        <h1 style={styles.title}>Modifier l'investissement</h1>
+        <h1 style={styles.title}>Edit investment</h1>
         <Link href="/admin/investments" style={styles.backLink}>
           ← Retour
         </Link>
@@ -269,21 +269,21 @@ export default function EditInvestmentPage() {
       <form onSubmit={handleSave} style={styles.form}>
         {/* Asset Type Display */}
         <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>🏷️ Type d'actif</h2>
+          <h2 style={styles.sectionTitle}>🏷️ Asset type</h2>
           <div style={styles.assetTypeDisplay}>
-            {assetType === 'property' ? '🏠 Villa' : '🌴 Terrain'}
+            {assetType === 'property' ? '🏠 Villa' : '🌴 Land'}
           </div>
         </section>
 
         {/* Property/Land Information */}
         <section style={styles.section}>
           <h2 style={styles.sectionTitle}>
-            📍 Informations {assetType === 'property' ? 'de la villa' : 'du terrain'}
+            📍 {assetType === 'property' ? 'Villa' : 'Land'} information
           </h2>
           
           <div style={styles.grid2}>
             <div style={styles.field}>
-              <label style={styles.label}>Titre *</label>
+              <label style={styles.label}>Title *</label>
               <input
                 style={styles.input}
                 value={title}
@@ -293,7 +293,7 @@ export default function EditInvestmentPage() {
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Localisation *</label>
+              <label style={styles.label}>Location *</label>
               <input
                 style={styles.input}
                 value={location}
@@ -317,7 +317,7 @@ export default function EditInvestmentPage() {
             <>
               <div style={styles.grid4}>
                 <div style={styles.field}>
-                  <label style={styles.label}>Chambres</label>
+                  <label style={styles.label}>Bedrooms</label>
                   <input
                     style={styles.input}
                     type="number"
@@ -327,7 +327,7 @@ export default function EditInvestmentPage() {
                 </div>
 
                 <div style={styles.field}>
-                  <label style={styles.label}>Salles de bain</label>
+                  <label style={styles.label}>Bathrooms</label>
                   <input
                     style={styles.input}
                     type="number"
@@ -347,7 +347,7 @@ export default function EditInvestmentPage() {
                 </div>
 
                 <div style={styles.field}>
-                  <label style={styles.label}>Terrain (are)</label>
+                  <label style={styles.label}>Land (are)</label>
                   <input
                     style={styles.input}
                     type="number"
@@ -361,15 +361,15 @@ export default function EditInvestmentPage() {
               <div style={styles.amenities}>
                 <label style={styles.checkbox}>
                   <input type="checkbox" checked={pool} onChange={e => setPool(e.target.checked)} />
-                  <span>🏊 Piscine</span>
+                  <span>🏊 Pool</span>
                 </label>
                 <label style={styles.checkbox}>
                   <input type="checkbox" checked={garden} onChange={e => setGarden(e.target.checked)} />
-                  <span>🌳 Jardin</span>
+                  <span>🌳 Garden</span>
                 </label>
                 <label style={styles.checkbox}>
                   <input type="checkbox" checked={furnished} onChange={e => setFurnished(e.target.checked)} />
-                  <span>🛋️ Meublé</span>
+                  <span>🛋️ Furnished</span>
                 </label>
               </div>
             </>
@@ -377,7 +377,7 @@ export default function EditInvestmentPage() {
 
           {assetType === 'land' && (
             <div style={styles.field}>
-              <label style={styles.label}>Surface du terrain (are) *</label>
+              <label style={styles.label}>Land area (are) *</label>
               <input
                 style={styles.input}
                 type="number"
@@ -392,12 +392,12 @@ export default function EditInvestmentPage() {
 
         {/* Investment Terms */}
         <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>💰 Conditions d'investissement</h2>
+          <h2 style={styles.sectionTitle}>💰 Investment conditions</h2>
           
           <div style={styles.grid2}>
             <div style={styles.field}>
               <label style={styles.label}>
-                Prix {assetType === 'land' ? '(par are)' : ''} *
+                Price {assetType === 'land' ? '(per are)' : ''} *
               </label>
               <div style={styles.priceInput}>
                 <input
@@ -419,7 +419,7 @@ export default function EditInvestmentPage() {
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Rendement estimé (%/an)</label>
+              <label style={styles.label}>Estimated yield (%/year)</label>
               <input
                 style={styles.input}
                 type="number"
@@ -432,7 +432,7 @@ export default function EditInvestmentPage() {
 
           {/* Tenure Type */}
           <div style={styles.field}>
-            <label style={styles.label}>Type de propriété *</label>
+            <label style={styles.label}>Property type *</label>
             <div style={styles.tenureSelector}>
               <button
                 type="button"
@@ -444,7 +444,7 @@ export default function EditInvestmentPage() {
               >
                 <span style={{ fontSize: 24 }}>🔑</span>
                 <span style={styles.tenureLabel}>Freehold</span>
-                <span style={styles.tenureDesc}>Propriété pleine</span>
+                <span style={styles.tenureDesc}>Full ownership</span>
               </button>
               <button
                 type="button"
@@ -456,14 +456,14 @@ export default function EditInvestmentPage() {
               >
                 <span style={{ fontSize: 24 }}>📋</span>
                 <span style={styles.tenureLabel}>Leasehold</span>
-                <span style={styles.tenureDesc}>Bail longue durée</span>
+                <span style={styles.tenureDesc}>Long-term lease</span>
               </button>
             </div>
           </div>
 
           {tenure === 'leasehold' && (
             <div style={styles.field}>
-              <label style={styles.label}>Durée du bail (années) *</label>
+              <label style={styles.label}>Lease duration (years) *</label>
               <input
                 style={styles.input}
                 type="number"
@@ -481,19 +481,19 @@ export default function EditInvestmentPage() {
             </label>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={managementAvailable} onChange={e => setManagementAvailable(e.target.checked)} />
-              <span>🏢 Gestion locative disponible</span>
+              <span>🏢 Rental management available</span>
             </label>
           </div>
         </section>
 
         {/* Image Gallery */}
         <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>📸 Galerie photos</h2>
+          <h2 style={styles.sectionTitle}>📸 Photo gallery</h2>
           
           {/* Existing images */}
           {existingImages.length > 0 && (
             <>
-              <p style={{ marginBottom: 12, color: '#6b7280', fontSize: 14 }}>Images actuelles :</p>
+              <p style={{ marginBottom: 12, color: '#6b7280', fontSize: 14 }}>Current images:</p>
               <div style={styles.gallery}>
                 {existingImages.map((url, index) => (
                   <div key={url} style={styles.imageWrapper}>
@@ -505,7 +505,7 @@ export default function EditInvestmentPage() {
                     >
                       ✕
                     </button>
-                    {index === 0 && <span style={styles.mainBadge}>Photo principale</span>}
+                    {index === 0 && <span style={styles.mainBadge}>Main photo</span>}
                   </div>
                 ))}
               </div>
@@ -524,14 +524,14 @@ export default function EditInvestmentPage() {
             />
             <label htmlFor="image-upload" style={styles.dropzoneLabel}>
               <span style={{ fontSize: 40 }}>📷</span>
-              <span>Ajouter des images</span>
+              <span>Add images</span>
             </label>
           </div>
 
           {/* New images preview */}
           {newImagePreviews.length > 0 && (
             <>
-              <p style={{ marginTop: 20, marginBottom: 12, color: '#6b7280', fontSize: 14 }}>Nouvelles images :</p>
+              <p style={{ marginTop: 20, marginBottom: 12, color: '#6b7280', fontSize: 14 }}>New images:</p>
               <div style={styles.gallery}>
                 {newImagePreviews.map((preview, index) => (
                   <div key={index} style={styles.imageWrapper}>
@@ -564,7 +564,7 @@ export default function EditInvestmentPage() {
             disabled={saving}
             style={styles.btnDanger}
           >
-            🗑️ Supprimer
+            🗑️ Delete
           </button>
           <div style={{ flex: 1 }} />
           <button
@@ -572,14 +572,14 @@ export default function EditInvestmentPage() {
             onClick={() => router.back()}
             style={styles.btnSecondary}
           >
-            Annuler
+            Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
             style={styles.btnPrimary}
           >
-            {saving ? 'Enregistrement...' : '✓ Enregistrer'}
+            {saving ? 'Saving...' : '✓ Save'}
           </button>
         </div>
       </form>

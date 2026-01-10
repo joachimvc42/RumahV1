@@ -108,7 +108,7 @@ export default function RentalsPage() {
       <main style={styles.container}>
         <div style={styles.loading}>
           <div style={styles.spinner} />
-          <p>Chargement des biens...</p>
+          <p>Loading properties...</p>
         </div>
       </main>
     );
@@ -118,22 +118,22 @@ export default function RentalsPage() {
     <main style={styles.container}>
       {/* Hero Section */}
       <section style={styles.hero}>
-        <h1 style={styles.heroTitle}>Locations longue durée à Lombok</h1>
+        <h1 style={styles.heroTitle}>Long-term rentals in Lombok</h1>
         <p style={styles.heroSubtitle}>
-          Villas et maisons sélectionnées pour les expatriés
+          Villas and houses selected for expatriates
         </p>
       </section>
 
       {/* Filters */}
       <section style={styles.filters}>
         <div style={styles.filterGroup}>
-          <label style={styles.filterLabel}>Localisation</label>
+          <label style={styles.filterLabel}>Location</label>
           <select
             style={styles.filterSelect}
             value={filters.location}
             onChange={e => setFilters({ ...filters, location: e.target.value })}
           >
-            <option value="">Toutes les zones</option>
+            <option value="">All areas</option>
             {locations.map(loc => (
               <option key={loc} value={loc!}>{loc}</option>
             ))}
@@ -141,13 +141,13 @@ export default function RentalsPage() {
         </div>
 
         <div style={styles.filterGroup}>
-          <label style={styles.filterLabel}>Chambres min</label>
+          <label style={styles.filterLabel}>Min bedrooms</label>
           <select
             style={styles.filterSelect}
             value={filters.minBeds}
             onChange={e => setFilters({ ...filters, minBeds: e.target.value })}
           >
-            <option value="">Tous</option>
+            <option value="">All</option>
             <option value="1">1+</option>
             <option value="2">2+</option>
             <option value="3">3+</option>
@@ -156,13 +156,13 @@ export default function RentalsPage() {
         </div>
 
         <div style={styles.filterGroup}>
-          <label style={styles.filterLabel}>Budget max (IDR/mois)</label>
+          <label style={styles.filterLabel}>Max budget (IDR/month)</label>
           <select
             style={styles.filterSelect}
             value={filters.maxPrice}
             onChange={e => setFilters({ ...filters, maxPrice: e.target.value })}
           >
-            <option value="">Tous budgets</option>
+            <option value="">All budgets</option>
             <option value="15000000">15 Mio</option>
             <option value="25000000">25 Mio</option>
             <option value="35000000">35 Mio</option>
@@ -177,25 +177,25 @@ export default function RentalsPage() {
             checked={filters.pool}
             onChange={e => setFilters({ ...filters, pool: e.target.checked })}
           />
-          <span>🏊 Piscine</span>
+          <span>🏊 Pool</span>
         </label>
       </section>
 
       {/* Results count */}
       <p style={styles.resultCount}>
-        {filtered.length} bien{filtered.length !== 1 ? 's' : ''} disponible{filtered.length !== 1 ? 's' : ''}
+        {filtered.length} propert{filtered.length !== 1 ? 'ies' : 'y'} available
       </p>
 
       {/* Property Grid */}
       {filtered.length === 0 ? (
         <div style={styles.empty}>
           <span style={{ fontSize: 48 }}>🏠</span>
-          <p>Aucun bien ne correspond à vos critères</p>
+          <p>No properties match your criteria</p>
           <button
             onClick={() => setFilters({ location: '', minBeds: '', maxPrice: '', pool: false })}
             style={styles.resetBtn}
           >
-            Réinitialiser les filtres
+            Reset filters
           </button>
         </div>
       ) : (
@@ -255,13 +255,13 @@ export default function RentalsPage() {
                 {/* Price */}
                 <div style={styles.priceRow}>
                   <span style={styles.price}>{fmtIDR(rental.monthly_price_idr)}</span>
-                  <span style={styles.pricePer}>IDR / mois</span>
+                  <span style={styles.pricePer}>IDR / month</span>
                 </div>
 
                 {/* Duration */}
                 <p style={styles.duration}>
-                  {rental.min_duration_months}–{rental.max_duration_months} mois
-                  {rental.upfront_months > 0 && ` • ${rental.upfront_months} mois d'avance`}
+                  {rental.min_duration_months}–{rental.max_duration_months} months
+                  {rental.upfront_months > 0 && ` • ${rental.upfront_months} months upfront`}
                 </p>
               </div>
             </Link>

@@ -101,7 +101,7 @@ export default function InvestmentDetailPage() {
           item = {
             id: inv.id,
             type: 'land',
-            title: land.title || 'Terrain',
+            title: land.title || 'Land',
             description: land.description,
             location: land.location || 'Lombok',
             price: land.price_per_are || 0,
@@ -127,7 +127,7 @@ export default function InvestmentDetailPage() {
   if (loading) {
     return (
       <main style={styles.container}>
-        <div style={styles.loading}>Chargement...</div>
+        <div style={styles.loading}>Loading...</div>
       </main>
     );
   }
@@ -136,10 +136,10 @@ export default function InvestmentDetailPage() {
     return (
       <main style={styles.container}>
         <div style={styles.notFound}>
-          <h1>Opportunité non trouvée</h1>
-          <p>Cette opportunité d'investissement n'existe pas ou n'est plus disponible.</p>
+          <h1>Opportunity not found</h1>
+          <p>This investment opportunity does not exist or is no longer available.</p>
           <Link href="/investments" style={styles.backBtn}>
-            ← Retour aux investissements
+            ← Back to investments
           </Link>
         </div>
       </main>
@@ -154,7 +154,7 @@ export default function InvestmentDetailPage() {
     <main style={styles.container}>
       {/* Back link */}
       <Link href="/investments" style={styles.backLink}>
-        ← Retour aux investissements
+        ← Back to investments
       </Link>
 
       <div style={styles.layout}>
@@ -182,7 +182,7 @@ export default function InvestmentDetailPage() {
                   ...styles.typeBadge,
                   background: data.type === 'villa' ? '#8b5cf6' : '#059669',
                 }}>
-                  {data.type === 'villa' ? '🏠 Villa' : '🌴 Terrain'}
+                  {data.type === 'villa' ? '🏠 Villa' : '🌴 Land'}
                 </div>
               </div>
 
@@ -207,7 +207,7 @@ export default function InvestmentDetailPage() {
           ) : (
             <div style={styles.noImages}>
               <span style={{ fontSize: 64 }}>{data.type === 'villa' ? '🏠' : '🌴'}</span>
-              <p>Pas de photos disponibles</p>
+              <p>No photos available</p>
             </div>
           )}
         </div>
@@ -221,7 +221,7 @@ export default function InvestmentDetailPage() {
                 <span style={styles.verifiedBadge}>✓ Verified by RumahYa</span>
               )}
               {data.managementAvailable && (
-                <span style={styles.mgmtBadge}>🏢 Gestion locative disponible</span>
+                <span style={styles.mgmtBadge}>🏢 Rental management available</span>
               )}
             </div>
             <h1 style={styles.title}>{data.title}</h1>
@@ -244,15 +244,15 @@ export default function InvestmentDetailPage() {
                 background: data.tenure === 'freehold' ? '#dbeafe' : '#fef3c7',
                 color: data.tenure === 'freehold' ? '#1e40af' : '#92400e',
               }}>
-                {data.tenure === 'freehold' ? '🔑 Freehold - Propriété pleine' : `📋 Leasehold - ${data.leaseYears} ans`}
+                {data.tenure === 'freehold' ? '🔑 Freehold - Full ownership' : `📋 Leasehold - ${data.leaseYears} years`}
               </div>
             </div>
 
             {/* Yield */}
             {data.expectedYield && (
               <div style={styles.yieldSection}>
-                <span style={styles.yieldLabel}>Rendement estimé</span>
-                <span style={styles.yieldValue}>{data.expectedYield}% / an</span>
+                <span style={styles.yieldLabel}>Estimated yield</span>
+                <span style={styles.yieldValue}>{data.expectedYield}% / year</span>
               </div>
             )}
           </div>
@@ -263,13 +263,13 @@ export default function InvestmentDetailPage() {
               {data.bedrooms && (
                 <div style={styles.featureItem}>
                   <span style={styles.featureIcon}>🛏️</span>
-                  <span>{data.bedrooms} chambre{data.bedrooms > 1 ? 's' : ''}</span>
+                  <span>{data.bedrooms} bedroom{data.bedrooms > 1 ? 's' : ''}</span>
                 </div>
               )}
               {data.bathrooms && (
                 <div style={styles.featureItem}>
                   <span style={styles.featureIcon}>🚿</span>
-                  <span>{data.bathrooms} salle{data.bathrooms > 1 ? 's' : ''} de bain</span>
+                  <span>{data.bathrooms} bathroom{data.bathrooms > 1 ? 's' : ''}</span>
                 </div>
               )}
               {data.builtArea && (
@@ -291,7 +291,7 @@ export default function InvestmentDetailPage() {
             <div style={styles.features}>
               <div style={styles.featureItem}>
                 <span style={styles.featureIcon}>🌍</span>
-                <span>{data.landSize} are de terrain</span>
+                <span>{data.landSize} are of land</span>
               </div>
             </div>
           )}
@@ -299,9 +299,9 @@ export default function InvestmentDetailPage() {
           {/* Amenities for villa */}
           {data.type === 'villa' && (
             <div style={styles.amenities}>
-              {data.pool && <span style={styles.amenity}>🏊 Piscine</span>}
-              {data.garden && <span style={styles.amenity}>🌳 Jardin</span>}
-              {data.furnished && <span style={styles.amenity}>🛋️ Meublé</span>}
+              {data.pool && <span style={styles.amenity}>🏊 Pool</span>}
+              {data.garden && <span style={styles.amenity}>🌳 Garden</span>}
+              {data.furnished && <span style={styles.amenity}>🛋️ Furnished</span>}
             </div>
           )}
 
@@ -316,13 +316,13 @@ export default function InvestmentDetailPage() {
           {/* CTA */}
           <div style={styles.cta}>
             <a
-              href={`mailto:contact@rumahya.com?subject=Investissement: ${data.title}`}
+              href={`mailto:contact@rumahya.com?subject=Investment: ${data.title}`}
               style={styles.ctaBtn}
             >
-              📧 Demander plus d'infos
+              📧 Request more info
             </a>
             <a
-              href={`https://wa.me/6281234567890?text=Bonjour, je suis intéressé par l'investissement: ${encodeURIComponent(data.title)}`}
+              href={`https://wa.me/6281234567890?text=Hello, I am interested in the investment: ${encodeURIComponent(data.title)}`}
               target="_blank"
               rel="noopener noreferrer"
               style={styles.ctaBtnWhatsapp}

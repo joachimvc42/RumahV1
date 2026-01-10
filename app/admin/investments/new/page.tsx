@@ -187,7 +187,7 @@ export default function NewInvestmentPage() {
   return (
     <main style={styles.container}>
       <div style={styles.header}>
-        <h1 style={styles.title}>Ajouter un investissement</h1>
+        <h1 style={styles.title}>Add investment</h1>
         <Link href="/admin/investments" style={styles.backLink}>
           ← Retour
         </Link>
@@ -198,7 +198,7 @@ export default function NewInvestmentPage() {
       <form onSubmit={handleSubmit} style={styles.form}>
         {/* Asset Type Section */}
         <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>🏷️ Type d'actif</h2>
+          <h2 style={styles.sectionTitle}>🏷️ Asset type</h2>
           
           <div style={styles.typeSelector}>
             <button
@@ -219,7 +219,7 @@ export default function NewInvestmentPage() {
                 ...(assetType === 'land' ? styles.typeBtnActive : {}),
               }}
             >
-              🌴 Terrain
+              🌴 Land
             </button>
           </div>
         </section>
@@ -227,23 +227,23 @@ export default function NewInvestmentPage() {
         {/* Property/Land Information */}
         <section style={styles.section}>
           <h2 style={styles.sectionTitle}>
-            📍 Informations {assetType === 'villa' ? 'de la villa' : 'du terrain'}
+            📍 {assetType === 'villa' ? 'Villa' : 'Land'} information
           </h2>
           
           <div style={styles.grid2}>
             <div style={styles.field}>
-              <label style={styles.label}>Titre *</label>
+              <label style={styles.label}>Title *</label>
               <input
                 style={styles.input}
                 value={title}
                 onChange={e => setTitle(e.target.value)}
-                placeholder={assetType === 'villa' ? 'Ex: Villa de luxe vue mer' : 'Ex: Terrain constructible Kuta'}
+                placeholder={assetType === 'villa' ? 'Ex: Luxury seafront villa' : 'Ex: Buildable land Kuta'}
                 required
               />
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Localisation *</label>
+              <label style={styles.label}>Location *</label>
               <input
                 style={styles.input}
                 value={location}
@@ -260,7 +260,7 @@ export default function NewInvestmentPage() {
               style={styles.textarea}
               value={description}
               onChange={e => setDescription(e.target.value)}
-              placeholder="Description détaillée du bien..."
+              placeholder="Detailed property description..."
               rows={4}
             />
           </div>
@@ -268,7 +268,7 @@ export default function NewInvestmentPage() {
           {assetType === 'villa' && (
             <div style={styles.grid4}>
               <div style={styles.field}>
-                <label style={styles.label}>Chambres</label>
+                <label style={styles.label}>Bedrooms</label>
                 <input
                   style={styles.input}
                   type="number"
@@ -279,7 +279,7 @@ export default function NewInvestmentPage() {
               </div>
 
               <div style={styles.field}>
-                <label style={styles.label}>Salles de bain</label>
+                <label style={styles.label}>Bathrooms</label>
                 <input
                   style={styles.input}
                   type="number"
@@ -290,7 +290,7 @@ export default function NewInvestmentPage() {
               </div>
 
               <div style={styles.field}>
-                <label style={styles.label}>Surface (m²)</label>
+                <label style={styles.label}>Built area (m²)</label>
                 <input
                   style={styles.input}
                   type="number"
@@ -301,7 +301,7 @@ export default function NewInvestmentPage() {
               </div>
 
               <div style={styles.field}>
-                <label style={styles.label}>Terrain (are)</label>
+                <label style={styles.label}>Land (are)</label>
                 <input
                   style={styles.input}
                   type="number"
@@ -316,7 +316,7 @@ export default function NewInvestmentPage() {
 
           {assetType === 'land' && (
             <div style={styles.field}>
-              <label style={styles.label}>Surface du terrain (are) *</label>
+              <label style={styles.label}>Land area (are) *</label>
               <input
                 style={styles.input}
                 type="number"
@@ -333,15 +333,15 @@ export default function NewInvestmentPage() {
             <div style={styles.amenities}>
               <label style={styles.checkbox}>
                 <input type="checkbox" checked={pool} onChange={e => setPool(e.target.checked)} />
-                <span>🏊 Piscine</span>
+                <span>🏊 Pool</span>
               </label>
               <label style={styles.checkbox}>
                 <input type="checkbox" checked={garden} onChange={e => setGarden(e.target.checked)} />
-                <span>🌳 Jardin</span>
+                <span>🌳 Garden</span>
               </label>
               <label style={styles.checkbox}>
                 <input type="checkbox" checked={furnished} onChange={e => setFurnished(e.target.checked)} />
-                <span>🛋️ Meublé</span>
+                <span>🛋️ Furnished</span>
               </label>
             </div>
           )}
@@ -349,7 +349,7 @@ export default function NewInvestmentPage() {
 
         {/* Investment Terms */}
         <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>💰 Conditions d'investissement</h2>
+          <h2 style={styles.sectionTitle}>💰 Investment conditions</h2>
           
           <div style={styles.grid2}>
             <div style={styles.field}>
@@ -377,7 +377,7 @@ export default function NewInvestmentPage() {
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Rendement estimé (%/an)</label>
+              <label style={styles.label}>Estimated yield (%/year)</label>
               <input
                 style={styles.input}
                 type="number"
@@ -391,7 +391,7 @@ export default function NewInvestmentPage() {
 
           {/* Tenure Type */}
           <div style={styles.field}>
-            <label style={styles.label}>Type de propriété *</label>
+            <label style={styles.label}>Property type *</label>
             <div style={styles.tenureSelector}>
               <button
                 type="button"
@@ -403,7 +403,7 @@ export default function NewInvestmentPage() {
               >
                 <span style={{ fontSize: 24 }}>🔑</span>
                 <span style={styles.tenureLabel}>Freehold</span>
-                <span style={styles.tenureDesc}>Propriété pleine</span>
+                <span style={styles.tenureDesc}>Full ownership</span>
               </button>
               <button
                 type="button"
@@ -415,14 +415,14 @@ export default function NewInvestmentPage() {
               >
                 <span style={{ fontSize: 24 }}>📋</span>
                 <span style={styles.tenureLabel}>Leasehold</span>
-                <span style={styles.tenureDesc}>Bail longue durée</span>
+                <span style={styles.tenureDesc}>Long-term lease</span>
               </button>
             </div>
           </div>
 
           {tenure === 'leasehold' && (
             <div style={styles.field}>
-              <label style={styles.label}>Durée du bail (années) *</label>
+              <label style={styles.label}>Lease duration (years) *</label>
               <input
                 style={styles.input}
                 type="number"
@@ -441,7 +441,7 @@ export default function NewInvestmentPage() {
             </label>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={managementAvailable} onChange={e => setManagementAvailable(e.target.checked)} />
-              <span>🏢 Gestion locative disponible</span>
+              <span>🏢 Rental management available</span>
             </label>
           </div>
         </section>
@@ -461,8 +461,8 @@ export default function NewInvestmentPage() {
             />
             <label htmlFor="image-upload" style={styles.dropzoneLabel}>
               <span style={{ fontSize: 40 }}>📷</span>
-              <span>Cliquez ou glissez vos images ici</span>
-              <span style={{ fontSize: 12, color: '#6b7280' }}>PNG, JPG jusqu'à 10MB chacune</span>
+              <span>Click or drag your images here</span>
+              <span style={{ fontSize: 12, color: '#6b7280' }}>PNG, JPG up to 10MB each</span>
             </label>
           </div>
 
@@ -478,7 +478,7 @@ export default function NewInvestmentPage() {
                   >
                     ✕
                   </button>
-                  {index === 0 && <span style={styles.mainBadge}>Photo principale</span>}
+                  {index === 0 && <span style={styles.mainBadge}>Main photo</span>}
                 </div>
               ))}
             </div>
@@ -498,14 +498,14 @@ export default function NewInvestmentPage() {
             onClick={() => router.back()}
             style={styles.btnSecondary}
           >
-            Annuler
+            Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
             style={styles.btnPrimary}
           >
-            {loading ? 'Création en cours...' : '✓ Créer l\'investissement'}
+            {loading ? 'Creating...' : '✓ Create investment'}
           </button>
         </div>
       </form>
@@ -573,7 +573,9 @@ const styles: { [key: string]: React.CSSProperties } = {
   typeBtn: {
     padding: 24,
     borderRadius: 12,
-    border: '2px solid #e5e7eb',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    borderColor: '#e5e7eb',
     background: '#f9fafb',
     cursor: 'pointer',
     fontSize: 18,
@@ -641,7 +643,9 @@ const styles: { [key: string]: React.CSSProperties } = {
   tenureBtn: {
     padding: 20,
     borderRadius: 12,
-    border: '2px solid #e5e7eb',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    borderColor: '#e5e7eb',
     background: '#f9fafb',
     cursor: 'pointer',
     display: 'flex',

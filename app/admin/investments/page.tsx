@@ -97,7 +97,7 @@ export default function AdminInvestmentsPage() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Supprimer cet investissement ?')) return;
+    if (!confirm('Delete this investment?')) return;
     
     setDeleting(id);
     await supabase.from('investments').delete().eq('id', id);
@@ -106,7 +106,7 @@ export default function AdminInvestmentsPage() {
   };
 
   if (loading) {
-    return <div style={styles.loading}>Chargement des investissements...</div>;
+    return <div style={styles.loading}>Loading investments...</div>;
   }
 
   return (
@@ -114,11 +114,11 @@ export default function AdminInvestmentsPage() {
       {/* Header */}
       <div style={styles.header}>
         <div>
-          <h1 style={styles.title}>Investissements</h1>
-          <p style={styles.subtitle}>{investments.length} opportunité(s) enregistrée(s)</p>
+          <h1 style={styles.title}>Investments</h1>
+          <p style={styles.subtitle}>{investments.length} opportunit{investments.length !== 1 ? 'ies' : 'y'} registered</p>
         </div>
         <Link href="/admin/investments/new" style={styles.btnAdd}>
-          + Ajouter un investissement
+          + Add investment
         </Link>
       </div>
 
@@ -128,9 +128,9 @@ export default function AdminInvestmentsPage() {
       {investments.length === 0 ? (
         <div style={styles.empty}>
           <span style={{ fontSize: 48 }}>💰</span>
-          <p>Aucun investissement pour le moment</p>
+          <p>No investments yet</p>
           <Link href="/admin/investments/new" style={styles.btnAdd}>
-            Créer mon premier investissement
+            Create my first investment
           </Link>
         </div>
       ) : (
@@ -148,7 +148,7 @@ export default function AdminInvestmentsPage() {
                 ) : (
                   <div style={styles.noImage}>
                     <span style={{ fontSize: 32 }}>{inv.asset_type === 'property' ? '🏠' : '🌴'}</span>
-                    <span>Pas d'image</span>
+                    <span>No image</span>
                   </div>
                 )}
                 
@@ -157,7 +157,7 @@ export default function AdminInvestmentsPage() {
                   ...styles.typeBadge,
                   background: inv.asset_type === 'property' ? '#8b5cf6' : '#059669',
                 }}>
-                  {inv.asset_type === 'property' ? 'Villa' : 'Terrain'}
+                  {inv.asset_type === 'property' ? 'Villa' : 'Land'}
                 </div>
 
                 {/* Tenure badge */}
@@ -178,7 +178,7 @@ export default function AdminInvestmentsPage() {
 
               {/* Content */}
               <div style={styles.cardContent}>
-                <h3 style={styles.cardTitle}>{inv.title || 'Sans titre'}</h3>
+                <h3 style={styles.cardTitle}>{inv.title || 'Untitled'}</h3>
                 <p style={styles.location}>📍 {inv.location || '—'}</p>
 
                 {/* Price */}
@@ -192,20 +192,20 @@ export default function AdminInvestmentsPage() {
                 {/* Yield */}
                 {inv.expected_yield && (
                   <div style={styles.yieldBadge}>
-                    📈 {inv.expected_yield}% rendement estimé
+                    📈 {inv.expected_yield}% estimated yield
                   </div>
                 )}
 
                 {/* Status */}
                 <div style={styles.statusRow}>
                   {inv.legal_checked && <span style={styles.statusBadge}>✅ Verified</span>}
-                  {inv.management_available && <span style={styles.statusBadge}>🏢 Gestion</span>}
+                  {inv.management_available && <span style={styles.statusBadge}>🏢 Management</span>}
                 </div>
 
                 {/* Actions */}
                 <div style={styles.actions}>
                   <Link href={`/admin/investments/${inv.id}`} style={styles.btnEdit}>
-                    ✏️ Modifier
+                    ✏️ Edit
                   </Link>
                   <button
                     onClick={() => handleDelete(inv.id)}

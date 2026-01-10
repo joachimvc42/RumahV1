@@ -5,11 +5,8 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabaseClient';
 
 export default function NewRentalPage() {
-  const router = {
-    push: (path: string) => window.location.href = path,
-    back: () => window.history.back()
-  };
-  
+  const router = useRouter();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,7 +25,7 @@ export default function NewRentalPage() {
   const [wifi, setWifi] = useState(true);
   const [parking, setParking] = useState(false);
 
-  // Rental specific fields
+  // Rental fields
   const [monthlyPrice, setMonthlyPrice] = useState('');
   const [minDuration, setMinDuration] = useState('1');
   const [maxDuration, setMaxDuration] = useState('12');
@@ -66,24 +63,20 @@ export default function NewRentalPage() {
     
     for (let i = 0; i < images.length; i++) {
       const file = images[i];
-      
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('propertyId', propertyId);
-      
-      try {
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          urls.push(data.url);
-        }
-      } catch (err) {
-        console.error('Upload error:', err);
+      const ext = file.name.split('.').pop();
+      const path = `rentals/${propertyId}/${Date.now()}_${i}.${ext}`;
+
+      const { error } = await supabase.storage
+        .from('properties')
+        .upload(path, file, { upsert: true });
+
+      if (error) {
+        console.error('Upload error:', error);
+        continue;
       }
+
+      const { data } = supabase.storage.from('properties').getPublicUrl(path);
+      urls.push(data.publicUrl);
 
       setUploadProgress(Math.round(((i + 1) / images.length) * 100));
     }
@@ -93,18 +86,20 @@ export default function NewRentalPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
+
     setLoading(true);
     setError(null);
     setUploadProgress(0);
 
     try {
-      const propertyResponse = await fetch('/api/properties', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      // 1. Create property
+      const { data: propertyData, error: propertyError } = await supabase
+        .from('properties')
+        .insert({
           title,
           location,
-          description,
+          description: description || null,
           bedrooms: bedrooms ? Number(bedrooms) : null,
           bathrooms: bathrooms ? Number(bathrooms) : null,
           built_area: builtArea ? Number(builtArea) : null,
@@ -118,28 +113,33 @@ export default function NewRentalPage() {
           status: 'available',
           property_type: 'rental',
         })
-      });
+        .select()
+        .single();
 
-      if (!propertyResponse.ok) throw new Error('Erreur lors de la création du bien');
-      
-      const propertyData = await propertyResponse.json();
+      if (propertyError || !propertyData) {
+        setError(propertyError?.message || 'Failed to create property');
+        setLoading(false);
+        return;
+      }
+
       const propertyId = propertyData.id;
 
+      // 2. Upload images
       let imageUrls: string[] = [];
       if (images.length > 0) {
         imageUrls = await uploadImages(propertyId);
         
-        await fetch(`/api/properties/${propertyId}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ images: imageUrls })
-        });
+        // Update property with image URLs
+        await supabase
+          .from('properties')
+          .update({ images: imageUrls })
+          .eq('id', propertyId);
       }
 
-      const rentalResponse = await fetch('/api/rentals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      // 3. Create rental
+      const { error: rentalError } = await supabase
+        .from('long_term_rentals')
+        .insert({
           property_id: propertyId,
           monthly_price_idr: Number(monthlyPrice),
           min_duration_months: Number(minDuration),
@@ -147,44 +147,47 @@ export default function NewRentalPage() {
           upfront_months: Number(upfrontMonths),
           available_from: availableFrom || null,
           legal_checked: legalChecked,
-        })
-      });
+        });
 
-      if (!rentalResponse.ok) throw new Error('Erreur lors de la création de la location');
+      if (rentalError) {
+        setError(rentalError.message || 'Failed to create rental');
+        setLoading(false);
+        return;
+      }
 
-      router.push('/admin/rentals');
+      router.push('/admin');
     } catch (err: any) {
-      console.error('Error creating rental:', err);
-      setError(err.message || 'Une erreur est survenue lors de la création du bien');
-    } finally {
+      console.error(err);
+      setError(err.message || 'Unexpected error');
       setLoading(false);
     }
   };
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Ajouter un bien locatif</h1>
+    <main style={styles.container}>
+      <h1 style={styles.title}>Add rental property</h1>
       
       {error && <div style={styles.error}>{error}</div>}
 
-      <div style={styles.form}>
+      <form onSubmit={handleSubmit} style={styles.form}>
+        {/* Property Information */}
         <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>📍 Informations du bien</h2>
+          <h2 style={styles.sectionTitle}>📍 Property information</h2>
           
           <div style={styles.grid2}>
             <div style={styles.field}>
-              <label style={styles.label}>Titre du bien *</label>
+              <label style={styles.label}>Property title *</label>
               <input
                 style={styles.input}
                 value={title}
                 onChange={e => setTitle(e.target.value)}
-                placeholder="Ex: Villa moderne avec piscine"
+                placeholder="Ex: Modern villa with pool"
                 required
               />
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Localisation *</label>
+              <label style={styles.label}>Location *</label>
               <input
                 style={styles.input}
                 value={location}
@@ -201,54 +204,50 @@ export default function NewRentalPage() {
               style={styles.textarea}
               value={description}
               onChange={e => setDescription(e.target.value)}
-              placeholder="Description détaillée du bien..."
+              placeholder="Detailed property description..."
               rows={4}
             />
           </div>
 
           <div style={styles.grid4}>
             <div style={styles.field}>
-              <label style={styles.label}>Chambres</label>
+              <label style={styles.label}>Bedrooms</label>
               <input
                 style={styles.input}
                 type="number"
                 value={bedrooms}
                 onChange={e => setBedrooms(e.target.value)}
-                placeholder="3"
               />
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Salles de bain</label>
+              <label style={styles.label}>Bathrooms</label>
               <input
                 style={styles.input}
                 type="number"
                 value={bathrooms}
                 onChange={e => setBathrooms(e.target.value)}
-                placeholder="2"
               />
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Surface (m²)</label>
+              <label style={styles.label}>Built area (m²)</label>
               <input
                 style={styles.input}
                 type="number"
                 value={builtArea}
                 onChange={e => setBuiltArea(e.target.value)}
-                placeholder="150"
               />
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Terrain (are)</label>
+              <label style={styles.label}>Land (are)</label>
               <input
                 style={styles.input}
                 type="number"
                 step="0.1"
                 value={landArea}
                 onChange={e => setLandArea(e.target.value)}
-                placeholder="5"
               />
             </div>
           </div>
@@ -256,19 +255,19 @@ export default function NewRentalPage() {
           <div style={styles.amenities}>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={pool} onChange={e => setPool(e.target.checked)} />
-              <span>🏊 Piscine</span>
+              <span>🏊 Pool</span>
             </label>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={garden} onChange={e => setGarden(e.target.checked)} />
-              <span>🌳 Jardin</span>
+              <span>🌳 Garden</span>
             </label>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={furnished} onChange={e => setFurnished(e.target.checked)} />
-              <span>🛋️ Meublé</span>
+              <span>🛋️ Furnished</span>
             </label>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={aircon} onChange={e => setAircon(e.target.checked)} />
-              <span>❄️ Climatisation</span>
+              <span>❄️ Air conditioning</span>
             </label>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={wifi} onChange={e => setWifi(e.target.checked)} />
@@ -281,57 +280,59 @@ export default function NewRentalPage() {
           </div>
         </section>
 
+        {/* Rental Terms */}
         <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>💰 Conditions de location</h2>
+          <h2 style={styles.sectionTitle}>💰 Rental conditions</h2>
           
           <div style={styles.grid2}>
             <div style={styles.field}>
-              <label style={styles.label}>Prix mensuel (IDR) *</label>
+              <label style={styles.label}>Monthly price (IDR) *</label>
               <input
                 style={styles.input}
                 type="number"
                 value={monthlyPrice}
                 onChange={e => setMonthlyPrice(e.target.value)}
-                placeholder="25000000"
                 required
               />
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Mois d'avance requis</label>
+              <label style={styles.label}>Upfront months required</label>
               <input
                 style={styles.input}
                 type="number"
                 value={upfrontMonths}
                 onChange={e => setUpfrontMonths(e.target.value)}
-                placeholder="0"
+                min="0"
               />
             </div>
           </div>
 
           <div style={styles.grid3}>
             <div style={styles.field}>
-              <label style={styles.label}>Durée min (mois)</label>
+              <label style={styles.label}>Min duration (months)</label>
               <input
                 style={styles.input}
                 type="number"
                 value={minDuration}
                 onChange={e => setMinDuration(e.target.value)}
+                min="1"
               />
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Durée max (mois)</label>
+              <label style={styles.label}>Max duration (months)</label>
               <input
                 style={styles.input}
                 type="number"
                 value={maxDuration}
                 onChange={e => setMaxDuration(e.target.value)}
+                min="1"
               />
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Disponible à partir de</label>
+              <label style={styles.label}>Available from</label>
               <input
                 style={styles.input}
                 type="date"
@@ -347,9 +348,11 @@ export default function NewRentalPage() {
           </label>
         </section>
 
+        {/* Image Gallery */}
         <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>📸 Galerie photos</h2>
+          <h2 style={styles.sectionTitle}>📸 Photo gallery</h2>
           
+          {/* Upload images */}
           <div style={styles.dropzone}>
             <input
               type="file"
@@ -361,27 +364,31 @@ export default function NewRentalPage() {
             />
             <label htmlFor="image-upload" style={styles.dropzoneLabel}>
               <span style={{ fontSize: 40 }}>📷</span>
-              <span>Cliquez ou glissez vos images ici</span>
-              <span style={{ fontSize: 12, color: '#6b7280' }}>PNG, JPG jusqu'à 10MB chacune</span>
+              <span>Add images</span>
+              <span style={{ fontSize: 12, color: '#6b7280' }}>PNG, JPG up to 10MB each</span>
             </label>
           </div>
 
+          {/* Images preview */}
           {imagePreviews.length > 0 && (
-            <div style={styles.gallery}>
-              {imagePreviews.map((preview, index) => (
-                <div key={index} style={styles.imageWrapper}>
-                  <img src={preview} alt={`Preview ${index + 1}`} style={styles.preview} />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    style={styles.removeBtn}
-                  >
-                    ✕
-                  </button>
-                  {index === 0 && <span style={styles.mainBadge}>Photo principale</span>}
-                </div>
-              ))}
-            </div>
+            <>
+              <p style={{ marginTop: 20, marginBottom: 12, color: '#6b7280', fontSize: 14 }}>Selected images:</p>
+              <div style={styles.gallery}>
+                {imagePreviews.map((preview, index) => (
+                  <div key={index} style={styles.imageWrapper}>
+                    <img src={preview} alt={`Preview ${index + 1}`} style={styles.preview} />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      style={styles.removeBtn}
+                    >
+                      ✕
+                    </button>
+                    {index === 0 && <span style={styles.mainBadge}>Main photo</span>}
+                  </div>
+                ))}
+              </div>
+            </>
           )}
 
           {uploadProgress > 0 && uploadProgress < 100 && (
@@ -391,25 +398,25 @@ export default function NewRentalPage() {
           )}
         </section>
 
+        {/* Actions */}
         <div style={styles.actions}>
           <button
             type="button"
             onClick={() => router.back()}
             style={styles.btnSecondary}
           >
-            Annuler
+            Cancel
           </button>
           <button
-            type="button"
-            onClick={handleSubmit}
+            type="submit"
             disabled={loading}
             style={styles.btnPrimary}
           >
-            {loading ? 'Création en cours...' : '✓ Créer le bien locatif'}
+            {loading ? 'Creating...' : '✓ Create rental property'}
           </button>
         </div>
-      </div>
-    </div>
+      </form>
+    </main>
   );
 }
 
@@ -483,7 +490,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: 10,
     border: '2px solid #e5e7eb',
     fontSize: 15,
-    transition: 'all 0.2s',
     outline: 'none',
   },
   textarea: {
@@ -510,8 +516,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     cursor: 'pointer',
     fontSize: 14,
     fontWeight: 500,
-    border: '2px solid transparent',
-    transition: 'all 0.2s',
   },
   dropzone: {
     position: 'relative',
@@ -520,7 +524,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: 40,
     textAlign: 'center',
     background: '#fafafa',
-    transition: 'all 0.2s',
     cursor: 'pointer',
   },
   fileInput: {
@@ -542,7 +545,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
     gap: 12,
-    marginTop: 20,
   },
   imageWrapper: {
     position: 'relative',

@@ -191,7 +191,7 @@ export default function EditRentalPage() {
         })
         .eq('id', id);
 
-      router.push('/admin/rentals');
+      router.push('/admin');
     } catch (err: any) {
       setError(err.message || 'Failed to save');
     } finally {
@@ -200,12 +200,12 @@ export default function EditRentalPage() {
   };
 
   const handleDelete = async () => {
-    if (!confirm('Supprimer ce bien locatif ? Cette action est irréversible.')) return;
+    if (!confirm('Delete this rental property? This action is irreversible.')) return;
 
     setSaving(true);
     try {
       await supabase.from('long_term_rentals').delete().eq('id', id);
-      router.push('/admin/rentals');
+      router.push('/admin');
     } catch (err: any) {
       setError(err.message || 'Failed to delete');
       setSaving(false);
@@ -213,23 +213,23 @@ export default function EditRentalPage() {
   };
 
   if (loading) {
-    return <div style={{ padding: 40 }}>Chargement...</div>;
+    return <div style={{ padding: 40 }}>Loading...</div>;
   }
 
   return (
     <main style={styles.container}>
-      <h1 style={styles.title}>Modifier le bien locatif</h1>
+      <h1 style={styles.title}>Edit rental property</h1>
       
       {error && <div style={styles.error}>{error}</div>}
 
       <form onSubmit={handleSave} style={styles.form}>
         {/* Property Information */}
         <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>📍 Informations du bien</h2>
+          <h2 style={styles.sectionTitle}>📍 Property information</h2>
           
           <div style={styles.grid2}>
             <div style={styles.field}>
-              <label style={styles.label}>Titre du bien *</label>
+              <label style={styles.label}>Property title *</label>
               <input
                 style={styles.input}
                 value={title}
@@ -239,7 +239,7 @@ export default function EditRentalPage() {
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Localisation *</label>
+              <label style={styles.label}>Location *</label>
               <input
                 style={styles.input}
                 value={location}
@@ -261,7 +261,7 @@ export default function EditRentalPage() {
 
           <div style={styles.grid4}>
             <div style={styles.field}>
-              <label style={styles.label}>Chambres</label>
+              <label style={styles.label}>Bedrooms</label>
               <input
                 style={styles.input}
                 type="number"
@@ -271,7 +271,7 @@ export default function EditRentalPage() {
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Salles de bain</label>
+              <label style={styles.label}>Bathrooms</label>
               <input
                 style={styles.input}
                 type="number"
@@ -281,7 +281,7 @@ export default function EditRentalPage() {
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Surface (m²)</label>
+              <label style={styles.label}>Built area (m²)</label>
               <input
                 style={styles.input}
                 type="number"
@@ -291,7 +291,7 @@ export default function EditRentalPage() {
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Terrain (are)</label>
+              <label style={styles.label}>Land (are)</label>
               <input
                 style={styles.input}
                 type="number"
@@ -305,15 +305,15 @@ export default function EditRentalPage() {
           <div style={styles.amenities}>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={pool} onChange={e => setPool(e.target.checked)} />
-              <span>🏊 Piscine</span>
+              <span>🏊 Pool</span>
             </label>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={garden} onChange={e => setGarden(e.target.checked)} />
-              <span>🌳 Jardin</span>
+              <span>🌳 Garden</span>
             </label>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={furnished} onChange={e => setFurnished(e.target.checked)} />
-              <span>🛋️ Meublé</span>
+              <span>🛋️ Furnished</span>
             </label>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={aircon} onChange={e => setAircon(e.target.checked)} />
@@ -332,11 +332,11 @@ export default function EditRentalPage() {
 
         {/* Rental Terms */}
         <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>💰 Conditions de location</h2>
+          <h2 style={styles.sectionTitle}>💰 Rental conditions</h2>
           
           <div style={styles.grid2}>
             <div style={styles.field}>
-              <label style={styles.label}>Prix mensuel (IDR) *</label>
+              <label style={styles.label}>Monthly price (IDR) *</label>
               <input
                 style={styles.input}
                 type="number"
@@ -359,7 +359,7 @@ export default function EditRentalPage() {
 
           <div style={styles.grid3}>
             <div style={styles.field}>
-              <label style={styles.label}>Durée min (mois)</label>
+              <label style={styles.label}>Min duration (months)</label>
               <input
                 style={styles.input}
                 type="number"
@@ -369,7 +369,7 @@ export default function EditRentalPage() {
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Durée max (mois)</label>
+              <label style={styles.label}>Max duration (months)</label>
               <input
                 style={styles.input}
                 type="number"
@@ -379,7 +379,7 @@ export default function EditRentalPage() {
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Disponible à partir de</label>
+              <label style={styles.label}>Available from</label>
               <input
                 style={styles.input}
                 type="date"
@@ -397,12 +397,12 @@ export default function EditRentalPage() {
 
         {/* Image Gallery */}
         <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>📸 Galerie photos</h2>
+          <h2 style={styles.sectionTitle}>📸 Photo gallery</h2>
           
           {/* Existing images */}
           {existingImages.length > 0 && (
             <>
-              <p style={{ marginBottom: 12, color: '#6b7280', fontSize: 14 }}>Images actuelles :</p>
+              <p style={{ marginBottom: 12, color: '#6b7280', fontSize: 14 }}>Current images:</p>
               <div style={styles.gallery}>
                 {existingImages.map((url, index) => (
                   <div key={url} style={styles.imageWrapper}>
@@ -414,7 +414,7 @@ export default function EditRentalPage() {
                     >
                       ✕
                     </button>
-                    {index === 0 && <span style={styles.mainBadge}>Photo principale</span>}
+                    {index === 0 && <span style={styles.mainBadge}>Main photo</span>}
                   </div>
                 ))}
               </div>
@@ -433,15 +433,15 @@ export default function EditRentalPage() {
             />
             <label htmlFor="image-upload" style={styles.dropzoneLabel}>
               <span style={{ fontSize: 40 }}>📷</span>
-              <span>Ajouter des images</span>
-              <span style={{ fontSize: 12, color: '#6b7280' }}>PNG, JPG jusqu'à 10MB chacune</span>
+              <span>Add images</span>
+              <span style={{ fontSize: 12, color: '#6b7280' }}>PNG, JPG up to 10MB each</span>
             </label>
           </div>
 
           {/* New images preview */}
           {newImagePreviews.length > 0 && (
             <>
-              <p style={{ marginTop: 20, marginBottom: 12, color: '#6b7280', fontSize: 14 }}>Nouvelles images à ajouter :</p>
+              <p style={{ marginTop: 20, marginBottom: 12, color: '#6b7280', fontSize: 14 }}>New images to add:</p>
               <div style={styles.gallery}>
                 {newImagePreviews.map((preview, index) => (
                   <div key={index} style={styles.imageWrapper}>
@@ -474,7 +474,7 @@ export default function EditRentalPage() {
             disabled={saving}
             style={styles.btnDanger}
           >
-            🗑️ Supprimer
+            🗑️ Delete
           </button>
           <div style={{ flex: 1 }} />
           <button
@@ -482,14 +482,14 @@ export default function EditRentalPage() {
             onClick={() => router.back()}
             style={styles.btnSecondary}
           >
-            Annuler
+            Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
             style={styles.btnPrimary}
           >
-            {saving ? 'Enregistrement...' : '✓ Enregistrer'}
+            {saving ? 'Saving...' : '✓ Save'}
           </button>
         </div>
       </form>

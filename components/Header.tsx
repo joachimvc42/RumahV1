@@ -7,6 +7,7 @@ import { useState } from 'react';
 export default function Header() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const isAdmin = pathname.startsWith('/admin');
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + '/');
@@ -24,9 +25,11 @@ export default function Header() {
         </Link>
 
         {/* Tagline */}
-        <p className="header-tagline">
-          A local point of contact for long-term living and investment in Lombok
-        </p>
+        {!isAdmin && (
+          <p className="header-tagline">
+            A local point of contact for long-term living and investment in Lombok
+          </p>
+        )}
 
         {/* Mobile toggle */}
         <button
@@ -41,45 +44,51 @@ export default function Header() {
 
         {/* Navigation */}
         <nav className={`primary-nav ${menuOpen ? 'is-open' : ''}`}>
+          {!isAdmin && (
+            <Link
+              href="/"
+              className={
+                pathname === '/'
+                  ? 'nav-link is-active'
+                  : 'nav-link'
+              }
+              onClick={closeMenu}
+            >
+              Home
+            </Link>
+          )}
+
           <Link
-            href="/"
+            href={isAdmin ? '/admin' : '/rentals'}
+            className={isAdmin ? (pathname === '/admin' ? 'nav-link is-active' : 'nav-link') : (isActive('/rentals') ? 'nav-link is-active' : 'nav-link')}
+            onClick={closeMenu}
+          >
+            {isAdmin ? 'Rentals Property' : 'Rentals'}
+          </Link>
+
+          <Link
+            href={isAdmin ? '/admin/investments/new' : '/investments'}
             className={
-              pathname === '/'
-                ? 'nav-link is-active'
-                : 'nav-link'
+              isAdmin
+                ? (pathname === '/admin/investments/new' ? 'nav-link is-active' : 'nav-link')
+                : (isActive('/investments') || isActive('/land') || isActive('/villa')
+                    ? 'nav-link is-active'
+                    : 'nav-link')
             }
             onClick={closeMenu}
           >
-            Home
+            {isAdmin ? 'Investments New' : 'Investments'}
           </Link>
 
-          <Link
-            href="/rentals"
-            className={isActive('/rentals') ? 'nav-link is-active' : 'nav-link'}
-            onClick={closeMenu}
-          >
-            Rentals
-          </Link>
-
-          <Link
-            href="/investments"
-            className={
-              isActive('/investments') || isActive('/land') || isActive('/villa')
-                ? 'nav-link is-active'
-                : 'nav-link'
-            }
-            onClick={closeMenu}
-          >
-            Investments
-          </Link>
-
-          <Link
-            href="/contact"
-            className={isActive('/contact') ? 'nav-link nav-cta is-active' : 'nav-link nav-cta'}
-            onClick={closeMenu}
-          >
-            Contact
-          </Link>
+          {!isAdmin && (
+            <Link
+              href="/contact"
+              className={isActive('/contact') ? 'nav-link nav-cta is-active' : 'nav-link nav-cta'}
+              onClick={closeMenu}
+            >
+              Contact
+            </Link>
+          )}
         </nav>
       </div>
     </header>

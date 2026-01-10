@@ -137,7 +137,7 @@ export default function InvestmentsPage() {
       <main style={styles.container}>
         <div style={styles.loading}>
           <div style={styles.spinner} />
-          <p>Chargement des opportunités...</p>
+          <p>Loading opportunities...</p>
         </div>
       </main>
     );
@@ -147,48 +147,48 @@ export default function InvestmentsPage() {
     <main style={styles.container}>
       {/* Hero */}
       <section style={styles.hero}>
-        <h1 style={styles.heroTitle}>Investir à Lombok</h1>
+        <h1 style={styles.heroTitle}>Invest in Lombok</h1>
         <p style={styles.heroSubtitle}>
-          Villas et terrains sélectionnés pour l'investissement
+          Selected villas and land for investment
         </p>
       </section>
 
       {/* Filters */}
       <section style={styles.filters}>
         <div style={styles.filterGroup}>
-          <label style={styles.filterLabel}>Type d'actif</label>
+          <label style={styles.filterLabel}>Asset type</label>
           <select
             style={styles.filterSelect}
             value={filters.type}
             onChange={e => setFilters({ ...filters, type: e.target.value as any })}
           >
-            <option value="all">Tous</option>
+            <option value="all">All</option>
             <option value="villa">🏠 Villas</option>
-            <option value="land">🌴 Terrains</option>
+            <option value="land">🌴 Land</option>
           </select>
         </div>
 
         <div style={styles.filterGroup}>
-          <label style={styles.filterLabel}>Type de propriété</label>
+          <label style={styles.filterLabel}>Property type</label>
           <select
             style={styles.filterSelect}
             value={filters.tenure}
             onChange={e => setFilters({ ...filters, tenure: e.target.value as any })}
           >
-            <option value="all">Tous</option>
+            <option value="all">All</option>
             <option value="freehold">🔑 Freehold</option>
             <option value="leasehold">📋 Leasehold</option>
           </select>
         </div>
 
         <div style={styles.filterGroup}>
-          <label style={styles.filterLabel}>Localisation</label>
+          <label style={styles.filterLabel}>Location</label>
           <select
             style={styles.filterSelect}
             value={filters.location}
             onChange={e => setFilters({ ...filters, location: e.target.value })}
           >
-            <option value="">Toutes les zones</option>
+            <option value="">All areas</option>
             {locations.map(loc => (
               <option key={loc} value={loc}>{loc}</option>
             ))}
@@ -201,25 +201,25 @@ export default function InvestmentsPage() {
             checked={filters.legal}
             onChange={e => setFilters({ ...filters, legal: e.target.checked })}
           />
-          <span>✅ Vérifié légalement</span>
+          <span>✅ Legally verified</span>
         </label>
       </section>
 
       {/* Results count */}
       <p style={styles.resultCount}>
-        {filtered.length} opportunité{filtered.length !== 1 ? 's' : ''} disponible{filtered.length !== 1 ? 's' : ''}
+        {filtered.length} opportunit{filtered.length !== 1 ? 'ies' : 'y'} available
       </p>
 
       {/* Grid */}
       {filtered.length === 0 ? (
         <div style={styles.empty}>
           <span style={{ fontSize: 48 }}>💰</span>
-          <p>Aucune opportunité ne correspond à vos critères</p>
+          <p>No opportunities match your criteria</p>
           <button
             onClick={() => setFilters({ type: 'all', tenure: 'all', location: '', legal: false })}
             style={styles.resetBtn}
           >
-            Réinitialiser les filtres
+            Reset filters
           </button>
         </div>
       ) : (
@@ -241,7 +241,7 @@ export default function InvestmentsPage() {
                   ...styles.typeBadge,
                   background: item.type === 'villa' ? '#8b5cf6' : '#059669',
                 }}>
-                  {item.type === 'villa' ? 'Villa' : 'Terrain'}
+                  {item.type === 'villa' ? 'Villa' : 'Land'}
                 </div>
 
                 {/* Tenure badge */}
@@ -273,7 +273,7 @@ export default function InvestmentsPage() {
                 {/* Yield */}
                 {item.expectedYield && (
                   <div style={styles.yieldBadge}>
-                    📈 {item.expectedYield}% rendement estimé
+                    📈 {item.expectedYield}% estimated yield
                   </div>
                 )}
 
@@ -283,7 +283,7 @@ export default function InvestmentsPage() {
                     <span style={styles.badge}>✅ Verified</span>
                   )}
                   {item.managementAvailable && (
-                    <span style={styles.badge}>🏢 Gestion dispo</span>
+                    <span style={styles.badge}>🏢 Management available</span>
                   )}
                 </div>
               </div>

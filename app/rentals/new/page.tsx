@@ -113,7 +113,7 @@ export default function NewRentalPage() {
     <main style={{ padding: 24, maxWidth: 640 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
         <h1>Create long-term rental</h1>
-        <Link href="/admin/rentals" className="btn btn-secondary" style={btnSecondary}>
+        <Link href="/admin" className="btn btn-secondary" style={btnSecondary}>
           Back
         </Link>
       </div>
