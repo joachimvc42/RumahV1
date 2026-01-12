@@ -80,16 +80,11 @@ export default function HomePage() {
               <li>Clear and direct communication</li>
             </ul>
             <ul className="bullets">
-              <li>Verified information when possible</li>
+              <li>Verified documents</li>
               <li>Long-term relationship focus</li>
               <li>Human-scale approach</li>
             </ul>
           </div>
-
-          <p className="muted" style={{ marginTop: 16 }}>
-            RumahYa does not replace legal, notarial or tax professionals.
-            Independent verification is always recommended.
-          </p>
         </div>
       </section>
 

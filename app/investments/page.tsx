@@ -14,18 +14,30 @@ type InvestmentItem = {
   tenure: 'freehold' | 'leasehold';
   leaseYears?: number;
   expectedYield: number | null;
-  legalChecked: boolean;
-  managementAvailable: boolean;
   images: string[];
   href: string;
+  // Property/land specific fields
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  pool?: boolean;
+  garden?: boolean;
+  furnished?: boolean;
+  landSize?: number | null; // For lands (land_size)
+  builtArea?: number | null; // For properties (built_area)
+  landArea?: number | null; // For properties (land_area)
 };
 
 type Filters = {
   type: 'all' | 'villa' | 'land';
   tenure: 'all' | 'freehold' | 'leasehold';
   location: string;
-  legal: boolean;
-  management: boolean;
+  pool: boolean;
+  garden: boolean;
+  furnished: boolean;
+  minBedrooms: string;
+  minBathrooms: string;
+  yield20Plus: boolean;
+  yield30Plus: boolean;
 };
 
 function fmtPrice(price: number, currency: string, isLand: boolean) {
@@ -43,8 +55,13 @@ export default function InvestmentsPage() {
     type: 'all',
     tenure: 'all',
     location: '',
-    legal: false,
-    management: false,
+    pool: false,
+    garden: false,
+    furnished: false,
+    minBedrooms: '',
+    minBathrooms: '',
+    yield20Plus: false,
+    yield30Plus: false,
   });
 
   useEffect(() => {
@@ -74,7 +91,8 @@ export default function InvestmentsPage() {
       for (const inv of investments) {
         if (inv.asset_type === 'property') {
           const prop = properties?.find(p => p.id === inv.asset_id);
-          if (prop) {
+          // Only include published properties
+          if (prop && prop.status === 'published') {
             merged.push({
               id: inv.id,
               type: 'villa',
@@ -85,10 +103,15 @@ export default function InvestmentsPage() {
               tenure: prop.tenure || 'freehold',
               leaseYears: prop.lease_years,
               expectedYield: inv.expected_yield,
-              legalChecked: inv.legal_checked,
-              managementAvailable: inv.management_available,
               images: prop.images || [],
               href: `/investments/${inv.id}`,
+              bedrooms: prop.bedrooms,
+              bathrooms: prop.bathrooms,
+              pool: prop.pool,
+              garden: prop.garden,
+              furnished: prop.furnished,
+              builtArea: prop.built_area,
+              landArea: prop.land_area,
             });
           }
         }
@@ -107,10 +130,9 @@ export default function InvestmentsPage() {
               tenure: land.tenure || 'freehold',
               leaseYears: land.lease_years,
               expectedYield: inv.expected_yield,
-              legalChecked: inv.legal_checked,
-              managementAvailable: inv.management_available,
               images: land.images || [],
               href: `/investments/${inv.id}`,
+              landSize: land.land_size,
             });
           }
         }
@@ -128,7 +150,13 @@ export default function InvestmentsPage() {
     if (filters.type !== 'all' && item.type !== filters.type) return false;
     if (filters.tenure !== 'all' && item.tenure !== filters.tenure) return false;
     if (filters.location && !item.location.toLowerCase().includes(filters.location.toLowerCase())) return false;
-    if (filters.legal && !item.legalChecked) return false;
+    if (filters.pool && !item.pool) return false;
+    if (filters.garden && !item.garden) return false;
+    if (filters.furnished && !item.furnished) return false;
+    if (filters.minBedrooms && (item.bedrooms || 0) < Number(filters.minBedrooms)) return false;
+    if (filters.minBathrooms && (item.bathrooms || 0) < Number(filters.minBathrooms)) return false;
+    if (filters.yield20Plus && (!item.expectedYield || item.expectedYield < 20)) return false;
+    if (filters.yield30Plus && (!item.expectedYield || item.expectedYield < 30)) return false;
     return true;
   });
 
@@ -162,22 +190,94 @@ export default function InvestmentsPage() {
           <h3 style={styles.sidebarTitle}>Filters</h3>
           
           <div style={styles.sidebarSection}>
-            <h4 style={styles.sidebarSectionTitle}>Verification</h4>
+            <h4 style={styles.sidebarSectionTitle}>Amenities</h4>
             <label style={styles.sidebarCheckbox}>
               <input
                 type="checkbox"
-                checked={filters.legal}
-                onChange={e => setFilters({ ...filters, legal: e.target.checked })}
+                checked={filters.pool}
+                onChange={e => setFilters({ ...filters, pool: e.target.checked })}
               />
-              <span>✅ Legally verified</span>
+              <span>Pool</span>
             </label>
             <label style={styles.sidebarCheckbox}>
               <input
                 type="checkbox"
-                checked={filters.management}
-                onChange={e => setFilters({ ...filters, management: e.target.checked })}
+                checked={filters.garden}
+                onChange={e => setFilters({ ...filters, garden: e.target.checked })}
               />
-              <span>🏢 Management available</span>
+              <span>Garden</span>
+            </label>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.furnished}
+                onChange={e => setFilters({ ...filters, furnished: e.target.checked })}
+              />
+              <span>Furnished</span>
+            </label>
+          </div>
+
+          <div style={styles.sidebarSection}>
+            <h4 style={styles.sidebarSectionTitle}>Property Details</h4>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.minBedrooms === '1'}
+                onChange={e => setFilters({ ...filters, minBedrooms: e.target.checked ? '1' : '' })}
+              />
+              <span>1+ bedrooms</span>
+            </label>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.minBedrooms === '2'}
+                onChange={e => setFilters({ ...filters, minBedrooms: e.target.checked ? '2' : '' })}
+              />
+              <span>2+ bedrooms</span>
+            </label>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.minBedrooms === '3'}
+                onChange={e => setFilters({ ...filters, minBedrooms: e.target.checked ? '3' : '' })}
+              />
+              <span>3+ bedrooms</span>
+            </label>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.minBathrooms === '1'}
+                onChange={e => setFilters({ ...filters, minBathrooms: e.target.checked ? '1' : '' })}
+              />
+              <span>1+ bathrooms</span>
+            </label>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.minBathrooms === '2'}
+                onChange={e => setFilters({ ...filters, minBathrooms: e.target.checked ? '2' : '' })}
+              />
+              <span>2+ bathrooms</span>
+            </label>
+          </div>
+
+          <div style={styles.sidebarSection}>
+            <h4 style={styles.sidebarSectionTitle}>Yield</h4>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.yield20Plus}
+                onChange={e => setFilters({ ...filters, yield20Plus: e.target.checked })}
+              />
+              <span>20% or more</span>
+            </label>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.yield30Plus}
+                onChange={e => setFilters({ ...filters, yield30Plus: e.target.checked })}
+              />
+              <span>30% or more</span>
             </label>
           </div>
         </aside>
@@ -239,10 +339,20 @@ export default function InvestmentsPage() {
       {/* Grid */}
       {filtered.length === 0 ? (
         <div style={styles.empty}>
-          <span style={{ fontSize: 48 }}>💰</span>
           <p>No opportunities match your criteria</p>
           <button
-            onClick={() => setFilters({ type: 'all', tenure: 'all', location: '', legal: false, management: false })}
+            onClick={() => setFilters({ 
+              type: 'all', 
+              tenure: 'all', 
+              location: '', 
+              pool: false,
+              garden: false,
+              furnished: false,
+              minBedrooms: '',
+              minBathrooms: '',
+              yield20Plus: false,
+              yield30Plus: false,
+            })}
             style={styles.resetBtn}
           >
             Reset filters
@@ -302,16 +412,6 @@ export default function InvestmentsPage() {
                     📈 {item.expectedYield}% estimated yield
                   </div>
                 )}
-
-                {/* Badges */}
-                <div style={styles.badges}>
-                  {item.legalChecked && (
-                    <span style={styles.badge}>✅ Verified</span>
-                  )}
-                  {item.managementAvailable && (
-                    <span style={styles.badge}>🏢 Management available</span>
-                  )}
-                </div>
               </div>
               </Link>
             ))}

@@ -170,7 +170,7 @@ export default function RentalsPage() {
                 checked={filters.pool}
                 onChange={e => setFilters({ ...filters, pool: e.target.checked })}
               />
-              <span>🏊 Pool</span>
+              <span>Pool</span>
             </label>
             <label style={styles.sidebarCheckbox}>
               <input
@@ -178,7 +178,7 @@ export default function RentalsPage() {
                 checked={filters.garden}
                 onChange={e => setFilters({ ...filters, garden: e.target.checked })}
               />
-              <span>🌳 Garden</span>
+              <span>Garden</span>
             </label>
             <label style={styles.sidebarCheckbox}>
               <input
@@ -186,7 +186,7 @@ export default function RentalsPage() {
                 checked={filters.aircon}
                 onChange={e => setFilters({ ...filters, aircon: e.target.checked })}
               />
-              <span>❄️ Air conditioning</span>
+              <span>Air conditioning</span>
             </label>
             <label style={styles.sidebarCheckbox}>
               <input
@@ -194,7 +194,7 @@ export default function RentalsPage() {
                 checked={filters.furnished}
                 onChange={e => setFilters({ ...filters, furnished: e.target.checked })}
               />
-              <span>🛋️ Furnished</span>
+              <span>Furnished</span>
             </label>
             <label style={styles.sidebarCheckbox}>
               <input
@@ -202,7 +202,7 @@ export default function RentalsPage() {
                 checked={filters.wifi}
                 onChange={e => setFilters({ ...filters, wifi: e.target.checked })}
               />
-              <span>📶 WiFi</span>
+              <span>WiFi</span>
             </label>
             <label style={styles.sidebarCheckbox}>
               <input
@@ -210,7 +210,7 @@ export default function RentalsPage() {
                 checked={filters.parking}
                 onChange={e => setFilters({ ...filters, parking: e.target.checked })}
               />
-              <span>🚗 Parking</span>
+              <span>Parking</span>
             </label>
           </div>
         </aside>
@@ -265,7 +265,7 @@ export default function RentalsPage() {
             </div>
 
             <button style={styles.searchBtn} type="button">
-              🔍 Search
+              Search
             </button>
           </section>
 
@@ -277,7 +277,6 @@ export default function RentalsPage() {
           {/* Property Grid */}
           {filtered.length === 0 ? (
             <div style={styles.empty}>
-              <span style={{ fontSize: 48 }}>🏠</span>
               <p>No properties match your criteria</p>
               <button
                 onClick={() => setFilters({ 
@@ -314,7 +313,6 @@ export default function RentalsPage() {
                   />
                 ) : (
                   <div style={styles.noImage}>
-                    <span style={{ fontSize: 40 }}>🏠</span>
                   </div>
                 )}
 
@@ -326,7 +324,7 @@ export default function RentalsPage() {
                 {/* Image count */}
                 {(rental.properties?.images?.length || 0) > 1 && (
                   <div style={styles.imageCount}>
-                    📷 {rental.properties?.images?.length}
+                    {rental.properties?.images?.length} photos
                   </div>
                 )}
               </div>
@@ -334,20 +332,20 @@ export default function RentalsPage() {
               {/* Content */}
               <div style={styles.cardContent}>
                 <h3 style={styles.cardTitle}>{rental.properties?.title || 'Villa'}</h3>
-                <p style={styles.location}>📍 {rental.properties?.location || 'Lombok'}</p>
+                <p style={styles.location}>{rental.properties?.location || 'Lombok'}</p>
 
                 {/* Features */}
                 <div style={styles.features}>
                   {rental.properties?.bedrooms && (
-                    <span style={styles.feature}>🛏️ {rental.properties.bedrooms}</span>
+                    <span style={styles.feature}>{rental.properties.bedrooms} bed{rental.properties.bedrooms !== 1 ? 's' : ''}</span>
                   )}
                   {rental.properties?.bathrooms && (
-                    <span style={styles.feature}>🚿 {rental.properties.bathrooms}</span>
+                    <span style={styles.feature}>{rental.properties.bathrooms} bath{rental.properties.bathrooms !== 1 ? 's' : ''}</span>
                   )}
-                  {rental.properties?.pool && <span style={styles.feature}>🏊</span>}
-                  {rental.properties?.garden && <span style={styles.feature}>🌳</span>}
-                  {rental.properties?.wifi && <span style={styles.feature}>📶</span>}
-                  {rental.properties?.aircon && <span style={styles.feature}>❄️</span>}
+                  {rental.properties?.pool && <span style={styles.feature}>Pool</span>}
+                  {rental.properties?.garden && <span style={styles.feature}>Garden</span>}
+                  {rental.properties?.wifi && <span style={styles.feature}>WiFi</span>}
+                  {rental.properties?.aircon && <span style={styles.feature}>AC</span>}
                 </div>
 
                 {/* Price */}
