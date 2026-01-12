@@ -34,6 +34,7 @@ export default function NewInvestmentPage() {
   const [expectedYield, setExpectedYield] = useState('');
   const [legalChecked, setLegalChecked] = useState(false);
   const [managementAvailable, setManagementAvailable] = useState(true);
+  const [status, setStatus] = useState<PropertyStatus>('draft');
 
   // Images
   const [images, setImages] = useState<File[]>([]);

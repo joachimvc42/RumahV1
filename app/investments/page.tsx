@@ -25,6 +25,7 @@ type Filters = {
   tenure: 'all' | 'freehold' | 'leasehold';
   location: string;
   legal: boolean;
+  management: boolean;
 };
 
 function fmtPrice(price: number, currency: string, isLand: boolean) {
@@ -241,7 +242,7 @@ export default function InvestmentsPage() {
           <span style={{ fontSize: 48 }}>💰</span>
           <p>No opportunities match your criteria</p>
           <button
-            onClick={() => setFilters({ type: 'all', tenure: 'all', location: '', legal: false })}
+            onClick={() => setFilters({ type: 'all', tenure: 'all', location: '', legal: false, management: false })}
             style={styles.resetBtn}
           >
             Reset filters

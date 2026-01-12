@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../../lib/supabaseClient';
+import { normalizeStatus, type PropertyStatus } from '../../../../lib/statusUtils';
 
 export default function EditInvestmentPage() {
   const { id } = useParams<{ id: string }>();
