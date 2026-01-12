@@ -43,6 +43,7 @@ export default function InvestmentsPage() {
     tenure: 'all',
     location: '',
     legal: false,
+    management: false,
   });
 
   useEffect(() => {
@@ -93,7 +94,8 @@ export default function InvestmentsPage() {
 
         if (inv.asset_type === 'land') {
           const land = lands?.find(l => l.id === inv.asset_id);
-          if (land) {
+          // Only include published lands
+          if (land && land.status === 'published') {
             merged.push({
               id: inv.id,
               type: 'land',
@@ -153,57 +155,80 @@ export default function InvestmentsPage() {
         </p>
       </section>
 
-      {/* Filters */}
-      <section style={styles.filters}>
-        <div style={styles.filterGroup}>
-          <label style={styles.filterLabel}>Asset type</label>
-          <select
-            style={styles.filterSelect}
-            value={filters.type}
-            onChange={e => setFilters({ ...filters, type: e.target.value as any })}
-          >
-            <option value="all">All</option>
-            <option value="villa">🏠 Villas</option>
-            <option value="land">🌴 Land</option>
-          </select>
-        </div>
+      <div style={styles.layout}>
+        {/* Sidebar Filters */}
+        <aside style={styles.sidebar}>
+          <h3 style={styles.sidebarTitle}>Filters</h3>
+          
+          <div style={styles.sidebarSection}>
+            <h4 style={styles.sidebarSectionTitle}>Verification</h4>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.legal}
+                onChange={e => setFilters({ ...filters, legal: e.target.checked })}
+              />
+              <span>✅ Legally verified</span>
+            </label>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.management}
+                onChange={e => setFilters({ ...filters, management: e.target.checked })}
+              />
+              <span>🏢 Management available</span>
+            </label>
+          </div>
+        </aside>
 
-        <div style={styles.filterGroup}>
-          <label style={styles.filterLabel}>Property type</label>
-          <select
-            style={styles.filterSelect}
-            value={filters.tenure}
-            onChange={e => setFilters({ ...filters, tenure: e.target.value as any })}
-          >
-            <option value="all">All</option>
-            <option value="freehold">🔑 Freehold</option>
-            <option value="leasehold">📋 Leasehold</option>
-          </select>
-        </div>
+        {/* Main Content */}
+        <div style={styles.mainContent}>
+          {/* Search Bar */}
+          <section style={styles.filters}>
+            <div style={styles.filterGroup}>
+              <label style={styles.filterLabel}>Asset type</label>
+              <select
+                style={styles.filterSelect}
+                value={filters.type}
+                onChange={e => setFilters({ ...filters, type: e.target.value as any })}
+              >
+                <option value="all">All</option>
+                <option value="villa">🏠 Villas</option>
+                <option value="land">🌴 Land</option>
+              </select>
+            </div>
 
-        <div style={styles.filterGroup}>
-          <label style={styles.filterLabel}>Location</label>
-          <select
-            style={styles.filterSelect}
-            value={filters.location}
-            onChange={e => setFilters({ ...filters, location: e.target.value })}
-          >
-            <option value="">All areas</option>
-            {locations.map(loc => (
-              <option key={loc} value={loc}>{loc}</option>
-            ))}
-          </select>
-        </div>
+            <div style={styles.filterGroup}>
+              <label style={styles.filterLabel}>Property type</label>
+              <select
+                style={styles.filterSelect}
+                value={filters.tenure}
+                onChange={e => setFilters({ ...filters, tenure: e.target.value as any })}
+              >
+                <option value="all">All</option>
+                <option value="freehold">🔑 Freehold</option>
+                <option value="leasehold">📋 Leasehold</option>
+              </select>
+            </div>
 
-        <label style={styles.filterCheckbox}>
-          <input
-            type="checkbox"
-            checked={filters.legal}
-            onChange={e => setFilters({ ...filters, legal: e.target.checked })}
-          />
-          <span>✅ Legally verified</span>
-        </label>
-      </section>
+            <div style={styles.filterGroup}>
+              <label style={styles.filterLabel}>Location</label>
+              <select
+                style={styles.filterSelect}
+                value={filters.location}
+                onChange={e => setFilters({ ...filters, location: e.target.value })}
+              >
+                <option value="">All areas</option>
+                {locations.map(loc => (
+                  <option key={loc} value={loc}>{loc}</option>
+                ))}
+              </select>
+            </div>
+
+            <button style={styles.searchBtn} type="button">
+              🔍 Search
+            </button>
+          </section>
 
       {/* Results count */}
       <p style={styles.resultCount}>
@@ -287,19 +312,61 @@ export default function InvestmentsPage() {
                   )}
                 </div>
               </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </main>
   );
 }
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
-    maxWidth: 1200,
+    maxWidth: 1400,
     margin: '0 auto',
     padding: '0 24px 60px',
+  },
+  layout: {
+    display: 'flex',
+    gap: 24,
+    alignItems: 'flex-start',
+  },
+  sidebar: {
+    width: 240,
+    padding: 20,
+    background: '#fffbeb',
+    borderRadius: 16,
+    border: '1px solid #fde68a',
+    position: 'sticky',
+    top: 20,
+  },
+  sidebarTitle: {
+    fontSize: 18,
+    fontWeight: 700,
+    color: '#111827',
+    margin: 0,
+    marginBottom: 20,
+  },
+  sidebarSection: {
+    marginBottom: 24,
+  },
+  sidebarSectionTitle: {
+    fontSize: 14,
+    fontWeight: 600,
+    color: '#92400e',
+    margin: 0,
+    marginBottom: 12,
+  },
+  sidebarCheckbox: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    padding: '10px 0',
+    cursor: 'pointer',
+    fontSize: 14,
+    color: '#374151',
   },
   loading: {
     display: 'flex',
@@ -364,17 +431,19 @@ const styles: { [key: string]: React.CSSProperties } = {
     background: '#fff',
     cursor: 'pointer',
   },
-  filterCheckbox: {
+  searchBtn: {
+    padding: '12px 24px',
+    background: 'linear-gradient(135deg, #2563eb, #059669)',
+    color: '#fff',
+    border: 'none',
+    borderRadius: 10,
+    fontSize: 15,
+    fontWeight: 700,
+    cursor: 'pointer',
+    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
     display: 'flex',
     alignItems: 'center',
     gap: 8,
-    padding: '12px 16px',
-    background: '#fff',
-    borderRadius: 10,
-    cursor: 'pointer',
-    fontSize: 14,
-    fontWeight: 500,
-    border: '2px solid #fde68a',
   },
   resultCount: {
     color: '#6b7280',

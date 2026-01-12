@@ -21,6 +21,7 @@ type PropertyData = {
   wifi: boolean;
   parking: boolean;
   images: string[] | null;
+  status?: 'draft' | 'published' | 'paused';
 };
 
 type RentalData = {
@@ -98,6 +99,21 @@ export default function RentalDetailPage() {
     );
   }
 
+  // Check if property is published
+  if (rental.properties.status !== 'published') {
+    return (
+      <main style={styles.container}>
+        <div style={styles.notFound}>
+          <h1>Property not available</h1>
+          <p>This property is not currently available for viewing.</p>
+          <Link href="/rentals" style={styles.backBtn}>
+            ← Back to rentals
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   const p = rental.properties;
   const images = p.images || [];
 
@@ -108,7 +124,7 @@ export default function RentalDetailPage() {
     <main style={styles.container}>
       {/* Back link */}
       <Link href="/rentals" style={styles.backLink}>
-        ← Retour aux locations
+        ← Back to rentals
       </Link>
 
       <div style={styles.layout}>

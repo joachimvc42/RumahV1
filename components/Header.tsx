@@ -67,17 +67,17 @@ export default function Header() {
           </Link>
 
           <Link
-            href={isAdmin ? '/admin/investments/new' : '/investments'}
+            href={isAdmin ? '/admin/investments' : '/investments'}
             className={
               isAdmin
-                ? (pathname === '/admin/investments/new' ? 'nav-link is-active' : 'nav-link')
+                ? (pathname === '/admin/investments' || pathname.startsWith('/admin/investments/') ? 'nav-link is-active' : 'nav-link')
                 : (isActive('/investments') || isActive('/land') || isActive('/villa')
                     ? 'nav-link is-active'
                     : 'nav-link')
             }
             onClick={closeMenu}
           >
-            {isAdmin ? 'Investments New' : 'Investments'}
+            {isAdmin ? 'Investment' : 'Investments'}
           </Link>
 
           {!isAdmin && (

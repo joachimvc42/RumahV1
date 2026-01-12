@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabaseClient';
+import { normalizeStatus } from '../../../../lib/statusUtils';
 
 export default function EditRentalPage() {
   const { id } = useParams<{ id: string }>();
@@ -27,6 +28,7 @@ export default function EditRentalPage() {
   const [aircon, setAircon] = useState(true);
   const [wifi, setWifi] = useState(true);
   const [parking, setParking] = useState(false);
+  const [status, setStatus] = useState<'draft' | 'published' | 'paused'>('draft');
 
   // Rental fields
   const [monthlyPrice, setMonthlyPrice] = useState('');
@@ -85,6 +87,7 @@ export default function EditRentalPage() {
         setWifi(p.wifi ?? true);
         setParking(p.parking || false);
         setExistingImages(p.images || []);
+        setStatus((p.status as 'draft' | 'published' | 'paused') || 'draft');
       }
 
       setLoading(false);
@@ -175,6 +178,7 @@ export default function EditRentalPage() {
           wifi,
           parking,
           images: allImages,
+          status: normalizeStatus(status),
         })
         .eq('id', propertyId);
 
@@ -317,7 +321,7 @@ export default function EditRentalPage() {
             </label>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={aircon} onChange={e => setAircon(e.target.checked)} />
-              <span>❄️ Climatisation</span>
+              <span>❄️ Air conditioning</span>
             </label>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={wifi} onChange={e => setWifi(e.target.checked)} />
@@ -347,12 +351,13 @@ export default function EditRentalPage() {
             </div>
 
             <div style={styles.field}>
-              <label style={styles.label}>Mois d'avance requis</label>
+              <label style={styles.label}>Upfront months required</label>
               <input
                 style={styles.input}
                 type="number"
                 value={upfrontMonths}
                 onChange={e => setUpfrontMonths(e.target.value)}
+                min="0"
               />
             </div>
           </div>
@@ -387,6 +392,20 @@ export default function EditRentalPage() {
                 onChange={e => setAvailableFrom(e.target.value)}
               />
             </div>
+          </div>
+
+          <div style={styles.field}>
+            <label style={styles.label}>Status *</label>
+            <select
+              style={styles.input}
+              value={status}
+              onChange={e => setStatus(e.target.value as 'draft' | 'published' | 'paused')}
+              required
+            >
+              <option value="draft">Draft (not visible to public)</option>
+              <option value="published">Published (visible to public)</option>
+              <option value="paused">Paused (not visible to public)</option>
+            </select>
           </div>
 
           <label style={styles.checkbox}>
@@ -549,7 +568,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   grid4: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
+    gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
     gap: 16,
   },
   field: {

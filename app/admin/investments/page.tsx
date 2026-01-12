@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabaseClient';
+import { getStatusLabel, getStatusColor, normalizeStatus, type PropertyStatus } from '../../../lib/statusUtils';
 
 type InvestmentRow = {
   id: string;
@@ -20,6 +21,7 @@ type InvestmentRow = {
   tenure?: string;
   lease_years?: number;
   images?: string[];
+  status?: string | null;
 };
 
 function fmtPrice(price: number, currency: string) {
@@ -54,10 +56,10 @@ export default function AdminInvestmentsPage() {
 
       const [{ data: properties }, { data: lands }] = await Promise.all([
         propertyIds.length
-          ? supabase.from('properties').select('id,title,location,price,currency,tenure,lease_years,images').in('id', propertyIds)
+          ? supabase.from('properties').select('id,title,location,price,currency,tenure,lease_years,images,status').in('id', propertyIds)
           : Promise.resolve({ data: [] }),
         landIds.length
-          ? supabase.from('lands').select('id,title,location,price_per_are,currency,tenure,lease_years,images').in('id', landIds)
+          ? supabase.from('lands').select('id,title,location,price_per_are,currency,tenure,lease_years,images,status').in('id', landIds)
           : Promise.resolve({ data: [] }),
       ]);
 
@@ -73,6 +75,7 @@ export default function AdminInvestmentsPage() {
             tenure: prop?.tenure,
             lease_years: prop?.lease_years,
             images: prop?.images,
+            status: prop?.status,
           };
         } else {
           const land = lands?.find(l => l.id === inv.asset_id);
@@ -85,6 +88,7 @@ export default function AdminInvestmentsPage() {
             tenure: land?.tenure,
             lease_years: land?.lease_years,
             images: land?.images,
+            status: land?.status,
           };
         }
       });
@@ -97,12 +101,20 @@ export default function AdminInvestmentsPage() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this investment?')) return;
+    if (!confirm('Delete this investment? This action is irreversible.')) return;
     
     setDeleting(id);
-    await supabase.from('investments').delete().eq('id', id);
-    setInvestments(prev => prev.filter(i => i.id !== id));
-    setDeleting(null);
+    setError(null);
+    
+    const { error } = await supabase.from('investments').delete().eq('id', id);
+    
+    if (error) {
+      setError(`Failed to delete investment: ${error.message}`);
+      setDeleting(null);
+    } else {
+      setInvestments(prev => prev.filter(i => i.id !== id));
+      setDeleting(null);
+    }
   };
 
   if (loading) {
@@ -114,8 +126,8 @@ export default function AdminInvestmentsPage() {
       {/* Header */}
       <div style={styles.header}>
         <div>
-          <h1 style={styles.title}>Investments</h1>
-          <p style={styles.subtitle}>{investments.length} opportunit{investments.length !== 1 ? 'ies' : 'y'} registered</p>
+          <h1 style={styles.title}>Investment Portfolio</h1>
+          <p style={styles.subtitle}>{investments.length} investment{investments.length !== 1 ? 's' : ''} registered</p>
         </div>
         <Link href="/admin/investments/new" style={styles.btnAdd}>
           + Add investment
@@ -152,10 +164,21 @@ export default function AdminInvestmentsPage() {
                   </div>
                 )}
                 
+                {/* Status badge */}
+                {inv.status && (
+                  <div style={{
+                    ...styles.statusBadge,
+                    background: getStatusColor(normalizeStatus(inv.status)),
+                  }}>
+                    {getStatusLabel(inv.status)}
+                  </div>
+                )}
+
                 {/* Type badge */}
                 <div style={{
                   ...styles.typeBadge,
                   background: inv.asset_type === 'property' ? '#8b5cf6' : '#059669',
+                  top: inv.status ? 48 : 12,
                 }}>
                   {inv.asset_type === 'property' ? 'Villa' : 'Land'}
                 </div>
@@ -198,8 +221,8 @@ export default function AdminInvestmentsPage() {
 
                 {/* Status */}
                 <div style={styles.statusRow}>
-                  {inv.legal_checked && <span style={styles.statusBadge}>✅ Verified</span>}
-                  {inv.management_available && <span style={styles.statusBadge}>🏢 Management</span>}
+                  {inv.legal_checked && <span style={styles.statusTextBadge}>✅ Verified</span>}
+                  {inv.management_available && <span style={styles.statusTextBadge}>🏢 Management</span>}
                 </div>
 
                 {/* Actions */}
@@ -313,6 +336,16 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: '#9ca3af',
     fontSize: 14,
   },
+  statusBadge: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    padding: '6px 12px',
+    borderRadius: 20,
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 700,
+  },
   typeBadge: {
     position: 'absolute',
     top: 12,
@@ -391,7 +424,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: 16,
     flexWrap: 'wrap',
   },
-  statusBadge: {
+  statusTextBadge: {
     padding: '4px 10px',
     background: '#f3f4f6',
     borderRadius: 6,

@@ -23,7 +23,9 @@ type RentalRow = {
     furnished: boolean;
     aircon: boolean;
     wifi: boolean;
+    parking: boolean;
     images: string[] | null;
+    status?: 'draft' | 'published' | 'paused';
   } | null;
 };
 
@@ -32,6 +34,11 @@ type Filters = {
   minBeds: string;
   maxPrice: string;
   pool: boolean;
+  garden: boolean;
+  aircon: boolean;
+  furnished: boolean;
+  wifi: boolean;
+  parking: boolean;
 };
 
 function fmtIDR(v: number) {
@@ -46,6 +53,11 @@ export default function RentalsPage() {
     minBeds: '',
     maxPrice: '',
     pool: false,
+    garden: false,
+    aircon: false,
+    furnished: false,
+    wifi: false,
+    parking: false,
   });
 
   useEffect(() => {
@@ -71,7 +83,9 @@ export default function RentalsPage() {
             furnished,
             aircon,
             wifi,
-            images
+            parking,
+            images,
+            status
           )
         `)
         .order('created_at', { ascending: false });
@@ -85,6 +99,10 @@ export default function RentalsPage() {
 
   // Filter rentals
   const filtered = rentals.filter(r => {
+    // Only show published properties
+    if (r.properties?.status !== 'published') {
+      return false;
+    }
     if (filters.location && !r.properties?.location?.toLowerCase().includes(filters.location.toLowerCase())) {
       return false;
     }
@@ -95,6 +113,21 @@ export default function RentalsPage() {
       return false;
     }
     if (filters.pool && !r.properties?.pool) {
+      return false;
+    }
+    if (filters.garden && !r.properties?.garden) {
+      return false;
+    }
+    if (filters.aircon && !r.properties?.aircon) {
+      return false;
+    }
+    if (filters.furnished && !r.properties?.furnished) {
+      return false;
+    }
+    if (filters.wifi && !r.properties?.wifi) {
+      return false;
+    }
+    if (filters.parking && !r.properties?.parking) {
       return false;
     }
     return true;
@@ -124,83 +157,148 @@ export default function RentalsPage() {
         </p>
       </section>
 
-      {/* Filters */}
-      <section style={styles.filters}>
-        <div style={styles.filterGroup}>
-          <label style={styles.filterLabel}>Location</label>
-          <select
-            style={styles.filterSelect}
-            value={filters.location}
-            onChange={e => setFilters({ ...filters, location: e.target.value })}
-          >
-            <option value="">All areas</option>
-            {locations.map(loc => (
-              <option key={loc} value={loc!}>{loc}</option>
-            ))}
-          </select>
-        </div>
+      <div style={styles.layout}>
+        {/* Sidebar Filters */}
+        <aside style={styles.sidebar}>
+          <h3 style={styles.sidebarTitle}>Filters</h3>
+          
+          <div style={styles.sidebarSection}>
+            <h4 style={styles.sidebarSectionTitle}>Amenities</h4>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.pool}
+                onChange={e => setFilters({ ...filters, pool: e.target.checked })}
+              />
+              <span>🏊 Pool</span>
+            </label>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.garden}
+                onChange={e => setFilters({ ...filters, garden: e.target.checked })}
+              />
+              <span>🌳 Garden</span>
+            </label>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.aircon}
+                onChange={e => setFilters({ ...filters, aircon: e.target.checked })}
+              />
+              <span>❄️ Air conditioning</span>
+            </label>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.furnished}
+                onChange={e => setFilters({ ...filters, furnished: e.target.checked })}
+              />
+              <span>🛋️ Furnished</span>
+            </label>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.wifi}
+                onChange={e => setFilters({ ...filters, wifi: e.target.checked })}
+              />
+              <span>📶 WiFi</span>
+            </label>
+            <label style={styles.sidebarCheckbox}>
+              <input
+                type="checkbox"
+                checked={filters.parking}
+                onChange={e => setFilters({ ...filters, parking: e.target.checked })}
+              />
+              <span>🚗 Parking</span>
+            </label>
+          </div>
+        </aside>
 
-        <div style={styles.filterGroup}>
-          <label style={styles.filterLabel}>Min bedrooms</label>
-          <select
-            style={styles.filterSelect}
-            value={filters.minBeds}
-            onChange={e => setFilters({ ...filters, minBeds: e.target.value })}
-          >
-            <option value="">All</option>
-            <option value="1">1+</option>
-            <option value="2">2+</option>
-            <option value="3">3+</option>
-            <option value="4">4+</option>
-          </select>
-        </div>
+        {/* Main Content */}
+        <div style={styles.mainContent}>
+          {/* Search Bar */}
+          <section style={styles.filters}>
+            <div style={styles.filterGroup}>
+              <label style={styles.filterLabel}>Location</label>
+              <select
+                style={styles.filterSelect}
+                value={filters.location}
+                onChange={e => setFilters({ ...filters, location: e.target.value })}
+              >
+                <option value="">All areas</option>
+                {locations.map(loc => (
+                  <option key={loc} value={loc!}>{loc}</option>
+                ))}
+              </select>
+            </div>
 
-        <div style={styles.filterGroup}>
-          <label style={styles.filterLabel}>Max budget (IDR/month)</label>
-          <select
-            style={styles.filterSelect}
-            value={filters.maxPrice}
-            onChange={e => setFilters({ ...filters, maxPrice: e.target.value })}
-          >
-            <option value="">All budgets</option>
-            <option value="15000000">15 Mio</option>
-            <option value="25000000">25 Mio</option>
-            <option value="35000000">35 Mio</option>
-            <option value="50000000">50 Mio</option>
-            <option value="75000000">75 Mio</option>
-          </select>
-        </div>
+            <div style={styles.filterGroup}>
+              <label style={styles.filterLabel}>Min bedrooms</label>
+              <select
+                style={styles.filterSelect}
+                value={filters.minBeds}
+                onChange={e => setFilters({ ...filters, minBeds: e.target.value })}
+              >
+                <option value="">All</option>
+                <option value="1">1+</option>
+                <option value="2">2+</option>
+                <option value="3">3+</option>
+                <option value="4">4+</option>
+              </select>
+            </div>
 
-        <label style={styles.filterCheckbox}>
-          <input
-            type="checkbox"
-            checked={filters.pool}
-            onChange={e => setFilters({ ...filters, pool: e.target.checked })}
-          />
-          <span>🏊 Pool</span>
-        </label>
-      </section>
+            <div style={styles.filterGroup}>
+              <label style={styles.filterLabel}>Max budget (IDR/month)</label>
+              <select
+                style={styles.filterSelect}
+                value={filters.maxPrice}
+                onChange={e => setFilters({ ...filters, maxPrice: e.target.value })}
+              >
+                <option value="">All budgets</option>
+                <option value="15000000">15 Mio</option>
+                <option value="25000000">25 Mio</option>
+                <option value="35000000">35 Mio</option>
+                <option value="50000000">50 Mio</option>
+                <option value="75000000">75 Mio</option>
+              </select>
+            </div>
 
-      {/* Results count */}
-      <p style={styles.resultCount}>
-        {filtered.length} propert{filtered.length !== 1 ? 'ies' : 'y'} available
-      </p>
+            <button style={styles.searchBtn} type="button">
+              🔍 Search
+            </button>
+          </section>
 
-      {/* Property Grid */}
-      {filtered.length === 0 ? (
-        <div style={styles.empty}>
-          <span style={{ fontSize: 48 }}>🏠</span>
-          <p>No properties match your criteria</p>
-          <button
-            onClick={() => setFilters({ location: '', minBeds: '', maxPrice: '', pool: false })}
-            style={styles.resetBtn}
-          >
-            Reset filters
-          </button>
-        </div>
-      ) : (
-        <div style={styles.grid}>
-          {filtered.map(rental => (
+          {/* Results count */}
+          <p style={styles.resultCount}>
+            {filtered.length} propert{filtered.length !== 1 ? 'ies' : 'y'} available
+          </p>
+
+          {/* Property Grid */}
+          {filtered.length === 0 ? (
+            <div style={styles.empty}>
+              <span style={{ fontSize: 48 }}>🏠</span>
+              <p>No properties match your criteria</p>
+              <button
+                onClick={() => setFilters({ 
+                  location: '', 
+                  minBeds: '', 
+                  maxPrice: '', 
+                  pool: false,
+                  garden: false,
+                  aircon: false,
+                  furnished: false,
+                  wifi: false,
+                  parking: false,
+                })}
+                style={styles.resetBtn}
+              >
+                Reset filters
+              </button>
+            </div>
+          ) : (
+            <div style={styles.grid}>
+              {filtered.map(rental => (
             <Link
               key={rental.id}
               href={`/rentals/${rental.properties?.id}`}
@@ -264,19 +362,61 @@ export default function RentalsPage() {
                   {rental.upfront_months > 0 && ` • ${rental.upfront_months} months upfront`}
                 </p>
               </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </main>
   );
 }
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
-    maxWidth: 1200,
+    maxWidth: 1400,
     margin: '0 auto',
     padding: '0 24px 60px',
+  },
+  layout: {
+    display: 'flex',
+    gap: 24,
+    alignItems: 'flex-start',
+  },
+  sidebar: {
+    width: 240,
+    padding: 20,
+    background: '#f9fafb',
+    borderRadius: 16,
+    border: '1px solid #e5e7eb',
+    position: 'sticky',
+    top: 20,
+  },
+  sidebarTitle: {
+    fontSize: 18,
+    fontWeight: 700,
+    color: '#111827',
+    margin: 0,
+    marginBottom: 20,
+  },
+  sidebarSection: {
+    marginBottom: 24,
+  },
+  sidebarSectionTitle: {
+    fontSize: 14,
+    fontWeight: 600,
+    color: '#4b5563',
+    margin: 0,
+    marginBottom: 12,
+  },
+  sidebarCheckbox: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    padding: '10px 0',
+    cursor: 'pointer',
+    fontSize: 14,
+    color: '#374151',
   },
   loading: {
     display: 'flex',
@@ -311,6 +451,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     maxWidth: 500,
     margin: '0 auto',
   },
+  mainContent: {
+    flex: 1,
+    minWidth: 0,
+  },
   filters: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -320,6 +464,20 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: 16,
     marginBottom: 24,
     alignItems: 'flex-end',
+  },
+  searchBtn: {
+    padding: '12px 24px',
+    background: 'linear-gradient(135deg, #2563eb, #059669)',
+    color: '#fff',
+    border: 'none',
+    borderRadius: 10,
+    fontSize: 15,
+    fontWeight: 700,
+    cursor: 'pointer',
+    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
   },
   filterGroup: {
     display: 'flex',
@@ -339,18 +497,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontSize: 14,
     background: '#fff',
     cursor: 'pointer',
-  },
-  filterCheckbox: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    padding: '12px 16px',
-    background: '#fff',
-    borderRadius: 10,
-    cursor: 'pointer',
-    fontSize: 14,
-    fontWeight: 500,
-    border: '2px solid #e5e7eb',
   },
   resultCount: {
     color: '#6b7280',

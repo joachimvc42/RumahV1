@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
+import { getStatusLabel, getStatusColor, normalizeStatus, type PropertyStatus } from '../../lib/statusUtils';
 
 type RentalRow = {
   id: string;
@@ -22,6 +23,7 @@ type RentalRow = {
     pool: boolean;
     garden: boolean;
     images: string[] | null;
+    status?: string | null;
   } | null;
 };
 
@@ -56,7 +58,8 @@ export default function AdminHomePage() {
             bathrooms,
             pool,
             garden,
-            images
+            images,
+            status
           )
         `)
         .order('created_at', { ascending: false });
@@ -137,12 +140,25 @@ export default function AdminHomePage() {
                 )}
                 
                 {/* Status badge */}
-                <div style={{
-                  ...styles.badge,
-                  background: rental.legal_checked ? '#059669' : '#f59e0b',
-                }}>
-                  {rental.legal_checked ? '✓ Verified' : '⏳ Pending'}
-                </div>
+                {rental.properties?.status && (
+                  <div style={{
+                    ...styles.badge,
+                    background: getStatusColor(normalizeStatus(rental.properties.status)),
+                  }}>
+                    {getStatusLabel(rental.properties.status)}
+                  </div>
+                )}
+                
+                {/* Legal verification badge */}
+                {rental.legal_checked && (
+                  <div style={{
+                    ...styles.badge,
+                    background: '#059669',
+                    top: rental.properties?.status ? 48 : 12,
+                  }}>
+                    ✓ Verified
+                  </div>
+                )}
 
                 {/* Image count */}
                 {(rental.properties?.images?.length || 0) > 1 && (

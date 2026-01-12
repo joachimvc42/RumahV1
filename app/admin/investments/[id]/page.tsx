@@ -37,6 +37,7 @@ export default function EditInvestmentPage() {
   const [expectedYield, setExpectedYield] = useState('');
   const [legalChecked, setLegalChecked] = useState(false);
   const [managementAvailable, setManagementAvailable] = useState(true);
+  const [status, setStatus] = useState<PropertyStatus>('draft');
 
   // Images
   const [existingImages, setExistingImages] = useState<string[]>([]);
@@ -201,6 +202,7 @@ export default function EditInvestmentPage() {
             tenure,
             lease_years: tenure === 'leasehold' ? Number(leaseDuration) : null,
             images: allImages,
+            status: normalizeStatus(status),
           })
           .eq('id', investment.asset_id);
       } else {
@@ -216,6 +218,7 @@ export default function EditInvestmentPage() {
             tenure,
             lease_years: tenure === 'leasehold' ? Number(leaseDuration) : null,
             images: allImages,
+            status: normalizeStatus(status),
           })
           .eq('id', investment.asset_id);
       }
@@ -474,6 +477,20 @@ export default function EditInvestmentPage() {
             </div>
           )}
 
+          <div style={styles.field}>
+            <label style={styles.label}>Status *</label>
+            <select
+              style={styles.input}
+              value={status}
+              onChange={e => setStatus(e.target.value as PropertyStatus)}
+              required
+            >
+              <option value="draft">Draft (not visible to public)</option>
+              <option value="published">Published (visible to public)</option>
+              <option value="paused">Paused (not visible to public)</option>
+            </select>
+          </div>
+
           <div style={styles.checkboxRow}>
             <label style={styles.checkbox}>
               <input type="checkbox" checked={legalChecked} onChange={e => setLegalChecked(e.target.checked)} />
@@ -630,6 +647,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: 24,
     boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
     border: '1px solid #e5e7eb',
+    overflow: 'hidden',
   },
   sectionTitle: {
     fontSize: 18,
@@ -654,7 +672,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   grid4: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
+    gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
     gap: 16,
   },
   field: {

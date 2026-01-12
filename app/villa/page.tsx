@@ -18,14 +18,14 @@ export default function VillaPage() {
   useEffect(() => {
     const load = async () => {
       const [{ data: villas }, { data: investments }] = await Promise.all([
-        supabase.from('properties').select('id,title,location,price'),
+        supabase.from('properties').select('id,title,location,price,status').eq('status', 'published'),
         supabase
           .from('investments')
           .select('asset_id')
           .eq('asset_type', 'property'),
       ]);
 
-      setVillas(villas || []);
+      setVillas((villas || []).filter(v => v.status === 'published'));
       setInvestmentIds(new Set(investments?.map((i) => i.asset_id)));
     };
 

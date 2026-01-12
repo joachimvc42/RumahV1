@@ -66,7 +66,8 @@ export default function InvestmentDetailPage() {
           .eq('id', inv.asset_id)
           .single();
 
-        if (prop) {
+        // Only show published properties
+        if (prop && prop.status === 'published') {
           item = {
             id: inv.id,
             type: 'villa',
@@ -97,7 +98,8 @@ export default function InvestmentDetailPage() {
           .eq('id', inv.asset_id)
           .single();
 
-        if (land) {
+        // Only show published lands
+        if (land && land.status === 'published') {
           item = {
             id: inv.id,
             type: 'land',

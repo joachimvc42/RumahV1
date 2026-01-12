@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabaseClient';
+import { normalizeStatus } from '../../../../lib/statusUtils';
 
 export default function NewRentalPage() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function NewRentalPage() {
   const [aircon, setAircon] = useState(true);
   const [wifi, setWifi] = useState(true);
   const [parking, setParking] = useState(false);
+  const [status, setStatus] = useState<'draft' | 'published' | 'paused'>('draft');
 
   // Rental fields
   const [monthlyPrice, setMonthlyPrice] = useState('');
@@ -110,7 +112,7 @@ export default function NewRentalPage() {
           aircon,
           wifi,
           parking,
-          status: 'available',
+          status: normalizeStatus(status),
           property_type: 'rental',
         })
         .select()
@@ -308,6 +310,20 @@ export default function NewRentalPage() {
             </div>
           </div>
 
+          <div style={styles.field}>
+            <label style={styles.label}>Status *</label>
+            <select
+              style={styles.input}
+              value={status}
+              onChange={e => setStatus(e.target.value as 'draft' | 'published' | 'paused')}
+              required
+            >
+              <option value="draft">Draft (not visible to public)</option>
+              <option value="published">Published (visible to public)</option>
+              <option value="paused">Paused (not visible to public)</option>
+            </select>
+          </div>
+
           <div style={styles.grid3}>
             <div style={styles.field}>
               <label style={styles.label}>Min duration (months)</label>
@@ -451,6 +467,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: 24,
     boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
     border: '1px solid #e5e7eb',
+    overflow: 'hidden',
   },
   sectionTitle: {
     fontSize: 18,
@@ -472,7 +489,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   grid4: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
+    gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
     gap: 16,
   },
   field: {
