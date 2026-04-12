@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '../../../../../lib/supabaseClient';
 import { normalizeStatus, type PropertyStatus } from '../../../../../lib/statusUtils';
 import { readFileAsDataURL, type SortableGalleryItem } from '../../../../../lib/galleryUtils';
 import AdminImageGallery from '../../../../../components/admin/AdminImageGallery';
@@ -53,7 +53,7 @@ export default function NewInvestmentPage() {
     const added: SortableGalleryItem[] = [];
     for (const file of files) {
       const previewSrc = await readFileAsDataURL(file);
-      added.push({ id: crypto.randomUUID(), previewSrc, file });
+      added.push({ id: crypto.randomUUID(), previewSrc, file, mediaType: 'image' as const });
     }
     setGalleryItems(prev => [...prev, ...added]);
     e.target.value = '';
