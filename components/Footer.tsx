@@ -9,8 +9,8 @@ export default function Footer() {
           Lombok long-term rentals, land and property management.
         </div>
         <div>
-          WhatsApp: +62 812 3456 7890<br />
-          Email: info@rumahya.com
+          WhatsApp: <a href="https://wa.me/6287873487940" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>+62 878 7348 7940</a><br />
+          Email: <a href="mailto:info@rumahya.com" style={{ color: 'inherit' }}>info@rumahya.com</a>
         </div>
       </div>
       <div className="container" style={{ marginTop: '8px', fontSize: '0.78rem', color: '#9ca3af' }}>
@@ -19,4 +19,3 @@ export default function Footer() {
     </footer>
   );
 }
-

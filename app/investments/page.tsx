@@ -1,687 +1,275 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 
 type InvestmentItem = {
-  id: string;
-  type: 'villa' | 'land';
-  title: string;
-  location: string;
-  price: number;
-  currency: string;
-  tenure: 'freehold' | 'leasehold';
-  leaseYears?: number;
-  expectedYield: number | null;
-  images: string[];
-  href: string;
-  // Property/land specific fields
-  bedrooms?: number | null;
-  bathrooms?: number | null;
-  pool?: boolean;
-  garden?: boolean;
-  furnished?: boolean;
-  landSize?: number | null; // For lands (land_size)
-  builtArea?: number | null; // For properties (built_area)
-  landArea?: number | null; // For properties (land_area)
+  id: string; type: 'villa' | 'land'; title: string; location: string;
+  price: number; currency: string; tenure: 'freehold' | 'leasehold'; leaseYears?: number;
+  expectedYield: number | null; images: string[]; href: string;
+  bedrooms?: number | null; bathrooms?: number | null;
+  pool?: boolean; garden?: boolean; furnished?: boolean;
+  condition?: string; landSize?: string | null;
 };
 
-type Filters = {
+type SearchState = {
   type: 'all' | 'villa' | 'land';
   tenure: 'all' | 'freehold' | 'leasehold';
   location: string;
-  pool: boolean;
-  garden: boolean;
-  furnished: boolean;
-  minBedrooms: string;
-  minBathrooms: string;
-  yield20Plus: boolean;
-  yield30Plus: boolean;
+  searched: boolean;
+};
+
+type SidebarFilters = {
+  pool: boolean; garden: boolean; furnished: boolean;
+  minBedrooms: string; minBathrooms: string;
+  condition: string; // 'ready' | 'to_finish' | 'to_renovate' | ''
 };
 
 function fmtPrice(price: number, currency: string, isLand: boolean) {
-  if (currency === 'USD') {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
-  }
-  const formatted = new Intl.NumberFormat('id-ID').format(price);
-  return isLand ? `${formatted} IDR/are` : `${formatted} IDR`;
+  if (currency === 'USD') return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
+  return new Intl.NumberFormat('id-ID').format(price) + (isLand ? ' IDR/are' : ' IDR');
+}
+
+function InvestmentCard({ item }: { item: InvestmentItem }) {
+  const [imgIdx, setImgIdx] = useState(0);
+  const prev = useCallback((e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setImgIdx(i => (i - 1 + item.images.length) % item.images.length); }, [item.images.length]);
+  const next = useCallback((e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setImgIdx(i => (i + 1) % item.images.length); }, [item.images.length]);
+
+  return (
+    <Link href={item.href} style={s.card}>
+      <div style={s.imageWrap}>
+        {item.images.length > 0
+          ? <img src={item.images[imgIdx]} alt={item.title} style={s.img} />
+          : <div style={s.noImg}>{item.type === 'villa' ? '🏠' : '🌴'}</div>
+        }
+        {item.images.length > 1 && (
+          <>
+            <button onClick={prev} style={{ ...s.arrow, left: 8 }}>‹</button>
+            <button onClick={next} style={{ ...s.arrow, right: 8 }}>›</button>
+            <div style={s.dots}>{item.images.map((_, i) => <div key={i} style={{ ...s.dot, background: i === imgIdx ? '#fff' : 'rgba(255,255,255,0.45)' }} />)}</div>
+          </>
+        )}
+        <div style={{ ...s.typeBadge, background: item.type === 'villa' ? '#8b5cf6' : '#059669' }}>{item.type === 'villa' ? '🏠 Villa' : '🌴 Land'}</div>
+        <div style={{ ...s.tenureBadge, background: item.tenure === 'freehold' ? '#2563eb' : '#f59e0b' }}>
+          {item.tenure === 'freehold' ? '🔑 Freehold' : `📋 Lease ${item.leaseYears}y`}
+        </div>
+        {item.images.length > 1 && <div style={s.imgCount}>📷 {item.images.length}</div>}
+      </div>
+      <div style={s.cardBody}>
+        <h3 style={s.cardTitle}>{item.title}</h3>
+        <p style={s.cardLoc}>📍 {item.location}</p>
+        {item.type === 'villa' && (
+          <div style={s.features}>
+            {item.bedrooms && <span style={s.feat}>{item.bedrooms} bed{item.bedrooms !== 1 ? 's' : ''}</span>}
+            {item.bathrooms && <span style={s.feat}>{item.bathrooms} bath{item.bathrooms !== 1 ? 's' : ''}</span>}
+            {item.pool && <span style={s.feat}>Pool</span>}
+            {item.garden && <span style={s.feat}>Garden</span>}
+          </div>
+        )}
+        <div style={s.priceRow}>
+          <span style={s.price}>{fmtPrice(item.price, item.currency, item.type === 'land')}</span>
+        </div>
+        {item.expectedYield && <div style={s.yieldBadge}>📈 {item.expectedYield}% est. yield</div>}
+      </div>
+    </Link>
+  );
 }
 
 export default function InvestmentsPage() {
   const [items, setItems] = useState<InvestmentItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState<Filters>({
-    type: 'all',
-    tenure: 'all',
-    location: '',
-    pool: false,
-    garden: false,
-    furnished: false,
-    minBedrooms: '',
-    minBathrooms: '',
-    yield20Plus: false,
-    yield30Plus: false,
-  });
+  const [search, setSearch] = useState<SearchState>({ type: 'all', tenure: 'all', location: '', searched: false });
+  const [sidebar, setSidebar] = useState<SidebarFilters>({ pool: false, garden: false, furnished: false, minBedrooms: '', minBathrooms: '', condition: '' });
 
   useEffect(() => {
     const load = async () => {
       const { data: investments } = await supabase.from('investments').select('*');
-
-      if (!investments) {
-        setItems([]);
-        setLoading(false);
-        return;
-      }
+      if (!investments) { setLoading(false); return; }
 
       const propertyIds = investments.filter(i => i.asset_type === 'property').map(i => i.asset_id);
       const landIds = investments.filter(i => i.asset_type === 'land').map(i => i.asset_id);
 
-      const [{ data: properties }, { data: lands }] = await Promise.all([
-        propertyIds.length
-          ? supabase.from('properties').select('*').in('id', propertyIds)
-          : Promise.resolve({ data: [] }),
-        landIds.length
-          ? supabase.from('lands').select('*').in('id', landIds)
-          : Promise.resolve({ data: [] }),
+      const [{ data: props }, { data: lands }] = await Promise.all([
+        propertyIds.length ? supabase.from('properties').select('*').in('id', propertyIds) : Promise.resolve({ data: [] }),
+        landIds.length ? supabase.from('lands').select('*').in('id', landIds) : Promise.resolve({ data: [] }),
       ]);
 
       const merged: InvestmentItem[] = [];
-
       for (const inv of investments) {
         if (inv.asset_type === 'property') {
-          const prop = properties?.find(p => p.id === inv.asset_id);
-          // Only include published properties
+          const prop = props?.find(p => p.id === inv.asset_id);
           if (prop && prop.status === 'published') {
-            merged.push({
-              id: inv.id,
-              type: 'villa',
-              title: prop.title,
-              location: prop.location || 'Lombok',
-              price: prop.price || 0,
-              currency: prop.currency || 'USD',
-              tenure: prop.tenure || 'freehold',
-              leaseYears: prop.lease_years,
-              expectedYield: inv.expected_yield,
-              images: prop.images || [],
-              href: `/investments/${inv.id}`,
-              bedrooms: prop.bedrooms,
-              bathrooms: prop.bathrooms,
-              pool: prop.pool,
-              garden: prop.garden,
-              furnished: prop.furnished,
-              builtArea: prop.built_area,
-              landArea: prop.land_area,
-            });
+            merged.push({ id: inv.id, type: 'villa', title: prop.title, location: prop.location || 'Lombok', price: prop.price || 0, currency: prop.currency || 'USD', tenure: prop.tenure || 'freehold', leaseYears: prop.lease_years, expectedYield: inv.expected_yield, images: prop.images || [], href: `/investments/${inv.id}`, bedrooms: prop.bedrooms, bathrooms: prop.bathrooms, pool: prop.pool, garden: prop.garden, furnished: prop.furnished, condition: prop.condition });
           }
         }
-
         if (inv.asset_type === 'land') {
           const land = lands?.find(l => l.id === inv.asset_id);
-          // Only include published lands
           if (land && land.status === 'published') {
-            merged.push({
-              id: inv.id,
-              type: 'land',
-              title: land.title,
-              location: land.location || 'Lombok',
-              price: land.price_per_are || 0,
-              currency: land.currency || 'IDR',
-              tenure: land.tenure || 'freehold',
-              leaseYears: land.lease_years,
-              expectedYield: inv.expected_yield,
-              images: land.images || [],
-              href: `/investments/${inv.id}`,
-              landSize: land.land_size,
-            });
+            merged.push({ id: inv.id, type: 'land', title: land.title, location: land.location || 'Lombok', price: land.price_per_are_idr ?? land.price_per_are ?? 0, currency: land.currency || 'IDR', tenure: land.tenure || 'freehold', leaseYears: land.lease_years, expectedYield: inv.expected_yield, images: land.images || [], href: `/investments/${inv.id}`, landSize: land.land_size, condition: land.condition });
           }
         }
       }
-
       setItems(merged);
       setLoading(false);
     };
-
     load();
   }, []);
 
-  // Filter items
-  const filtered = items.filter(item => {
-    if (filters.type !== 'all' && item.type !== filters.type) return false;
-    if (filters.tenure !== 'all' && item.tenure !== filters.tenure) return false;
-    if (filters.location && !item.location.toLowerCase().includes(filters.location.toLowerCase())) return false;
-    if (filters.pool && !item.pool) return false;
-    if (filters.garden && !item.garden) return false;
-    if (filters.furnished && !item.furnished) return false;
-    if (filters.minBedrooms && (item.bedrooms || 0) < Number(filters.minBedrooms)) return false;
-    if (filters.minBathrooms && (item.bathrooms || 0) < Number(filters.minBathrooms)) return false;
-    if (filters.yield20Plus && (!item.expectedYield || item.expectedYield < 20)) return false;
-    if (filters.yield30Plus && (!item.expectedYield || item.expectedYield < 30)) return false;
+  const locations = [...new Set(items.map(i => i.location))].sort();
+
+  // Apply search bar filters
+  const afterSearch = items.filter(item => {
+    if (search.type !== 'all' && item.type !== search.type) return false;
+    if (search.tenure !== 'all' && item.tenure !== search.tenure) return false;
+    if (search.location && item.location !== search.location) return false;
     return true;
   });
 
-  // Get unique locations
-  const locations = [...new Set(items.map(i => i.location))];
+  // Apply sidebar filters (only if searched)
+  const filtered = !search.searched ? afterSearch : afterSearch.filter(item => {
+    if (sidebar.pool && !item.pool) return false;
+    if (sidebar.garden && !item.garden) return false;
+    if (sidebar.furnished && !item.furnished) return false;
+    if (sidebar.minBedrooms && (item.bedrooms || 0) < Number(sidebar.minBedrooms)) return false;
+    if (sidebar.minBathrooms && (item.bathrooms || 0) < Number(sidebar.minBathrooms)) return false;
+    if (sidebar.condition && item.condition !== sidebar.condition) return false;
+    return true;
+  });
 
-  if (loading) {
-    return (
-      <main style={styles.container}>
-        <div style={styles.loading}>
-          <div style={styles.spinner} />
-          <p>Loading opportunities...</p>
-        </div>
-      </main>
-    );
-  }
+  const handleSearch = () => setSearch(s => ({ ...s, searched: true }));
+
+  const isVilla = search.type === 'villa' || (search.type === 'all' && afterSearch.some(i => i.type === 'villa'));
+  const isLand = search.type === 'land' || (search.type === 'all' && afterSearch.some(i => i.type === 'land'));
+
+  if (loading) return <main style={s.page}><div style={s.loading}><div style={s.spinner} /><p>Loading opportunities…</p></div></main>;
 
   return (
-    <main style={styles.container}>
-      {/* Hero */}
-      <section style={styles.hero}>
-        <h1 style={styles.heroTitle}>Invest in Lombok</h1>
-        <p style={styles.heroSubtitle}>
-          Selected villas and land for investment
-        </p>
+    <main style={s.page}>
+      <section style={s.hero}>
+        <h1 style={s.heroTitle}>Invest in Lombok</h1>
+        <p style={s.heroSub}>Selected villas and land — curated for serious investors</p>
       </section>
 
-      <div style={styles.layout}>
-        {/* Sidebar Filters */}
-        <aside style={styles.sidebar}>
-          <h3 style={styles.sidebarTitle}>Filters</h3>
-          
-          <div style={styles.sidebarSection}>
-            <h4 style={styles.sidebarSectionTitle}>Amenities</h4>
-            <label style={styles.sidebarCheckbox}>
-              <input
-                type="checkbox"
-                checked={filters.pool}
-                onChange={e => setFilters({ ...filters, pool: e.target.checked })}
-              />
-              <span>Pool</span>
-            </label>
-            <label style={styles.sidebarCheckbox}>
-              <input
-                type="checkbox"
-                checked={filters.garden}
-                onChange={e => setFilters({ ...filters, garden: e.target.checked })}
-              />
-              <span>Garden</span>
-            </label>
-            <label style={styles.sidebarCheckbox}>
-              <input
-                type="checkbox"
-                checked={filters.furnished}
-                onChange={e => setFilters({ ...filters, furnished: e.target.checked })}
-              />
-              <span>Furnished</span>
-            </label>
-          </div>
-
-          <div style={styles.sidebarSection}>
-            <h4 style={styles.sidebarSectionTitle}>Property Details</h4>
-            <label style={styles.sidebarCheckbox}>
-              <input
-                type="checkbox"
-                checked={filters.minBedrooms === '1'}
-                onChange={e => setFilters({ ...filters, minBedrooms: e.target.checked ? '1' : '' })}
-              />
-              <span>1+ bedrooms</span>
-            </label>
-            <label style={styles.sidebarCheckbox}>
-              <input
-                type="checkbox"
-                checked={filters.minBedrooms === '2'}
-                onChange={e => setFilters({ ...filters, minBedrooms: e.target.checked ? '2' : '' })}
-              />
-              <span>2+ bedrooms</span>
-            </label>
-            <label style={styles.sidebarCheckbox}>
-              <input
-                type="checkbox"
-                checked={filters.minBedrooms === '3'}
-                onChange={e => setFilters({ ...filters, minBedrooms: e.target.checked ? '3' : '' })}
-              />
-              <span>3+ bedrooms</span>
-            </label>
-            <label style={styles.sidebarCheckbox}>
-              <input
-                type="checkbox"
-                checked={filters.minBathrooms === '1'}
-                onChange={e => setFilters({ ...filters, minBathrooms: e.target.checked ? '1' : '' })}
-              />
-              <span>1+ bathrooms</span>
-            </label>
-            <label style={styles.sidebarCheckbox}>
-              <input
-                type="checkbox"
-                checked={filters.minBathrooms === '2'}
-                onChange={e => setFilters({ ...filters, minBathrooms: e.target.checked ? '2' : '' })}
-              />
-              <span>2+ bathrooms</span>
-            </label>
-          </div>
-
-          <div style={styles.sidebarSection}>
-            <h4 style={styles.sidebarSectionTitle}>Yield</h4>
-            <label style={styles.sidebarCheckbox}>
-              <input
-                type="checkbox"
-                checked={filters.yield20Plus}
-                onChange={e => setFilters({ ...filters, yield20Plus: e.target.checked })}
-              />
-              <span>20% or more</span>
-            </label>
-            <label style={styles.sidebarCheckbox}>
-              <input
-                type="checkbox"
-                checked={filters.yield30Plus}
-                onChange={e => setFilters({ ...filters, yield30Plus: e.target.checked })}
-              />
-              <span>30% or more</span>
-            </label>
-          </div>
-        </aside>
-
-        {/* Main Content */}
-        <div style={styles.mainContent}>
-          {/* Search Bar */}
-          <section style={styles.filters}>
-            <div style={styles.filterGroup}>
-              <label style={styles.filterLabel}>Asset type</label>
-              <select
-                style={styles.filterSelect}
-                value={filters.type}
-                onChange={e => setFilters({ ...filters, type: e.target.value as any })}
-              >
-                <option value="all">All</option>
-                <option value="villa">🏠 Villas</option>
-                <option value="land">🌴 Land</option>
-              </select>
-            </div>
-
-            <div style={styles.filterGroup}>
-              <label style={styles.filterLabel}>Property type</label>
-              <select
-                style={styles.filterSelect}
-                value={filters.tenure}
-                onChange={e => setFilters({ ...filters, tenure: e.target.value as any })}
-              >
-                <option value="all">All</option>
-                <option value="freehold">🔑 Freehold</option>
-                <option value="leasehold">📋 Leasehold</option>
-              </select>
-            </div>
-
-            <div style={styles.filterGroup}>
-              <label style={styles.filterLabel}>Location</label>
-              <select
-                style={styles.filterSelect}
-                value={filters.location}
-                onChange={e => setFilters({ ...filters, location: e.target.value })}
-              >
-                <option value="">All areas</option>
-                {locations.map(loc => (
-                  <option key={loc} value={loc}>{loc}</option>
-                ))}
-              </select>
-            </div>
-
-            <button style={styles.searchBtn} type="button">
-              🔍 Search
-            </button>
-          </section>
-
-      {/* Results count */}
-      <p style={styles.resultCount}>
-        {filtered.length} opportunit{filtered.length !== 1 ? 'ies' : 'y'} available
-      </p>
-
-      {/* Grid */}
-      {filtered.length === 0 ? (
-        <div style={styles.empty}>
-          <p>No opportunities match your criteria</p>
-          <button
-            onClick={() => setFilters({ 
-              type: 'all', 
-              tenure: 'all', 
-              location: '', 
-              pool: false,
-              garden: false,
-              furnished: false,
-              minBedrooms: '',
-              minBathrooms: '',
-              yield20Plus: false,
-              yield30Plus: false,
-            })}
-            style={styles.resetBtn}
-          >
-            Reset filters
-          </button>
+      {/* Search bar */}
+      <div style={s.searchBar}>
+        <div style={s.searchSegment}>
+          <span style={s.searchLabel}>ASSET TYPE</span>
+          <select style={s.searchSelect} value={search.type} onChange={e => setSearch(p => ({ ...p, type: e.target.value as any, searched: false }))}>
+            <option value="all">All</option>
+            <option value="villa">🏠 Villas</option>
+            <option value="land">🌴 Land</option>
+          </select>
         </div>
-      ) : (
-        <div style={styles.grid}>
-          {filtered.map(item => (
-            <Link key={item.id} href={item.href} style={styles.card}>
-              {/* Image */}
-              <div style={styles.imageContainer}>
-                {item.images[0] ? (
-                  <img src={item.images[0]} alt={item.title} style={styles.image} />
-                ) : (
-                  <div style={styles.noImage}>
-                    <span style={{ fontSize: 40 }}>{item.type === 'villa' ? '🏠' : '🌴'}</span>
-                  </div>
-                )}
+        <div style={s.searchDivider} />
+        <div style={s.searchSegment}>
+          <span style={s.searchLabel}>PROPERTY TYPE</span>
+          <select style={s.searchSelect} value={search.tenure} onChange={e => setSearch(p => ({ ...p, tenure: e.target.value as any, searched: false }))}>
+            <option value="all">All</option>
+            <option value="freehold">🔑 Freehold</option>
+            <option value="leasehold">📋 Leasehold</option>
+          </select>
+        </div>
+        <div style={s.searchDivider} />
+        <div style={s.searchSegment}>
+          <span style={s.searchLabel}>LOCATION</span>
+          <select style={s.searchSelect} value={search.location} onChange={e => setSearch(p => ({ ...p, location: e.target.value, searched: false }))}>
+            <option value="">All areas</option>
+            {locations.map(loc => <option key={loc} value={loc}>{loc}</option>)}
+          </select>
+        </div>
+        <div style={s.searchAction}>
+          <button onClick={handleSearch} style={s.searchBtn}>Search</button>
+        </div>
+      </div>
 
-                {/* Type badge */}
-                <div style={{
-                  ...styles.typeBadge,
-                  background: item.type === 'villa' ? '#8b5cf6' : '#059669',
-                }}>
-                  {item.type === 'villa' ? 'Villa' : 'Land'}
-                </div>
-
-                {/* Tenure badge */}
-                <div style={{
-                  ...styles.tenureBadge,
-                  background: item.tenure === 'freehold' ? '#2563eb' : '#f59e0b',
-                }}>
-                  {item.tenure === 'freehold' ? '🔑 Freehold' : `📋 Lease ${item.leaseYears}y`}
-                </div>
-
-                {/* Image count */}
-                {item.images.length > 1 && (
-                  <div style={styles.imageCount}>📷 {item.images.length}</div>
-                )}
-              </div>
-
-              {/* Content */}
-              <div style={styles.cardContent}>
-                <h3 style={styles.cardTitle}>{item.title}</h3>
-                <p style={styles.location}>📍 {item.location}</p>
-
-                {/* Price */}
-                <div style={styles.priceRow}>
-                  <span style={styles.price}>
-                    {fmtPrice(item.price, item.currency, item.type === 'land')}
-                  </span>
-                </div>
-
-                {/* Yield */}
-                {item.expectedYield && (
-                  <div style={styles.yieldBadge}>
-                    📈 {item.expectedYield}% estimated yield
-                  </div>
-                )}
-              </div>
-              </Link>
+      <div style={s.layout}>
+        {/* Sidebar — only after search */}
+        {search.searched && (
+          <aside style={s.sidebar}>
+            {(isVilla || search.type === 'all') && (
+              <>
+                <p style={s.sidebarHeading}>AMENITIES</p>
+                {[['pool','pool','🏊 Pool'],['garden','garden','🌳 Garden'],['furnished','furnished','🛋️ Furnished']] .map(([,key,label]) => (
+                  <label key={key} style={s.checkRow}>
+                    <input type="checkbox" checked={sidebar[key as keyof SidebarFilters] as boolean} onChange={e => setSidebar(p => ({ ...p, [key]: e.target.checked }))} style={{ accentColor: '#2563eb', width: 18, height: 18 }} />
+                    <span style={s.checkLabel}>{label}</span>
+                  </label>
+                ))}
+                <p style={{ ...s.sidebarHeading, marginTop: 20 }}>BEDROOMS</p>
+                {[['1','1+'],['2','2+'],['3','3+']].map(([val, label]) => (
+                  <label key={val} style={s.checkRow}>
+                    <input type="checkbox" checked={sidebar.minBedrooms === val} onChange={e => setSidebar(p => ({ ...p, minBedrooms: e.target.checked ? val : '' }))} style={{ accentColor: '#2563eb', width: 18, height: 18 }} />
+                    <span style={s.checkLabel}>{label} bedrooms</span>
+                  </label>
+                ))}
+              </>
+            )}
+            <p style={{ ...s.sidebarHeading, marginTop: 20 }}>CONDITION</p>
+            {[['ready','✅ Ready to live'],['to_finish','🔨 To finish'],['to_renovate','🏚️ To renovate']].map(([val, label]) => (
+              <label key={val} style={s.checkRow}>
+                <input type="checkbox" checked={sidebar.condition === val} onChange={e => setSidebar(p => ({ ...p, condition: e.target.checked ? val : '' }))} style={{ accentColor: '#f59e0b', width: 18, height: 18 }} />
+                <span style={s.checkLabel}>{label}</span>
+              </label>
             ))}
-            </div>
-          )}
+          </aside>
+        )}
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={s.resultRow}>
+            <p style={s.resultCount}>{filtered.length} opportunit{filtered.length !== 1 ? 'ies' : 'y'} available</p>
+            {search.searched && <button onClick={() => { setSearch(p => ({ ...p, searched: false })); setSidebar({ pool: false, garden: false, furnished: false, minBedrooms: '', minBathrooms: '', condition: '' }); }} style={s.resetBtn}>Clear filters</button>}
+          </div>
+          {filtered.length === 0
+            ? <div style={s.empty}><p>No opportunities match your criteria.</p></div>
+            : <div style={s.grid}>{filtered.map(item => <InvestmentCard key={item.id} item={item} />)}</div>
+          }
         </div>
       </div>
     </main>
   );
 }
 
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    maxWidth: 1400,
-    margin: '0 auto',
-    padding: '0 24px 60px',
-  },
-  layout: {
-    display: 'flex',
-    gap: 24,
-    alignItems: 'flex-start',
-  },
-  sidebar: {
-    width: 240,
-    padding: 20,
-    background: '#fffbeb',
-    borderRadius: 16,
-    border: '1px solid #fde68a',
-    position: 'sticky',
-    top: 20,
-  },
-  sidebarTitle: {
-    fontSize: 18,
-    fontWeight: 700,
-    color: '#111827',
-    margin: 0,
-    marginBottom: 20,
-  },
-  sidebarSection: {
-    marginBottom: 24,
-  },
-  sidebarSectionTitle: {
-    fontSize: 14,
-    fontWeight: 600,
-    color: '#92400e',
-    margin: 0,
-    marginBottom: 12,
-  },
-  sidebarCheckbox: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 10,
-    padding: '10px 0',
-    cursor: 'pointer',
-    fontSize: 14,
-    color: '#374151',
-  },
-  loading: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '60vh',
-    gap: 16,
-    color: '#6b7280',
-  },
-  spinner: {
-    width: 40,
-    height: 40,
-    border: '4px solid #e5e7eb',
-    borderTopColor: '#f59e0b',
-    borderRadius: '50%',
-    animation: 'spin 1s linear infinite',
-  },
-  hero: {
-    textAlign: 'center',
-    padding: '60px 0 40px',
-  },
-  heroTitle: {
-    fontSize: 42,
-    fontWeight: 800,
-    color: '#111827',
-    marginBottom: 12,
-  },
-  heroSubtitle: {
-    fontSize: 18,
-    color: '#6b7280',
-    maxWidth: 500,
-    margin: '0 auto',
-  },
-  filters: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: 16,
-    padding: 24,
-    background: '#fffbeb',
-    borderRadius: 16,
-    marginBottom: 24,
-    alignItems: 'flex-end',
-    border: '1px solid #fde68a',
-  },
-  filterGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 6,
-    minWidth: 160,
-  },
-  filterLabel: {
-    fontSize: 13,
-    fontWeight: 600,
-    color: '#92400e',
-  },
-  filterSelect: {
-    padding: '12px 14px',
-    borderRadius: 10,
-    border: '2px solid #fde68a',
-    fontSize: 14,
-    background: '#fff',
-    cursor: 'pointer',
-  },
-  searchBtn: {
-    padding: '12px 24px',
-    background: 'linear-gradient(135deg, #2563eb, #059669)',
-    color: '#fff',
-    border: 'none',
-    borderRadius: 10,
-    fontSize: 15,
-    fontWeight: 700,
-    cursor: 'pointer',
-    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-  },
-  resultCount: {
-    color: '#6b7280',
-    marginBottom: 20,
-    fontSize: 14,
-  },
-  empty: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 16,
-    padding: 60,
-    background: '#f9fafb',
-    borderRadius: 16,
-    color: '#6b7280',
-  },
-  resetBtn: {
-    padding: '12px 24px',
-    background: '#f59e0b',
-    color: '#fff',
-    border: 'none',
-    borderRadius: 10,
-    fontSize: 14,
-    fontWeight: 600,
-    cursor: 'pointer',
-  },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-    gap: 24,
-  },
-  card: {
-    background: '#fff',
-    borderRadius: 16,
-    overflow: 'hidden',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-    border: '1px solid #e5e7eb',
-    textDecoration: 'none',
-    color: 'inherit',
-    transition: 'transform 0.2s, box-shadow 0.2s',
-  },
-  imageContainer: {
-    position: 'relative',
-    aspectRatio: '16/10',
-    background: '#f3f4f6',
-    overflow: 'hidden',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    transition: 'transform 0.3s',
-  },
-  noImage: {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#9ca3af',
-  },
-  typeBadge: {
-    position: 'absolute',
-    top: 12,
-    left: 12,
-    padding: '6px 12px',
-    borderRadius: 20,
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 700,
-  },
-  tenureBadge: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    padding: '6px 12px',
-    borderRadius: 20,
-    color: '#fff',
-    fontSize: 11,
-    fontWeight: 700,
-  },
-  imageCount: {
-    position: 'absolute',
-    bottom: 12,
-    right: 12,
-    padding: '6px 10px',
-    borderRadius: 8,
-    background: 'rgba(0,0,0,0.6)',
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 600,
-  },
-  cardContent: {
-    padding: 20,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 700,
-    color: '#111827',
-    margin: 0,
-    marginBottom: 4,
-  },
-  location: {
-    color: '#6b7280',
-    fontSize: 14,
-    margin: 0,
-    marginBottom: 12,
-  },
-  priceRow: {
-    marginBottom: 8,
-  },
-  price: {
-    fontSize: 22,
-    fontWeight: 800,
-    color: '#f59e0b',
-  },
-  yieldBadge: {
-    display: 'inline-block',
-    padding: '6px 12px',
-    background: '#ecfdf5',
-    color: '#059669',
-    borderRadius: 8,
-    fontSize: 13,
-    fontWeight: 600,
-    marginBottom: 12,
-  },
-  badges: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  badge: {
-    padding: '4px 10px',
-    background: '#f3f4f6',
-    borderRadius: 6,
-    fontSize: 12,
-    fontWeight: 500,
-    color: '#374151',
-  },
+const s: { [k: string]: React.CSSProperties } = {
+  page: { maxWidth: 1400, margin: '0 auto', padding: '0 24px 80px' },
+  loading: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 16, color: '#6b7280' },
+  spinner: { width: 44, height: 44, border: '4px solid #e5e7eb', borderTopColor: '#f59e0b', borderRadius: '50%' },
+  hero: { textAlign: 'center', padding: '72px 0 48px' },
+  heroTitle: { fontSize: 48, fontWeight: 800, color: '#111827', marginBottom: 14 },
+  heroSub: { fontSize: 19, color: '#6b7280', maxWidth: 520, margin: '0 auto' },
+  searchBar: { display: 'flex', background: '#fff', borderRadius: 16, border: '1px solid #e5e7eb', overflow: 'hidden', marginBottom: 32, boxShadow: '0 4px 20px rgba(15,23,42,0.06)', alignItems: 'stretch' },
+  searchSegment: { flex: 1, padding: '18px 22px', display: 'flex', flexDirection: 'column', gap: 6 },
+  searchLabel: { fontSize: 11, fontWeight: 800, letterSpacing: '0.1em', color: '#9ca3af' },
+  searchSelect: { border: 'none', outline: 'none', fontSize: 15, fontWeight: 600, color: '#111827', background: 'transparent', cursor: 'pointer', padding: 0 },
+  searchDivider: { width: 1, background: '#f3f4f6', margin: '12px 0' },
+  searchAction: { display: 'flex', alignItems: 'center', padding: '0 20px' },
+  searchBtn: { padding: '13px 24px', background: 'linear-gradient(135deg,#f59e0b,#d97706)', color: '#fff', border: 'none', borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' },
+  layout: { display: 'flex', gap: 28, alignItems: 'flex-start' },
+  sidebar: { width: 240, flexShrink: 0, background: '#fff', borderRadius: 18, border: '1px solid #e5e7eb', padding: '24px 20px', position: 'sticky', top: 24, boxShadow: '0 4px 20px rgba(15,23,42,0.06)' },
+  sidebarHeading: { fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', color: '#f59e0b', margin: '0 0 14px', textTransform: 'uppercase' },
+  checkRow: { display: 'flex', alignItems: 'center', gap: 12, padding: '11px 0', borderBottom: '1px solid #f3f4f6', cursor: 'pointer' },
+  checkLabel: { fontSize: 15, fontWeight: 500, color: '#374151' },
+  resultRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
+  resultCount: { fontSize: 15, color: '#6b7280', margin: 0 },
+  resetBtn: { fontSize: 14, fontWeight: 600, color: '#f59e0b', background: 'none', border: 'none', cursor: 'pointer', padding: 0 },
+  empty: { display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 60, background: '#f9fafb', borderRadius: 16 },
+  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24 },
+  card: { background: '#fff', borderRadius: 18, overflow: 'hidden', boxShadow: '0 4px 20px rgba(15,23,42,0.07)', border: '1px solid #e5e7eb', textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column' },
+  imageWrap: { position: 'relative', aspectRatio: '16/10', background: '#f3f4f6', flexShrink: 0 },
+  img: { width: '100%', height: '100%', objectFit: 'cover' },
+  noImg: { width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 52, color: '#d1d5db' },
+  arrow: { position: 'absolute', top: '50%', transform: 'translateY(-50%)', width: 34, height: 34, borderRadius: '50%', background: 'rgba(255,255,255,0.93)', border: 'none', fontSize: 22, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.18)', zIndex: 2, color: '#111' },
+  dots: { position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5 },
+  dot: { width: 6, height: 6, borderRadius: '50%' },
+  typeBadge: { position: 'absolute', top: 10, left: 10, padding: '5px 11px', borderRadius: 20, color: '#fff', fontSize: 12, fontWeight: 700 },
+  tenureBadge: { position: 'absolute', top: 10, right: 10, padding: '5px 11px', borderRadius: 20, color: '#fff', fontSize: 11, fontWeight: 700 },
+  imgCount: { position: 'absolute', bottom: 10, right: 10, padding: '5px 10px', background: 'rgba(0,0,0,0.58)', color: '#fff', borderRadius: 8, fontSize: 11, fontWeight: 600 },
+  cardBody: { padding: '18px 20px 20px' },
+  cardTitle: { fontSize: 17, fontWeight: 700, color: '#111827', margin: '0 0 4px' },
+  cardLoc: { fontSize: 14, color: '#6b7280', margin: '0 0 12px' },
+  features: { display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 12 },
+  feat: { fontSize: 13, color: '#374151', background: '#f3f4f6', padding: '4px 10px', borderRadius: 7, fontWeight: 500 },
+  priceRow: { marginBottom: 8 },
+  price: { fontSize: 22, fontWeight: 800, color: '#f59e0b' },
+  yieldBadge: { display: 'inline-block', padding: '5px 11px', background: '#ecfdf5', color: '#059669', borderRadius: 8, fontSize: 13, fontWeight: 600 },
 };

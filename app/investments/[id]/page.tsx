@@ -5,115 +5,73 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 
+const WA_NUMBER = '6287873487940';
+type MediaItem = { src: string; isVideo: boolean };
+
 type InvestmentData = {
-  id: string;
-  type: 'villa' | 'land';
-  title: string;
-  description: string | null;
-  location: string;
-  price: number;
-  currency: string;
-  tenure: 'freehold' | 'leasehold';
-  leaseYears: number | null;
-  expectedYield: number | null;
-  legalChecked: boolean;
-  managementAvailable: boolean;
-  images: string[];
-  // Villa specific
-  bedrooms?: number;
-  bathrooms?: number;
-  builtArea?: number;
-  landArea?: number;
-  pool?: boolean;
-  garden?: boolean;
-  furnished?: boolean;
-  // Land specific
-  landSize?: number;
+  id: string; type: 'villa' | 'land'; title: string; description: string | null;
+  location: string; price: number; currency: string; tenure: 'freehold' | 'leasehold';
+  leaseYears: number | null; expectedYield: number | null; legalChecked: boolean;
+  managementAvailable: boolean; media: MediaItem[];
+  bedrooms?: number; bathrooms?: number; builtArea?: number; landArea?: number;
+  pool?: boolean; garden?: boolean; furnished?: boolean; landSize?: string;
 };
 
 function fmtPrice(price: number, currency: string) {
-  if (currency === 'USD') {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
-  }
+  if (currency === 'USD') return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
   return new Intl.NumberFormat('id-ID').format(price) + ' IDR';
+}
+function isVid(url: string) {
+  const ext = url.split('?')[0].split('.').pop()?.toLowerCase();
+  return !!ext && ['mp4','mov','webm','avi','m4v','mkv'].includes(ext);
+}
+function buildMedia(images: string[], videos: string[]): MediaItem[] {
+  return [
+    ...(images || []).map(src => ({ src, isVideo: false })),
+    ...(videos || []).filter(Boolean).map(src => ({ src, isVideo: isVid(src) })),
+  ];
 }
 
 export default function InvestmentDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [data, setData] = useState<InvestmentData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentImage, setCurrentImage] = useState(0);
+  const [idx, setIdx] = useState(0);
 
   useEffect(() => {
     const load = async () => {
-      const { data: inv } = await supabase
-        .from('investments')
-        .select('*')
-        .eq('id', id)
-        .single();
-
-      if (!inv) {
-        setLoading(false);
-        return;
-      }
+      const { data: inv } = await supabase.from('investments').select('*').eq('id', id).single();
+      if (!inv) { setLoading(false); return; }
 
       let item: InvestmentData | null = null;
 
       if (inv.asset_type === 'property') {
-        const { data: prop } = await supabase
-          .from('properties')
-          .select('*')
-          .eq('id', inv.asset_id)
-          .single();
-
-        // Only show published properties
+        const { data: prop } = await supabase.from('properties').select('*').eq('id', inv.asset_id).single();
         if (prop && prop.status === 'published') {
           item = {
-            id: inv.id,
-            type: 'villa',
-            title: prop.title || 'Villa',
-            description: prop.description,
-            location: prop.location || 'Lombok',
-            price: prop.price || 0,
-            currency: prop.currency || 'USD',
-            tenure: prop.tenure || 'freehold',
-            leaseYears: prop.lease_years,
-            expectedYield: inv.expected_yield,
-            legalChecked: inv.legal_checked,
+            id: inv.id, type: 'villa', title: prop.title || 'Villa',
+            description: prop.description, location: prop.location || 'Lombok',
+            price: prop.price || 0, currency: prop.currency || 'USD',
+            tenure: prop.tenure || 'freehold', leaseYears: prop.lease_years,
+            expectedYield: inv.expected_yield, legalChecked: inv.legal_checked,
             managementAvailable: inv.management_available,
-            images: prop.images || [],
-            bedrooms: prop.bedrooms,
-            bathrooms: prop.bathrooms,
-            builtArea: prop.built_area,
-            landArea: prop.land_area,
-            pool: prop.pool,
-            garden: prop.garden,
-            furnished: prop.furnished,
+            media: buildMedia(prop.images || [], prop.videos || []),
+            bedrooms: prop.bedrooms, bathrooms: prop.bathrooms,
+            builtArea: prop.built_area, landArea: prop.land_area,
+            pool: prop.pool, garden: prop.garden, furnished: prop.furnished,
           };
         }
       } else {
-        const { data: land } = await supabase
-          .from('lands')
-          .select('*')
-          .eq('id', inv.asset_id)
-          .single();
-
-        // Only show published lands
-        if (land && land.status === 'published') {
+        const { data: land } = await supabase.from('lands').select('*').eq('id', inv.asset_id).single();
+        if (land) {
           item = {
-            id: inv.id,
-            type: 'land',
-            title: land.title || 'Land',
-            description: land.description,
-            location: land.location || 'Lombok',
-            price: land.price_per_are || 0,
-            currency: land.currency || 'IDR',
-            tenure: land.tenure || 'freehold',
-            leaseYears: land.lease_years,
-            expectedYield: inv.expected_yield,
-            legalChecked: inv.legal_checked,
-            managementAvailable: inv.management_available,
-            images: land.images || [],
+            id: inv.id, type: 'land', title: land.title || 'Land',
+            description: land.description, location: land.location || 'Lombok',
+            price: land.price_per_are_idr ?? land.price_per_are ?? 0,
+            currency: land.currency || 'IDR', tenure: land.tenure || 'freehold',
+            leaseYears: land.lease_years, expectedYield: inv.expected_yield,
+            legalChecked: inv.legal_checked, managementAvailable: inv.management_available,
+            media: buildMedia(land.images || [], land.videos || []),
             landSize: land.land_size,
           };
         }
@@ -122,215 +80,120 @@ export default function InvestmentDetailPage() {
       setData(item);
       setLoading(false);
     };
-
     load();
   }, [id]);
 
-  if (loading) {
-    return (
-      <main style={styles.container}>
-        <div style={styles.loading}>Loading...</div>
-      </main>
-    );
-  }
+  if (loading) return <main style={s.page}><div style={s.loading}>Loading...</div></main>;
 
   if (!data) {
     return (
-      <main style={styles.container}>
-        <div style={styles.notFound}>
+      <main style={s.page}>
+        <div style={s.notFound}>
           <h1>Opportunity not found</h1>
-          <p>This investment opportunity does not exist or is no longer available.</p>
-          <Link href="/investments" style={styles.backBtn}>
-            ← Back to investments
-          </Link>
+          <Link href="/investments" style={s.backBtn}>← Back to investments</Link>
         </div>
       </main>
     );
   }
 
-  const images = data.images;
-  const nextImage = () => setCurrentImage((c) => (c + 1) % images.length);
-  const prevImage = () => setCurrentImage((c) => (c - 1 + images.length) % images.length);
+  const { media } = data;
+  const cur = media[idx];
 
   return (
-    <main style={styles.container}>
-      {/* Back link */}
-      <Link href="/investments" style={styles.backLink}>
-        ← Back to investments
-      </Link>
+    <main style={s.page}>
+      <Link href="/investments" style={s.backLink}>← Back to investments</Link>
 
-      <div style={styles.layout}>
-        {/* Left: Image Gallery */}
-        <div style={styles.gallerySection}>
-          {images.length > 0 ? (
+      <div style={s.layout}>
+        {/* Gallery */}
+        <div>
+          {media.length > 0 ? (
             <>
-              <div style={styles.mainImage}>
-                <img
-                  src={images[currentImage]}
-                  alt={`${data.title} - Image ${currentImage + 1}`}
-                  style={styles.heroImage}
-                />
-                
-                {images.length > 1 && (
+              <div style={s.mainMedia}>
+                {cur.isVideo
+                  ? <video key={cur.src} src={cur.src} style={s.mediaEl} controls autoPlay playsInline />
+                  : <img src={cur.src} alt={`${data.title} ${idx + 1}`} style={s.mediaEl} />
+                }
+                {media.length > 1 && (
                   <>
-                    <button onClick={prevImage} style={{ ...styles.navBtn, left: 16 }}>‹</button>
-                    <button onClick={nextImage} style={{ ...styles.navBtn, right: 16 }}>›</button>
-                    <div style={styles.imageCounter}>{currentImage + 1} / {images.length}</div>
+                    <button onClick={() => setIdx(i => (i - 1 + media.length) % media.length)} style={{ ...s.navBtn, left: 14 }}>‹</button>
+                    <button onClick={() => setIdx(i => (i + 1) % media.length)} style={{ ...s.navBtn, right: 14 }}>›</button>
+                    <div style={s.counter}>{idx + 1} / {media.length}</div>
                   </>
                 )}
-
-                {/* Badges */}
-                <div style={{
-                  ...styles.typeBadge,
-                  background: data.type === 'villa' ? '#8b5cf6' : '#059669',
-                }}>
+                <div style={{ ...s.typeBadge, background: data.type === 'villa' ? '#8b5cf6' : '#059669' }}>
                   {data.type === 'villa' ? '🏠 Villa' : '🌴 Land'}
                 </div>
               </div>
-
-              {/* Thumbnails */}
-              {images.length > 1 && (
-                <div style={styles.thumbnails}>
-                  {images.map((img, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setCurrentImage(i)}
-                      style={{
-                        ...styles.thumbnail,
-                        borderColor: i === currentImage ? '#f59e0b' : 'transparent',
-                      }}
-                    >
-                      <img src={img} alt={`Thumbnail ${i + 1}`} style={styles.thumbImg} />
+              {media.length > 1 && (
+                <div style={s.thumbRow}>
+                  {media.map((m, i) => (
+                    <button key={i} onClick={() => setIdx(i)} style={{ ...s.thumb, borderColor: i === idx ? '#f59e0b' : 'transparent' }}>
+                      {m.isVideo
+                        ? <div style={s.vidThumb}>▶</div>
+                        : <img src={m.src} alt="" style={s.thumbImg} />
+                      }
                     </button>
                   ))}
                 </div>
               )}
             </>
           ) : (
-            <div style={styles.noImages}>
-              <span style={{ fontSize: 64 }}>{data.type === 'villa' ? '🏠' : '🌴'}</span>
-              <p>No photos available</p>
-            </div>
+            <div style={s.noMedia}>{data.type === 'villa' ? '🏠' : '🌴'}</div>
           )}
         </div>
 
-        {/* Right: Details */}
-        <div style={styles.detailsSection}>
-          {/* Header */}
-          <div style={styles.header}>
-            <div style={styles.badges}>
-              {data.legalChecked && (
-                <span style={styles.verifiedBadge}>✓ Verified by RumahYa</span>
-              )}
-              {data.managementAvailable && (
-                <span style={styles.mgmtBadge}>🏢 Rental management available</span>
-              )}
-            </div>
-            <h1 style={styles.title}>{data.title}</h1>
-            <p style={styles.location}>📍 {data.location}</p>
+        {/* Details */}
+        <div>
+          <div style={s.badges}>
+            {data.legalChecked && <span style={s.verifiedBadge}>✓ Verified by RumahYa</span>}
+            {data.managementAvailable && <span style={s.mgmtBadge}>🏢 Management available</span>}
           </div>
+          <h1 style={s.title}>{data.title}</h1>
+          <p style={s.location}>📍 {data.location}</p>
 
-          {/* Price Card */}
-          <div style={styles.priceCard}>
-            <div style={styles.priceMain}>
-              <span style={styles.priceValue}>
-                {fmtPrice(data.price, data.currency)}
-              </span>
-              {data.type === 'land' && <span style={styles.priceUnit}>/are</span>}
+          <div style={s.priceCard}>
+            <div style={s.priceRow}>
+              <span style={s.priceVal}>{fmtPrice(data.price, data.currency)}</span>
+              {data.type === 'land' && <span style={s.priceUnit}>/are</span>}
             </div>
-
-            {/* Tenure */}
-            <div style={styles.tenureRow}>
-              <div style={{
-                ...styles.tenureBadge,
-                background: data.tenure === 'freehold' ? '#dbeafe' : '#fef3c7',
-                color: data.tenure === 'freehold' ? '#1e40af' : '#92400e',
-              }}>
-                {data.tenure === 'freehold' ? '🔑 Freehold - Full ownership' : `📋 Leasehold - ${data.leaseYears} years`}
-              </div>
+            <div style={{ ...s.tenureBadge, background: data.tenure === 'freehold' ? '#dbeafe' : '#fef3c7', color: data.tenure === 'freehold' ? '#1e40af' : '#92400e' }}>
+              {data.tenure === 'freehold' ? '🔑 Freehold — Full ownership' : `📋 Leasehold — ${data.leaseYears} years`}
             </div>
-
-            {/* Yield */}
             {data.expectedYield && (
-              <div style={styles.yieldSection}>
-                <span style={styles.yieldLabel}>Estimated yield</span>
-                <span style={styles.yieldValue}>{data.expectedYield}% / year</span>
+              <div style={s.yieldRow}>
+                <span style={{ fontSize: 14, color: '#065f46' }}>Estimated yield</span>
+                <span style={{ fontSize: 22, fontWeight: 800, color: '#059669' }}>{data.expectedYield}% / year</span>
               </div>
             )}
           </div>
 
-          {/* Features */}
           {data.type === 'villa' && (
-            <div style={styles.features}>
-              {data.bedrooms && (
-                <div style={styles.featureItem}>
-                  <span style={styles.featureIcon}>🛏️</span>
-                  <span>{data.bedrooms} bedroom{data.bedrooms > 1 ? 's' : ''}</span>
-                </div>
-              )}
-              {data.bathrooms && (
-                <div style={styles.featureItem}>
-                  <span style={styles.featureIcon}>🚿</span>
-                  <span>{data.bathrooms} bathroom{data.bathrooms > 1 ? 's' : ''}</span>
-                </div>
-              )}
-              {data.builtArea && (
-                <div style={styles.featureItem}>
-                  <span style={styles.featureIcon}>📐</span>
-                  <span>{data.builtArea} m²</span>
-                </div>
-              )}
-              {data.landArea && (
-                <div style={styles.featureItem}>
-                  <span style={styles.featureIcon}>🌍</span>
-                  <span>{data.landArea} are</span>
-                </div>
-              )}
+            <div style={s.specs}>
+              {data.bedrooms && <div style={s.spec}><span>🛏️</span>{data.bedrooms} bed{data.bedrooms > 1 ? 's' : ''}</div>}
+              {data.bathrooms && <div style={s.spec}><span>🚿</span>{data.bathrooms} bath{data.bathrooms > 1 ? 's' : ''}</div>}
+              {data.builtArea && <div style={s.spec}><span>📐</span>{data.builtArea} m²</div>}
+              {data.landArea && <div style={s.spec}><span>🌍</span>{data.landArea} are</div>}
             </div>
           )}
 
-          {data.type === 'land' && data.landSize && (
-            <div style={styles.features}>
-              <div style={styles.featureItem}>
-                <span style={styles.featureIcon}>🌍</span>
-                <span>{data.landSize} are of land</span>
-              </div>
-            </div>
-          )}
-
-          {/* Amenities for villa */}
           {data.type === 'villa' && (
-            <div style={styles.amenities}>
-              {data.pool && <span style={styles.amenity}>🏊 Pool</span>}
-              {data.garden && <span style={styles.amenity}>🌳 Garden</span>}
-              {data.furnished && <span style={styles.amenity}>🛋️ Furnished</span>}
+            <div style={s.amenities}>
+              {data.pool && <span style={s.amenity}>🏊 Pool</span>}
+              {data.garden && <span style={s.amenity}>🌳 Garden</span>}
+              {data.furnished && <span style={s.amenity}>🛋️ Furnished</span>}
             </div>
           )}
 
-          {/* Description */}
           {data.description && (
-            <div style={styles.description}>
-              <h3 style={styles.sectionTitle}>Description</h3>
-              <p style={styles.descriptionText}>{data.description}</p>
+            <div style={s.desc}>
+              <h3 style={s.descTitle}>Description</h3>
+              <p style={s.descText}>{data.description}</p>
             </div>
           )}
 
-          {/* CTA */}
-          <div style={styles.cta}>
-            <a
-              href={`mailto:contact@rumahya.com?subject=Investment: ${data.title}`}
-              style={styles.ctaBtn}
-            >
-              📧 Request more info
-            </a>
-            <a
-              href={`https://wa.me/6281234567890?text=Hello, I am interested in the investment: ${encodeURIComponent(data.title)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={styles.ctaBtnWhatsapp}
-            >
-              💬 WhatsApp
-            </a>
+          <div style={s.cta}>
+            <a href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hello, I am interested in: ${data.title}`)}`} target="_blank" rel="noopener noreferrer" style={s.ctaWa}>💬 WhatsApp</a>
+            <a href={`mailto:info@rumahya.com?subject=Investment: ${data.title}`} style={s.ctaEmail}>📧 Request info</a>
           </div>
         </div>
       </div>
@@ -338,286 +201,42 @@ export default function InvestmentDetailPage() {
   );
 }
 
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    maxWidth: 1200,
-    margin: '0 auto',
-    padding: 24,
-  },
-  loading: {
-    textAlign: 'center',
-    padding: 60,
-    color: '#6b7280',
-  },
-  notFound: {
-    textAlign: 'center',
-    padding: 60,
-  },
-  backBtn: {
-    display: 'inline-block',
-    marginTop: 20,
-    padding: '12px 24px',
-    background: '#f59e0b',
-    color: '#fff',
-    borderRadius: 10,
-    textDecoration: 'none',
-    fontWeight: 600,
-  },
-  backLink: {
-    display: 'inline-block',
-    marginBottom: 24,
-    color: '#6b7280',
-    textDecoration: 'none',
-    fontSize: 14,
-    fontWeight: 500,
-  },
-  layout: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 400px',
-    gap: 40,
-  },
-  gallerySection: {},
-  mainImage: {
-    position: 'relative',
-    aspectRatio: '16/10',
-    borderRadius: 20,
-    overflow: 'hidden',
-    background: '#f3f4f6',
-  },
-  heroImage: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-  },
-  navBtn: {
-    position: 'absolute',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    width: 48,
-    height: 48,
-    borderRadius: '50%',
-    background: 'rgba(255,255,255,0.9)',
-    border: 'none',
-    fontSize: 28,
-    cursor: 'pointer',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-  },
-  imageCounter: {
-    position: 'absolute',
-    bottom: 16,
-    left: '50%',
-    transform: 'translateX(-50%)',
-    padding: '8px 16px',
-    background: 'rgba(0,0,0,0.6)',
-    color: '#fff',
-    borderRadius: 20,
-    fontSize: 14,
-    fontWeight: 600,
-  },
-  typeBadge: {
-    position: 'absolute',
-    top: 16,
-    left: 16,
-    padding: '8px 16px',
-    borderRadius: 24,
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 700,
-  },
-  thumbnails: {
-    display: 'flex',
-    gap: 10,
-    marginTop: 16,
-    overflowX: 'auto',
-    paddingBottom: 8,
-  },
-  thumbnail: {
-    flexShrink: 0,
-    width: 80,
-    height: 60,
-    borderRadius: 10,
-    overflow: 'hidden',
-    border: '3px solid transparent',
-    cursor: 'pointer',
-    padding: 0,
-    background: 'none',
-  },
-  thumbImg: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-  },
-  noImages: {
-    aspectRatio: '16/10',
-    borderRadius: 20,
-    background: '#f3f4f6',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    color: '#9ca3af',
-  },
-  detailsSection: {},
-  header: {
-    marginBottom: 24,
-  },
-  badges: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 12,
-  },
-  verifiedBadge: {
-    display: 'inline-block',
-    padding: '6px 12px',
-    background: '#059669',
-    color: '#fff',
-    borderRadius: 20,
-    fontSize: 12,
-    fontWeight: 700,
-  },
-  mgmtBadge: {
-    display: 'inline-block',
-    padding: '6px 12px',
-    background: '#6366f1',
-    color: '#fff',
-    borderRadius: 20,
-    fontSize: 12,
-    fontWeight: 700,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 800,
-    color: '#111827',
-    margin: 0,
-    marginBottom: 8,
-  },
-  location: {
-    fontSize: 16,
-    color: '#6b7280',
-    margin: 0,
-  },
-  priceCard: {
-    background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
-    borderRadius: 16,
-    padding: 24,
-    marginBottom: 24,
-    border: '2px solid #fde68a',
-  },
-  priceMain: {
-    display: 'flex',
-    alignItems: 'baseline',
-    gap: 8,
-    marginBottom: 12,
-  },
-  priceValue: {
-    fontSize: 32,
-    fontWeight: 800,
-    color: '#d97706',
-  },
-  priceUnit: {
-    fontSize: 16,
-    color: '#92400e',
-  },
-  tenureRow: {
-    marginBottom: 16,
-  },
-  tenureBadge: {
-    display: 'inline-block',
-    padding: '10px 16px',
-    borderRadius: 10,
-    fontSize: 14,
-    fontWeight: 700,
-  },
-  yieldSection: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '12px 16px',
-    background: '#ecfdf5',
-    borderRadius: 10,
-  },
-  yieldLabel: {
-    fontSize: 14,
-    color: '#065f46',
-  },
-  yieldValue: {
-    fontSize: 20,
-    fontWeight: 800,
-    color: '#059669',
-  },
-  features: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: 12,
-    marginBottom: 24,
-  },
-  featureItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 10,
-    padding: '12px 16px',
-    background: '#f9fafb',
-    borderRadius: 12,
-    fontSize: 14,
-    fontWeight: 500,
-  },
-  featureIcon: {
-    fontSize: 20,
-  },
-  amenities: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: 10,
-    marginBottom: 24,
-  },
-  amenity: {
-    padding: '10px 16px',
-    background: '#fff',
-    border: '2px solid #e5e7eb',
-    borderRadius: 10,
-    fontSize: 14,
-    fontWeight: 500,
-  },
-  description: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 700,
-    marginBottom: 12,
-    color: '#374151',
-  },
-  descriptionText: {
-    fontSize: 15,
-    lineHeight: 1.7,
-    color: '#4b5563',
-  },
-  cta: {
-    display: 'flex',
-    gap: 12,
-  },
-  ctaBtn: {
-    flex: 1,
-    padding: '16px 24px',
-    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-    color: '#fff',
-    borderRadius: 12,
-    textDecoration: 'none',
-    fontWeight: 700,
-    fontSize: 15,
-    textAlign: 'center',
-    boxShadow: '0 4px 14px rgba(245, 158, 11, 0.3)',
-  },
-  ctaBtnWhatsapp: {
-    padding: '16px 24px',
-    background: '#25d366',
-    color: '#fff',
-    borderRadius: 12,
-    textDecoration: 'none',
-    fontWeight: 700,
-    fontSize: 15,
-    textAlign: 'center',
-  },
+const s: { [k: string]: React.CSSProperties } = {
+  page: { maxWidth: 1200, margin: '0 auto', padding: '24px 24px 60px' },
+  loading: { textAlign: 'center', padding: 80, color: '#6b7280', fontSize: 18 },
+  notFound: { textAlign: 'center', padding: 80 },
+  backBtn: { display: 'inline-block', marginTop: 20, padding: '13px 26px', background: '#f59e0b', color: '#fff', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: 15 },
+  backLink: { display: 'inline-block', marginBottom: 28, color: '#6b7280', textDecoration: 'none', fontSize: 15, fontWeight: 600 },
+  layout: { display: 'grid', gridTemplateColumns: '1fr 420px', gap: 48 },
+  mainMedia: { position: 'relative', aspectRatio: '16/10', borderRadius: 20, overflow: 'hidden', background: '#111827' },
+  mediaEl: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
+  navBtn: { position: 'absolute', top: '50%', transform: 'translateY(-50%)', width: 48, height: 48, borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', fontSize: 28, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', color: '#111' },
+  counter: { position: 'absolute', bottom: 14, left: '50%', transform: 'translateX(-50%)', padding: '7px 16px', background: 'rgba(0,0,0,0.6)', color: '#fff', borderRadius: 20, fontSize: 14, fontWeight: 600 },
+  typeBadge: { position: 'absolute', top: 16, left: 16, padding: '8px 16px', borderRadius: 24, color: '#fff', fontSize: 14, fontWeight: 700 },
+  thumbRow: { display: 'flex', gap: 10, marginTop: 14, overflowX: 'auto', paddingBottom: 4 },
+  thumb: { flexShrink: 0, width: 80, height: 60, borderRadius: 10, overflow: 'hidden', border: '3px solid transparent', cursor: 'pointer', padding: 0, background: '#1f2937' },
+  thumbImg: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
+  vidThumb: { width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#fff', background: '#374151' },
+  noMedia: { aspectRatio: '16/10', borderRadius: 20, background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 80, color: '#d1d5db' },
+  badges: { display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 14 },
+  verifiedBadge: { display: 'inline-block', padding: '7px 14px', background: '#059669', color: '#fff', borderRadius: 20, fontSize: 13, fontWeight: 700 },
+  mgmtBadge: { display: 'inline-block', padding: '7px 14px', background: '#6366f1', color: '#fff', borderRadius: 20, fontSize: 13, fontWeight: 700 },
+  title: { fontSize: 32, fontWeight: 800, color: '#111827', margin: '0 0 8px' },
+  location: { fontSize: 16, color: '#6b7280', margin: '0 0 24px' },
+  priceCard: { background: 'linear-gradient(135deg,#fffbeb,#fef3c7)', borderRadius: 16, padding: 24, marginBottom: 24, border: '2px solid #fde68a' },
+  priceRow: { display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 14 },
+  priceVal: { fontSize: 34, fontWeight: 800, color: '#d97706' },
+  priceUnit: { fontSize: 16, color: '#92400e' },
+  tenureBadge: { display: 'inline-block', padding: '10px 16px', borderRadius: 10, fontSize: 14, fontWeight: 700, marginBottom: 14 },
+  yieldRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: '#ecfdf5', borderRadius: 10 },
+  specs: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 },
+  spec: { display: 'flex', alignItems: 'center', gap: 10, padding: '13px 16px', background: '#f9fafb', borderRadius: 12, fontSize: 15, fontWeight: 500 },
+  amenities: { display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 },
+  amenity: { padding: '10px 16px', background: '#fff', border: '2px solid #e5e7eb', borderRadius: 10, fontSize: 14, fontWeight: 600 },
+  desc: { marginBottom: 28 },
+  descTitle: { fontSize: 18, fontWeight: 700, color: '#374151', marginBottom: 10 },
+  descText: { fontSize: 15, color: '#4b5563', lineHeight: 1.75 },
+  cta: { display: 'flex', gap: 12 },
+  ctaWa: { flex: 1, padding: '16px 24px', background: '#25d366', color: '#fff', borderRadius: 12, textDecoration: 'none', fontWeight: 700, fontSize: 16, textAlign: 'center' },
+  ctaEmail: { flex: 1, padding: '16px 24px', background: 'linear-gradient(135deg,#f59e0b,#d97706)', color: '#fff', borderRadius: 12, textDecoration: 'none', fontWeight: 700, fontSize: 16, textAlign: 'center' },
 };
