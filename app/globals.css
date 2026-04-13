@@ -45,12 +45,10 @@ html, body {
 
 body {
     font-family: "Nunito", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: 16px;
-    line-height: 1.7;
+    line-height: 1.6;
     color: var(--text-main);
     background-color: var(--bg);
     width: 100%;
-    -webkit-font-smoothing: antialiased;
 }
 
 /* Images */
@@ -101,13 +99,13 @@ p {
 }
 
 .section-title {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 6px;
 }
 
 .section-subtitle {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     color: var(--text-muted);
     margin-bottom: 16px;
 }
@@ -168,7 +166,7 @@ p {
 .brand-name {
     font-weight: 800;
     letter-spacing: 0.04em;
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     color: var(--text-main);
 }
 
@@ -177,7 +175,7 @@ p {
 }
 
 .brand-tagline {
-    font-size: 0.82rem;
+    font-size: 0.76rem;
     color: var(--text-muted);
 }
 
@@ -185,7 +183,7 @@ p {
 .header-tagline {
     flex: 1;
     text-align: center;
-    font-size: 0.95rem;
+    font-size: 0.88rem;
     color: var(--text-muted);
     margin: 0;
     padding: 0 20px;
@@ -203,7 +201,7 @@ p {
 .nav-link {
     position: relative;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-muted);
     padding: 10px 18px;
@@ -309,7 +307,7 @@ p {
 
 .nav-main a {
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: var(--text-muted);
     padding: 6px 12px;
     border-radius: 999px;
@@ -377,7 +375,7 @@ p {
 .hero-headline {
     text-align: center;
     max-width: 100%;
-    font-size: 2.9rem;
+    font-size: 2.6rem;
     line-height: 1.2;
 }
 
@@ -386,7 +384,7 @@ p {
 }
 
 .hero-content h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 800;
     line-height: 1.2;
     margin-bottom: 16px;
@@ -394,7 +392,7 @@ p {
 }
 
 .hero-subtitle {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--text-muted);
     margin-bottom: 24px;
     line-height: 1.6;
@@ -413,7 +411,7 @@ p {
 }
 
 .hero-kicker {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: #64748b;
@@ -421,14 +419,14 @@ p {
 }
 
 .hero-title {
-    font-size: 2.6rem;
+    font-size: 2.3rem;
     font-weight: 800;
     line-height: 1.15;
     margin-bottom: 12px;
 }
 
 .hero-lead {
-    font-size: 1.08rem;
+    font-size: 0.98rem;
     color: var(--text-muted);
     margin-bottom: 18px;
 }
@@ -519,13 +517,13 @@ p {
 }
 
 .section-header h2 {
-    font-size: 1.85rem;
+    font-size: 1.6rem;
     font-weight: 700;
     margin-bottom: 8px;
 }
 
 .section-header p {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--text-muted);
 }
 
@@ -605,9 +603,9 @@ p {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 24px;
+    padding: 10px 20px;
     border-radius: 999px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     text-decoration: none;
     border: 1px solid transparent;
@@ -620,7 +618,6 @@ p {
     background: linear-gradient(120deg, var(--primary), var(--accent));
     color: #ffffff;
     box-shadow: 0 10px 22px rgba(37, 99, 235, 0.45);
-    font-size: 1rem;
 }
 
 .btn-primary:hover,
@@ -657,7 +654,7 @@ p {
 .text-link {
     color: var(--primary);
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.9rem;
 }
 
 .text-link:hover {
@@ -717,14 +714,14 @@ p {
 /* contenus card */
 
 .card-title {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
     margin-bottom: 2px;
     color: var(--text-main);
 }
 
 .card-subtitle {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     margin-bottom: 6px;
     color: var(--text-muted);
 }
@@ -750,8 +747,8 @@ p {
 }
 
 .card-price {
-    font-weight: 700;
-    font-size: 1.05rem;
+    font-weight: 600;
+    font-size: 0.96rem;
     margin-bottom: 4px;
     color: var(--text-main);
 }
@@ -900,7 +897,7 @@ p {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 18px;
-    font-size: 0.95rem;
+    font-size: 0.86rem;
     color: var(--text-muted);
 }
 
@@ -1010,7 +1007,7 @@ p {
 }
 
 .land-filter-label-top {
-    font-size: 0.78rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: #6b7280;
@@ -1103,13 +1100,13 @@ p {
 }
 
 .property-card-title {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     font-weight: 600;
     margin-bottom: 4px;
 }
 
 .property-card-location {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #6b7280;
     margin-bottom: 6px;
 }
@@ -1118,7 +1115,7 @@ p {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     color: #374151;
     margin-bottom: 4px;
 }
@@ -1167,7 +1164,7 @@ p {
 }
 
 .rentals-intro h1 {
-    font-size: 2.6rem;
+    font-size: 2.2rem;
     font-weight: 800;
     margin-bottom: 12px;
     background: linear-gradient(135deg, var(--text-main) 0%, var(--primary) 100%);
@@ -1177,7 +1174,7 @@ p {
 }
 
 .rentals-intro p {
-    font-size: 1.1rem;
+    font-size: 1rem;
     line-height: 1.7;
 }
 
@@ -1303,7 +1300,7 @@ p {
 }
 
 .filter-label-top {
-    font-size: 0.78rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: 700;
@@ -1330,9 +1327,9 @@ p {
     border: 2px solid #e5e7eb;
     outline: none;
     background: #ffffff;
-    padding: 11px 14px;
+    padding: 10px 14px;
     margin: 0;
-    font-size: 1rem;
+    font-size: 0.9rem;
     width: 100%;
     border-radius: 12px;
     box-sizing: border-box;
@@ -1475,14 +1472,14 @@ p {
 }
 
 .rental-card-title {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 700;
     margin: 0 0 4px 0;
     color: var(--text-main);
 }
 
 .rental-card-location {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: var(--text-muted);
     margin: 0 0 12px 0;
     display: flex;
@@ -1505,7 +1502,7 @@ p {
 .rental-card-features span {
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(34, 197, 94, 0.1));
     color: var(--text-main);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 600;
     padding: 6px 12px;
     border-radius: 20px;
@@ -1514,7 +1511,7 @@ p {
 
 .rental-card-price {
     margin-top: auto;
-    font-size: 1.45rem;
+    font-size: 1.3rem;
     font-weight: 800;
     color: var(--text-main);
     display: flex;
@@ -1523,7 +1520,7 @@ p {
 }
 
 .rental-card-price span {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 500;
     color: var(--text-muted);
 }
@@ -1837,7 +1834,7 @@ p {
     }
 
     .hero-headline {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
 
     .section-block {
@@ -1967,10 +1964,10 @@ p {
   select,
   textarea {
     width: 100%;
-    padding: 12px 14px;
+    padding: 10px 12px;
     border-radius: 8px;
     border: 1px solid #d1d5db;
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
   
   select:focus,
@@ -1978,3 +1975,56 @@ p {
     outline: none;
     border-color: #111827;
   }
+  
+/* =============================================
+   PREMIUM DESIGN — Police agrandie + Typographie
+   ============================================= */
+
+html { font-size: 17px; }
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Textes */
+p, .text { font-size: 1rem; line-height: 1.75; }
+.lead     { font-size: 1.18rem; line-height: 1.75; }
+.muted    { font-size: 0.97rem; }
+label     { font-size: 1rem; }
+
+/* Titres */
+.h1, h1 { font-size: 2.5rem !important; font-weight: 800; }
+.h2, h2 { font-size: 1.8rem !important; font-weight: 700; }
+.h3, h3 { font-size: 1.3rem !important; font-weight: 700; }
+
+/* Hero */
+.hero-headline { font-size: 3rem !important; }
+.hero-title    { font-size: 2.8rem !important; }
+
+/* Nav */
+.nav-link   { font-size: 1.05rem !important; }
+.brand-name { font-size: 1.3rem !important; }
+
+/* Supprimer la tagline header */
+.header-tagline { display: none !important; }
+
+/* Inputs */
+input:not([type="checkbox"]):not([type="radio"]),
+select, textarea {
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+/* Boutons */
+.btn-primary, .btn-secondary, .button, .button-outline, .btn {
+  padding: 13px 26px !important;
+  font-size: 1rem !important;
+  border-radius: 10px !important;
+}
+
+/* Footer */
+.site-footer, .footer-inner { font-size: 0.97rem; }
+
+/* Card grids */
+.rentals-grid, .land-grid { gap: 28px !important; }

@@ -4,272 +4,258 @@ import Link from 'next/link';
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 
-type InvestmentItem = {
-  id: string; type: 'villa' | 'land'; title: string; location: string;
-  price: number; currency: string; tenure: 'freehold' | 'leasehold'; leaseYears?: number;
-  expectedYield: number | null; images: string[]; href: string;
-  bedrooms?: number | null; bathrooms?: number | null;
+const WA = '6287873487940';
+
+type Item = {
+  id: string; type: 'villa'|'land'; title: string; location: string;
+  price: number; currency: string; tenure: 'freehold'|'leasehold'; leaseYears?: number;
+  expectedYield: number|null; images: string[]; href: string;
+  bedrooms?: number|null; bathrooms?: number|null;
   pool?: boolean; garden?: boolean; furnished?: boolean;
-  condition?: string; landSize?: string | null;
+  condition?: string; landSize?: string|null;
 };
 
-type SearchState = {
-  type: 'all' | 'villa' | 'land';
-  tenure: 'all' | 'freehold' | 'leasehold';
-  location: string;
-  searched: boolean;
-};
+type Search = { type:'all'|'villa'|'land'; tenure:'all'|'freehold'|'leasehold'; location:string; searched:boolean };
+type Sidebar = { pool:boolean; garden:boolean; furnished:boolean; minBedrooms:string; condition:string };
 
-type SidebarFilters = {
-  pool: boolean; garden: boolean; furnished: boolean;
-  minBedrooms: string; minBathrooms: string;
-  condition: string; // 'ready' | 'to_finish' | 'to_renovate' | ''
-};
-
-function fmtPrice(price: number, currency: string, isLand: boolean) {
-  if (currency === 'USD') return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
+function fmt(price: number, currency: string, isLand: boolean) {
+  if (currency === 'USD') return new Intl.NumberFormat('en-US', { style:'currency', currency:'USD', maximumFractionDigits:0 }).format(price);
   return new Intl.NumberFormat('id-ID').format(price) + (isLand ? ' IDR/are' : ' IDR');
 }
 
-function InvestmentCard({ item }: { item: InvestmentItem }) {
-  const [imgIdx, setImgIdx] = useState(0);
-  const prev = useCallback((e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setImgIdx(i => (i - 1 + item.images.length) % item.images.length); }, [item.images.length]);
-  const next = useCallback((e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setImgIdx(i => (i + 1) % item.images.length); }, [item.images.length]);
+function InvCard({ item }: { item: Item }) {
+  const [idx, setIdx] = useState(0);
+  const prev = useCallback((e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setIdx(i => (i-1+item.images.length)%item.images.length); }, [item.images.length]);
+  const next = useCallback((e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setIdx(i => (i+1)%item.images.length); }, [item.images.length]);
+  const waMsg = encodeURIComponent(`Hello, I'm interested in: ${item.title}`);
 
   return (
-    <Link href={item.href} style={s.card}>
-      <div style={s.imageWrap}>
-        {item.images.length > 0
-          ? <img src={item.images[imgIdx]} alt={item.title} style={s.img} />
-          : <div style={s.noImg}>{item.type === 'villa' ? '🏠' : '🌴'}</div>
-        }
+    <div style={C.card}>
+      <div style={C.imgWrap}>
+        {item.images.length > 0 ? item.images.map((src, i) => (
+          <img key={src} src={src} alt={item.title} loading={i===0?'eager':'lazy'}
+            style={{ ...C.img, opacity: i===idx ? 1 : 0 }} />
+        )) : (
+          <div style={C.noImg}>{item.type==='villa' ? '🏠' : '🌴'}</div>
+        )}
+        <div style={C.gradient} />
+        <div style={{ ...C.typeBadge, background: item.type==='villa' ? '#6d28d9' : '#059669' }}>
+          {item.type==='villa' ? '🏠 Villa' : '🌴 Land'}
+        </div>
+        <div style={{ ...C.tenureBadge, background: item.tenure==='freehold' ? '#1d4ed8' : '#b45309' }}>
+          {item.tenure==='freehold' ? 'Freehold' : `Lease ${item.leaseYears}y`}
+        </div>
+        {item.images.length > 1 && <div style={C.imgCount}>📷 {item.images.length}</div>}
         {item.images.length > 1 && (
           <>
-            <button onClick={prev} style={{ ...s.arrow, left: 8 }}>‹</button>
-            <button onClick={next} style={{ ...s.arrow, right: 8 }}>›</button>
-            <div style={s.dots}>{item.images.map((_, i) => <div key={i} style={{ ...s.dot, background: i === imgIdx ? '#fff' : 'rgba(255,255,255,0.45)' }} />)}</div>
+            <button onClick={prev} style={{ ...C.arrow, left:12 }} aria-label="Previous">‹</button>
+            <button onClick={next} style={{ ...C.arrow, right:12 }} aria-label="Next">›</button>
+            <div style={C.dots}>
+              {item.images.map((_,i) => (
+                <button key={i} aria-label={`Photo ${i+1}`}
+                  onClick={e => { e.preventDefault(); e.stopPropagation(); setIdx(i); }}
+                  style={{ ...C.dot, background: i===idx ? '#fff' : 'rgba(255,255,255,0.4)' }} />
+              ))}
+            </div>
           </>
         )}
-        <div style={{ ...s.typeBadge, background: item.type === 'villa' ? '#8b5cf6' : '#059669' }}>{item.type === 'villa' ? '🏠 Villa' : '🌴 Land'}</div>
-        <div style={{ ...s.tenureBadge, background: item.tenure === 'freehold' ? '#2563eb' : '#f59e0b' }}>
-          {item.tenure === 'freehold' ? '🔑 Freehold' : `📋 Lease ${item.leaseYears}y`}
-        </div>
-        {item.images.length > 1 && <div style={s.imgCount}>📷 {item.images.length}</div>}
       </div>
-      <div style={s.cardBody}>
-        <h3 style={s.cardTitle}>{item.title}</h3>
-        <p style={s.cardLoc}>📍 {item.location}</p>
-        {item.type === 'villa' && (
-          <div style={s.features}>
-            {item.bedrooms && <span style={s.feat}>{item.bedrooms} bed{item.bedrooms !== 1 ? 's' : ''}</span>}
-            {item.bathrooms && <span style={s.feat}>{item.bathrooms} bath{item.bathrooms !== 1 ? 's' : ''}</span>}
-            {item.pool && <span style={s.feat}>Pool</span>}
-            {item.garden && <span style={s.feat}>Garden</span>}
-          </div>
-        )}
-        <div style={s.priceRow}>
-          <span style={s.price}>{fmtPrice(item.price, item.currency, item.type === 'land')}</span>
+      <Link href={item.href} style={C.link}>
+        <div style={C.body}>
+          <h3 style={C.title}>{item.title}</h3>
+          <p style={C.loc}>📍 {item.location}</p>
+          {item.type==='villa' && (
+            <div style={C.chips}>
+              {item.bedrooms && <span style={C.chip}>{item.bedrooms} bed{item.bedrooms!==1?'s':''}</span>}
+              {item.bathrooms && <span style={C.chip}>{item.bathrooms} bath{item.bathrooms!==1?'s':''}</span>}
+              {item.pool && <span style={C.chip}>Pool</span>}
+              {item.garden && <span style={C.chip}>Garden</span>}
+            </div>
+          )}
+          <p style={C.price}>{fmt(item.price, item.currency, item.type==='land')}</p>
+          {item.expectedYield && <p style={C.yield}>📈 {item.expectedYield}% estimated yield/year</p>}
         </div>
-        {item.expectedYield && <div style={s.yieldBadge}>📈 {item.expectedYield}% est. yield</div>}
-      </div>
-    </Link>
+      </Link>
+      <a href={`https://wa.me/${WA}?text=${waMsg}`} target="_blank" rel="noopener noreferrer"
+        style={C.waBtn} onClick={e => e.stopPropagation()}>
+        💬 WhatsApp
+      </a>
+    </div>
   );
 }
 
 export default function InvestmentsPage() {
-  const [items, setItems] = useState<InvestmentItem[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState<SearchState>({ type: 'all', tenure: 'all', location: '', searched: false });
-  const [sidebar, setSidebar] = useState<SidebarFilters>({ pool: false, garden: false, furnished: false, minBedrooms: '', minBathrooms: '', condition: '' });
+  const [search, setSearch] = useState<Search>({ type:'all', tenure:'all', location:'', searched:false });
+  const [sidebar, setSidebar] = useState<Sidebar>({ pool:false, garden:false, furnished:false, minBedrooms:'', condition:'' });
 
   useEffect(() => {
     const load = async () => {
       const { data: investments } = await supabase.from('investments').select('*');
       if (!investments) { setLoading(false); return; }
-
-      const propertyIds = investments.filter(i => i.asset_type === 'property').map(i => i.asset_id);
-      const landIds = investments.filter(i => i.asset_type === 'land').map(i => i.asset_id);
-
+      const pIds = investments.filter(i=>i.asset_type==='property').map(i=>i.asset_id);
+      const lIds = investments.filter(i=>i.asset_type==='land').map(i=>i.asset_id);
       const [{ data: props }, { data: lands }] = await Promise.all([
-        propertyIds.length ? supabase.from('properties').select('*').in('id', propertyIds) : Promise.resolve({ data: [] }),
-        landIds.length ? supabase.from('lands').select('*').in('id', landIds) : Promise.resolve({ data: [] }),
+        pIds.length ? supabase.from('properties').select('*').in('id',pIds) : Promise.resolve({data:[]}),
+        lIds.length ? supabase.from('lands').select('*').in('id',lIds) : Promise.resolve({data:[]}),
       ]);
-
-      const merged: InvestmentItem[] = [];
+      const merged: Item[] = [];
       for (const inv of investments) {
-        if (inv.asset_type === 'property') {
-          const prop = props?.find(p => p.id === inv.asset_id);
-          if (prop && prop.status === 'published') {
-            merged.push({ id: inv.id, type: 'villa', title: prop.title, location: prop.location || 'Lombok', price: prop.price || 0, currency: prop.currency || 'USD', tenure: prop.tenure || 'freehold', leaseYears: prop.lease_years, expectedYield: inv.expected_yield, images: prop.images || [], href: `/investments/${inv.id}`, bedrooms: prop.bedrooms, bathrooms: prop.bathrooms, pool: prop.pool, garden: prop.garden, furnished: prop.furnished, condition: prop.condition });
-          }
+        if (inv.asset_type==='property') {
+          const p = (props as any[])?.find(x=>x.id===inv.asset_id);
+          if (p && p.status==='published') merged.push({ id:inv.id, type:'villa', title:p.title, location:p.location||'Lombok', price:p.price||0, currency:p.currency||'USD', tenure:p.tenure||'freehold', leaseYears:p.lease_years, expectedYield:inv.expected_yield, images:p.images||[], href:`/investments/${inv.id}`, bedrooms:p.bedrooms, bathrooms:p.bathrooms, pool:p.pool, garden:p.garden, furnished:p.furnished, condition:p.condition });
         }
-        if (inv.asset_type === 'land') {
-          const land = lands?.find(l => l.id === inv.asset_id);
-          if (land && land.status === 'published') {
-            merged.push({ id: inv.id, type: 'land', title: land.title, location: land.location || 'Lombok', price: land.price_per_are_idr ?? land.price_per_are ?? 0, currency: land.currency || 'IDR', tenure: land.tenure || 'freehold', leaseYears: land.lease_years, expectedYield: inv.expected_yield, images: land.images || [], href: `/investments/${inv.id}`, landSize: land.land_size, condition: land.condition });
-          }
+        if (inv.asset_type==='land') {
+          const l = (lands as any[])?.find(x=>x.id===inv.asset_id);
+          if (l && l.status==='published') merged.push({ id:inv.id, type:'land', title:l.title, location:l.location||'Lombok', price:l.price_per_are_idr??l.price_per_are??0, currency:l.currency||'IDR', tenure:l.tenure||'freehold', leaseYears:l.lease_years, expectedYield:inv.expected_yield, images:l.images||[], href:`/investments/${inv.id}`, landSize:l.land_size, condition:l.condition });
         }
       }
-      setItems(merged);
-      setLoading(false);
+      setItems(merged); setLoading(false);
     };
     load();
   }, []);
 
-  const locations = [...new Set(items.map(i => i.location))].sort();
+  const locations = [...new Set(items.map(i=>i.location))].sort();
 
-  // Apply search bar filters
   const afterSearch = items.filter(item => {
-    if (search.type !== 'all' && item.type !== search.type) return false;
-    if (search.tenure !== 'all' && item.tenure !== search.tenure) return false;
-    if (search.location && item.location !== search.location) return false;
+    if (search.type!=='all' && item.type!==search.type) return false;
+    if (search.tenure!=='all' && item.tenure!==search.tenure) return false;
+    if (search.location && item.location!==search.location) return false;
     return true;
   });
 
-  // Apply sidebar filters (only if searched)
   const filtered = !search.searched ? afterSearch : afterSearch.filter(item => {
     if (sidebar.pool && !item.pool) return false;
     if (sidebar.garden && !item.garden) return false;
     if (sidebar.furnished && !item.furnished) return false;
-    if (sidebar.minBedrooms && (item.bedrooms || 0) < Number(sidebar.minBedrooms)) return false;
-    if (sidebar.minBathrooms && (item.bathrooms || 0) < Number(sidebar.minBathrooms)) return false;
-    if (sidebar.condition && item.condition !== sidebar.condition) return false;
+    if (sidebar.minBedrooms && (item.bedrooms??0) < Number(sidebar.minBedrooms)) return false;
+    if (sidebar.condition && item.condition!==sidebar.condition) return false;
     return true;
   });
 
-  const handleSearch = () => setSearch(s => ({ ...s, searched: true }));
-
-  const isVilla = search.type === 'villa' || (search.type === 'all' && afterSearch.some(i => i.type === 'villa'));
-  const isLand = search.type === 'land' || (search.type === 'all' && afterSearch.some(i => i.type === 'land'));
-
-  if (loading) return <main style={s.page}><div style={s.loading}><div style={s.spinner} /><p>Loading opportunities…</p></div></main>;
+  if (loading) return (
+    <main style={P.page}><div style={P.loading}><div style={P.spinner}/><span style={{fontSize:16,color:'#6b7280'}}>Loading opportunities…</span></div></main>
+  );
 
   return (
-    <main style={s.page}>
-      <section style={s.hero}>
-        <h1 style={s.heroTitle}>Invest in Lombok</h1>
-        <p style={s.heroSub}>Selected villas and land — curated for serious investors</p>
+    <main style={P.page}>
+      <section style={P.hero}>
+        <h1 style={P.h1}>Invest in Lombok</h1>
+        <p style={P.sub}>Selected villas and land — curated for serious investors</p>
       </section>
 
-      {/* Search bar */}
-      <div style={s.searchBar}>
-        <div style={s.searchSegment}>
-          <span style={s.searchLabel}>ASSET TYPE</span>
-          <select style={s.searchSelect} value={search.type} onChange={e => setSearch(p => ({ ...p, type: e.target.value as any, searched: false }))}>
-            <option value="all">All</option>
-            <option value="villa">🏠 Villas</option>
-            <option value="land">🌴 Land</option>
-          </select>
-        </div>
-        <div style={s.searchDivider} />
-        <div style={s.searchSegment}>
-          <span style={s.searchLabel}>PROPERTY TYPE</span>
-          <select style={s.searchSelect} value={search.tenure} onChange={e => setSearch(p => ({ ...p, tenure: e.target.value as any, searched: false }))}>
-            <option value="all">All</option>
-            <option value="freehold">🔑 Freehold</option>
-            <option value="leasehold">📋 Leasehold</option>
-          </select>
-        </div>
-        <div style={s.searchDivider} />
-        <div style={s.searchSegment}>
-          <span style={s.searchLabel}>LOCATION</span>
-          <select style={s.searchSelect} value={search.location} onChange={e => setSearch(p => ({ ...p, location: e.target.value, searched: false }))}>
-            <option value="">All areas</option>
-            {locations.map(loc => <option key={loc} value={loc}>{loc}</option>)}
-          </select>
-        </div>
-        <div style={s.searchAction}>
-          <button onClick={handleSearch} style={s.searchBtn}>Search</button>
+      <div style={P.searchBar}>
+        {[
+          ['ASSET TYPE', search.type, (v:string)=>setSearch(s=>({...s,type:v as any,searched:false})), [['all','All'],['villa','🏠 Villas'],['land','🌴 Land']]],
+          ['PROPERTY TYPE', search.tenure, (v:string)=>setSearch(s=>({...s,tenure:v as any,searched:false})), [['all','All'],['freehold','🔑 Freehold'],['leasehold','📋 Leasehold']]],
+          ['LOCATION', search.location, (v:string)=>setSearch(s=>({...s,location:v,searched:false})), [['','All areas'],...locations.map(l=>[l,l])]],
+        ].map(([label, val, setter, opts], i, arr) => (
+          <>
+            <div key={label as string} style={P.seg}>
+              <span style={P.segLabel}>{label as string}</span>
+              <select style={P.segSel} value={val as string} onChange={e=>(setter as any)(e.target.value)}>
+                {(opts as [string,string][]).map(([v,l])=><option key={v} value={v}>{l}</option>)}
+              </select>
+            </div>
+            {i < arr.length-1 && <div key={`div${i}`} style={P.divider}/>}
+          </>
+        ))}
+        <div style={P.searchAction}>
+          <button onClick={()=>setSearch(s=>({...s,searched:true}))} style={P.searchBtn}>Search</button>
         </div>
       </div>
 
-      <div style={s.layout}>
-        {/* Sidebar — only after search */}
+      <div style={P.layout}>
         {search.searched && (
-          <aside style={s.sidebar}>
-            {(isVilla || search.type === 'all') && (
+          <aside style={P.sidebar}>
+            {(search.type==='villa'||search.type==='all') && (
               <>
-                <p style={s.sidebarHeading}>AMENITIES</p>
-                {[['pool','pool','🏊 Pool'],['garden','garden','🌳 Garden'],['furnished','furnished','🛋️ Furnished']] .map(([,key,label]) => (
-                  <label key={key} style={s.checkRow}>
-                    <input type="checkbox" checked={sidebar[key as keyof SidebarFilters] as boolean} onChange={e => setSidebar(p => ({ ...p, [key]: e.target.checked }))} style={{ accentColor: '#2563eb', width: 18, height: 18 }} />
-                    <span style={s.checkLabel}>{label}</span>
+                <p style={P.sHead}>AMENITIES</p>
+                {([['pool','🏊 Pool'],['garden','🌳 Garden'],['furnished','🛋️ Furnished']] as [keyof Sidebar,string][]).map(([key,label])=>(
+                  <label key={key} style={P.checkRow}>
+                    <input type="checkbox" checked={sidebar[key] as boolean} onChange={e=>setSidebar(s=>({...s,[key]:e.target.checked}))} style={{accentColor:'#f59e0b',width:17,height:17}}/>
+                    <span style={P.checkLabel}>{label}</span>
                   </label>
                 ))}
-                <p style={{ ...s.sidebarHeading, marginTop: 20 }}>BEDROOMS</p>
-                {[['1','1+'],['2','2+'],['3','3+']].map(([val, label]) => (
-                  <label key={val} style={s.checkRow}>
-                    <input type="checkbox" checked={sidebar.minBedrooms === val} onChange={e => setSidebar(p => ({ ...p, minBedrooms: e.target.checked ? val : '' }))} style={{ accentColor: '#2563eb', width: 18, height: 18 }} />
-                    <span style={s.checkLabel}>{label} bedrooms</span>
+                <p style={{...P.sHead,marginTop:20}}>BEDROOMS</p>
+                {[['1','1+'],['2','2+'],['3','3+']].map(([v,l])=>(
+                  <label key={v} style={P.checkRow}>
+                    <input type="checkbox" checked={sidebar.minBedrooms===v} onChange={e=>setSidebar(s=>({...s,minBedrooms:e.target.checked?v:''}))} style={{accentColor:'#f59e0b',width:17,height:17}}/>
+                    <span style={P.checkLabel}>{l} bedrooms</span>
                   </label>
                 ))}
               </>
             )}
-            <p style={{ ...s.sidebarHeading, marginTop: 20 }}>CONDITION</p>
-            {[['ready','✅ Ready to live'],['to_finish','🔨 To finish'],['to_renovate','🏚️ To renovate']].map(([val, label]) => (
-              <label key={val} style={s.checkRow}>
-                <input type="checkbox" checked={sidebar.condition === val} onChange={e => setSidebar(p => ({ ...p, condition: e.target.checked ? val : '' }))} style={{ accentColor: '#f59e0b', width: 18, height: 18 }} />
-                <span style={s.checkLabel}>{label}</span>
+            <p style={{...P.sHead,marginTop:20}}>CONDITION</p>
+            {[['ready','✅ Ready to live'],['to_finish','🔨 To finish'],['to_renovate','🏚️ To renovate']].map(([v,l])=>(
+              <label key={v} style={P.checkRow}>
+                <input type="checkbox" checked={sidebar.condition===v} onChange={e=>setSidebar(s=>({...s,condition:e.target.checked?v:''}))} style={{accentColor:'#f59e0b',width:17,height:17}}/>
+                <span style={P.checkLabel}>{l}</span>
               </label>
             ))}
           </aside>
         )}
-
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={s.resultRow}>
-            <p style={s.resultCount}>{filtered.length} opportunit{filtered.length !== 1 ? 'ies' : 'y'} available</p>
-            {search.searched && <button onClick={() => { setSearch(p => ({ ...p, searched: false })); setSidebar({ pool: false, garden: false, furnished: false, minBedrooms: '', minBathrooms: '', condition: '' }); }} style={s.resetBtn}>Clear filters</button>}
+        <div style={{flex:1,minWidth:0}}>
+          <div style={P.resultRow}>
+            <p style={{fontSize:15,color:'#6b7280',margin:0}}>{filtered.length} opportunit{filtered.length!==1?'ies':'y'} available</p>
+            {search.searched && <button onClick={()=>{setSearch(s=>({...s,searched:false}));setSidebar({pool:false,garden:false,furnished:false,minBedrooms:'',condition:''});}} style={{fontSize:14,fontWeight:600,color:'#f59e0b',background:'none',border:'none',cursor:'pointer'}}>Clear filters</button>}
           </div>
-          {filtered.length === 0
-            ? <div style={s.empty}><p>No opportunities match your criteria.</p></div>
-            : <div style={s.grid}>{filtered.map(item => <InvestmentCard key={item.id} item={item} />)}</div>
-          }
+          {filtered.length===0 ? (
+            <div style={{display:'flex',flexDirection:'column',alignItems:'center',padding:60,background:'#f9fafb',borderRadius:16}}>
+              <p style={{color:'#6b7280',fontSize:16}}>No opportunities match your criteria.</p>
+            </div>
+          ) : (
+            <div style={P.grid}>{filtered.map(item=><InvCard key={item.id} item={item}/>)}</div>
+          )}
         </div>
       </div>
     </main>
   );
 }
 
-const s: { [k: string]: React.CSSProperties } = {
-  page: { maxWidth: 1400, margin: '0 auto', padding: '0 24px 80px' },
-  loading: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 16, color: '#6b7280' },
-  spinner: { width: 44, height: 44, border: '4px solid #e5e7eb', borderTopColor: '#f59e0b', borderRadius: '50%' },
-  hero: { textAlign: 'center', padding: '72px 0 48px' },
-  heroTitle: { fontSize: 48, fontWeight: 800, color: '#111827', marginBottom: 14 },
-  heroSub: { fontSize: 19, color: '#6b7280', maxWidth: 520, margin: '0 auto' },
-  searchBar: { display: 'flex', background: '#fff', borderRadius: 16, border: '1px solid #e5e7eb', overflow: 'hidden', marginBottom: 32, boxShadow: '0 4px 20px rgba(15,23,42,0.06)', alignItems: 'stretch' },
-  searchSegment: { flex: 1, padding: '18px 22px', display: 'flex', flexDirection: 'column', gap: 6 },
-  searchLabel: { fontSize: 11, fontWeight: 800, letterSpacing: '0.1em', color: '#9ca3af' },
-  searchSelect: { border: 'none', outline: 'none', fontSize: 15, fontWeight: 600, color: '#111827', background: 'transparent', cursor: 'pointer', padding: 0 },
-  searchDivider: { width: 1, background: '#f3f4f6', margin: '12px 0' },
-  searchAction: { display: 'flex', alignItems: 'center', padding: '0 20px' },
-  searchBtn: { padding: '13px 24px', background: 'linear-gradient(135deg,#f59e0b,#d97706)', color: '#fff', border: 'none', borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' },
-  layout: { display: 'flex', gap: 28, alignItems: 'flex-start' },
-  sidebar: { width: 240, flexShrink: 0, background: '#fff', borderRadius: 18, border: '1px solid #e5e7eb', padding: '24px 20px', position: 'sticky', top: 24, boxShadow: '0 4px 20px rgba(15,23,42,0.06)' },
-  sidebarHeading: { fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', color: '#f59e0b', margin: '0 0 14px', textTransform: 'uppercase' },
-  checkRow: { display: 'flex', alignItems: 'center', gap: 12, padding: '11px 0', borderBottom: '1px solid #f3f4f6', cursor: 'pointer' },
-  checkLabel: { fontSize: 15, fontWeight: 500, color: '#374151' },
-  resultRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  resultCount: { fontSize: 15, color: '#6b7280', margin: 0 },
-  resetBtn: { fontSize: 14, fontWeight: 600, color: '#f59e0b', background: 'none', border: 'none', cursor: 'pointer', padding: 0 },
-  empty: { display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 60, background: '#f9fafb', borderRadius: 16 },
-  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24 },
-  card: { background: '#fff', borderRadius: 18, overflow: 'hidden', boxShadow: '0 4px 20px rgba(15,23,42,0.07)', border: '1px solid #e5e7eb', textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column' },
-  imageWrap: { position: 'relative', aspectRatio: '16/10', background: '#f3f4f6', flexShrink: 0 },
-  img: { width: '100%', height: '100%', objectFit: 'cover' },
-  noImg: { width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 52, color: '#d1d5db' },
-  arrow: { position: 'absolute', top: '50%', transform: 'translateY(-50%)', width: 34, height: 34, borderRadius: '50%', background: 'rgba(255,255,255,0.93)', border: 'none', fontSize: 22, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.18)', zIndex: 2, color: '#111' },
-  dots: { position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5 },
-  dot: { width: 6, height: 6, borderRadius: '50%' },
-  typeBadge: { position: 'absolute', top: 10, left: 10, padding: '5px 11px', borderRadius: 20, color: '#fff', fontSize: 12, fontWeight: 700 },
-  tenureBadge: { position: 'absolute', top: 10, right: 10, padding: '5px 11px', borderRadius: 20, color: '#fff', fontSize: 11, fontWeight: 700 },
-  imgCount: { position: 'absolute', bottom: 10, right: 10, padding: '5px 10px', background: 'rgba(0,0,0,0.58)', color: '#fff', borderRadius: 8, fontSize: 11, fontWeight: 600 },
-  cardBody: { padding: '18px 20px 20px' },
-  cardTitle: { fontSize: 17, fontWeight: 700, color: '#111827', margin: '0 0 4px' },
-  cardLoc: { fontSize: 14, color: '#6b7280', margin: '0 0 12px' },
-  features: { display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 12 },
-  feat: { fontSize: 13, color: '#374151', background: '#f3f4f6', padding: '4px 10px', borderRadius: 7, fontWeight: 500 },
-  priceRow: { marginBottom: 8 },
-  price: { fontSize: 22, fontWeight: 800, color: '#f59e0b' },
-  yieldBadge: { display: 'inline-block', padding: '5px 11px', background: '#ecfdf5', color: '#059669', borderRadius: 8, fontSize: 13, fontWeight: 600 },
+const C: { [k: string]: React.CSSProperties } = {
+  card: { background:'#fff', borderRadius:14, overflow:'hidden', boxShadow:'0 2px 16px rgba(15,23,42,0.08)', border:'1px solid #e8e8e8', display:'flex', flexDirection:'column', transition:'transform 0.2s ease, box-shadow 0.2s ease' },
+  imgWrap: { position:'relative', width:'100%', height:220, flexShrink:0, background:'#e5e7eb', overflow:'hidden' },
+  img: { position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', transition:'opacity 0.35s ease', pointerEvents:'none', userSelect:'none' },
+  noImg: { position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:56, color:'#d1d5db' },
+  gradient: { position:'absolute', inset:0, background:'linear-gradient(180deg,transparent 50%,rgba(0,0,0,0.4) 100%)', pointerEvents:'none' },
+  typeBadge: { position:'absolute', top:12, left:12, color:'#fff', fontSize:12, fontWeight:700, padding:'5px 11px', borderRadius:6 },
+  tenureBadge: { position:'absolute', top:12, right:12, color:'#fff', fontSize:11, fontWeight:700, padding:'5px 10px', borderRadius:6 },
+  imgCount: { position:'absolute', bottom:12, right:12, background:'rgba(0,0,0,0.55)', color:'#fff', fontSize:12, fontWeight:600, padding:'5px 10px', borderRadius:6 },
+  arrow: { position:'absolute', top:'50%', transform:'translateY(-50%)', width:36, height:36, borderRadius:'50%', background:'rgba(255,255,255,0.93)', border:'none', fontSize:22, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 2px 8px rgba(0,0,0,0.2)', zIndex:3, color:'#111', padding:0, lineHeight:1 },
+  dots: { position:'absolute', bottom:10, left:'50%', transform:'translateX(-50%)', display:'flex', gap:5, zIndex:3 },
+  dot: { width:7, height:7, borderRadius:'50%', border:'none', padding:0, cursor:'pointer', transition:'background 0.2s' },
+  link: { textDecoration:'none', color:'inherit', display:'block' },
+  body: { padding:'18px 20px 12px' },
+  title: { fontSize:17, fontWeight:800, color:'#111827', margin:'0 0 4px', lineHeight:1.3 },
+  loc: { fontSize:14, color:'#6b7280', margin:'0 0 12px' },
+  chips: { display:'flex', flexWrap:'wrap', gap:6, marginBottom:12 },
+  chip: { fontSize:13, color:'#374151', background:'#f3f4f6', padding:'4px 11px', borderRadius:6, fontWeight:600, border:'1px solid #e5e7eb' },
+  price: { fontSize:22, fontWeight:800, color:'#111827', margin:'0 0 4px' },
+  yield: { fontSize:13, color:'#059669', fontWeight:600, margin:0 },
+  waBtn: { display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'12px 16px', background:'#25d366', color:'#fff', textDecoration:'none', fontWeight:700, fontSize:14, margin:'10px 16px 16px', borderRadius:10 },
+};
+
+const P: { [k: string]: React.CSSProperties } = {
+  page: { maxWidth:1400, margin:'0 auto', padding:'0 24px 80px' },
+  loading: { display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:'60vh', gap:16 },
+  spinner: { width:44, height:44, border:'4px solid #e5e7eb', borderTopColor:'#f59e0b', borderRadius:'50%' },
+  hero: { textAlign:'center', padding:'64px 0 48px' },
+  h1: { fontSize:46, fontWeight:800, color:'#111827', marginBottom:14, lineHeight:1.15 },
+  sub: { fontSize:18, color:'#6b7280', maxWidth:520, margin:'0 auto' },
+  searchBar: { display:'flex', background:'#fff', borderRadius:14, border:'1px solid #e5e7eb', overflow:'hidden', marginBottom:32, boxShadow:'0 2px 12px rgba(15,23,42,0.06)', alignItems:'stretch' },
+  seg: { flex:1, padding:'16px 20px', display:'flex', flexDirection:'column', gap:5 },
+  segLabel: { fontSize:11, fontWeight:800, letterSpacing:'0.1em', color:'#9ca3af' },
+  segSel: { border:'none', outline:'none', fontSize:15, fontWeight:600, color:'#111827', background:'transparent', cursor:'pointer', padding:0 },
+  divider: { width:1, background:'#f3f4f6', margin:'10px 0' },
+  searchAction: { display:'flex', alignItems:'center', padding:'0 18px' },
+  searchBtn: { padding:'12px 22px', background:'linear-gradient(135deg,#f59e0b,#d97706)', color:'#fff', border:'none', borderRadius:10, fontSize:15, fontWeight:700, cursor:'pointer' },
+  layout: { display:'flex', gap:28, alignItems:'flex-start' },
+  sidebar: { width:230, flexShrink:0, background:'#fff', borderRadius:16, border:'1px solid #e5e7eb', padding:'22px 18px', position:'sticky', top:24, boxShadow:'0 2px 12px rgba(15,23,42,0.06)' },
+  sHead: { fontSize:11, fontWeight:800, letterSpacing:'0.13em', color:'#f59e0b', margin:'0 0 14px', textTransform:'uppercase' },
+  checkRow: { display:'flex', alignItems:'center', gap:11, padding:'10px 0', borderBottom:'1px solid #f3f4f6', cursor:'pointer' },
+  checkLabel: { fontSize:15, fontWeight:500, color:'#374151' },
+  resultRow: { display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20 },
+  grid: { display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:24 },
 };

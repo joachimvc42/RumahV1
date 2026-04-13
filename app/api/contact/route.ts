@@ -15,69 +15,68 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Save to Supabase leads table
-    const { error: dbError } = await supabase.from('leads').insert({
+    // Save to Supabase
+    await supabase.from('leads').insert({
       full_name: fullName,
       email,
       message: `[${type || 'general'}] ${message}`,
       interest_type: type === 'investment' ? 'investment' : 'rental',
     });
 
-    if (dbError) {
-      console.error('DB error:', dbError);
+    // Send via Resend if key is set
+    const resendKey = process.env.RESEND_API_KEY;
+    if (!resendKey) {
+      console.warn('RESEND_API_KEY not configured — lead saved to DB only');
+      return NextResponse.json({ success: true, emailSent: false });
     }
 
-    // Try to send email via Resend if API key is available
-    const resendKey = process.env.RESEND_API_KEY;
+    const from = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 
-    if (resendKey) {
-      const emailBody = {
-        from: 'RumahYa Contact <noreply@rumahya.com>',
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: `RumahYa <${from}>`,
         to: ['info@rumahya.com'],
         reply_to: email,
-        subject: `New contact from ${fullName} — ${type || 'General'}`,
-        html: `
-          <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px;">
-            <div style="background: linear-gradient(135deg, #2563eb, #22c55e); padding: 24px; border-radius: 16px 16px 0 0;">
-              <h1 style="color: white; margin: 0; font-size: 22px;">New contact message</h1>
-            </div>
-            <div style="background: #f9fafb; padding: 28px; border-radius: 0 0 16px 16px; border: 1px solid #e5e7eb; border-top: none;">
-              <table style="width: 100%; border-collapse: collapse;">
-                <tr><td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #374151; width: 140px;">Name</td><td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; color: #111827;">${fullName}</td></tr>
-                <tr><td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #374151;">Email</td><td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb;"><a href="mailto:${email}" style="color: #2563eb;">${email}</a></td></tr>
-                <tr><td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; font-weight: 600; color: #374151;">Topic</td><td style="padding: 10px 0; border-bottom: 1px solid #e5e7eb; color: #111827;">${type || 'Not specified'}</td></tr>
-              </table>
-              <div style="margin-top: 24px;">
-                <p style="font-weight: 600; color: #374151; margin: 0 0 10px;">Message</p>
-                <div style="background: white; border: 1px solid #e5e7eb; border-radius: 10px; padding: 18px; color: #111827; line-height: 1.7; white-space: pre-wrap;">${message}</div>
-              </div>
-              <div style="margin-top: 20px; padding: 14px; background: #eff6ff; border-radius: 10px; font-size: 13px; color: #1d4ed8;">
-                Reply directly to this email to contact ${fullName}.
-              </div>
-            </div>
-          </div>
-        `,
-      };
+        subject: `[RumahYa] New message from ${fullName} — ${type || 'General enquiry'}`,
+        html: `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;background:#f5f5f5;font-family:system-ui,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5;padding:32px 0;"><tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+<tr><td style="background:linear-gradient(135deg,#2563eb,#22c55e);padding:28px 36px;">
+  <p style="margin:0;font-size:22px;font-weight:800;color:#fff;">RumahYa</p>
+  <p style="margin:6px 0 0;font-size:14px;color:rgba(255,255,255,0.85);">New contact message received</p>
+</td></tr>
+<tr><td style="padding:32px 36px 0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
+    <tr style="background:#f9fafb;"><td style="padding:12px 18px;font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;width:120px;">Name</td><td style="padding:12px 18px;font-size:15px;color:#111827;font-weight:600;">${fullName}</td></tr>
+    <tr style="border-top:1px solid #e5e7eb;"><td style="padding:12px 18px;font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;">Email</td><td style="padding:12px 18px;"><a href="mailto:${email}" style="color:#2563eb;font-size:15px;text-decoration:none;font-weight:600;">${email}</a></td></tr>
+    <tr style="border-top:1px solid #e5e7eb;"><td style="padding:12px 18px;font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;">Topic</td><td style="padding:12px 18px;font-size:15px;color:#111827;">${type || 'Not specified'}</td></tr>
+  </table>
+</td></tr>
+<tr><td style="padding:24px 36px 0;">
+  <p style="margin:0 0 10px;font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;">Message</p>
+  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px 22px;font-size:15px;line-height:1.75;color:#374151;white-space:pre-wrap;">${message}</div>
+</td></tr>
+<tr><td style="padding:24px 36px;">
+  <a href="mailto:${email}?subject=Re: Your enquiry to RumahYa" style="display:inline-block;padding:13px 24px;background:#2563eb;color:#fff;font-size:15px;font-weight:700;text-decoration:none;border-radius:10px;">Reply to ${fullName}</a>
+</td></tr>
+<tr><td style="padding:20px 36px;border-top:1px solid #e5e7eb;background:#f9fafb;">
+  <p style="margin:0;font-size:13px;color:#9ca3af;">Sent via the RumahYa website contact form. Reply to respond to ${fullName}.</p>
+</td></tr>
+</table></td></tr></table></body></html>`,
+      }),
+    });
 
-      const res = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${resendKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(emailBody),
-      });
-
-      if (!res.ok) {
-        const err = await res.text();
-        console.error('Resend error:', err);
-        // Don't fail — lead is saved in DB
-      }
+    if (!res.ok) {
+      const err = await res.text();
+      console.error('Resend error:', err);
+      return NextResponse.json({ success: true, emailSent: false });
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, emailSent: true });
   } catch (error) {
-    console.error('Contact API error:', error);
+    console.error('Contact route error:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

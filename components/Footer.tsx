@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="container footer-inner">
         <div>
           <strong>RUMAHYA</strong><br />
-          Lombok long-term rentals, land and property management.
+          Lombok rentals & Investment
         </div>
         <div>
           WhatsApp: <a href="https://wa.me/6287873487940" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>+62 878 7348 7940</a><br />
