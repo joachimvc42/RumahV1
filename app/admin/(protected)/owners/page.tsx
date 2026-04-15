@@ -66,7 +66,7 @@ export default function AdminOwnersPage() {
                   <td style={s.td}><span style={s.name}>{o.name}</span></td>
                   <td style={{ ...s.td, color: '#6b7280' }}>{o.contact_info ?? '—'}</td>
                   <td style={s.td}>
-                    <span style={{ ...s.badge, background: o.verified ? '#ecfdf5', color: '#065f46' }}>
+                    <span style={{ ...s.badge, background: o.verified ? '#ecfdf5' : '#f3f4f6', color: o.verified ? '#065f46' : '#6b7280' }}>
                       {o.verified ? '✓ Verified' : 'Unverified'}
                     </span>
                   </td>
