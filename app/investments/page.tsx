@@ -27,7 +27,6 @@ function InvCard({ item }: { item: Item }) {
   const [idx, setIdx] = useState(0);
   const prev = useCallback((e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setIdx(i => (i-1+item.images.length)%item.images.length); }, [item.images.length]);
   const next = useCallback((e: React.MouseEvent) => { e.preventDefault(); e.stopPropagation(); setIdx(i => (i+1)%item.images.length); }, [item.images.length]);
-  const waMsg = encodeURIComponent(`Hello, I'm interested in: ${item.title}`);
 
   return (
     <div style={C.card}>
@@ -40,12 +39,12 @@ function InvCard({ item }: { item: Item }) {
         )}
         <div style={C.gradient} />
         <div style={{ ...C.typeBadge, background: item.type==='villa' ? '#6d28d9' : '#059669' }}>
-          {item.type==='villa' ? '🏠 Villa' : '🌴 Land'}
+          {item.type==='villa' ? 'Villa' : 'Land'}
         </div>
         <div style={{ ...C.tenureBadge, background: item.tenure==='freehold' ? '#1d4ed8' : '#b45309' }}>
           {item.tenure==='freehold' ? 'Freehold' : `Lease ${item.leaseYears}y`}
         </div>
-        {item.images.length > 1 && <div style={C.imgCount}>📷 {item.images.length}</div>}
+        {item.images.length > 1 && <div style={C.imgCount}>{item.images.length} photos</div>}
         {item.images.length > 1 && (
           <>
             <button onClick={prev} style={{ ...C.arrow, left:12 }} aria-label="Previous">‹</button>
@@ -62,24 +61,24 @@ function InvCard({ item }: { item: Item }) {
       </div>
       <Link href={item.href} style={C.link}>
         <div style={C.body}>
-          <h3 style={C.title}>{item.title}</h3>
-          <p style={C.loc}>📍 {item.location}</p>
-          {item.type==='villa' && (
-            <div style={C.chips}>
-              {item.bedrooms && <span style={C.chip}>{item.bedrooms} bed{item.bedrooms!==1?'s':''}</span>}
-              {item.bathrooms && <span style={C.chip}>{item.bathrooms} bath{item.bathrooms!==1?'s':''}</span>}
-              {item.pool && <span style={C.chip}>Pool</span>}
-              {item.garden && <span style={C.chip}>Garden</span>}
-            </div>
-          )}
-          <p style={C.price}>{fmt(item.price, item.currency, item.type==='land')}</p>
-          {item.expectedYield && <p style={C.yield}>📈 {item.expectedYield}% estimated yield/year</p>}
+          <div>
+            <h3 style={C.title}>{item.title}</h3>
+            <p style={C.loc}>{item.location}</p>
+            {item.type==='villa' && (
+              <div style={C.chips}>
+                {item.bedrooms && <span style={C.chip}>{item.bedrooms} bed{item.bedrooms!==1?'s':''}</span>}
+                {item.bathrooms && <span style={C.chip}>{item.bathrooms} bath{item.bathrooms!==1?'s':''}</span>}
+                {item.pool && <span style={C.chip}>Pool</span>}
+                {item.garden && <span style={C.chip}>Garden</span>}
+              </div>
+            )}
+          </div>
+          <div style={C.priceBlock}>
+            <p style={C.price}>{fmt(item.price, item.currency, item.type==='land')}</p>
+            {item.expectedYield && <p style={C.yield}>{item.expectedYield}% est. yield / year</p>}
+          </div>
         </div>
       </Link>
-      <a href={`https://wa.me/${WA}?text=${waMsg}`} target="_blank" rel="noopener noreferrer"
-        style={C.waBtn} onClick={e => e.stopPropagation()}>
-        💬 WhatsApp
-      </a>
     </div>
   );
 }
@@ -215,26 +214,26 @@ export default function InvestmentsPage() {
 }
 
 const C: { [k: string]: React.CSSProperties } = {
-  card: { background:'#fff', borderRadius:14, overflow:'hidden', boxShadow:'0 2px 16px rgba(15,23,42,0.08)', border:'1px solid #e8e8e8', display:'flex', flexDirection:'column', transition:'transform 0.2s ease, box-shadow 0.2s ease' },
+  card: { background:'#fff', borderRadius:14, overflow:'hidden', boxShadow:'0 2px 16px rgba(15,23,42,0.08)', border:'1px solid #e8e8e8', display:'flex', flexDirection:'column' },
   imgWrap: { position:'relative', width:'100%', height:220, flexShrink:0, background:'#e5e7eb', overflow:'hidden' },
   img: { position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', transition:'opacity 0.35s ease', pointerEvents:'none', userSelect:'none' },
   noImg: { position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:56, color:'#d1d5db' },
-  gradient: { position:'absolute', inset:0, background:'linear-gradient(180deg,transparent 50%,rgba(0,0,0,0.4) 100%)', pointerEvents:'none' },
-  typeBadge: { position:'absolute', top:12, left:12, color:'#fff', fontSize:12, fontWeight:700, padding:'5px 11px', borderRadius:6 },
-  tenureBadge: { position:'absolute', top:12, right:12, color:'#fff', fontSize:11, fontWeight:700, padding:'5px 10px', borderRadius:6 },
-  imgCount: { position:'absolute', bottom:12, right:12, background:'rgba(0,0,0,0.55)', color:'#fff', fontSize:12, fontWeight:600, padding:'5px 10px', borderRadius:6 },
-  arrow: { position:'absolute', top:'50%', transform:'translateY(-50%)', width:36, height:36, borderRadius:'50%', background:'rgba(255,255,255,0.93)', border:'none', fontSize:22, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 2px 8px rgba(0,0,0,0.2)', zIndex:3, color:'#111', padding:0, lineHeight:1 },
+  gradient: { position:'absolute', inset:0, background:'linear-gradient(180deg,transparent 60%,rgba(0,0,0,0.32) 100%)', pointerEvents:'none' },
+  typeBadge: { position:'absolute', top:12, left:12, color:'#fff', fontSize:11, fontWeight:700, padding:'4px 10px', borderRadius:5, letterSpacing:'0.04em', textTransform:'uppercase' },
+  tenureBadge: { position:'absolute', top:12, right:12, color:'#fff', fontSize:11, fontWeight:700, padding:'4px 10px', borderRadius:5, letterSpacing:'0.04em' },
+  imgCount: { position:'absolute', bottom:10, right:10, background:'rgba(0,0,0,0.5)', color:'#fff', fontSize:11, fontWeight:600, padding:'4px 9px', borderRadius:5 },
+  arrow: { position:'absolute', top:'50%', transform:'translateY(-50%)', width:34, height:34, borderRadius:'50%', background:'rgba(255,255,255,0.92)', border:'none', fontSize:20, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 2px 8px rgba(0,0,0,0.18)', zIndex:3, color:'#111', padding:0, lineHeight:1 },
   dots: { position:'absolute', bottom:10, left:'50%', transform:'translateX(-50%)', display:'flex', gap:5, zIndex:3 },
-  dot: { width:7, height:7, borderRadius:'50%', border:'none', padding:0, cursor:'pointer', transition:'background 0.2s' },
-  link: { textDecoration:'none', color:'inherit', display:'block' },
-  body: { padding:'18px 20px 12px' },
-  title: { fontSize:17, fontWeight:800, color:'#111827', margin:'0 0 4px', lineHeight:1.3 },
-  loc: { fontSize:14, color:'#6b7280', margin:'0 0 12px' },
-  chips: { display:'flex', flexWrap:'wrap', gap:6, marginBottom:12 },
-  chip: { fontSize:13, color:'#374151', background:'#f3f4f6', padding:'4px 11px', borderRadius:6, fontWeight:600, border:'1px solid #e5e7eb' },
-  price: { fontSize:22, fontWeight:800, color:'#111827', margin:'0 0 4px' },
-  yield: { fontSize:13, color:'#059669', fontWeight:600, margin:0 },
-  waBtn: { display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'12px 16px', background:'#25d366', color:'#fff', textDecoration:'none', fontWeight:700, fontSize:14, margin:'10px 16px 16px', borderRadius:10 },
+  dot: { width:6, height:6, borderRadius:'50%', border:'none', padding:0, cursor:'pointer', transition:'background 0.2s' },
+  link: { textDecoration:'none', color:'inherit', display:'flex', flexDirection:'column', flex:1 },
+  body: { padding:'18px 20px 20px', display:'flex', flexDirection:'column', justifyContent:'space-between', flex:1 },
+  title: { fontSize:16, fontWeight:700, color:'#111827', margin:'0 0 4px', lineHeight:1.35 },
+  loc: { fontSize:13, color:'#9ca3af', margin:'0 0 10px' },
+  chips: { display:'flex', flexWrap:'wrap', gap:5, marginTop:6 },
+  chip: { fontSize:12, color:'#374151', background:'#f3f4f6', padding:'3px 9px', borderRadius:5, fontWeight:600, border:'1px solid #e5e7eb' },
+  priceBlock: { marginTop:16, paddingTop:14, borderTop:'1px solid #f3f4f6' },
+  price: { fontSize:20, fontWeight:800, color:'#111827', margin:'0 0 3px' },
+  yield: { fontSize:12, color:'#059669', fontWeight:600, margin:0 },
 };
 
 const P: { [k: string]: React.CSSProperties } = {
