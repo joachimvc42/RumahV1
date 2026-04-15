@@ -4,13 +4,14 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 const WA = '6287873487940';
+const WA_URL = `https://wa.me/${WA}?text=${encodeURIComponent('Hello RumahYa, I would like more information.')}`;
 
 export default function AboutPage() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [type, setType] = useState('');
   const [message, setMessage] = useState('');
-  const [status, setStatus] = useState<'idle'|'sending'|'sent'|'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +31,7 @@ export default function AboutPage() {
   return (
     <main className="page">
 
+      {/* ── Hero ── */}
       <section className="section hero">
         <div className="container">
           <h1 className="h1 hero-headline">
@@ -38,6 +40,7 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* ── Lead ── */}
       <section className="section">
         <div className="container">
           <p className="lead">
@@ -47,6 +50,7 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* ── Paths ── */}
       <section className="section">
         <div className="container grid grid-2">
           <div className="card path-card">
@@ -58,7 +62,6 @@ export default function AboutPage() {
                 <li>Identified owners</li>
                 <li>Local intermediary coordination</li>
               </ul>
-              <Link href="/rentals" className="btn btn-primary">Browse rentals</Link>
             </div>
           </div>
           <div className="card path-card">
@@ -70,12 +73,12 @@ export default function AboutPage() {
                 <li>Legal verification available</li>
                 <li>Optional property management</li>
               </ul>
-              <Link href="/investments" className="btn btn-primary">Browse investments</Link>
             </div>
           </div>
         </div>
       </section>
 
+      {/* ── Why RumahYa ── */}
       <section className="section section-soft">
         <div className="container">
           <h2 className="h2">Why RumahYa</h2>
@@ -94,82 +97,77 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* CONTACT */}
+      {/* ── Contact ── */}
       <section className="section">
         <div className="container">
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1.1fr', gap:56, alignItems:'start' }}>
 
-            <div>
-              <p style={{ fontSize:12, fontWeight:800, letterSpacing:'0.13em', textTransform:'uppercase', color:'#2563eb', margin:'0 0 12px' }}>Get in touch</p>
-              <h2 className="h2" style={{ marginBottom:14 }}>Let's talk about your project</h2>
-              <p className="text">No commitment, no pressure. We begin by understanding your situation and objectives.</p>
-
-              <div style={{ display:'flex', flexDirection:'column', gap:10, margin:'24px 0 32px' }}>
-                {[['🏠','Long-term rental in Lombok'],['🌍','Relocation planning'],['💰','Land or villa investment'],['🏢','Property management']].map(([icon,label])=>(
-                  <div key={label} style={{ display:'flex', alignItems:'center', gap:14, padding:'13px 18px', background:'#f9fafb', borderRadius:10, border:'1px solid #e5e7eb' }}>
-                    <span style={{ fontSize:20 }}>{icon}</span>
-                    <span style={{ fontSize:15, fontWeight:600, color:'#374151' }}>{label}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div style={{ background:'#f0fdf4', border:'2px solid #bbf7d0', borderRadius:14, padding:'22px 24px' }}>
-                <p style={{ fontSize:15, fontWeight:700, color:'#065f46', margin:'0 0 14px' }}>Prefer to chat directly?</p>
-                <a href={`https://wa.me/${WA}?text=${encodeURIComponent('Hello RumahYa, I would like more information.')}`} target="_blank" rel="noopener noreferrer"
-                  style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'12px 20px', background:'#25d366', color:'#fff', borderRadius:10, textDecoration:'none', fontWeight:700, fontSize:15 }}>
-                  💬 WhatsApp us now
-                </a>
-                <p style={{ margin:'10px 0 0', fontSize:13, color:'#6b7280' }}>+62 878 7348 7940</p>
-              </div>
+          {/* Title row + WhatsApp */}
+          <div style={c.titleRow}>
+            <div style={c.titleBlock}>
+              <h2 className="h2" style={{ marginBottom: 8 }}>Let's talk about your project</h2>
+              <p className="text" style={{ margin: 0 }}>No commitment, no pressure. We begin by understanding your situation and objectives.</p>
             </div>
-
-            <div style={{ background:'#fff', borderRadius:18, padding:36, boxShadow:'0 8px 32px rgba(15,23,42,0.08)', border:'1px solid #e5e7eb' }}>
-              {status === 'sent' ? (
-                <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:14, padding:'44px 20px', textAlign:'center' }}>
-                  <div style={{ width:60, height:60, background:'linear-gradient(135deg,#2563eb,#22c55e)', color:'#fff', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:26, fontWeight:800 }}>✓</div>
-                  <h3 style={{ fontSize:22, fontWeight:800, color:'#111827', margin:0 }}>Message sent!</h3>
-                  <p style={{ fontSize:16, color:'#6b7280', margin:0 }}>We have received your message and will get back to you shortly.</p>
-                  <button onClick={()=>setStatus('idle')} style={{ padding:'11px 22px', background:'#f3f4f6', border:'none', borderRadius:8, fontSize:14, fontWeight:600, cursor:'pointer', color:'#374151' }}>Send another message</button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} style={{ display:'flex', flexDirection:'column', gap:18 }}>
-                  <h3 style={{ fontSize:20, fontWeight:800, color:'#111827', margin:'0 0 4px' }}>Send us a message</h3>
-                  {status==='error' && <div style={{ padding:'13px 16px', background:'#fef2f2', border:'1px solid #fca5a5', borderRadius:8, color:'#b91c1c', fontSize:14 }}>Something went wrong. Try WhatsApp or email info@rumahya.com</div>}
-                  {[['Full name *','text',fullName,setFullName,'Your name'],['Email address *','email',email,setEmail,'your@email.com']].map(([label,t,val,setter,ph])=>(
-                    <div key={label as string} style={{ display:'flex', flexDirection:'column', gap:6 }}>
-                      <label style={{ fontSize:14, fontWeight:700, color:'#374151' }}>{label as string}</label>
-                      <input type={t as string} value={val as string} onChange={e=>(setter as any)(e.target.value)} placeholder={ph as string} required
-                        style={{ padding:'12px 15px', borderRadius:10, border:'2px solid #e5e7eb', fontSize:15, outline:'none', fontFamily:'inherit' }} />
-                    </div>
-                  ))}
-                  <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
-                    <label style={{ fontSize:14, fontWeight:700, color:'#374151' }}>Topic *</label>
-                    <select value={type} onChange={e=>setType(e.target.value)} required style={{ padding:'12px 15px', borderRadius:10, border:'2px solid #e5e7eb', fontSize:15, outline:'none', background:'#fff', fontFamily:'inherit' }}>
-                      <option value="">Select a topic</option>
-                      <option value="rentals">Living in Lombok (rentals)</option>
-                      <option value="investment">Investing in Lombok</option>
-                      <option value="other">Other / not sure yet</option>
-                    </select>
-                  </div>
-                  <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
-                    <label style={{ fontSize:14, fontWeight:700, color:'#374151' }}>Message *</label>
-                    <textarea value={message} onChange={e=>setMessage(e.target.value)} rows={4} placeholder="Briefly describe your situation, timeline, and expectations." required
-                      style={{ padding:'12px 15px', borderRadius:10, border:'2px solid #e5e7eb', fontSize:15, resize:'vertical', outline:'none', fontFamily:'inherit', lineHeight:1.6 }} />
-                  </div>
-                  <button type="submit" disabled={status==='sending'}
-                    style={{ padding:'14px 22px', background:'linear-gradient(135deg,#2563eb,#22c55e)', color:'#fff', border:'none', borderRadius:10, fontSize:16, fontWeight:700, cursor:'pointer', boxShadow:'0 4px 14px rgba(37,99,235,0.28)' }}>
-                    {status==='sending' ? 'Sending…' : 'Send message →'}
-                  </button>
-                </form>
-              )}
-            </div>
+            <a href={WA_URL} target="_blank" rel="noopener noreferrer" style={c.waBtn}>
+              <span style={{ fontSize: 18 }}>💬</span>
+              <span>WhatsApp</span>
+              <span style={c.waNumber}>+62 878 7348 7940</span>
+            </a>
           </div>
+
+          {/* Form */}
+          <div style={c.formWrap}>
+            {status === 'sent' ? (
+              <div style={c.successBox}>
+                <div style={c.successIcon}>✓</div>
+                <h3 style={{ fontSize: 20, fontWeight: 700, color: '#111827', margin: 0 }}>Message sent</h3>
+                <p style={{ fontSize: 15, color: '#6b7280', margin: 0 }}>We'll get back to you shortly.</p>
+                <button onClick={() => setStatus('idle')} style={c.resetBtn}>Send another message</button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} style={c.form}>
+                {status === 'error' && (
+                  <div style={c.errorBox}>Something went wrong. Try WhatsApp or email info@rumahya.com</div>
+                )}
+                <div style={c.fieldRow}>
+                  <div style={c.field}>
+                    <label style={c.label}>Full name *</label>
+                    <input style={c.input} type="text" value={fullName} onChange={e => setFullName(e.target.value)}
+                      placeholder="Your name" required />
+                  </div>
+                  <div style={c.field}>
+                    <label style={c.label}>Email address *</label>
+                    <input style={c.input} type="email" value={email} onChange={e => setEmail(e.target.value)}
+                      placeholder="your@email.com" required />
+                  </div>
+                </div>
+                <div style={c.field}>
+                  <label style={c.label}>Topic *</label>
+                  <select style={c.input} value={type} onChange={e => setType(e.target.value)} required>
+                    <option value="">Select a topic</option>
+                    <option value="rentals">Living in Lombok (rentals)</option>
+                    <option value="investment">Investing in Lombok</option>
+                    <option value="other">Other / not sure yet</option>
+                  </select>
+                </div>
+                <div style={c.field}>
+                  <label style={c.label}>Message *</label>
+                  <textarea style={c.textarea} value={message} onChange={e => setMessage(e.target.value)}
+                    rows={4} placeholder="Briefly describe your situation, timeline, and expectations." required />
+                </div>
+                <button type="submit" disabled={status === 'sending'} style={c.submitBtn}>
+                  {status === 'sending' ? 'Sending…' : 'Send message →'}
+                </button>
+              </form>
+            )}
+          </div>
+
         </div>
       </section>
 
+      {/* ── Footer note ── */}
       <section className="section section-soft">
         <div className="container">
-          <p className="text" style={{ textAlign:'center', maxWidth:640, margin:'0 auto' }}>
+          <p className="text" style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto' }}>
             RumahYa is based in Lombok and works with local partners. We do not act as agents pushing transactions. Our role is to provide clarity, context and local coordination.
           </p>
         </div>
@@ -178,3 +176,136 @@ export default function AboutPage() {
     </main>
   );
 }
+
+const c: { [k: string]: React.CSSProperties } = {
+  titleRow: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 32,
+    marginBottom: 32,
+    flexWrap: 'wrap',
+  },
+  titleBlock: {
+    flex: 1,
+    minWidth: 260,
+  },
+  waBtn: {
+    display: 'inline-flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 4,
+    padding: '14px 24px',
+    background: '#25d366',
+    color: '#fff',
+    borderRadius: 12,
+    textDecoration: 'none',
+    fontWeight: 700,
+    fontSize: 15,
+    flexShrink: 0,
+    lineHeight: 1.3,
+  },
+  waNumber: {
+    fontSize: 12,
+    fontWeight: 400,
+    opacity: 0.85,
+  },
+  formWrap: {
+    background: '#fff',
+    borderRadius: 16,
+    padding: 36,
+    border: '1px solid #e5e7eb',
+    boxShadow: '0 4px 24px rgba(15,23,42,0.06)',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 18,
+  },
+  fieldRow: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: 16,
+  },
+  field: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 6,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: 600,
+    color: '#374151',
+  },
+  input: {
+    padding: '11px 14px',
+    borderRadius: 8,
+    border: '1.5px solid #e5e7eb',
+    fontSize: 15,
+    outline: 'none',
+    background: '#fff',
+    fontFamily: 'inherit',
+    color: '#111827',
+  },
+  textarea: {
+    padding: '11px 14px',
+    borderRadius: 8,
+    border: '1.5px solid #e5e7eb',
+    fontSize: 15,
+    resize: 'vertical',
+    outline: 'none',
+    fontFamily: 'inherit',
+    lineHeight: 1.6,
+    color: '#111827',
+  },
+  submitBtn: {
+    alignSelf: 'flex-start',
+    padding: '13px 28px',
+    background: '#2563eb',
+    color: '#fff',
+    border: 'none',
+    borderRadius: 8,
+    fontSize: 15,
+    fontWeight: 600,
+    cursor: 'pointer',
+  },
+  errorBox: {
+    padding: '12px 16px',
+    background: '#fef2f2',
+    border: '1px solid #fca5a5',
+    borderRadius: 8,
+    color: '#b91c1c',
+    fontSize: 14,
+  },
+  successBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 12,
+    padding: '48px 20px',
+    textAlign: 'center',
+  },
+  successIcon: {
+    width: 52,
+    height: 52,
+    background: '#2563eb',
+    color: '#fff',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 22,
+    fontWeight: 700,
+  },
+  resetBtn: {
+    marginTop: 4,
+    padding: '10px 20px',
+    background: '#f3f4f6',
+    border: 'none',
+    borderRadius: 8,
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: 'pointer',
+    color: '#374151',
+  },
+};

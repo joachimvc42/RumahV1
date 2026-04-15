@@ -38,8 +38,6 @@ export default function Header() {
             <>
               <Link href="/admin" className={pathname === '/admin' ? 'nav-link is-active' : 'nav-link'} onClick={closeMenu}>Rentals</Link>
               <Link href="/admin/investments" className={isActive('/admin/investments') ? 'nav-link is-active' : 'nav-link'} onClick={closeMenu}>Investments</Link>
-              <Link href="/admin/lands" className={isActive('/admin/lands') ? 'nav-link is-active' : 'nav-link'} onClick={closeMenu}>Lands</Link>
-              <Link href="/admin/owners" className={isActive('/admin/owners') ? 'nav-link is-active' : 'nav-link'} onClick={closeMenu}>Owners</Link>
             </>
           )}
         </nav>
