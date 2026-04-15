@@ -6,6 +6,15 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+function escapeHtml(str: string): string {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -32,6 +41,11 @@ export async function POST(req: NextRequest) {
 
     const from = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 
+    const safeName = escapeHtml(fullName);
+    const safeEmail = escapeHtml(email);
+    const safeType = escapeHtml(type || 'Not specified');
+    const safeMessage = escapeHtml(message);
+
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
@@ -49,20 +63,20 @@ export async function POST(req: NextRequest) {
 </td></tr>
 <tr><td style="padding:32px 36px 0;">
   <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
-    <tr style="background:#f9fafb;"><td style="padding:12px 18px;font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;width:120px;">Name</td><td style="padding:12px 18px;font-size:15px;color:#111827;font-weight:600;">${fullName}</td></tr>
-    <tr style="border-top:1px solid #e5e7eb;"><td style="padding:12px 18px;font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;">Email</td><td style="padding:12px 18px;"><a href="mailto:${email}" style="color:#2563eb;font-size:15px;text-decoration:none;font-weight:600;">${email}</a></td></tr>
-    <tr style="border-top:1px solid #e5e7eb;"><td style="padding:12px 18px;font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;">Topic</td><td style="padding:12px 18px;font-size:15px;color:#111827;">${type || 'Not specified'}</td></tr>
+    <tr style="background:#f9fafb;"><td style="padding:12px 18px;font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;width:120px;">Name</td><td style="padding:12px 18px;font-size:15px;color:#111827;font-weight:600;">${safeName}</td></tr>
+    <tr style="border-top:1px solid #e5e7eb;"><td style="padding:12px 18px;font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;">Email</td><td style="padding:12px 18px;"><a href="mailto:${safeEmail}" style="color:#2563eb;font-size:15px;text-decoration:none;font-weight:600;">${safeEmail}</a></td></tr>
+    <tr style="border-top:1px solid #e5e7eb;"><td style="padding:12px 18px;font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;">Topic</td><td style="padding:12px 18px;font-size:15px;color:#111827;">${safeType}</td></tr>
   </table>
 </td></tr>
 <tr><td style="padding:24px 36px 0;">
   <p style="margin:0 0 10px;font-size:13px;font-weight:700;color:#6b7280;text-transform:uppercase;">Message</p>
-  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px 22px;font-size:15px;line-height:1.75;color:#374151;white-space:pre-wrap;">${message}</div>
+  <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:20px 22px;font-size:15px;line-height:1.75;color:#374151;white-space:pre-wrap;">${safeMessage}</div>
 </td></tr>
 <tr><td style="padding:24px 36px;">
-  <a href="mailto:${email}?subject=Re: Your enquiry to RumahYa" style="display:inline-block;padding:13px 24px;background:#2563eb;color:#fff;font-size:15px;font-weight:700;text-decoration:none;border-radius:10px;">Reply to ${fullName}</a>
+  <a href="mailto:${safeEmail}?subject=Re: Your enquiry to RumahYa" style="display:inline-block;padding:13px 24px;background:#2563eb;color:#fff;font-size:15px;font-weight:700;text-decoration:none;border-radius:10px;">Reply to ${safeName}</a>
 </td></tr>
 <tr><td style="padding:20px 36px;border-top:1px solid #e5e7eb;background:#f9fafb;">
-  <p style="margin:0;font-size:13px;color:#9ca3af;">Sent via the RumahYa website contact form. Reply to respond to ${fullName}.</p>
+  <p style="margin:0;font-size:13px;color:#9ca3af;">Sent via the RumahYa website contact form. Reply to respond to ${safeName}.</p>
 </td></tr>
 </table></td></tr></table></body></html>`,
       }),
