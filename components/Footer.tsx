@@ -3,17 +3,17 @@ export default function Footer() {
 
   return (
     <footer className="site-footer">
-      <div className="container footer-inner">
-        <div>
-          <strong>RUMAHYA</strong><br />
-          Lombok rentals & Investment
-        </div>
-        <div>
-          WhatsApp: <a href="https://wa.me/6287873487940" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>+62 878 7348 7940</a><br />
-          Email: <a href="mailto:info@rumahya.com" style={{ color: 'inherit' }}>info@rumahya.com</a>
+      <div className="container">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <span className="brand-name">
+            Rumah<span>Ya</span>
+          </span>
+          <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--text-muted)', maxWidth: 560, lineHeight: 1.65 }}>
+            RumahYa is based in Lombok and works with local partners. We do not act as agents pushing transactions. Our role is to provide clarity, context and local coordination.
+          </p>
         </div>
       </div>
-      <div className="container" style={{ marginTop: '8px', fontSize: '0.78rem', color: '#9ca3af' }}>
+      <div className="container" style={{ marginTop: 16, fontSize: '0.78rem', color: '#9ca3af', borderTop: '1px solid var(--border-subtle)', paddingTop: 12 }}>
         © {currentYear} RumahYa. All rights reserved.
       </div>
     </footer>

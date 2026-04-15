@@ -164,15 +164,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Footer note ── */}
-      <section className="section section-soft">
-        <div className="container">
-          <p className="text" style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto' }}>
-            RumahYa is based in Lombok and works with local partners. We do not act as agents pushing transactions. Our role is to provide clarity, context and local coordination.
-          </p>
-        </div>
-      </section>
-
     </main>
   );
 }
