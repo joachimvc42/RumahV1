@@ -131,7 +131,7 @@ export default function AdminInvestmentsPage() {
 
                   {/* Top-right: tenure badge */}
                   <div style={{ ...s.badgeTopRight, background: inv.tenure === 'freehold' ? '#2563eb' : '#f59e0b' }}>
-                    {inv.tenure === 'freehold' ? '🔑 Freehold' : `📋 Lease ${inv.lease_years}y`}
+                    {inv.tenure === 'freehold' ? '🔑 Freehold' : inv.lease_years ? `📋 Lease ${inv.lease_years}y` : '📋 Leasehold'}
                   </div>
 
                   {/* Bottom-left: type badge */}

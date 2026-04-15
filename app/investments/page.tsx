@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../lib/supabaseClient';
@@ -42,7 +43,7 @@ function InvCard({ item }: { item: Item }) {
           {item.type==='villa' ? 'Villa' : 'Land'}
         </div>
         <div style={{ ...C.tenureBadge, background: item.tenure==='freehold' ? '#1d4ed8' : '#b45309' }}>
-          {item.tenure==='freehold' ? 'Freehold' : `Lease ${item.leaseYears}y`}
+          {item.tenure==='freehold' ? 'Freehold' : item.leaseYears ? `Lease ${item.leaseYears}y` : 'Leasehold'}
         </div>
         {item.images.length > 1 && <div style={C.imgCount}>{item.images.length} photos</div>}
         {item.images.length > 1 && (
@@ -150,15 +151,15 @@ export default function InvestmentsPage() {
           ['PROPERTY TYPE', search.tenure, (v:string)=>setSearch(s=>({...s,tenure:v as any,searched:false})), [['all','All'],['freehold','🔑 Freehold'],['leasehold','📋 Leasehold']]],
           ['LOCATION', search.location, (v:string)=>setSearch(s=>({...s,location:v,searched:false})), [['','All areas'],...locations.map(l=>[l,l])]],
         ].map(([label, val, setter, opts], i, arr) => (
-          <>
-            <div key={label as string} style={P.seg}>
+          <React.Fragment key={label as string}>
+            <div style={P.seg}>
               <span style={P.segLabel}>{label as string}</span>
               <select style={P.segSel} value={val as string} onChange={e=>(setter as any)(e.target.value)}>
                 {(opts as [string,string][]).map(([v,l])=><option key={v} value={v}>{l}</option>)}
               </select>
             </div>
-            {i < arr.length-1 && <div key={`div${i}`} style={P.divider}/>}
-          </>
+            {i < arr.length-1 && <div style={P.divider}/>}
+          </React.Fragment>
         ))}
         <div style={P.searchAction}>
           <button onClick={()=>setSearch(s=>({...s,searched:true}))} style={P.searchBtn}>Search</button>

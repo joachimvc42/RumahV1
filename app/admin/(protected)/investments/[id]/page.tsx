@@ -204,7 +204,7 @@ export default function EditInvestmentPage() {
       const allVideos = await buildOrderedVideos();
 
       if (assetType === 'property') {
-        await supabase.from('properties').update({
+        const { error: propErr } = await supabase.from('properties').update({
           title, location, description,
           bedrooms: bedrooms ? Number(bedrooms) : null,
           bathrooms: bathrooms ? Number(bathrooms) : null,
@@ -217,8 +217,9 @@ export default function EditInvestmentPage() {
           videos: allVideos,
           status: normalizeStatus(status),
         }).eq('id', investment.asset_id);
+        if (propErr) throw propErr;
       } else {
-        await supabase.from('lands').update({
+        const { error: landErr } = await supabase.from('lands').update({
           title, location, description,
           land_size: landArea ? Number(landArea) : null,
           price_per_are: Number(price), currency, tenure,
@@ -227,6 +228,7 @@ export default function EditInvestmentPage() {
           videos: allVideos,
           status: normalizeStatus(status),
         }).eq('id', investment.asset_id);
+        if (landErr) throw landErr;
       }
 
       await supabase.from('investments').update({

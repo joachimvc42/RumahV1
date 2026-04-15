@@ -175,7 +175,8 @@ export default function NewInvestmentPage() {
         if (imageUrls.length > 0) updatePayload.images = imageUrls;
         if (videoUrls.length > 0) updatePayload.videos = videoUrls;
         if (Object.keys(updatePayload).length > 0) {
-          await supabase.from('lands').update(updatePayload).eq('id', assetId);
+          const { error: updateErr } = await supabase.from('lands').update(updatePayload).eq('id', assetId);
+          if (updateErr) throw updateErr;
         }
       }
 
