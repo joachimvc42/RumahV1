@@ -35,14 +35,6 @@ function InvCard({ item }: { item: Item }) {
         )) : (
           <div style={C.noImg}>{item.type==='villa' ? '🏠' : '🌴'}</div>
         )}
-        <div style={C.gradient} />
-        <div style={{ ...C.typeBadge, background: item.type==='villa' ? '#6d28d9' : '#059669' }}>
-          {item.type==='villa' ? 'Villa' : 'Land'}
-        </div>
-        <div style={{ ...C.tenureBadge, background: item.tenure==='freehold' ? '#1d4ed8' : '#b45309' }}>
-          {item.tenure==='freehold' ? 'Freehold' : item.leaseYears ? `Lease ${item.leaseYears}y` : 'Leasehold'}
-        </div>
-        {item.images.length > 1 && <div style={C.imgCount}>{item.images.length} photos</div>}
         {item.images.length > 1 && (
           <>
             <button onClick={prev} style={{ ...C.arrow, left:12 }} aria-label="Previous">‹</button>
@@ -60,6 +52,16 @@ function InvCard({ item }: { item: Item }) {
       <Link href={item.href} style={C.link}>
         <div style={C.body}>
           <div>
+            {/* Badges row */}
+            <div style={C.metaRow}>
+              <span style={{ ...C.metaBadge, background: item.type==='villa' ? '#ede9fe' : '#dcfce7', color: item.type==='villa' ? '#6d28d9' : '#059669' }}>
+                {item.type==='villa' ? 'Villa' : 'Land'}
+              </span>
+              <span style={{ ...C.metaBadge, background: item.tenure==='freehold' ? '#dbeafe' : '#fef3c7', color: item.tenure==='freehold' ? '#1d4ed8' : '#b45309' }}>
+                {item.tenure==='freehold' ? 'Freehold' : item.leaseYears ? `Lease ${item.leaseYears}y` : 'Leasehold'}
+              </span>
+              {item.images.length > 1 && <span style={{ ...C.metaBadge, background: '#f3f4f6', color: '#6b7280' }}>{item.images.length} photos</span>}
+            </div>
             <h3 style={C.title}>{item.title}</h3>
             <p style={C.loc}>{item.location}</p>
             {item.type==='villa' && (
@@ -215,10 +217,8 @@ const C: { [k: string]: React.CSSProperties } = {
   imgWrap: { position:'relative', width:'100%', height:180, flexShrink:0, background:'#e5e7eb', overflow:'hidden' },
   img: { position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', transition:'opacity 0.35s ease', pointerEvents:'none', userSelect:'none' },
   noImg: { position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:56, color:'#d1d5db' },
-  gradient: { position:'absolute', inset:0, background:'linear-gradient(180deg,transparent 60%,rgba(0,0,0,0.32) 100%)', pointerEvents:'none' },
-  typeBadge: { position:'absolute', top:12, left:12, color:'#fff', fontSize:11, fontWeight:700, padding:'4px 10px', borderRadius:5, letterSpacing:'0.04em', textTransform:'uppercase' },
-  tenureBadge: { position:'absolute', top:12, right:12, color:'#fff', fontSize:11, fontWeight:700, padding:'4px 10px', borderRadius:5, letterSpacing:'0.04em' },
-  imgCount: { position:'absolute', bottom:10, right:10, background:'rgba(0,0,0,0.5)', color:'#fff', fontSize:11, fontWeight:600, padding:'4px 9px', borderRadius:5 },
+  metaRow: { display:'flex', gap:5, flexWrap:'wrap', marginBottom:8 },
+  metaBadge: { fontSize:11, fontWeight:700, padding:'3px 8px', borderRadius:6 },
   arrow: { position:'absolute', top:'50%', transform:'translateY(-50%)', width:34, height:34, borderRadius:'50%', background:'rgba(255,255,255,0.92)', border:'none', fontSize:20, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 2px 8px rgba(0,0,0,0.18)', zIndex:3, color:'#111', padding:0, lineHeight:1 },
   dots: { position:'absolute', bottom:10, left:'50%', transform:'translateX(-50%)', display:'flex', gap:5, zIndex:3 },
   dot: { width:6, height:6, borderRadius:'50%', border:'none', padding:0, cursor:'pointer', transition:'background 0.2s' },
