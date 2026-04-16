@@ -2,19 +2,19 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="site-footer">
-      <div className="container">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <span className="brand-name">
+    <footer className="site-footer" style={{ paddingTop: 20, paddingBottom: 20 }}>
+      <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <span className="brand-name" style={{ fontSize: '1rem' }}>
             Rumah<span>Ya</span>
           </span>
-          <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--text-muted)', maxWidth: 560, lineHeight: 1.65 }}>
-            RumahYa is based in Lombok and works with local partners. We do not act as agents pushing transactions. Our role is to provide clarity, context and local coordination.
+          <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+            Based in Lombok. Local partners, verified information, long-term coordination.
           </p>
         </div>
-      </div>
-      <div className="container" style={{ marginTop: 16, fontSize: '0.78rem', color: '#9ca3af', borderTop: '1px solid var(--border-subtle)', paddingTop: 12 }}>
-        © {currentYear} RumahYa. All rights reserved.
+        <span style={{ fontSize: '0.78rem', color: '#9ca3af', flexShrink: 0 }}>
+          © {currentYear} RumahYa. All rights reserved.
+        </span>
       </div>
     </footer>
   );

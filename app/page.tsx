@@ -108,9 +108,11 @@ export default function AboutPage() {
               <p className="text" style={{ margin: 0 }}>No commitment, no pressure. We begin by understanding your situation and objectives.</p>
             </div>
             <a href={WA_URL} target="_blank" rel="noopener noreferrer" style={c.waBtn}>
-              <span style={{ fontSize: 18 }}>💬</span>
-              <span>WhatsApp</span>
-              <span style={c.waNumber}>+62 878 7348 7940</span>
+              <span style={{ fontSize: 20, lineHeight: 1 }}>💬</span>
+              <div style={c.waBtnText}>
+                <span style={{ fontWeight: 700, fontSize: 14 }}>WhatsApp</span>
+                <span style={c.waNumber}>+62 878 7348 7940</span>
+              </div>
             </a>
           </div>
 
@@ -183,17 +185,21 @@ const c: { [k: string]: React.CSSProperties } = {
   },
   waBtn: {
     display: 'inline-flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    padding: '14px 24px',
-    background: '#25d366',
+    gap: 10,
+    padding: '10px 20px',
+    background: '#25a244',
     color: '#fff',
-    borderRadius: 12,
+    borderRadius: 10,
     textDecoration: 'none',
-    fontWeight: 700,
-    fontSize: 15,
     flexShrink: 0,
+    whiteSpace: 'nowrap' as const,
+  },
+  waBtnText: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: 1,
     lineHeight: 1.3,
   },
   waNumber: {
