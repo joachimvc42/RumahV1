@@ -192,8 +192,9 @@ export default function InvestmentDetailPage() {
           )}
 
           <div style={s.cta}>
-            <a href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hello, I am interested in: ${data.title}`)}`} target="_blank" rel="noopener noreferrer" style={s.ctaWa}>💬 WhatsApp</a>
-            <a href={`mailto:info@rumahya.com?subject=Investment: ${data.title}`} style={s.ctaEmail}>📧 Request info</a>
+            <a href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hello, I am interested in: ${data.title}`)}`} target="_blank" rel="noopener noreferrer" style={s.ctaWa}>
+              <span style={{ fontSize: 18 }}>💬</span> Request info
+            </a>
           </div>
         </div>
       </div>
@@ -236,7 +237,6 @@ const s: { [k: string]: React.CSSProperties } = {
   desc: { marginBottom: 28 },
   descTitle: { fontSize: 18, fontWeight: 700, color: '#374151', marginBottom: 10 },
   descText: { fontSize: 15, color: '#4b5563', lineHeight: 1.75 },
-  cta: { display: 'flex', gap: 12 },
-  ctaWa: { flex: 1, padding: '16px 24px', background: '#25d366', color: '#fff', borderRadius: 12, textDecoration: 'none', fontWeight: 700, fontSize: 16, textAlign: 'center' },
-  ctaEmail: { flex: 1, padding: '16px 24px', background: 'linear-gradient(135deg,#f59e0b,#d97706)', color: '#fff', borderRadius: 12, textDecoration: 'none', fontWeight: 700, fontSize: 16, textAlign: 'center' },
+  cta: { display: 'flex' },
+  ctaWa: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '16px 24px', background: '#25a244', color: '#fff', borderRadius: 12, textDecoration: 'none', fontWeight: 700, fontSize: 16, textAlign: 'center' as const },
 };
