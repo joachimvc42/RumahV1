@@ -14,11 +14,13 @@ type Item = {
   expectedYield: number|null; images: string[]; href: string;
   bedrooms?: number|null; bathrooms?: number|null;
   pool?: boolean; garden?: boolean; furnished?: boolean;
-  condition?: string; landSize?: string|null;
+  condition?: string; landSize?: number|null;
+  hasWater?: boolean; hasElectricity?: boolean; hasRoad?: boolean;
 };
 
-type Search = { type:'all'|'villa'|'land'; tenure:'all'|'freehold'|'leasehold'; location:string; searched:boolean };
-type Sidebar = { pool:boolean; garden:boolean; furnished:boolean; minBedrooms:string; condition:string };
+type Search = { type:'all'|'villa'|'land'; tenure:'all'|'freehold'|'leasehold'; location:string };
+type VillaSidebar = { pool:boolean; garden:boolean; furnished:boolean; minBedrooms:string; minBathrooms:string; };
+type LandSidebar  = { hasWater:boolean; hasElectricity:boolean; hasRoad:boolean; minArea:string; maxPrice:string; };
 
 
 function InvCard({ item }: { item: Item }) {
@@ -85,8 +87,9 @@ function InvCard({ item }: { item: Item }) {
 export default function InvestmentsPage() {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState<Search>({ type:'all', tenure:'all', location:'', searched:false });
-  const [sidebar, setSidebar] = useState<Sidebar>({ pool:false, garden:false, furnished:false, minBedrooms:'', condition:'' });
+  const [search, setSearch] = useState<Search>({ type:'all', tenure:'all', location:'' });
+  const [villa, setVilla] = useState<VillaSidebar>({ pool:false, garden:false, furnished:false, minBedrooms:'', minBathrooms:'' });
+  const [land, setLand] = useState<LandSidebar>({ hasWater:false, hasElectricity:false, hasRoad:false, minArea:'', maxPrice:'' });
 
   useEffect(() => {
     const load = async () => {
@@ -106,7 +109,7 @@ export default function InvestmentsPage() {
         }
         if (inv.asset_type==='land') {
           const l = (lands as any[])?.find(x=>x.id===inv.asset_id);
-          if (l && l.status==='published') merged.push({ id:inv.id, type:'land', title:l.title, location:l.location||'Lombok', price:l.price_per_are_idr??l.price_per_are??0, currency:l.currency||'IDR', tenure:l.tenure||'freehold', leaseYears:l.lease_years, expectedYield:inv.expected_yield, images:l.images||[], href:`/investments/${inv.id}`, landSize:l.land_size, condition:l.condition });
+          if (l && l.status==='published') merged.push({ id:inv.id, type:'land', title:l.title, location:l.location||'Lombok', price:l.price_per_are_idr??l.price_per_are??0, currency:l.currency||'IDR', tenure:l.tenure||'freehold', leaseYears:l.lease_years, expectedYield:inv.expected_yield, images:l.images||[], href:`/investments/${inv.id}`, landSize:l.land_size ? Number(l.land_size) : null, condition:l.condition, hasWater:l.has_water, hasElectricity:l.has_electricity, hasRoad:l.has_road });
         }
       }
       setItems(merged); setLoading(false);
@@ -116,21 +119,32 @@ export default function InvestmentsPage() {
 
   const locations = [...new Set(items.map(i=>i.location))].sort();
 
-  const afterSearch = items.filter(item => {
+  const filtered = items.filter(item => {
     if (search.type!=='all' && item.type!==search.type) return false;
     if (search.tenure!=='all' && item.tenure!==search.tenure) return false;
     if (search.location && item.location!==search.location) return false;
+    if (item.type==='villa') {
+      if (villa.pool && !item.pool) return false;
+      if (villa.garden && !item.garden) return false;
+      if (villa.furnished && !item.furnished) return false;
+      if (villa.minBedrooms && (item.bedrooms??0) < Number(villa.minBedrooms)) return false;
+      if (villa.minBathrooms && (item.bathrooms??0) < Number(villa.minBathrooms)) return false;
+    }
+    if (item.type==='land') {
+      if (land.hasWater && !item.hasWater) return false;
+      if (land.hasElectricity && !item.hasElectricity) return false;
+      if (land.hasRoad && !item.hasRoad) return false;
+      if (land.minArea && (item.landSize??0) < Number(land.minArea)) return false;
+      if (land.maxPrice && item.price > Number(land.maxPrice)) return false;
+    }
     return true;
   });
 
-  const filtered = !search.searched ? afterSearch : afterSearch.filter(item => {
-    if (sidebar.pool && !item.pool) return false;
-    if (sidebar.garden && !item.garden) return false;
-    if (sidebar.furnished && !item.furnished) return false;
-    if (sidebar.minBedrooms && (item.bedrooms??0) < Number(sidebar.minBedrooms)) return false;
-    if (sidebar.condition && item.condition!==sidebar.condition) return false;
-    return true;
-  });
+  const resetFilters = () => {
+    setVilla({ pool:false, garden:false, furnished:false, minBedrooms:'', minBathrooms:'' });
+    setLand({ hasWater:false, hasElectricity:false, hasRoad:false, minArea:'', maxPrice:'' });
+  };
+  const hasActiveFilters = villa.pool||villa.garden||villa.furnished||!!villa.minBedrooms||!!villa.minBathrooms||land.hasWater||land.hasElectricity||land.hasRoad||!!land.minArea||!!land.maxPrice;
 
   if (loading) return (
     <main style={P.page}><div style={P.loading}><div style={P.spinner}/><span style={{fontSize:16,color:'#6b7280'}}>Loading opportunities…</span></div></main>
@@ -142,65 +156,95 @@ export default function InvestmentsPage() {
         <h1 style={P.h1}>Invest in Lombok</h1>
       </section>
 
+      {/* ── Search bar ── */}
       <div style={P.searchBar}>
-        {[
-          ['ASSET TYPE', search.type, (v:string)=>setSearch(s=>({...s,type:v as any,searched:false})), [['all','All'],['villa','🏠 Villas'],['land','🌴 Land']]],
-          ['PROPERTY TYPE', search.tenure, (v:string)=>setSearch(s=>({...s,tenure:v as any,searched:false})), [['all','All'],['freehold','🔑 Freehold'],['leasehold','📋 Leasehold']]],
-          ['LOCATION', search.location, (v:string)=>setSearch(s=>({...s,location:v,searched:false})), [['','All areas'],...locations.map(l=>[l,l])]],
-        ].map(([label, val, setter, opts], i, arr) => (
-          <React.Fragment key={label as string}>
+        {([
+          ['ASSET TYPE', search.type, (v:string)=>setSearch(s=>({...s,type:v as any})), [['all','All'],['villa','Villas'],['land','Land']]],
+          ['PROPERTY TYPE', search.tenure, (v:string)=>setSearch(s=>({...s,tenure:v as any})), [['all','All'],['freehold','Freehold'],['leasehold','Leasehold']]],
+          ['LOCATION', search.location, (v:string)=>setSearch(s=>({...s,location:v})), [['','All areas'],...locations.map(l=>[l,l])]],
+        ] as [string,string,Function,[string,string][]][]).map(([label, val, setter, opts], i, arr) => (
+          <React.Fragment key={label}>
             <div style={P.seg}>
-              <span style={P.segLabel}>{label as string}</span>
-              <select style={P.segSel} value={val as string} onChange={e=>(setter as any)(e.target.value)}>
-                {(opts as [string,string][]).map(([v,l])=><option key={v} value={v}>{l}</option>)}
+              <span style={P.segLabel}>{label}</span>
+              <select style={P.segSel} value={val} onChange={e=>setter(e.target.value)}>
+                {opts.map(([v,l])=><option key={v} value={v}>{l}</option>)}
               </select>
             </div>
             {i < arr.length-1 && <div style={P.divider}/>}
           </React.Fragment>
         ))}
-        <div style={P.searchAction}>
-          <button onClick={()=>setSearch(s=>({...s,searched:true}))} style={P.searchBtn}>Search</button>
-        </div>
       </div>
 
+      {/* ── Layout ── */}
       <div style={P.layout}>
-        {search.searched && (
-          <aside style={P.sidebar}>
-            {(search.type==='villa'||search.type==='all') && (
-              <>
-                <p style={P.sHead}>AMENITIES</p>
-                {([['pool','🏊 Pool'],['garden','🌳 Garden'],['furnished','🛋️ Furnished']] as [keyof Sidebar,string][]).map(([key,label])=>(
-                  <label key={key} style={P.checkRow}>
-                    <input type="checkbox" checked={sidebar[key] as boolean} onChange={e=>setSidebar(s=>({...s,[key]:e.target.checked}))} style={{accentColor:'#f59e0b',width:17,height:17}}/>
-                    <span style={P.checkLabel}>{label}</span>
-                  </label>
-                ))}
-                <p style={{...P.sHead,marginTop:20}}>BEDROOMS</p>
-                {[['1','1+'],['2','2+'],['3','3+']].map(([v,l])=>(
-                  <label key={v} style={P.checkRow}>
-                    <input type="checkbox" checked={sidebar.minBedrooms===v} onChange={e=>setSidebar(s=>({...s,minBedrooms:e.target.checked?v:''}))} style={{accentColor:'#f59e0b',width:17,height:17}}/>
-                    <span style={P.checkLabel}>{l} bedrooms</span>
-                  </label>
-                ))}
-              </>
-            )}
-            <p style={{...P.sHead,marginTop:20}}>CONDITION</p>
-            {[['ready','✅ Ready to live'],['to_finish','🔨 To finish'],['to_renovate','🏚️ To renovate']].map(([v,l])=>(
+        {/* Sidebar */}
+        <aside style={P.sidebar}>
+          {/* Villa filters */}
+          {(search.type==='villa'||search.type==='all') && (<>
+            <p style={P.sHead}>AMENITIES</p>
+            {([['pool','🏊 Pool'],['garden','🌳 Garden'],['furnished','🛋️ Furnished']] as [keyof VillaSidebar,string][]).map(([key,label])=>(
+              <label key={key} style={P.checkRow}>
+                <input type="checkbox" checked={villa[key] as boolean} onChange={e=>setVilla(s=>({...s,[key]:e.target.checked}))} style={{accentColor:'#f59e0b',width:16,height:16,cursor:'pointer'}}/>
+                <span style={P.checkLabel}>{label}</span>
+              </label>
+            ))}
+            <p style={{...P.sHead,marginTop:18}}>BEDROOMS</p>
+            {[['1','1+'],['2','2+'],['3','3+'],['4','4+']].map(([v,l])=>(
               <label key={v} style={P.checkRow}>
-                <input type="checkbox" checked={sidebar.condition===v} onChange={e=>setSidebar(s=>({...s,condition:e.target.checked?v:''}))} style={{accentColor:'#f59e0b',width:17,height:17}}/>
+                <input type="checkbox" checked={villa.minBedrooms===v} onChange={e=>setVilla(s=>({...s,minBedrooms:e.target.checked?v:''}))} style={{accentColor:'#f59e0b',width:16,height:16,cursor:'pointer'}}/>
+                <span style={P.checkLabel}>{l} beds</span>
+              </label>
+            ))}
+            <p style={{...P.sHead,marginTop:18}}>BATHROOMS</p>
+            {[['1','1+'],['2','2+'],['3','3+']].map(([v,l])=>(
+              <label key={v} style={P.checkRow}>
+                <input type="checkbox" checked={villa.minBathrooms===v} onChange={e=>setVilla(s=>({...s,minBathrooms:e.target.checked?v:''}))} style={{accentColor:'#f59e0b',width:16,height:16,cursor:'pointer'}}/>
+                <span style={P.checkLabel}>{l} baths</span>
+              </label>
+            ))}
+          </>)}
+
+          {/* Land filters */}
+          {(search.type==='land'||search.type==='all') && (<>
+            <p style={{...P.sHead,marginTop:search.type==='all'?24:0}}>UTILITIES</p>
+            {([['hasWater','💧 Water access'],['hasElectricity','⚡ Electricity'],['hasRoad','🛤️ Road access']] as [keyof LandSidebar,string][]).map(([key,label])=>(
+              <label key={key} style={P.checkRow}>
+                <input type="checkbox" checked={land[key] as boolean} onChange={e=>setLand(s=>({...s,[key]:e.target.checked}))} style={{accentColor:'#059669',width:16,height:16,cursor:'pointer'}}/>
+                <span style={P.checkLabel}>{label}</span>
+              </label>
+            ))}
+            <p style={{...P.sHead,marginTop:18}}>MIN AREA (are)</p>
+            {[['5','5+'],['10','10+'],['20','20+'],['50','50+']].map(([v,l])=>(
+              <label key={v} style={P.checkRow}>
+                <input type="checkbox" checked={land.minArea===v} onChange={e=>setLand(s=>({...s,minArea:e.target.checked?v:''}))} style={{accentColor:'#059669',width:16,height:16,cursor:'pointer'}}/>
+                <span style={P.checkLabel}>{l} are</span>
+              </label>
+            ))}
+            <p style={{...P.sHead,marginTop:18}}>MAX PRICE/ARE</p>
+            {[['100000000','100 M IDR'],['200000000','200 M IDR'],['300000000','300 M IDR']].map(([v,l])=>(
+              <label key={v} style={P.checkRow}>
+                <input type="checkbox" checked={land.maxPrice===v} onChange={e=>setLand(s=>({...s,maxPrice:e.target.checked?v:''}))} style={{accentColor:'#059669',width:16,height:16,cursor:'pointer'}}/>
                 <span style={P.checkLabel}>{l}</span>
               </label>
             ))}
-          </aside>
-        )}
+          </>)}
+
+          {hasActiveFilters && (
+            <button onClick={resetFilters} style={{marginTop:20,width:'100%',padding:'9px 0',background:'#f3f4f6',border:'none',borderRadius:8,fontSize:13,fontWeight:600,color:'#6b7280',cursor:'pointer'}}>
+              Reset filters
+            </button>
+          )}
+        </aside>
+
+        {/* Grid */}
         <div style={{flex:1,minWidth:0}}>
           <div style={P.resultRow}>
-            <p style={{fontSize:15,color:'#6b7280',margin:0}}>{filtered.length} opportunit{filtered.length!==1?'ies':'y'} available</p>
-            {search.searched && <button onClick={()=>{setSearch(s=>({...s,searched:false}));setSidebar({pool:false,garden:false,furnished:false,minBedrooms:'',condition:''});}} style={{fontSize:14,fontWeight:600,color:'#f59e0b',background:'none',border:'none',cursor:'pointer'}}>Clear filters</button>}
+            <p style={{fontSize:14,color:'#6b7280',margin:0}}>{filtered.length} opportunit{filtered.length!==1?'ies':'y'} available</p>
           </div>
           {filtered.length===0 ? (
             <div style={{display:'flex',flexDirection:'column',alignItems:'center',padding:60,background:'#f9fafb',borderRadius:16}}>
-              <p style={{color:'#6b7280',fontSize:16}}>No opportunities match your criteria.</p>
+              <p style={{color:'#6b7280',fontSize:15}}>No opportunities match your criteria.</p>
+              <button onClick={resetFilters} style={{padding:'10px 22px',background:'#f59e0b',color:'#fff',border:'none',borderRadius:8,fontSize:14,fontWeight:600,cursor:'pointer'}}>Reset filters</button>
             </div>
           ) : (
             <div style={P.grid}>{filtered.map(item=><InvCard key={item.id} item={item}/>)}</div>
@@ -246,8 +290,6 @@ const P: { [k: string]: React.CSSProperties } = {
   segLabel: { fontSize:11, fontWeight:800, letterSpacing:'0.1em', color:'#9ca3af' },
   segSel: { border:'none', outline:'none', fontSize:15, fontWeight:600, color:'#111827', background:'transparent', cursor:'pointer', padding:0 },
   divider: { width:1, background:'#f3f4f6', margin:'10px 0' },
-  searchAction: { display:'flex', alignItems:'center', padding:'0 18px' },
-  searchBtn: { padding:'12px 22px', background:'linear-gradient(135deg,#f59e0b,#d97706)', color:'#fff', border:'none', borderRadius:10, fontSize:15, fontWeight:700, cursor:'pointer' },
   layout: { display:'flex', gap:28, alignItems:'flex-start' },
   sidebar: { width:230, flexShrink:0, background:'#fff', borderRadius:16, border:'1px solid #e5e7eb', padding:'22px 18px', position:'sticky', top:24, boxShadow:'0 2px 12px rgba(15,23,42,0.06)' },
   sHead: { fontSize:11, fontWeight:800, letterSpacing:'0.13em', color:'#f59e0b', margin:'0 0 14px', textTransform:'uppercase' },

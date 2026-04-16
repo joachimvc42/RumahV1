@@ -20,7 +20,7 @@ type RentalRow = {
 };
 
 type Filters = {
-  location: string; minBeds: string; maxPrice: string;
+  location: string; minBeds: string; minBaths: string; maxPrice: string;
   pool: boolean; garden: boolean; aircon: boolean;
   furnished: boolean; wifi: boolean; parking: boolean;
   privateSpace: boolean; kitchen: boolean;
@@ -106,7 +106,7 @@ export default function RentalsPage() {
   const [rentals, setRentals] = useState<RentalRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<Filters>({
-    location: '', minBeds: '', maxPrice: '',
+    location: '', minBeds: '', minBaths: '', maxPrice: '',
     pool: false, garden: false, aircon: false,
     furnished: false, wifi: false, parking: false,
     privateSpace: false, kitchen: false,
@@ -131,6 +131,7 @@ export default function RentalsPage() {
     const p = r.properties!;
     if (filters.location && p.location !== filters.location) return false;
     if (filters.minBeds && (p.bedrooms ?? 0) < Number(filters.minBeds)) return false;
+    if (filters.minBaths && (p.bathrooms ?? 0) < Number(filters.minBaths)) return false;
     if (filters.maxPrice && r.monthly_price_idr > Number(filters.maxPrice)) return false;
     if (filters.pool && !p.pool) return false;
     if (filters.garden && !p.garden) return false;
@@ -144,7 +145,7 @@ export default function RentalsPage() {
   });
 
   const reset = () => setFilters({
-    location: '', minBeds: '', maxPrice: '',
+    location: '', minBeds: '', minBaths: '', maxPrice: '',
     pool: false, garden: false, aircon: false,
     furnished: false, wifi: false, parking: false,
     privateSpace: false, kitchen: false,
@@ -180,6 +181,24 @@ export default function RentalsPage() {
               <span style={P.checkLabel}>{label}</span>
             </label>
           ))}
+          <p style={{ ...P.sHead, marginTop: 18 }}>BEDROOMS</p>
+          {[['1','1+'],['2','2+'],['3','3+'],['4','4+']].map(([v, l]) => (
+            <label key={v} style={P.checkRow}>
+              <input type="checkbox" checked={filters.minBeds === v}
+                onChange={e => setFilters(f => ({ ...f, minBeds: e.target.checked ? v : '' }))}
+                style={{ accentColor: '#2563eb', width: 16, height: 16, cursor: 'pointer' }} />
+              <span style={P.checkLabel}>{l} beds</span>
+            </label>
+          ))}
+          <p style={{ ...P.sHead, marginTop: 18 }}>BATHROOMS</p>
+          {[['1','1+'],['2','2+'],['3','3+']].map(([v, l]) => (
+            <label key={v} style={P.checkRow}>
+              <input type="checkbox" checked={filters.minBaths === v}
+                onChange={e => setFilters(f => ({ ...f, minBaths: e.target.checked ? v : '' }))}
+                style={{ accentColor: '#2563eb', width: 16, height: 16, cursor: 'pointer' }} />
+              <span style={P.checkLabel}>{l} baths</span>
+            </label>
+          ))}
         </aside>
 
         <div style={P.main}>
@@ -189,15 +208,6 @@ export default function RentalsPage() {
               <select style={P.segSel} value={filters.location} onChange={e => setFilters(f => ({ ...f, location: e.target.value }))}>
                 <option value="">All areas</option>
                 {locations.map(l => <option key={l} value={l}>{l}</option>)}
-              </select>
-            </div>
-            <div style={P.div} />
-            <div style={P.seg}>
-              <span style={P.segLabel}>BEDROOMS</span>
-              <select style={P.segSel} value={filters.minBeds} onChange={e => setFilters(f => ({ ...f, minBeds: e.target.value }))}>
-                <option value="">Any</option>
-                <option value="1">1+</option><option value="2">2+</option>
-                <option value="3">3+</option><option value="4">4+</option>
               </select>
             </div>
             <div style={P.div} />
