@@ -139,7 +139,6 @@ export default function InvestmentsPage() {
     <main style={P.page}>
       <section style={P.hero}>
         <h1 style={P.h1}>Invest in Lombok</h1>
-        <p style={P.sub}>Selected villas and land — curated for serious investors</p>
       </section>
 
       <div style={P.searchBar}>

@@ -158,7 +158,6 @@ export default function RentalsPage() {
     <main style={P.page}>
       <section style={P.hero}>
         <h1 style={P.h1}>Long-term rentals in Lombok</h1>
-        <p style={P.sub}>Villas and houses curated for expatriates and long-stay residents</p>
       </section>
 
       <div style={P.layout}>
