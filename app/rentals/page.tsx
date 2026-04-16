@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../lib/supabaseClient';
+import { dualPrice } from '../../lib/priceUtils';
 
 type RentalRow = {
   id: string; min_duration_months: number; max_duration_months: number;
-  monthly_price_idr: number; upfront_months: number; legal_checked: boolean;
+  monthly_price_idr: number; monthly_price_usd?: number | null; upfront_months: number; legal_checked: boolean;
   available_from: string | null;
   properties: {
     id: string; title: string; location: string | null;
@@ -116,7 +117,11 @@ export default function RentalsPage() {
       .select(`id, min_duration_months, max_duration_months, monthly_price_idr, upfront_months, legal_checked, available_from,
         properties (id, title, location, bedrooms, bathrooms, pool, garden, furnished, aircon, wifi, parking, private_space, kitchen, images, status)`)
       .order('created_at', { ascending: false })
-      .then(({ data }) => { setRentals((data as unknown as RentalRow[]) || []); setLoading(false); });
+      .then(({ data, error }) => {
+        if (error) console.error('Rentals query error:', error.message);
+        setRentals((data as unknown as RentalRow[]) || []);
+        setLoading(false);
+      });
   }, []);
 
   const published = rentals.filter(r => r.properties?.status === 'published');
