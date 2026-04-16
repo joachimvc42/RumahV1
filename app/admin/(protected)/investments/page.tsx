@@ -205,7 +205,7 @@ const s: { [key: string]: React.CSSProperties } = {
   empty: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 60, background: '#f9fafb', borderRadius: 16, color: '#6b7280' },
   grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 },
   card: { background: '#fff', borderRadius: 16, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column' },
-  imageContainer: { position: 'relative', aspectRatio: '16/10', background: '#f3f4f6', flexShrink: 0 },
+  imageContainer: { position: 'relative', height: 160, background: '#f3f4f6', flexShrink: 0, overflow: 'hidden' },
   image: { width: '100%', height: '100%', objectFit: 'cover' },
   noImage: { width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, color: '#9ca3af', fontSize: 14 },
   badgeTopLeft: { position: 'absolute', top: 10, left: 10, padding: '5px 10px', borderRadius: 20, color: '#fff', fontSize: 11, fontWeight: 700 },

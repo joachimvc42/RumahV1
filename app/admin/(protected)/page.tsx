@@ -294,8 +294,10 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   imageContainer: {
     position: 'relative',
-    aspectRatio: '16/10',
+    height: 160,
     background: '#f3f4f6',
+    flexShrink: 0,
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
