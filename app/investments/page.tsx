@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../lib/supabaseClient';
+import { dualPrice } from '../../lib/priceUtils';
 
 const WA = '6287873487940';
 
@@ -19,10 +20,6 @@ type Item = {
 type Search = { type:'all'|'villa'|'land'; tenure:'all'|'freehold'|'leasehold'; location:string; searched:boolean };
 type Sidebar = { pool:boolean; garden:boolean; furnished:boolean; minBedrooms:string; condition:string };
 
-function fmt(price: number, currency: string, isLand: boolean) {
-  if (currency === 'USD') return new Intl.NumberFormat('en-US', { style:'currency', currency:'USD', maximumFractionDigits:0 }).format(price);
-  return new Intl.NumberFormat('id-ID').format(price) + (isLand ? ' IDR/are' : ' IDR');
-}
 
 function InvCard({ item }: { item: Item }) {
   const [idx, setIdx] = useState(0);
@@ -75,7 +72,7 @@ function InvCard({ item }: { item: Item }) {
             )}
           </div>
           <div style={C.priceBlock}>
-            <p style={C.price}>{fmt(item.price, item.currency, item.type==='land')}</p>
+            {(() => { const { main, approx } = dualPrice(item.price, item.currency, item.type === 'land' ? '/are' : ''); return (<><p style={C.price}>{main}</p><p style={C.approx}>{approx}</p></>); })()}
             {item.expectedYield && <p style={C.yield}>{item.expectedYield}% est. yield / year</p>}
           </div>
         </div>
@@ -216,7 +213,7 @@ export default function InvestmentsPage() {
 
 const C: { [k: string]: React.CSSProperties } = {
   card: { background:'#fff', borderRadius:14, overflow:'hidden', boxShadow:'0 2px 16px rgba(15,23,42,0.08)', border:'1px solid #e8e8e8', display:'flex', flexDirection:'column' },
-  imgWrap: { position:'relative', width:'100%', height:220, flexShrink:0, background:'#e5e7eb', overflow:'hidden' },
+  imgWrap: { position:'relative', width:'100%', height:180, flexShrink:0, background:'#e5e7eb', overflow:'hidden' },
   img: { position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', transition:'opacity 0.35s ease', pointerEvents:'none', userSelect:'none' },
   noImg: { position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:56, color:'#d1d5db' },
   gradient: { position:'absolute', inset:0, background:'linear-gradient(180deg,transparent 60%,rgba(0,0,0,0.32) 100%)', pointerEvents:'none' },
@@ -234,6 +231,7 @@ const C: { [k: string]: React.CSSProperties } = {
   chip: { fontSize:12, color:'#374151', background:'#f3f4f6', padding:'3px 9px', borderRadius:5, fontWeight:600, border:'1px solid #e5e7eb' },
   priceBlock: { marginTop:16, paddingTop:14, borderTop:'1px solid #f3f4f6' },
   price: { fontSize:20, fontWeight:800, color:'#111827', margin:'0 0 3px' },
+  approx: { fontSize:12, color:'#9ca3af', margin:0, marginTop:2 },
   yield: { fontSize:12, color:'#059669', fontWeight:600, margin:0 },
 };
 
@@ -257,5 +255,5 @@ const P: { [k: string]: React.CSSProperties } = {
   checkRow: { display:'flex', alignItems:'center', gap:11, padding:'10px 0', borderBottom:'1px solid #f3f4f6', cursor:'pointer' },
   checkLabel: { fontSize:15, fontWeight:500, color:'#374151' },
   resultRow: { display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20 },
-  grid: { display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:24 },
+  grid: { display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(260px, 1fr))', gap:24 },
 };
