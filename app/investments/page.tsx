@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { dualPrice } from '../../lib/priceUtils';
+import MapThumb from '../../components/MapThumb';
 
 const WA = '6287873487940';
 
@@ -16,6 +17,7 @@ type Item = {
   pool?: boolean; garden?: boolean; furnished?: boolean;
   condition?: string; landSize?: number|null;
   hasWater?: boolean; hasElectricity?: boolean; hasRoad?: boolean;
+  latitude?: number | null; longitude?: number | null;
 };
 
 type Search = { type:'all'|'villa'|'land'; tenure:'all'|'freehold'|'leasehold'; location:string };
@@ -74,6 +76,11 @@ function InvCard({ item }: { item: Item }) {
               </div>
             )}
           </div>
+          {item.latitude != null && item.longitude != null && (
+            <div style={{ marginTop: 10 }}>
+              <MapThumb lat={Number(item.latitude)} lng={Number(item.longitude)} />
+            </div>
+          )}
           <div style={C.priceBlock}>
             {(() => { const { main, approx } = dualPrice(item.price, item.currency, item.type === 'land' ? '/are' : ''); return (<><p style={C.price}>{main}</p><p style={C.approx}>{approx}</p></>); })()}
             {item.expectedYield && <p style={C.yield}>{item.expectedYield}% est. yield / year</p>}
@@ -105,11 +112,11 @@ export default function InvestmentsPage() {
       for (const inv of investments) {
         if (inv.asset_type==='property') {
           const p = (props as any[])?.find(x=>x.id===inv.asset_id);
-          if (p && p.status==='published') merged.push({ id:inv.id, type:'villa', title:p.title, location:p.location||'Lombok', price:p.price||0, currency:p.currency||'USD', tenure:p.tenure||'freehold', leaseYears:p.lease_years, expectedYield:inv.expected_yield, images:p.images||[], href:`/investments/${inv.id}`, bedrooms:p.bedrooms, bathrooms:p.bathrooms, pool:p.pool, garden:p.garden, furnished:p.furnished, condition:p.condition });
+          if (p && p.status==='published') merged.push({ id:inv.id, type:'villa', title:p.title, location:p.location||'Lombok', price:p.price||0, currency:p.currency||'USD', tenure:p.tenure||'freehold', leaseYears:p.lease_years, expectedYield:inv.expected_yield, images:p.images||[], href:`/investments/${inv.id}`, bedrooms:p.bedrooms, bathrooms:p.bathrooms, pool:p.pool, garden:p.garden, furnished:p.furnished, condition:p.condition, latitude:p.latitude, longitude:p.longitude });
         }
         if (inv.asset_type==='land') {
           const l = (lands as any[])?.find(x=>x.id===inv.asset_id);
-          if (l && l.status==='published') merged.push({ id:inv.id, type:'land', title:l.title, location:l.location||'Lombok', price:l.price_per_are_idr??l.price_per_are??0, currency:l.currency||'IDR', tenure:l.tenure||'freehold', leaseYears:l.lease_years, expectedYield:inv.expected_yield, images:l.images||[], href:`/investments/${inv.id}`, landSize:l.land_size ? Number(l.land_size) : null, condition:l.condition, hasWater:l.has_water, hasElectricity:l.has_electricity, hasRoad:l.has_road });
+          if (l && l.status==='published') merged.push({ id:inv.id, type:'land', title:l.title, location:l.location||'Lombok', price:l.price_per_are_idr??l.price_per_are??0, currency:l.currency||'IDR', tenure:l.tenure||'freehold', leaseYears:l.lease_years, expectedYield:inv.expected_yield, images:l.images||[], href:`/investments/${inv.id}`, landSize:l.land_size ? Number(l.land_size) : null, condition:l.condition, hasWater:l.has_water, hasElectricity:l.has_electricity, hasRoad:l.has_road, latitude:l.latitude, longitude:l.longitude });
         }
       }
       setItems(merged); setLoading(false);

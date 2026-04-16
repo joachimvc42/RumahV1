@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
+import MapView from '../../../components/MapView';
 
 const WA_NUMBER = '6287873487940';
 type MediaItem = { src: string; isVideo: boolean };
@@ -15,6 +16,7 @@ type PropertyData = {
   aircon: boolean; wifi: boolean; parking: boolean;
   images: string[] | null; videos: string[] | null;
   status?: 'draft' | 'published' | 'paused';
+  latitude?: number | null; longitude?: number | null;
 };
 
 type RentalData = {
@@ -39,11 +41,11 @@ export default function RentalDetailPage() {
   useEffect(() => {
     const load = async () => {
       let { data } = await supabase.from('long_term_rentals')
-        .select(`*, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, images, videos, status)`)
+        .select(`*, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, images, videos, status, latitude, longitude)`)
         .eq('property_id', id).single();
       if (!data) {
         const res = await supabase.from('long_term_rentals')
-          .select(`*, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, images, videos, status)`)
+          .select(`*, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, images, videos, status, latitude, longitude)`)
           .eq('id', id).single();
         data = res.data;
       }
@@ -157,6 +159,13 @@ export default function RentalDetailPage() {
             <div style={s.desc}>
               <h3 style={s.descTitle}>Description</h3>
               <p style={s.descText}>{p.description}</p>
+            </div>
+          )}
+
+          {p.latitude != null && p.longitude != null && (
+            <div style={{ marginBottom: 24 }}>
+              <h3 style={s.descTitle}>Location</h3>
+              <MapView lat={Number(p.latitude)} lng={Number(p.longitude)} title={p.title} />
             </div>
           )}
 

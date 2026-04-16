@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { dualPrice } from '../../lib/priceUtils';
+import MapThumb from '../../components/MapThumb';
 
 type RentalRow = {
   id: string; min_duration_months: number; max_duration_months: number;
@@ -16,6 +17,7 @@ type RentalRow = {
     aircon: boolean; wifi: boolean; parking: boolean;
     private_space?: boolean; kitchen?: boolean;
     images: string[] | null; status?: string;
+    latitude?: number | null; longitude?: number | null;
   } | null;
 };
 
@@ -89,6 +91,11 @@ function RentalCard({ rental }: { rental: RentalRow }) {
               {p?.kitchen && <span style={C.chip}>Kitchen</span>}
             </div>
           </div>
+          {p?.latitude != null && p?.longitude != null && (
+            <div style={{ marginTop: 10 }}>
+              <MapThumb lat={Number(p.latitude)} lng={Number(p.longitude)} />
+            </div>
+          )}
           <div style={C.priceBlock}>
             <div style={C.priceRow}>
               <span style={C.price}>{fmtIDR(rental.monthly_price_idr)}</span>
@@ -115,7 +122,7 @@ export default function RentalsPage() {
   useEffect(() => {
     supabase.from('long_term_rentals')
       .select(`id, min_duration_months, max_duration_months, monthly_price_idr, upfront_months, legal_checked, available_from,
-        properties (id, title, location, bedrooms, bathrooms, pool, garden, furnished, aircon, wifi, parking, private_space, kitchen, images, status)`)
+        properties (id, title, location, bedrooms, bathrooms, pool, garden, furnished, aircon, wifi, parking, private_space, kitchen, images, status, latitude, longitude)`)
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {
         if (error) console.error('Rentals query error:', error.message);

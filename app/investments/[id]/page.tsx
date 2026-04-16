@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
+import { dualPrice } from '../../../lib/priceUtils';
 
 const WA_NUMBER = '6287873487940';
 type MediaItem = { src: string; isVideo: boolean };
@@ -17,10 +18,6 @@ type InvestmentData = {
   pool?: boolean; garden?: boolean; furnished?: boolean; landSize?: string;
 };
 
-function fmtPrice(price: number, currency: string) {
-  if (currency === 'USD') return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
-  return new Intl.NumberFormat('id-ID').format(price) + ' IDR';
-}
 function isVid(url: string) {
   const ext = url.split('?')[0].split('.').pop()?.toLowerCase();
   return !!ext && ['mp4','mov','webm','avi','m4v','mkv'].includes(ext);
@@ -152,10 +149,15 @@ export default function InvestmentDetailPage() {
           <p style={s.location}>📍 {data.location}</p>
 
           <div style={s.priceCard}>
-            <div style={s.priceRow}>
-              <span style={s.priceVal}>{fmtPrice(data.price, data.currency)}</span>
-              {data.type === 'land' && <span style={s.priceUnit}>/are</span>}
-            </div>
+            {(() => {
+              const { main, approx } = dualPrice(data.price, data.currency, data.type === 'land' ? '/are' : '');
+              return (
+                <div style={s.priceRow}>
+                  <span style={s.priceVal}>{main}</span>
+                  <span style={s.priceApprox}>{approx}</span>
+                </div>
+              );
+            })()}
             <div style={{ ...s.tenureBadge, background: data.tenure === 'freehold' ? '#dbeafe' : '#fef3c7', color: data.tenure === 'freehold' ? '#1e40af' : '#92400e' }}>
               {data.tenure === 'freehold' ? '🔑 Freehold — Full ownership' : `📋 Leasehold — ${data.leaseYears} years`}
             </div>
@@ -225,9 +227,9 @@ const s: { [k: string]: React.CSSProperties } = {
   title: { fontSize: 32, fontWeight: 800, color: '#111827', margin: '0 0 8px' },
   location: { fontSize: 16, color: '#6b7280', margin: '0 0 24px' },
   priceCard: { background: 'linear-gradient(135deg,#fffbeb,#fef3c7)', borderRadius: 16, padding: 24, marginBottom: 24, border: '2px solid #fde68a' },
-  priceRow: { display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 14 },
+  priceRow: { display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 14, flexWrap: 'wrap' as const },
   priceVal: { fontSize: 34, fontWeight: 800, color: '#d97706' },
-  priceUnit: { fontSize: 16, color: '#92400e' },
+  priceApprox: { fontSize: 14, color: '#92400e', fontWeight: 500 },
   tenureBadge: { display: 'inline-block', padding: '10px 16px', borderRadius: 10, fontSize: 14, fontWeight: 700, marginBottom: 14 },
   yieldRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: '#ecfdf5', borderRadius: 10 },
   specs: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 },

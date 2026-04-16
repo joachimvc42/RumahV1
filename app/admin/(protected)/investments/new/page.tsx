@@ -7,6 +7,7 @@ import { supabase } from '../../../../../lib/supabaseClient';
 import { normalizeStatus, type PropertyStatus } from '../../../../../lib/statusUtils';
 import { readFileAsDataURL, type SortableGalleryItem } from '../../../../../lib/galleryUtils';
 import AdminImageGallery from '../../../../../components/admin/AdminImageGallery';
+import MapPicker from '../../../../../components/MapPicker';
 
 type VideoItem = {
   id: string;
@@ -40,6 +41,9 @@ export default function NewInvestmentPage() {
   const [legalChecked, setLegalChecked] = useState(false);
   const [managementAvailable, setManagementAvailable] = useState(true);
   const [status, setStatus] = useState<PropertyStatus>('draft');
+
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
 
   const [galleryItems, setGalleryItems] = useState<SortableGalleryItem[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -137,6 +141,8 @@ export default function NewInvestmentPage() {
             lease_years: tenure === 'leasehold' ? Number(leaseDuration) : null,
             status: normalizeStatus(status),
             property_type: 'investment',
+            latitude: lat,
+            longitude: lng,
           })
           .select('id')
           .single();
@@ -162,6 +168,8 @@ export default function NewInvestmentPage() {
             lease_years: tenure === 'leasehold' ? Number(leaseDuration) : null,
             status: normalizeStatus(status),
             zoning: 'investment',
+            latitude: lat,
+            longitude: lng,
           })
           .select('id')
           .single();

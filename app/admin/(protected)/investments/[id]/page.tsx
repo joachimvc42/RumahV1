@@ -7,6 +7,7 @@ import { supabase } from '../../../../../lib/supabaseClient';
 import { normalizeStatus, type PropertyStatus } from '../../../../../lib/statusUtils';
 import { urlsToGalleryItems, readFileAsDataURL, type SortableGalleryItem } from '../../../../../lib/galleryUtils';
 import AdminImageGallery from '../../../../../components/admin/AdminImageGallery';
+import MapPicker from '../../../../../components/MapPicker';
 
 type VideoItem = {
   id: string;
@@ -47,6 +48,9 @@ export default function EditInvestmentPage() {
   const [managementAvailable, setManagementAvailable] = useState(true);
   const [status, setStatus] = useState<PropertyStatus>('draft');
 
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
+
   const [galleryItems, setGalleryItems] = useState<SortableGalleryItem[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -74,6 +78,8 @@ export default function EditInvestmentPage() {
           setPrice(String(prop.price || '')); setCurrency(prop.currency || 'USD');
           setTenure(prop.tenure || 'freehold'); setLeaseDuration(String(prop.lease_years || ''));
           setStatus((prop.status as PropertyStatus) || 'draft');
+          if (prop.latitude != null) setLat(Number(prop.latitude));
+          if (prop.longitude != null) setLng(Number(prop.longitude));
           setGalleryItems(urlsToGalleryItems(prop.images || []));
           if (prop.videos && Array.isArray(prop.videos)) {
             setVideoItems(prop.videos.map((url: string, i: number) => ({
@@ -92,6 +98,8 @@ export default function EditInvestmentPage() {
           setCurrency(land.currency || 'IDR'); setTenure(land.tenure || 'freehold');
           setLeaseDuration(String(land.lease_years || ''));
           setStatus((land.status as PropertyStatus) || 'draft');
+          if (land.latitude != null) setLat(Number(land.latitude));
+          if (land.longitude != null) setLng(Number(land.longitude));
           setGalleryItems(urlsToGalleryItems(land.images || []));
           if (land.videos && Array.isArray(land.videos)) {
             setVideoItems(land.videos.map((url: string, i: number) => ({
@@ -213,9 +221,9 @@ export default function EditInvestmentPage() {
           pool, garden, furnished,
           price: Number(price), currency, tenure,
           lease_years: tenure === 'leasehold' ? Number(leaseDuration) : null,
-          images: allImages,
-          videos: allVideos,
+          images: allImages, videos: allVideos,
           status: normalizeStatus(status),
+          latitude: lat, longitude: lng,
         }).eq('id', investment.asset_id);
         if (propErr) throw propErr;
       } else {
@@ -224,9 +232,9 @@ export default function EditInvestmentPage() {
           land_size: landArea ? Number(landArea) : null,
           price_per_are: Number(price), currency, tenure,
           lease_years: tenure === 'leasehold' ? Number(leaseDuration) : null,
-          images: allImages,
-          videos: allVideos,
+          images: allImages, videos: allVideos,
           status: normalizeStatus(status),
+          latitude: lat, longitude: lng,
         }).eq('id', investment.asset_id);
         if (landErr) throw landErr;
       }
@@ -350,6 +358,13 @@ export default function EditInvestmentPage() {
               <label style={s.checkbox}><input type="checkbox" checked={managementAvailable} onChange={e => setManagementAvailable(e.target.checked)} /><span>🏢 Rental management available</span></label>
             )}
           </div>
+        </section>
+
+        {/* ── Location ── */}
+        <section style={s.section}>
+          <h2 style={s.sectionTitle}>📍 Location on map</h2>
+          <p style={s.sectionHint}>Click on the map or search an address to pin the exact location.</p>
+          <MapPicker lat={lat} lng={lng} onChange={(la, lo) => { setLat(la); setLng(lo); }} onClear={() => { setLat(null); setLng(null); }} />
         </section>
 
         {/* ── Photos ── */}

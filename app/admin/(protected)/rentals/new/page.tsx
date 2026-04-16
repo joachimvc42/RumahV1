@@ -6,6 +6,7 @@ import { supabase } from '../../../../../lib/supabaseClient';
 import { normalizeStatus } from '../../../../../lib/statusUtils';
 import { readFileAsDataURL, type SortableGalleryItem } from '../../../../../lib/galleryUtils';
 import AdminImageGallery from '../../../../../components/admin/AdminImageGallery';
+import MapPicker from '../../../../../components/MapPicker';
 
 type VideoItem = {
   id: string;
@@ -41,6 +42,9 @@ export default function NewRentalPage() {
   const [upfrontMonths, setUpfrontMonths] = useState('0');
   const [availableFrom, setAvailableFrom] = useState('');
   const [legalChecked, setLegalChecked] = useState(false);
+
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
 
   const [galleryItems, setGalleryItems] = useState<SortableGalleryItem[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -133,6 +137,8 @@ export default function NewRentalPage() {
           pool, garden, furnished, aircon, wifi, parking,
           status: normalizeStatus(status),
           property_type: 'rental',
+          latitude: lat,
+          longitude: lng,
         })
         .select()
         .single();
@@ -243,6 +249,16 @@ export default function NewRentalPage() {
             <input type="checkbox" checked={legalChecked} onChange={e => setLegalChecked(e.target.checked)} />
             <span>✅ Legal documents verified</span>
           </label>
+        </section>
+
+        {/* ── Location ── */}
+        <section style={s.section}>
+          <h2 style={s.sectionTitle}>🗺️ Location</h2>
+          <MapPicker
+            lat={lat} lng={lng}
+            onChange={(la, lo) => { setLat(la); setLng(lo); }}
+            onClear={() => { setLat(null); setLng(null); }}
+          />
         </section>
 
         {/* ── Photos ── */}

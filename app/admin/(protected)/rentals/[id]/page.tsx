@@ -6,6 +6,7 @@ import { supabase } from '../../../../../lib/supabaseClient';
 import { normalizeStatus } from '../../../../../lib/statusUtils';
 import { urlsToGalleryItems, readFileAsDataURL, type SortableGalleryItem } from '../../../../../lib/galleryUtils';
 import AdminImageGallery from '../../../../../components/admin/AdminImageGallery';
+import MapPicker from '../../../../../components/MapPicker';
 
 type VideoItem = {
   id: string;
@@ -45,6 +46,9 @@ export default function EditRentalPage() {
   const [upfrontMonths, setUpfrontMonths] = useState('');
   const [availableFrom, setAvailableFrom] = useState('');
   const [legalChecked, setLegalChecked] = useState(false);
+
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
 
   const [galleryItems, setGalleryItems] = useState<SortableGalleryItem[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -87,6 +91,8 @@ export default function EditRentalPage() {
         setParking(p.parking || false);
         setGalleryItems(urlsToGalleryItems(p.images || []));
         setStatus((p.status as any) || 'draft');
+        setLat(p.latitude ?? null);
+        setLng(p.longitude ?? null);
 
         // Load existing videos
         if (p.videos && Array.isArray(p.videos)) {
@@ -206,6 +212,8 @@ export default function EditRentalPage() {
         images: allImages,
         videos: allVideos,
         status: normalizeStatus(status),
+        latitude: lat,
+        longitude: lng,
       }).eq('id', propertyId);
 
       await supabase.from('long_term_rentals').update({
@@ -287,6 +295,16 @@ export default function EditRentalPage() {
             </select>
           </div>
           <label style={s.checkbox}><input type="checkbox" checked={legalChecked} onChange={e => setLegalChecked(e.target.checked)} /><span>✅ Legal documents verified</span></label>
+        </section>
+
+        {/* ── Location ── */}
+        <section style={s.section}>
+          <h2 style={s.sectionTitle}>🗺️ Location</h2>
+          <MapPicker
+            lat={lat} lng={lng}
+            onChange={(la, lo) => { setLat(la); setLng(lo); }}
+            onClear={() => { setLat(null); setLng(null); }}
+          />
         </section>
 
         {/* ── Photos ── */}
