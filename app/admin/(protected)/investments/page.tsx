@@ -203,7 +203,7 @@ const s: { [key: string]: React.CSSProperties } = {
   btnAdd: { padding: '14px 24px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: '#fff', borderRadius: 12, textDecoration: 'none', fontWeight: 700, fontSize: 15, boxShadow: '0 4px 14px rgba(245,158,11,0.3)' },
   error: { background: '#fef2f2', border: '1px solid #fca5a5', color: '#b91c1c', padding: '12px 16px', borderRadius: 8, marginBottom: 20 },
   empty: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 60, background: '#f9fafb', borderRadius: 16, color: '#6b7280' },
-  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24 },
+  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 },
   card: { background: '#fff', borderRadius: 16, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column' },
   imageContainer: { position: 'relative', aspectRatio: '16/10', background: '#f3f4f6', flexShrink: 0 },
   image: { width: '100%', height: '100%', objectFit: 'cover' },
