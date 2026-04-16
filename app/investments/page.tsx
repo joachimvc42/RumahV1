@@ -52,7 +52,7 @@ function InvCard({ item }: { item: Item }) {
       <Link href={item.href} style={C.link}>
         <div style={C.body}>
           <div>
-            {/* Badges row */}
+            {/* Badges + location row */}
             <div style={C.metaRow}>
               <span style={{ ...C.metaBadge, background: item.type==='villa' ? '#ede9fe' : '#dcfce7', color: item.type==='villa' ? '#6d28d9' : '#059669' }}>
                 {item.type==='villa' ? 'Villa' : 'Land'}
@@ -60,10 +60,9 @@ function InvCard({ item }: { item: Item }) {
               <span style={{ ...C.metaBadge, background: item.tenure==='freehold' ? '#dbeafe' : '#fef3c7', color: item.tenure==='freehold' ? '#1d4ed8' : '#b45309' }}>
                 {item.tenure==='freehold' ? 'Freehold' : item.leaseYears ? `Lease ${item.leaseYears}y` : 'Leasehold'}
               </span>
-              {item.images.length > 1 && <span style={{ ...C.metaBadge, background: '#f3f4f6', color: '#6b7280' }}>{item.images.length} photos</span>}
+              <span style={C.locBadge}>📍 {item.location}</span>
             </div>
             <h3 style={C.title}>{item.title}</h3>
-            <p style={C.loc}>{item.location}</p>
             {item.type==='villa' && (
               <div style={C.chips}>
                 {item.bedrooms && <span style={C.chip}>{item.bedrooms} bed{item.bedrooms!==1?'s':''}</span>}
@@ -217,20 +216,21 @@ const C: { [k: string]: React.CSSProperties } = {
   imgWrap: { position:'relative', width:'100%', height:180, flexShrink:0, background:'#e5e7eb', overflow:'hidden' },
   img: { position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', transition:'opacity 0.35s ease', pointerEvents:'none', userSelect:'none' },
   noImg: { position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:56, color:'#d1d5db' },
-  metaRow: { display:'flex', gap:5, flexWrap:'wrap', marginBottom:8 },
+  metaRow: { display:'flex', gap:5, flexWrap:'wrap', alignItems:'center', marginBottom:8 },
   metaBadge: { fontSize:11, fontWeight:700, padding:'3px 8px', borderRadius:6 },
+  locBadge: { fontSize:12, color:'#374151', fontWeight:500 },
   arrow: { position:'absolute', top:'50%', transform:'translateY(-50%)', width:34, height:34, borderRadius:'50%', background:'rgba(255,255,255,0.92)', border:'none', fontSize:20, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 2px 8px rgba(0,0,0,0.18)', zIndex:3, color:'#111', padding:0, lineHeight:1 },
   dots: { position:'absolute', bottom:10, left:'50%', transform:'translateX(-50%)', display:'flex', gap:5, zIndex:3 },
   dot: { width:6, height:6, borderRadius:'50%', border:'none', padding:0, cursor:'pointer', transition:'background 0.2s' },
   link: { textDecoration:'none', color:'inherit', display:'flex', flexDirection:'column', flex:1 },
   body: { padding:'18px 20px 20px', display:'flex', flexDirection:'column', justifyContent:'space-between', flex:1 },
   title: { fontSize:16, fontWeight:700, color:'#111827', margin:'0 0 4px', lineHeight:1.35 },
-  loc: { fontSize:13, color:'#9ca3af', margin:'0 0 10px' },
+  loc: { fontSize:13, color:'#374151', margin:'0 0 10px' },
   chips: { display:'flex', flexWrap:'wrap', gap:5, marginTop:6 },
   chip: { fontSize:12, color:'#374151', background:'#f3f4f6', padding:'3px 9px', borderRadius:5, fontWeight:600, border:'1px solid #e5e7eb' },
   priceBlock: { marginTop:16, paddingTop:14, borderTop:'1px solid #f3f4f6' },
   price: { fontSize:20, fontWeight:800, color:'#111827', margin:'0 0 3px' },
-  approx: { fontSize:12, color:'#9ca3af', margin:0, marginTop:2 },
+  approx: { fontSize:13, color:'#374151', margin:0, marginTop:2 },
   yield: { fontSize:12, color:'#059669', fontWeight:600, margin:0 },
 };
 
