@@ -41,7 +41,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Lead ── */}
-      <section className="section" style={{ borderTop: '1px solid #e2ddd4' }}>
+      <section className="section" style={{ borderTop: '1px solid #DDD6C8' }}>
         <div className="container">
           <p className="lead">
             RumahYa supports expatriates and investors by providing local context,
@@ -51,7 +51,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Paths ── */}
-      <section className="section" style={{ borderTop: '1px solid #e2ddd4' }}>
+      <section className="section" style={{ borderTop: '1px solid #DDD6C8' }}>
         <div className="container grid grid-2">
           <div className="card path-card">
             <div className="card-body">
@@ -98,7 +98,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Contact ── */}
-      <section className="section" style={{ borderTop: '1px solid #e2ddd4' }}>
+      <section className="section" style={{ borderTop: '1px solid #DDD6C8' }}>
         <div className="container">
 
           {/* Title row + WhatsApp */}
@@ -121,8 +121,8 @@ export default function AboutPage() {
             {status === 'sent' ? (
               <div style={c.successBox}>
                 <div style={c.successIcon}>✓</div>
-                <h3 style={{ fontSize: 20, fontWeight: 700, color: '#111827', margin: 0 }}>Message sent</h3>
-                <p style={{ fontSize: 15, color: '#6b7280', margin: 0 }}>We'll get back to you shortly.</p>
+                <h3 style={{ fontSize: 20, fontWeight: 700, color: '#2F2A26', margin: 0 }}>Message sent</h3>
+                <p style={{ fontSize: 15, color: '#6F6A64', margin: 0 }}>We'll get back to you shortly.</p>
                 <button onClick={() => setStatus('idle')} style={c.resetBtn}>Send another message</button>
               </div>
             ) : (
@@ -208,11 +208,11 @@ const c: { [k: string]: React.CSSProperties } = {
     opacity: 0.85,
   },
   formWrap: {
-    background: '#fff',
+    background: '#FDFAF5',
     borderRadius: 16,
     padding: 36,
-    border: '1px solid #e5e7eb',
-    boxShadow: '0 4px 24px rgba(15,23,42,0.06)',
+    border: '1px solid #DDD6C8',
+    boxShadow: '0 4px 24px rgba(47,42,38,0.06)',
   },
   form: {
     display: 'flex',
@@ -232,33 +232,33 @@ const c: { [k: string]: React.CSSProperties } = {
   label: {
     fontSize: 13,
     fontWeight: 600,
-    color: '#374151',
+    color: '#2F2A26',
   },
   input: {
     padding: '11px 14px',
     borderRadius: 8,
-    border: '1.5px solid #e5e7eb',
+    border: '1.5px solid #DDD6C8',
     fontSize: 15,
     outline: 'none',
-    background: '#fff',
+    background: '#FDFAF5',
     fontFamily: 'inherit',
-    color: '#111827',
+    color: '#2F2A26',
   },
   textarea: {
     padding: '11px 14px',
     borderRadius: 8,
-    border: '1.5px solid #e5e7eb',
+    border: '1.5px solid #DDD6C8',
     fontSize: 15,
     resize: 'vertical',
     outline: 'none',
     fontFamily: 'inherit',
     lineHeight: 1.6,
-    color: '#111827',
+    color: '#2F2A26',
   },
   submitBtn: {
     alignSelf: 'flex-start',
     padding: '13px 28px',
-    background: '#2563eb',
+    background: '#2FB7A6',
     color: '#fff',
     border: 'none',
     borderRadius: 8,
@@ -285,7 +285,7 @@ const c: { [k: string]: React.CSSProperties } = {
   successIcon: {
     width: 52,
     height: 52,
-    background: '#2563eb',
+    background: '#2FB7A6',
     color: '#fff',
     borderRadius: '50%',
     display: 'flex',
@@ -297,12 +297,12 @@ const c: { [k: string]: React.CSSProperties } = {
   resetBtn: {
     marginTop: 4,
     padding: '10px 20px',
-    background: '#f3f4f6',
+    background: '#F6F1E9',
     border: 'none',
     borderRadius: 8,
     fontSize: 14,
     fontWeight: 600,
     cursor: 'pointer',
-    color: '#374151',
+    color: '#2F2A26',
   },
 };

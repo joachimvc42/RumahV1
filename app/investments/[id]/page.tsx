@@ -117,14 +117,14 @@ export default function InvestmentDetailPage() {
                     <div style={s.counter}>{idx + 1} / {media.length}</div>
                   </>
                 )}
-                <div style={{ ...s.typeBadge, background: data.type === 'villa' ? '#8b5cf6' : '#059669' }}>
+                <div style={{ ...s.typeBadge, background: data.type === 'villa' ? '#1F4E5F' : '#2FB7A6' }}>
                   {data.type === 'villa' ? '🏠 Villa' : '🌴 Land'}
                 </div>
               </div>
               {media.length > 1 && (
                 <div style={s.thumbRow}>
                   {media.map((m, i) => (
-                    <button key={i} onClick={() => setIdx(i)} style={{ ...s.thumb, borderColor: i === idx ? '#f59e0b' : 'transparent' }}>
+                    <button key={i} onClick={() => setIdx(i)} style={{ ...s.thumb, borderColor: i === idx ? '#C9A96A' : 'transparent' }}>
                       {m.isVideo
                         ? <div style={s.vidThumb}>▶</div>
                         : <img src={m.src} alt="" style={s.thumbImg} />
@@ -158,13 +158,13 @@ export default function InvestmentDetailPage() {
                 </div>
               );
             })()}
-            <div style={{ ...s.tenureBadge, background: data.tenure === 'freehold' ? '#dbeafe' : '#fef3c7', color: data.tenure === 'freehold' ? '#1e40af' : '#92400e' }}>
+            <div style={{ ...s.tenureBadge, background: data.tenure === 'freehold' ? '#d4f0ec' : '#f5eedc', color: data.tenure === 'freehold' ? '#1F4E5F' : '#7A6030' }}>
               {data.tenure === 'freehold' ? '🔑 Freehold — Full ownership' : `📋 Leasehold — ${data.leaseYears} years`}
             </div>
             {data.expectedYield && (
               <div style={s.yieldRow}>
-                <span style={{ fontSize: 14, color: '#065f46' }}>Estimated yield</span>
-                <span style={{ fontSize: 22, fontWeight: 800, color: '#059669' }}>{data.expectedYield}% / year</span>
+                <span style={{ fontSize: 14, color: '#2F2A26' }}>Estimated yield</span>
+                <span style={{ fontSize: 22, fontWeight: 800, color: '#C9A96A' }}>{data.expectedYield}% / year</span>
               </div>
             )}
           </div>
@@ -206,39 +206,39 @@ export default function InvestmentDetailPage() {
 
 const s: { [k: string]: React.CSSProperties } = {
   page: { maxWidth: 1200, margin: '0 auto', padding: '24px 24px 60px' },
-  loading: { textAlign: 'center', padding: 80, color: '#6b7280', fontSize: 18 },
+  loading: { textAlign: 'center', padding: 80, color: '#6F6A64', fontSize: 18 },
   notFound: { textAlign: 'center', padding: 80 },
-  backBtn: { display: 'inline-block', marginTop: 20, padding: '13px 26px', background: '#f59e0b', color: '#fff', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: 15 },
-  backLink: { display: 'inline-block', marginBottom: 28, color: '#6b7280', textDecoration: 'none', fontSize: 15, fontWeight: 600 },
+  backBtn: { display: 'inline-block', marginTop: 20, padding: '13px 26px', background: '#2FB7A6', color: '#fff', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: 15 },
+  backLink: { display: 'inline-block', marginBottom: 28, color: '#6F6A64', textDecoration: 'none', fontSize: 15, fontWeight: 600 },
   layout: { display: 'grid', gridTemplateColumns: '1fr 420px', gap: 48 },
-  mainMedia: { position: 'relative', aspectRatio: '16/10', borderRadius: 20, overflow: 'hidden', background: '#111827' },
+  mainMedia: { position: 'relative', aspectRatio: '16/10', borderRadius: 20, overflow: 'hidden', background: '#2F2A26' },
   mediaEl: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
   navBtn: { position: 'absolute', top: '50%', transform: 'translateY(-50%)', width: 48, height: 48, borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', fontSize: 28, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', color: '#111' },
   counter: { position: 'absolute', bottom: 14, left: '50%', transform: 'translateX(-50%)', padding: '7px 16px', background: 'rgba(0,0,0,0.6)', color: '#fff', borderRadius: 20, fontSize: 14, fontWeight: 600 },
   typeBadge: { position: 'absolute', top: 16, left: 16, padding: '8px 16px', borderRadius: 24, color: '#fff', fontSize: 14, fontWeight: 700 },
   thumbRow: { display: 'flex', gap: 10, marginTop: 14, overflowX: 'auto', paddingBottom: 4 },
-  thumb: { flexShrink: 0, width: 80, height: 60, borderRadius: 10, overflow: 'hidden', border: '3px solid transparent', cursor: 'pointer', padding: 0, background: '#1f2937' },
+  thumb: { flexShrink: 0, width: 80, height: 60, borderRadius: 10, overflow: 'hidden', border: '3px solid transparent', cursor: 'pointer', padding: 0, background: '#2F2A26' },
   thumbImg: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
-  vidThumb: { width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#fff', background: '#374151' },
-  noMedia: { aspectRatio: '16/10', borderRadius: 20, background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 80, color: '#d1d5db' },
+  vidThumb: { width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#fff', background: '#2F2A26' },
+  noMedia: { aspectRatio: '16/10', borderRadius: 20, background: '#F6F1E9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 80, color: '#DDD6C8' },
   badges: { display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 14 },
   verifiedBadge: { display: 'inline-block', padding: '7px 14px', background: '#059669', color: '#fff', borderRadius: 20, fontSize: 13, fontWeight: 700 },
-  mgmtBadge: { display: 'inline-block', padding: '7px 14px', background: '#6366f1', color: '#fff', borderRadius: 20, fontSize: 13, fontWeight: 700 },
-  title: { fontSize: 32, fontWeight: 800, color: '#111827', margin: '0 0 8px' },
-  location: { fontSize: 16, color: '#6b7280', margin: '0 0 24px' },
-  priceCard: { background: 'linear-gradient(135deg,#fffbeb,#fef3c7)', borderRadius: 16, padding: 24, marginBottom: 24, border: '2px solid #fde68a' },
+  mgmtBadge: { display: 'inline-block', padding: '7px 14px', background: '#1F4E5F', color: '#fff', borderRadius: 20, fontSize: 13, fontWeight: 700 },
+  title: { fontSize: 32, fontWeight: 800, color: '#2F2A26', margin: '0 0 8px' },
+  location: { fontSize: 16, color: '#6F6A64', margin: '0 0 24px' },
+  priceCard: { background: 'linear-gradient(135deg,#f5eedc,#f0fbf9)', borderRadius: 16, padding: 24, marginBottom: 24, border: '2px solid #DDD6C8' },
   priceRow: { display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 14, flexWrap: 'wrap' as const },
-  priceVal: { fontSize: 34, fontWeight: 800, color: '#d97706' },
-  priceApprox: { fontSize: 14, color: '#92400e', fontWeight: 500 },
+  priceVal: { fontSize: 34, fontWeight: 800, color: '#2F2A26' },
+  priceApprox: { fontSize: 14, color: '#6F6A64', fontWeight: 500 },
   tenureBadge: { display: 'inline-block', padding: '10px 16px', borderRadius: 10, fontSize: 14, fontWeight: 700, marginBottom: 14 },
-  yieldRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: '#ecfdf5', borderRadius: 10 },
+  yieldRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: '#f5eedc', borderRadius: 10 },
   specs: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 },
-  spec: { display: 'flex', alignItems: 'center', gap: 10, padding: '13px 16px', background: '#f9fafb', borderRadius: 12, fontSize: 15, fontWeight: 500 },
+  spec: { display: 'flex', alignItems: 'center', gap: 10, padding: '13px 16px', background: '#F6F1E9', borderRadius: 12, fontSize: 15, fontWeight: 500 },
   amenities: { display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 },
-  amenity: { padding: '10px 16px', background: '#fff', border: '2px solid #e5e7eb', borderRadius: 10, fontSize: 14, fontWeight: 600 },
+  amenity: { padding: '10px 16px', background: '#FDFAF5', border: '2px solid #DDD6C8', borderRadius: 10, fontSize: 14, fontWeight: 600 },
   desc: { marginBottom: 28 },
-  descTitle: { fontSize: 18, fontWeight: 700, color: '#374151', marginBottom: 10 },
-  descText: { fontSize: 15, color: '#4b5563', lineHeight: 1.75 },
+  descTitle: { fontSize: 18, fontWeight: 700, color: '#2F2A26', marginBottom: 10 },
+  descText: { fontSize: 15, color: '#6F6A64', lineHeight: 1.75 },
   cta: { display: 'flex' },
   ctaWa: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '16px 24px', background: '#25a244', color: '#fff', borderRadius: 12, textDecoration: 'none', fontWeight: 700, fontSize: 16, textAlign: 'center' as const },
 };

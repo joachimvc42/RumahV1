@@ -100,7 +100,7 @@ export default function RentalDetailPage() {
               {media.length > 1 && (
                 <div style={s.thumbRow}>
                   {media.map((m, i) => (
-                    <button key={i} onClick={() => setIdx(i)} style={{ ...s.thumb, borderColor: i === idx ? '#2563eb' : 'transparent' }}>
+                    <button key={i} onClick={() => setIdx(i)} style={{ ...s.thumb, borderColor: i === idx ? '#2FB7A6' : 'transparent' }}>
                       {m.isVideo
                         ? <div style={s.vidThumb}>▶</div>
                         : <img src={m.src} alt="" style={s.thumbImg} />
@@ -182,37 +182,37 @@ export default function RentalDetailPage() {
 
 const s: { [k: string]: React.CSSProperties } = {
   page: { maxWidth: 1200, margin: '0 auto', padding: '24px 24px 60px' },
-  loading: { textAlign: 'center', padding: 80, color: '#6b7280', fontSize: 18 },
+  loading: { textAlign: 'center', padding: 80, color: '#6F6A64', fontSize: 18 },
   notFound: { textAlign: 'center', padding: 80 },
-  backBtn: { display: 'inline-block', marginTop: 20, padding: '13px 26px', background: '#2563eb', color: '#fff', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: 15 },
-  backLink: { display: 'inline-block', marginBottom: 28, color: '#6b7280', textDecoration: 'none', fontSize: 15, fontWeight: 600 },
+  backBtn: { display: 'inline-block', marginTop: 20, padding: '13px 26px', background: '#2FB7A6', color: '#fff', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: 15 },
+  backLink: { display: 'inline-block', marginBottom: 28, color: '#6F6A64', textDecoration: 'none', fontSize: 15, fontWeight: 600 },
   layout: { display: 'grid', gridTemplateColumns: '1fr 420px', gap: 48 },
-  mainMedia: { position: 'relative', aspectRatio: '16/10', borderRadius: 20, overflow: 'hidden', background: '#111827' },
+  mainMedia: { position: 'relative', aspectRatio: '16/10', borderRadius: 20, overflow: 'hidden', background: '#2F2A26' },
   mediaEl: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
   navBtn: { position: 'absolute', top: '50%', transform: 'translateY(-50%)', width: 48, height: 48, borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', fontSize: 28, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', color: '#111' },
   counter: { position: 'absolute', bottom: 14, left: '50%', transform: 'translateX(-50%)', padding: '7px 16px', background: 'rgba(0,0,0,0.6)', color: '#fff', borderRadius: 20, fontSize: 14, fontWeight: 600 },
   thumbRow: { display: 'flex', gap: 10, marginTop: 14, overflowX: 'auto', paddingBottom: 4 },
-  thumb: { flexShrink: 0, width: 80, height: 60, borderRadius: 10, overflow: 'hidden', border: '3px solid transparent', cursor: 'pointer', padding: 0, background: '#1f2937' },
+  thumb: { flexShrink: 0, width: 80, height: 60, borderRadius: 10, overflow: 'hidden', border: '3px solid transparent', cursor: 'pointer', padding: 0, background: '#2F2A26' },
   thumbImg: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
-  vidThumb: { width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#fff', background: '#374151' },
-  noMedia: { aspectRatio: '16/10', borderRadius: 20, background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 80, color: '#d1d5db' },
-  verifiedBadge: { display: 'inline-block', padding: '7px 14px', background: '#059669', color: '#fff', borderRadius: 20, fontSize: 13, fontWeight: 700, marginBottom: 14 },
-  title: { fontSize: 32, fontWeight: 800, color: '#111827', margin: '0 0 8px' },
-  location: { fontSize: 16, color: '#6b7280', margin: '0 0 24px' },
-  priceCard: { background: 'linear-gradient(135deg,#f0fdf4,#ecfeff)', borderRadius: 16, padding: 24, marginBottom: 24, border: '2px solid #d1fae5' },
+  vidThumb: { width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#fff', background: '#2F2A26' },
+  noMedia: { aspectRatio: '16/10', borderRadius: 20, background: '#F6F1E9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 80, color: '#DDD6C8' },
+  verifiedBadge: { display: 'inline-block', padding: '7px 14px', background: '#1F4E5F', color: '#fff', borderRadius: 20, fontSize: 13, fontWeight: 700, marginBottom: 14 },
+  title: { fontSize: 32, fontWeight: 800, color: '#2F2A26', margin: '0 0 8px' },
+  location: { fontSize: 16, color: '#6F6A64', margin: '0 0 24px' },
+  priceCard: { background: 'linear-gradient(135deg,#f0fbf9,#f5f0e8)', borderRadius: 16, padding: 24, marginBottom: 24, border: '2px solid #c2e8e3' },
   priceRow: { display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 8 },
-  priceVal: { fontSize: 34, fontWeight: 800, color: '#059669' },
-  pricePer: { fontSize: 16, color: '#6b7280' },
-  priceMeta: { fontSize: 15, color: '#374151' },
-  avail: { marginTop: 12, fontSize: 14, color: '#2563eb', fontWeight: 600 },
+  priceVal: { fontSize: 34, fontWeight: 800, color: '#2FB7A6' },
+  pricePer: { fontSize: 16, color: '#6F6A64' },
+  priceMeta: { fontSize: 15, color: '#2F2A26' },
+  avail: { marginTop: 12, fontSize: 14, color: '#2FB7A6', fontWeight: 600 },
   specs: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 },
-  spec: { display: 'flex', alignItems: 'center', gap: 10, padding: '13px 16px', background: '#f9fafb', borderRadius: 12, fontSize: 15, fontWeight: 500 },
+  spec: { display: 'flex', alignItems: 'center', gap: 10, padding: '13px 16px', background: '#F6F1E9', borderRadius: 12, fontSize: 15, fontWeight: 500 },
   specIcon: { fontSize: 20 },
   amenities: { display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 },
-  amenity: { padding: '10px 16px', background: '#fff', border: '2px solid #e5e7eb', borderRadius: 10, fontSize: 14, fontWeight: 600 },
+  amenity: { padding: '10px 16px', background: '#FDFAF5', border: '2px solid #DDD6C8', borderRadius: 10, fontSize: 14, fontWeight: 600 },
   desc: { marginBottom: 28 },
-  descTitle: { fontSize: 18, fontWeight: 700, color: '#374151', marginBottom: 10 },
-  descText: { fontSize: 15, color: '#4b5563', lineHeight: 1.75 },
+  descTitle: { fontSize: 18, fontWeight: 700, color: '#2F2A26', marginBottom: 10 },
+  descText: { fontSize: 15, color: '#6F6A64', lineHeight: 1.75 },
   cta: { display: 'flex' },
   ctaWa: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '16px 24px', background: '#25a244', color: '#fff', borderRadius: 12, textDecoration: 'none', fontWeight: 700, fontSize: 16, textAlign: 'center' as const },
 };

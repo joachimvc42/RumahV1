@@ -8,22 +8,22 @@
 /* -------------------- */
 
 :root {
-    --bg: #f5f1ea;           /* beige crème */
-    --bg-alt: #ffffff;
-    --bg-card: #ffffff;
+    --bg: #F6F1E9;
+    --bg-alt: #FDFAF5;
+    --bg-card: #FDFAF5;
 
-    --primary: #3b82f6;      /* bleu pastel */
-    --primary-soft: #dbeafe;
+    --primary: #2FB7A6;
+    --primary-soft: #d4f0ec;
 
-    --accent: #22c55e;       /* vert doux */
-    --accent-soft: #dcfce7;
+    --accent: #C9A96A;
+    --accent-soft: #f5eedc;
 
-    --border-subtle: #e5e7eb;
+    --border-subtle: #DDD6C8;
 
-    --text-main: #111827;
-    --text-muted: #6b7280;
+    --text-main: #2F2A26;
+    --text-muted: #6F6A64;
 
-    --shadow-soft: 0 14px 30px rgba(15, 23, 42, 0.06);
+    --shadow-soft: 0 14px 30px rgba(47,42,38,0.07);
 }
 
 /* -------------------- */
@@ -118,7 +118,7 @@ p {
     position: sticky;
     top: 0;
     z-index: 20;
-    background: rgba(245, 241, 234, 0.96);
+    background: rgba(246,241,233,0.96);
     backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--border-subtle);
     width: 100%;
@@ -145,8 +145,8 @@ p {
     height: 36px;
     flex-shrink: 0;
     border-radius: 14px;
-    background: radial-gradient(circle at 20% 20%, #ffffff 0, #e0f2fe 22%, #a5b4fc 45%, #22c55e 100%);
-    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.45);
+    background: radial-gradient(circle at 20% 20%, #ffffff 0, #d4f0ec 22%, #C9A96A 45%, #2FB7A6 100%);
+    box-shadow: 0 6px 14px rgba(47,111,95,0.35);
     position: relative;
 }
 
@@ -217,7 +217,7 @@ p {
     position: absolute;
     inset: 0;
     border-radius: 12px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(34, 197, 94, 0.08));
+    background: linear-gradient(135deg, rgba(47,183,166,0.08), rgba(201,169,106,0.08));
     opacity: 0;
     transition: opacity 0.25s ease;
 }
@@ -258,7 +258,7 @@ p {
 /* État actif */
 .nav-link.is-active {
     color: var(--text-main);
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(34, 197, 94, 0.12));
+    background: linear-gradient(135deg, rgba(47,183,166,0.12), rgba(201,169,106,0.12));
 }
 
 .nav-link.is-active::after {
@@ -268,10 +268,10 @@ p {
 
 /* Bouton CTA Contact - style premium */
 .nav-cta {
-    background: linear-gradient(135deg, var(--primary), var(--accent));
+    background: linear-gradient(135deg, var(--primary), #1F4E5F);
     color: #ffffff !important;
     padding: 10px 22px;
-    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+    box-shadow: 0 4px 14px rgba(47,183,166,0.35);
     border: none;
 }
 
@@ -284,12 +284,12 @@ p {
 }
 
 .nav-cta:hover {
-    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 8px 24px rgba(47,183,166,0.5);
     transform: translateY(-3px);
 }
 
 .nav-cta:active {
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 4px 12px rgba(47,183,166,0.4);
     transform: translateY(-1px) scale(0.98);
 }
 
@@ -321,9 +321,9 @@ p {
 }
 
 .nav-main a.nav-active {
-    background: linear-gradient(120deg, var(--primary), var(--accent));
+    background: linear-gradient(120deg, var(--primary), #1F4E5F);
     color: #ffffff;
-    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.45);
+    box-shadow: 0 10px 22px rgba(47,183,166,0.35);
 }
 
 /* Bouton hamburger (mobile uniquement) */
@@ -348,7 +348,7 @@ p {
     width: 18px;
     height: 2px;
     border-radius: 999px;
-    background: #0f172a;
+    background: #2F2A26;
     transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
@@ -414,7 +414,7 @@ p {
     font-size: 0.8rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: #64748b;
+    color: #6F6A64;
     margin-bottom: 10px;
 }
 
@@ -615,15 +615,15 @@ p {
 
 .btn-primary,
 .button {
-    background: linear-gradient(120deg, var(--primary), var(--accent));
+    background: linear-gradient(120deg, var(--primary), #1F4E5F);
     color: #ffffff;
-    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.45);
+    box-shadow: 0 10px 22px rgba(47,183,166,0.35);
 }
 
 .btn-primary:hover,
 .button:hover {
     transform: translateY(-1px);
-    box-shadow: 0 14px 26px rgba(37, 99, 235, 0.6);
+    box-shadow: 0 14px 26px rgba(47,183,166,0.5);
 }
 
 .btn-secondary,
@@ -639,11 +639,11 @@ p {
 
 .btn-secondary:hover,
 .button-outline:hover {
-    background: 
-        linear-gradient(rgba(59, 130, 246, 0.08), rgba(34, 197, 94, 0.08)) padding-box,
+    background:
+        linear-gradient(rgba(47,183,166,0.08), rgba(201,169,106,0.08)) padding-box,
         linear-gradient(135deg, var(--primary), var(--accent)) border-box;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 6px 16px rgba(47,183,166,0.2);
 }
 
 .btn-secondary:active,
@@ -708,7 +708,7 @@ p {
     width: 100%;
     object-fit: cover;
     border-radius: 8px;
-    background: #e5e7eb;
+    background: #DDD6C8;
 }
 
 /* contenus card */
@@ -793,8 +793,9 @@ p {
     inset: 6%;
     max-width: 980px;
     margin: auto;
-    background: #f9fafb;
+    background: #F6F1E9;
     border-radius: 22px;
+
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55);
     padding: 18px 20px 20px;
     overflow-y: auto;
@@ -808,7 +809,7 @@ p {
     background: transparent;
     font-size: 1.8rem;
     cursor: pointer;
-    color: #0f172a;
+    color: #2F2A26;
 }
 
 .detail-layout {
@@ -872,7 +873,7 @@ p {
     object-fit: cover;
     border-radius: 10px;
     cursor: pointer;
-    background: #e5e7eb;
+    background: #DDD6C8;
     transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 
@@ -890,7 +891,7 @@ p {
     margin-top: 32px;
     border-top: 1px solid var(--border-subtle);
     padding: 22px 0 16px;
-    background: #f4ede2;
+    background: #EDE6D9;
 }
 
 .footer-inner {
@@ -990,7 +991,7 @@ p {
     flex: 1 1 0;
     min-width: 0;
     padding: 10px 16px;
-    border-right: 1px solid #e5e7eb;
+    border-right: 1px solid #DDD6C8;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1010,7 +1011,7 @@ p {
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #6b7280;
+    color: #6F6A64;
     margin-bottom: 2px;
 }
 
@@ -1019,14 +1020,14 @@ p {
     align-items: center;
     gap: 8px;
     font-size: 0.9rem;
-    color: #111827;
+    color: #2F2A26;
 }
 
 /* Champs bien visibles */
 .land-filter-input-line input {
-    border: 1px solid #e5e7eb;
+    border: 1px solid #DDD6C8;
     outline: none;
-    background: #f9fafb;
+    background: #F6F1E9;
     padding: 6px 10px;
     margin: 0;
     font-size: 0.9rem;
@@ -1036,7 +1037,7 @@ p {
 }
 
 .land-filter-input-line input:focus {
-    border-color: #2563eb;
+    border-color: var(--primary);
     background: #ffffff;
 }
 
@@ -1075,7 +1076,7 @@ p {
 }
 
 .property-card {
-    background: #ffffff;
+    background: #FDFAF5;
     border-radius: 16px;
     box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
     overflow: hidden;
@@ -1107,7 +1108,7 @@ p {
 
 .property-card-location {
     font-size: 0.9rem;
-    color: #6b7280;
+    color: #6F6A64;
     margin-bottom: 6px;
 }
 
@@ -1116,7 +1117,7 @@ p {
     flex-wrap: wrap;
     gap: 8px;
     font-size: 0.85rem;
-    color: #374151;
+    color: #2F2A26;
     margin-bottom: 4px;
 }
 
@@ -1147,7 +1148,7 @@ p {
 }
 
 .location-suggestion-item:hover {
-    background: #f3f4f6;
+    background: #F6F1E9;
 }
 
 /* -------------------- */
@@ -1216,7 +1217,7 @@ p {
     color: var(--primary);
     margin-bottom: 16px;
     padding-bottom: 12px;
-    border-bottom: 2px solid rgba(59, 130, 246, 0.1);
+    border-bottom: 2px solid rgba(47,183,166,0.1);
 }
 
 .rentals-sidebar .filter-checkbox {
@@ -1233,8 +1234,8 @@ p {
 }
 
 .rentals-sidebar .filter-checkbox:hover {
-    background: rgba(59, 130, 246, 0.05);
-    border-color: rgba(59, 130, 246, 0.1);
+    background: rgba(47,183,166,0.05);
+    border-color: rgba(47,183,166,0.1);
 }
 
 .rentals-sidebar .filter-checkbox input {
@@ -1287,7 +1288,7 @@ p {
 }
 
 .filter-segment:hover {
-    background: rgba(59, 130, 246, 0.03);
+    background: rgba(47,183,166,0.03);
 }
 
 /* WHERE un peu plus large pour éviter que le placeholder soit coupé mais sans être énorme */
@@ -1313,7 +1314,7 @@ p {
     align-items: center;
     gap: 8px;
     font-size: 0.9rem;
-    color: #111827;
+    color: #2F2A26;
 }
 
 /* Variante colonne (pour WHEN) */
@@ -1324,7 +1325,7 @@ p {
 
 /* Champs textuels clairement visibles (petites box) */
 .filter-segment input {
-    border: 2px solid #e5e7eb;
+    border: 2px solid #DDD6C8;
     outline: none;
     background: #ffffff;
     padding: 10px 14px;
@@ -1337,23 +1338,23 @@ p {
 }
 
 .filter-segment input:hover {
-    border-color: #d1d5db;
+    border-color: #DDD6C8;
 }
 
 .filter-segment input:focus {
     border-color: var(--primary);
     background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 3px rgba(47,183,166,0.1);
 }
 
 .filter-segment input::placeholder {
-    color: #9ca3af;
+    color: #6F6A64;
 }
 
 /* labels inline dans WHEN */
 .filter-field-label {
     font-size: 0.8rem;
-    color: #6b7280;
+    color: #6F6A64;
     margin-bottom: 2px;
 }
 
@@ -1375,7 +1376,7 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(34, 197, 94, 0.05));
+    background: linear-gradient(135deg, rgba(47,183,166,0.05), rgba(201,169,106,0.05));
 }
 
 .filter-segment-actions button {
@@ -1452,7 +1453,7 @@ p {
 
 .rental-card-badge {
     align-self: flex-start;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
+    background: linear-gradient(135deg, var(--primary), #1F4E5F);
     color: #ffffff;
     font-size: 0.75rem;
     font-weight: 700;
@@ -1460,7 +1461,7 @@ p {
     border-radius: 20px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 4px 12px rgba(47,183,166,0.3);
 }
 
 /* Card content */
@@ -1500,13 +1501,13 @@ p {
 }
 
 .rental-card-features span {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(34, 197, 94, 0.1));
+    background: linear-gradient(135deg, rgba(47,183,166,0.1), rgba(201,169,106,0.1));
     color: var(--text-main);
     font-size: 0.8rem;
     font-weight: 600;
     padding: 6px 12px;
     border-radius: 20px;
-    border: 1px solid rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(47,183,166,0.15);
 }
 
 .rental-card-price {
@@ -1557,12 +1558,12 @@ p {
     flex-wrap: wrap;
     gap: 8px;
     font-size: 0.85rem;
-    color: #374151;
+    color: #2F2A26;
     margin-bottom: 4px;
 }
 
 .rental-pill {
-    background: #f3f4f6;
+    background: #F6F1E9;
     border-radius: 999px;
     padding: 3px 8px;
 }
@@ -1591,7 +1592,7 @@ p {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
-    background: #e5e7eb;
+    background: #DDD6C8;
 }
 
 /* On force la taille ici pour écraser les styles globaux type img {height:auto;} */
@@ -1611,7 +1612,7 @@ p {
 }
 
 .villa-meta-item {
-    background: #f9fafb;
+    background: #F6F1E9;
     border-radius: 8px;
     padding: 10px 12px;
     font-size: 0.95rem;
@@ -1619,13 +1620,13 @@ p {
 
 .villa-meta-label {
     font-weight: 600;
-    color: #6b7280;
+    color: #6F6A64;
     display: block;
     margin-bottom: 2px;
 }
 
 .villa-meta-value {
-    color: #111827;
+    color: #2F2A26;
 }
 
 /* Calendrier front */
@@ -1647,14 +1648,14 @@ p {
 }
 .av-cal-header button {
     border: none;
-    background: #e5e7eb;
+    background: #DDD6C8;
     padding: 4px 8px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.85rem;
 }
 .av-cal-header button:hover {
-    background: #d1d5db;
+    background: #DDD6C8;
 }
 .av-cal-grid {
     display: grid;
@@ -1665,7 +1666,7 @@ p {
 .av-cal-dayname {
     text-align: center;
     font-weight: 600;
-    color: #6b7280;
+    color: #6F6A64;
 }
 .av-cal-cell {
     height: 32px;
@@ -1683,8 +1684,8 @@ p {
     color: #065f46;
 }
 .av-cal-cell-unavailable {
-    background: #e5e7eb;
-    color: #4b5563;
+    background: #DDD6C8;
+    color: #6F6A64;
 }
 
 /* -------------------- */
@@ -1733,7 +1734,7 @@ p {
     .land-filter-segment,
     .filter-segment {
         border-right: none;
-        border-bottom: 1px solid #e5e7eb;
+        border-bottom: 1px solid #DDD6C8;
     }
 
     .land-filter-segment:last-of-type,
@@ -1888,9 +1889,9 @@ p {
 /* RENTALS – Search pill */
 
 .section-soft {
-    background: #ede9e0;
-    border-top: 1px solid #d9d4c7;
-    border-bottom: 1px solid #d9d4c7;
+    background: #E8DCCB;
+    border-top: 1px solid #D4C9B5;
+    border-bottom: 1px solid #D4C9B5;
 }
   
   .search-pill {
@@ -1914,7 +1915,7 @@ p {
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #6b7280;
+    color: #6F6A64;
     margin-bottom: 4px;
   }
   
@@ -1923,12 +1924,12 @@ p {
     background: transparent;
     font-size: 0.95rem;
     padding: 6px 4px;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #DDD6C8;
   }
   
   .search-segment input:focus {
     outline: none;
-    border-bottom-color: #111827;
+    border-bottom-color: #2F2A26;
   }
   
   .price-range {
@@ -1959,7 +1960,7 @@ p {
   .form-label {
     display: block;
     font-size: 0.8rem;
-    color: #374151;
+    color: #2F2A26;
     margin-bottom: 6px;
   }
   
@@ -1968,14 +1969,14 @@ p {
     width: 100%;
     padding: 10px 12px;
     border-radius: 8px;
-    border: 1px solid #d1d5db;
+    border: 1px solid #DDD6C8;
     font-size: 0.95rem;
   }
   
   select:focus,
   textarea:focus {
     outline: none;
-    border-color: #111827;
+    border-color: #2F2A26;
   }
   
 /* =============================================

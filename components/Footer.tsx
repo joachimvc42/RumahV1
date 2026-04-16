@@ -12,7 +12,7 @@ export default function Footer() {
             Based in Lombok. Local partners, verified information, long-term coordination.
           </p>
         </div>
-        <span style={{ fontSize: '0.78rem', color: '#9ca3af', flexShrink: 0 }}>
+        <span style={{ fontSize: '0.78rem', color: '#6F6A64', flexShrink: 0 }}>
           © {currentYear} RumahYa. All rights reserved.
         </span>
       </div>
