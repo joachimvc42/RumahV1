@@ -41,7 +41,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Lead ── */}
-      <section className="section">
+      <section className="section" style={{ borderTop: '1px solid #e2ddd4' }}>
         <div className="container">
           <p className="lead">
             RumahYa supports expatriates and investors by providing local context,
@@ -51,7 +51,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Paths ── */}
-      <section className="section">
+      <section className="section" style={{ borderTop: '1px solid #e2ddd4' }}>
         <div className="container grid grid-2">
           <div className="card path-card">
             <div className="card-body">
@@ -98,7 +98,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Contact ── */}
-      <section className="section">
+      <section className="section" style={{ borderTop: '1px solid #e2ddd4' }}>
         <div className="container">
 
           {/* Title row + WhatsApp */}

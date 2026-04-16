@@ -267,7 +267,7 @@ const P: { [k: string]: React.CSSProperties } = {
   page: { maxWidth: 1400, margin: '0 auto', padding: '0 24px 80px' },
   loading: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 16 },
   spinner: { width: 44, height: 44, border: '4px solid #e5e7eb', borderTopColor: '#2563eb', borderRadius: '50%' },
-  hero: { textAlign: 'center', padding: '64px 0 48px' },
+  hero: { textAlign: 'center', padding: '36px 0 28px' },
   h1: { fontSize: 42, fontWeight: 800, color: '#111827', marginBottom: 12, lineHeight: 1.15 },
   sub: { fontSize: 17, color: '#6b7280', maxWidth: 480, margin: '0 auto' },
   layout: { display: 'flex', gap: 28, alignItems: 'flex-start' },

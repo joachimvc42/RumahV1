@@ -238,7 +238,7 @@ const P: { [k: string]: React.CSSProperties } = {
   page: { maxWidth:1400, margin:'0 auto', padding:'0 24px 80px' },
   loading: { display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:'60vh', gap:16 },
   spinner: { width:44, height:44, border:'4px solid #e5e7eb', borderTopColor:'#f59e0b', borderRadius:'50%' },
-  hero: { textAlign:'center', padding:'64px 0 48px' },
+  hero: { textAlign:'center', padding:'36px 0 28px' },
   h1: { fontSize:46, fontWeight:800, color:'#111827', marginBottom:14, lineHeight:1.15 },
   sub: { fontSize:18, color:'#6b7280', maxWidth:520, margin:'0 auto' },
   searchBar: { display:'flex', background:'#fff', borderRadius:14, border:'1px solid #e5e7eb', overflow:'hidden', marginBottom:32, boxShadow:'0 2px 12px rgba(15,23,42,0.06)', alignItems:'stretch' },

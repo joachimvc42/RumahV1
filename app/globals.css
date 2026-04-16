@@ -369,13 +369,13 @@ p {
 /* -------------------- */
 
 .hero {
-    padding: 48px 0 32px;
+    padding: 32px 0 20px;
 }
 
 .hero-headline {
     text-align: center;
     max-width: 100%;
-    font-size: 2.6rem;
+    font-size: 2.2rem;
     line-height: 1.2;
 }
 
@@ -499,7 +499,7 @@ p {
 /* ------------------------ */
 
 .section {
-    padding: 40px 0;
+    padding: 24px 0;
 }
 
 .section-light {
@@ -1888,8 +1888,10 @@ p {
 /* RENTALS – Search pill */
 
 .section-soft {
-    background: #f6f4ef;
-  }
+    background: #ede9e0;
+    border-top: 1px solid #d9d4c7;
+    border-bottom: 1px solid #d9d4c7;
+}
   
   .search-pill {
     display: flex;
