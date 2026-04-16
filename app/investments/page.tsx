@@ -166,10 +166,10 @@ export default function InvestmentsPage() {
       {/* ── Search bar ── */}
       <div style={P.searchBar}>
         {([
-          ['ASSET TYPE', search.type, (v:string)=>setSearch(s=>({...s,type:v as any})), [['all','All'],['villa','Villas'],['land','Land']]],
-          ['PROPERTY TYPE', search.tenure, (v:string)=>setSearch(s=>({...s,tenure:v as any})), [['all','All'],['freehold','Freehold'],['leasehold','Leasehold']]],
-          ['LOCATION', search.location, (v:string)=>setSearch(s=>({...s,location:v})), [['','All areas'],...locations.map(l=>[l,l])]],
-        ] as [string,string,Function,[string,string][]][]).map(([label, val, setter, opts], i, arr) => (
+          ['ASSET TYPE', search.type, (v:string)=>setSearch(s=>({...s,type:v as any})), [['all','All'],['villa','Villas'],['land','Land']] as [string,string][]],
+          ['PROPERTY TYPE', search.tenure, (v:string)=>setSearch(s=>({...s,tenure:v as any})), [['all','All'],['freehold','Freehold'],['leasehold','Leasehold']] as [string,string][]],
+          ['LOCATION', search.location, (v:string)=>setSearch(s=>({...s,location:v})), [['','All areas'],...locations.map(l=>[l,l] as [string,string])] as [string,string][]],
+        ] as [string,string,(v:string)=>void,[string,string][]][]).map(([label, val, setter, opts], i, arr) => (
           <React.Fragment key={label}>
             <div style={P.seg}>
               <span style={P.segLabel}>{label}</span>
