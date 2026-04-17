@@ -18,6 +18,7 @@ type Item = {
   condition?: string; landSize?: number|null;
   hasWater?: boolean; hasElectricity?: boolean; hasRoad?: boolean;
   latitude?: number | null; longitude?: number | null;
+  description?: string | null;
 };
 
 type Search = { type:'all'|'villa'|'land'; tenure:'all'|'freehold'|'leasehold'; location:string };
@@ -75,6 +76,7 @@ function InvCard({ item }: { item: Item }) {
                 {item.garden && <span style={C.chip}>Garden</span>}
               </div>
             )}
+            {item.description && <p style={C.desc}>{item.description}</p>}
           </div>
           {item.latitude != null && item.longitude != null && (
             <div style={{ marginTop: 10 }}>
@@ -112,11 +114,11 @@ export default function InvestmentsPage() {
       for (const inv of investments) {
         if (inv.asset_type==='property') {
           const p = (props as any[])?.find(x=>x.id===inv.asset_id);
-          if (p && p.status==='published') merged.push({ id:inv.id, type:'villa', title:p.title, location:p.location||'Lombok', price:p.price||0, currency:p.currency||'USD', tenure:p.tenure||'freehold', leaseYears:p.lease_years, expectedYield:inv.expected_yield, images:p.images||[], href:`/investments/${inv.id}`, bedrooms:p.bedrooms, bathrooms:p.bathrooms, pool:p.pool, garden:p.garden, furnished:p.furnished, condition:p.condition, latitude:p.latitude, longitude:p.longitude });
+          if (p && p.status==='published') merged.push({ id:inv.id, type:'villa', title:p.title, location:p.location||'Lombok', price:p.price||0, currency:p.currency||'USD', tenure:p.tenure||'freehold', leaseYears:p.lease_years, expectedYield:inv.expected_yield, images:p.images||[], href:`/investments/${inv.id}`, bedrooms:p.bedrooms, bathrooms:p.bathrooms, pool:p.pool, garden:p.garden, furnished:p.furnished, condition:p.condition, latitude:p.latitude, longitude:p.longitude, description:p.description });
         }
         if (inv.asset_type==='land') {
           const l = (lands as any[])?.find(x=>x.id===inv.asset_id);
-          if (l && l.status==='published') merged.push({ id:inv.id, type:'land', title:l.title, location:l.location||'Lombok', price:l.price_per_are_idr??l.price_per_are??0, currency:l.currency||'IDR', tenure:l.tenure||'freehold', leaseYears:l.lease_years, expectedYield:inv.expected_yield, images:l.images||[], href:`/investments/${inv.id}`, landSize:l.land_size ? Number(l.land_size) : null, condition:l.condition, hasWater:l.has_water, hasElectricity:l.has_electricity, hasRoad:l.has_road, latitude:l.latitude, longitude:l.longitude });
+          if (l && l.status==='published') merged.push({ id:inv.id, type:'land', title:l.title, location:l.location||'Lombok', price:l.price_per_are_idr??l.price_per_are??0, currency:l.currency||'IDR', tenure:l.tenure||'freehold', leaseYears:l.lease_years, expectedYield:inv.expected_yield, images:l.images||[], href:`/investments/${inv.id}`, landSize:l.land_size ? Number(l.land_size) : null, condition:l.condition, hasWater:l.has_water, hasElectricity:l.has_electricity, hasRoad:l.has_road, latitude:l.latitude, longitude:l.longitude, description:l.description });
         }
       }
       setItems(merged); setLoading(false);
@@ -283,6 +285,7 @@ const C: { [k: string]: React.CSSProperties } = {
   price: { fontSize:20, fontWeight:800, color:'#2F2A26', margin:'0 0 3px' },
   approx: { fontSize:13, color:'#6F6A64', margin:0, marginTop:2 },
   yield: { fontSize:12, color:'#059669', fontWeight:600, margin:0 },
+  desc: { fontSize:13, color:'#6F6A64', margin:'8px 0 0', lineHeight:1.55, display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden' },
 };
 
 const P: { [k: string]: React.CSSProperties } = {

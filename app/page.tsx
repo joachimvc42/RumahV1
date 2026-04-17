@@ -67,7 +67,7 @@ export default function AboutPage() {
           <div className="card path-card">
             <div className="card-body">
               <h2 className="h2">Invest in Lombok</h2>
-              <p className="text">Land and villa opportunities for long-term investors looking for clarity, structure and local execution.</p>
+              <p className="text">Land and villa opportunities for long-term investors looking for clarity and structure.</p>
               <ul className="bullets">
                 <li>Land and villa investment opportunities</li>
                 <li>Legal verification available</li>

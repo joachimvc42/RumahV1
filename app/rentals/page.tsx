@@ -18,6 +18,7 @@ type RentalRow = {
     private_space?: boolean; kitchen?: boolean;
     images: string[] | null; status?: string;
     latitude?: number | null; longitude?: number | null;
+    description?: string | null;
   } | null;
 };
 
@@ -90,6 +91,7 @@ function RentalCard({ rental }: { rental: RentalRow }) {
               {p?.furnished && <span style={C.chip}>Furnished</span>}
               {p?.kitchen && <span style={C.chip}>Kitchen</span>}
             </div>
+            {p?.description && <p style={C.desc}>{p.description}</p>}
           </div>
           {p?.latitude != null && p?.longitude != null && (
             <div style={{ marginTop: 10 }}>
@@ -122,7 +124,7 @@ export default function RentalsPage() {
   useEffect(() => {
     supabase.from('long_term_rentals')
       .select(`id, min_duration_months, max_duration_months, monthly_price_idr, upfront_months, legal_checked, available_from,
-        properties (id, title, location, bedrooms, bathrooms, pool, garden, furnished, aircon, wifi, parking, private_space, kitchen, images, status, latitude, longitude)`)
+        properties (id, title, description, location, bedrooms, bathrooms, pool, garden, furnished, aircon, wifi, parking, private_space, kitchen, images, status, latitude, longitude)`)
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {
         if (error) console.error('Rentals query error:', error.message);
@@ -278,6 +280,7 @@ const C: { [k: string]: React.CSSProperties } = {
   price: { fontSize: 20, fontWeight: 800, color: '#2F2A26' },
   per: { fontSize: 13, color: '#6F6A64' },
   dur: { fontSize: 12, color: '#6F6A64', margin: 0 },
+  desc: { fontSize: 13, color: '#6F6A64', margin: '8px 0 0', lineHeight: 1.55, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' },
 };
 
 const P: { [k: string]: React.CSSProperties } = {

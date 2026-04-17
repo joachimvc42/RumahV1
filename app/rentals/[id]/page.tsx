@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import MapView from '../../../components/MapView';
@@ -37,6 +37,7 @@ export default function RentalDetailPage() {
   const [rental, setRental] = useState<RentalData | null>(null);
   const [loading, setLoading] = useState(true);
   const [idx, setIdx] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -81,13 +82,13 @@ export default function RentalDetailPage() {
 
       <div style={s.layout}>
         {/* Gallery */}
-        <div>
+        <div style={{ minWidth: 0 }}>
           {media.length > 0 ? (
             <>
               <div style={s.mainMedia}>
                 {cur.isVideo
                   ? <video key={cur.src} src={cur.src} style={s.mediaEl} controls autoPlay playsInline />
-                  : <img src={cur.src} alt={`${p.title} ${idx + 1}`} style={s.mediaEl} />
+                  : <img src={cur.src} alt={`${p.title} ${idx + 1}`} style={{ ...s.mediaEl, cursor: 'zoom-in' }} onClick={() => setLightbox(true)} />
                 }
                 {media.length > 1 && (
                   <>
@@ -116,7 +117,7 @@ export default function RentalDetailPage() {
         </div>
 
         {/* Details */}
-        <div>
+        <div style={{ minWidth: 0 }}>
           {rental.legal_checked && <div style={s.verifiedBadge}>✓ Verified by RumahYa</div>}
           <h1 style={s.title}>{p.title}</h1>
           <p style={s.location}>📍 {p.location || 'Lombok'}</p>
@@ -176,9 +177,32 @@ export default function RentalDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Lightbox */}
+      {lightbox && cur && !cur.isVideo && (
+        <div style={lb.overlay} onClick={() => setLightbox(false)}>
+          <button style={lb.close} onClick={() => setLightbox(false)}>✕</button>
+          {media.length > 1 && (
+            <button style={{ ...lb.nav, left: 20 }} onClick={e => { e.stopPropagation(); setIdx(i => (i - 1 + media.length) % media.length); }}>‹</button>
+          )}
+          <img src={cur.src} alt="" style={lb.img} onClick={e => e.stopPropagation()} />
+          {media.length > 1 && (
+            <button style={{ ...lb.nav, right: 20 }} onClick={e => { e.stopPropagation(); setIdx(i => (i + 1) % media.length); }}>›</button>
+          )}
+          {media.length > 1 && <div style={lb.counter}>{idx + 1} / {media.length}</div>}
+        </div>
+      )}
     </main>
   );
 }
+
+const lb: { [k: string]: React.CSSProperties } = {
+  overlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.93)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' },
+  close: { position: 'absolute', top: 20, right: 24, background: 'none', border: 'none', color: '#fff', fontSize: 32, cursor: 'pointer', zIndex: 1001, lineHeight: 1, padding: '4px 10px' },
+  nav: { position: 'absolute', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', fontSize: 52, fontWeight: 300, cursor: 'pointer', zIndex: 1001, borderRadius: 8, padding: '6px 18px', lineHeight: 1 },
+  img: { maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain', borderRadius: 8, boxShadow: '0 20px 60px rgba(0,0,0,0.5)' },
+  counter: { position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.65)', fontSize: 14, fontWeight: 600 },
+};
 
 const s: { [k: string]: React.CSSProperties } = {
   page: { maxWidth: 1200, margin: '0 auto', padding: '24px 24px 60px' },
@@ -186,7 +210,7 @@ const s: { [k: string]: React.CSSProperties } = {
   notFound: { textAlign: 'center', padding: 80 },
   backBtn: { display: 'inline-block', marginTop: 20, padding: '13px 26px', background: '#2FB7A6', color: '#fff', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: 15 },
   backLink: { display: 'inline-block', marginBottom: 28, color: '#6F6A64', textDecoration: 'none', fontSize: 15, fontWeight: 600 },
-  layout: { display: 'grid', gridTemplateColumns: '1fr 420px', gap: 48 },
+  layout: { display: 'grid', gridTemplateColumns: '1fr minmax(0, 420px)', gap: 48 },
   mainMedia: { position: 'relative', aspectRatio: '16/10', borderRadius: 20, overflow: 'hidden', background: '#2F2A26' },
   mediaEl: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
   navBtn: { position: 'absolute', top: '50%', transform: 'translateY(-50%)', width: 48, height: 48, borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', fontSize: 28, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', color: '#111' },
@@ -197,7 +221,7 @@ const s: { [k: string]: React.CSSProperties } = {
   vidThumb: { width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#fff', background: '#2F2A26' },
   noMedia: { aspectRatio: '16/10', borderRadius: 20, background: '#F6F1E9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 80, color: '#DDD6C8' },
   verifiedBadge: { display: 'inline-block', padding: '7px 14px', background: '#1F4E5F', color: '#fff', borderRadius: 20, fontSize: 13, fontWeight: 700, marginBottom: 14 },
-  title: { fontSize: 32, fontWeight: 800, color: '#2F2A26', margin: '0 0 8px' },
+  title: { fontSize: 32, fontWeight: 800, color: '#2F2A26', margin: '0 0 8px', wordBreak: 'break-word' },
   location: { fontSize: 16, color: '#6F6A64', margin: '0 0 24px' },
   priceCard: { background: 'linear-gradient(135deg,#f0fbf9,#f5f0e8)', borderRadius: 16, padding: 24, marginBottom: 24, border: '2px solid #c2e8e3' },
   priceRow: { display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 8 },
