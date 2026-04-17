@@ -7,6 +7,7 @@ import { normalizeStatus } from '../../../../../lib/statusUtils';
 import { readFileAsDataURL, type SortableGalleryItem } from '../../../../../lib/galleryUtils';
 import AdminImageGallery from '../../../../../components/admin/AdminImageGallery';
 import MapPicker from '../../../../../components/MapPicker';
+import LocationInput from '../../../../../components/LocationInput';
 
 type VideoItem = {
   id: string;
@@ -202,7 +203,7 @@ export default function NewRentalPage() {
             </div>
             <div style={s.field}>
               <label style={s.label}>Location *</label>
-              <input style={s.input} value={location} onChange={e => setLocation(e.target.value)} placeholder="Ex: Kuta, Lombok" required />
+              <LocationInput value={location} onChange={setLocation} required placeholder="Ex: Kuta, Senggigi…" />
             </div>
           </div>
           <div style={s.field}>

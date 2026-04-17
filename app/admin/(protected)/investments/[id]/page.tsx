@@ -8,6 +8,7 @@ import { normalizeStatus, type PropertyStatus } from '../../../../../lib/statusU
 import { urlsToGalleryItems, readFileAsDataURL, type SortableGalleryItem } from '../../../../../lib/galleryUtils';
 import AdminImageGallery from '../../../../../components/admin/AdminImageGallery';
 import MapPicker from '../../../../../components/MapPicker';
+import LocationInput from '../../../../../components/LocationInput';
 
 type VideoItem = {
   id: string;
@@ -287,7 +288,7 @@ export default function EditInvestmentPage() {
           <h2 style={s.sectionTitle}>📍 {assetType === 'property' ? 'Villa' : 'Land'} information</h2>
           <div style={s.grid2}>
             <div style={s.field}><label style={s.label}>Title *</label><input style={s.input} value={title} onChange={e => setTitle(e.target.value)} required /></div>
-            <div style={s.field}><label style={s.label}>Location *</label><input style={s.input} value={location} onChange={e => setLocation(e.target.value)} required /></div>
+            <div style={s.field}><label style={s.label}>Location *</label><LocationInput value={location} onChange={setLocation} required /></div>
           </div>
           <div style={s.field}><label style={s.label}>Description</label><textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} rows={4} /></div>
           {assetType === 'property' && (

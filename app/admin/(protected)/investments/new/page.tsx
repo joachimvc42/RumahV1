@@ -8,6 +8,7 @@ import { normalizeStatus, type PropertyStatus } from '../../../../../lib/statusU
 import { readFileAsDataURL, type SortableGalleryItem } from '../../../../../lib/galleryUtils';
 import AdminImageGallery from '../../../../../components/admin/AdminImageGallery';
 import MapPicker from '../../../../../components/MapPicker';
+import LocationInput from '../../../../../components/LocationInput';
 
 type VideoItem = {
   id: string;
@@ -230,7 +231,7 @@ export default function NewInvestmentPage() {
           <h2 style={s.sectionTitle}>📍 {assetType === 'villa' ? 'Villa' : 'Land'} information</h2>
           <div style={s.grid2}>
             <div style={s.field}><label style={s.label}>Title *</label><input style={s.input} value={title} onChange={e => setTitle(e.target.value)} placeholder={assetType === 'villa' ? 'Ex: Luxury seafront villa' : 'Ex: Buildable land Kuta'} required /></div>
-            <div style={s.field}><label style={s.label}>Location *</label><input style={s.input} value={location} onChange={e => setLocation(e.target.value)} placeholder="Ex: Senggigi, Lombok" required /></div>
+            <div style={s.field}><label style={s.label}>Location *</label><LocationInput value={location} onChange={setLocation} required placeholder="Ex: Kuta, Senggigi…" /></div>
           </div>
           <div style={s.field}><label style={s.label}>Description</label><textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} placeholder="Detailed description..." rows={4} /></div>
           {assetType === 'villa' && (

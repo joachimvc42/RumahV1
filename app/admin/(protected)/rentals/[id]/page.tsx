@@ -7,6 +7,7 @@ import { normalizeStatus } from '../../../../../lib/statusUtils';
 import { urlsToGalleryItems, readFileAsDataURL, type SortableGalleryItem } from '../../../../../lib/galleryUtils';
 import AdminImageGallery from '../../../../../components/admin/AdminImageGallery';
 import MapPicker from '../../../../../components/MapPicker';
+import LocationInput from '../../../../../components/LocationInput';
 
 type VideoItem = {
   id: string;
@@ -258,7 +259,7 @@ export default function EditRentalPage() {
           <h2 style={s.sectionTitle}>📍 Property information</h2>
           <div style={s.grid2}>
             <div style={s.field}><label style={s.label}>Property title *</label><input style={s.input} value={title} onChange={e => setTitle(e.target.value)} required /></div>
-            <div style={s.field}><label style={s.label}>Location *</label><input style={s.input} value={location} onChange={e => setLocation(e.target.value)} required /></div>
+            <div style={s.field}><label style={s.label}>Location *</label><LocationInput value={location} onChange={setLocation} required /></div>
           </div>
           <div style={s.field}><label style={s.label}>Description</label><textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} rows={4} /></div>
           <div style={s.grid4}>
