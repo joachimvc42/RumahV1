@@ -1,5 +1,5 @@
 // Fixed exchange rate — update as needed
-export const IDR_PER_USD = 16000;
+export const IDR_PER_USD = 17000;
 
 /** 190_000_000 → "190 M"  |  5_500_000 → "5.5 M"  |  500_000 → "500 K" */
 export function toMillions(idr: number): string {
