@@ -36,6 +36,13 @@ export default function InvestmentDetailPage() {
   const [idx, setIdx] = useState(0);
   const [lightbox, setLightbox] = useState(false);
 
+  // Dynamic page title for SEO
+  useEffect(() => {
+    if (data?.title) {
+      document.title = `${data.title} — ${data.type === 'villa' ? 'Villa' : 'Land'} investment in Lombok | RumahYa`;
+    }
+  }, [data]);
+
   useEffect(() => {
     const load = async () => {
       const { data: inv } = await supabase.from('investments').select('*').eq('id', id).single();
@@ -99,6 +106,20 @@ export default function InvestmentDetailPage() {
 
   return (
     <main style={s.page}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'RealEstateListing',
+        name: data.title,
+        description: data.description ?? undefined,
+        address: { '@type': 'PostalAddress', addressLocality: data.location, addressCountry: 'ID' },
+        ...(data.media[0] && !data.media[0].isVideo ? { image: data.media[0].src } : {}),
+        offers: {
+          '@type': 'Offer',
+          price: data.price,
+          priceCurrency: data.currency,
+          availability: 'https://schema.org/InStock',
+        },
+      })}} />
       <Link href="/investments" style={s.backLink}>← Back to investments</Link>
 
       <div style={s.layout}>

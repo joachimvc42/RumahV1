@@ -39,6 +39,13 @@ export default function RentalDetailPage() {
   const [idx, setIdx] = useState(0);
   const [lightbox, setLightbox] = useState(false);
 
+  // Dynamic page title for SEO
+  useEffect(() => {
+    if (rental?.properties?.title) {
+      document.title = `${rental.properties.title} — Long-term rental in Lombok | RumahYa`;
+    }
+  }, [rental]);
+
   useEffect(() => {
     const load = async () => {
       let { data } = await supabase.from('long_term_rentals')
@@ -78,6 +85,20 @@ export default function RentalDetailPage() {
 
   return (
     <main style={s.page}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'RealEstateListing',
+        name: p.title,
+        description: p.description ?? undefined,
+        address: { '@type': 'PostalAddress', addressLocality: p.location ?? 'Lombok', addressCountry: 'ID' },
+        ...(p.images?.[0] ? { image: p.images[0] } : {}),
+        offers: {
+          '@type': 'Offer',
+          price: rental.monthly_price_idr,
+          priceCurrency: 'IDR',
+          availability: 'https://schema.org/InStock',
+        },
+      })}} />
       <Link href="/rentals" style={s.backLink}>← Back to rentals</Link>
 
       <div style={s.layout}>

@@ -1,20 +1,69 @@
 import type { Metadata } from 'next';
+import { Nunito } from 'next/font/google';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import './globals.css';
 
+const nunito = Nunito({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  display: 'swap',
+  variable: '--font-nunito',
+});
+
+const BASE_URL = 'https://rumahya.com';
+
 export const metadata: Metadata = {
-  title: 'RumahYa – Lombok long-term rentals & land',
-  description: 'RumahYa supports foreign investors and expatriates in Lombok by sourcing villas and land opportunities and securing each project with local due diligence, legal verification and on-the-ground property management.',
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: 'RumahYa — Long-term rentals & investment in Lombok',
+    template: '%s | RumahYa Lombok',
+  },
+  description:
+    'RumahYa helps expatriates and investors find verified long-term villa rentals and land investments in Lombok, Indonesia. Local expertise, legal verification, on-the-ground support.',
+  keywords: [
+    'Lombok real estate', 'villa rental Lombok', 'land investment Lombok',
+    'long-term rental Lombok', 'buy land Lombok', 'invest Lombok',
+    'Kuta Lombok villa', 'Selong Belanak property', 'Indonesia property investment',
+    'expat living Lombok', 'freehold land Lombok', 'leasehold villa Lombok',
+  ],
+  authors: [{ name: 'RumahYa', url: BASE_URL }],
+  creator: 'RumahYa',
+  publisher: 'RumahYa',
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: BASE_URL,
+    siteName: 'RumahYa',
+    title: 'RumahYa — Long-term rentals & investment in Lombok',
+    description:
+      'Find verified villas and land in Lombok. Long-term rentals and investment opportunities with local expertise.',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'RumahYa — Real estate in Lombok, Indonesia',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'RumahYa — Lombok real estate',
+    description: 'Long-term villa rentals and land investments in Lombok, Indonesia.',
+    images: ['/og-image.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+  },
+  alternates: { canonical: BASE_URL },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={nunito.variable}>
       <body>
         <Header />
         <main className="page-main">
@@ -27,4 +76,3 @@ export default function RootLayout({
     </html>
   );
 }
-
