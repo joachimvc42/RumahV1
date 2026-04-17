@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import { dualPrice } from '../../../lib/priceUtils';
+import MapView from '../../../components/MapView';
 
 const WA_NUMBER = '6287873487940';
 type MediaItem = { src: string; isVideo: boolean };
@@ -16,6 +17,7 @@ type InvestmentData = {
   managementAvailable: boolean; media: MediaItem[];
   bedrooms?: number; bathrooms?: number; builtArea?: number; landArea?: number;
   pool?: boolean; garden?: boolean; furnished?: boolean; landSize?: string;
+  latitude?: number | null; longitude?: number | null;
 };
 
 function isVid(url: string) {
@@ -64,6 +66,7 @@ export default function InvestmentDetailPage() {
             bedrooms: prop.bedrooms, bathrooms: prop.bathrooms,
             builtArea: prop.built_area, landArea: prop.land_area,
             pool: prop.pool, garden: prop.garden, furnished: prop.furnished,
+            latitude: prop.latitude, longitude: prop.longitude,
           };
         }
       } else {
@@ -78,6 +81,7 @@ export default function InvestmentDetailPage() {
             legalChecked: inv.legal_checked, managementAvailable: inv.management_available,
             media: buildMedia(land.images || [], land.videos || []),
             landSize: land.land_size,
+            latitude: land.latitude, longitude: land.longitude,
           };
         }
       }
@@ -212,6 +216,13 @@ export default function InvestmentDetailPage() {
             <div style={s.desc}>
               <h3 style={s.descTitle}>Description</h3>
               <p style={s.descText}>{data.description}</p>
+            </div>
+          )}
+
+          {data.latitude != null && data.longitude != null && (
+            <div style={{ marginBottom: 24 }}>
+              <h3 style={s.descTitle}>Location</h3>
+              <MapView lat={Number(data.latitude)} lng={Number(data.longitude)} title={data.title} />
             </div>
           )}
 
