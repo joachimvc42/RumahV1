@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { dualPrice } from '../../lib/priceUtils';
-import MapThumb from '../../components/MapThumb';
 
 type RentalRow = {
   id: string; min_duration_months: number; max_duration_months: number;
@@ -94,11 +93,6 @@ function RentalCard({ rental }: { rental: RentalRow }) {
             </div>
             {p?.description && <p style={C.desc}>{p.description}</p>}
           </div>
-          {p?.latitude != null && p?.longitude != null && (
-            <div style={{ marginTop: 10 }}>
-              <MapThumb lat={Number(p.latitude)} lng={Number(p.longitude)} />
-            </div>
-          )}
           <div style={C.priceBlock}>
             {rental.monthly_price_idr > 0 && (
               <div style={C.priceRow}>
@@ -273,7 +267,7 @@ export default function RentalsPage() {
 
 const C: { [k: string]: React.CSSProperties } = {
   card: { background: '#FDFAF5', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 16px rgba(47,42,38,0.08)', border: '1px solid #DDD6C8', display: 'flex', flexDirection: 'column' },
-  imgWrap: { position: 'relative', width: '100%', height: 220, flexShrink: 0, background: '#DDD6C8', overflow: 'hidden' },
+  imgWrap: { position: 'relative', width: '100%', aspectRatio: '4 / 3', flexShrink: 0, background: '#DDD6C8', overflow: 'hidden' },
   img: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'opacity 0.35s ease', pointerEvents: 'none', userSelect: 'none' },
   noImg: { position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 56, color: '#DDD6C8' },
   gradient: { position: 'absolute', inset: 0, background: 'linear-gradient(180deg,transparent 60%,rgba(0,0,0,0.32) 100%)', pointerEvents: 'none' },
@@ -315,5 +309,5 @@ const P: { [k: string]: React.CSSProperties } = {
   segSel: { border: 'none', outline: 'none', fontSize: 14, fontWeight: 600, color: '#2F2A26', background: 'transparent', cursor: 'pointer', padding: 0 },
   div: { width: 1, background: '#F0E8DC', margin: '10px 0' },
   resultRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 },
-  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: 20 },
+  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 380px), 1fr))', gap: 28 },
 };

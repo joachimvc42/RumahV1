@@ -14,7 +14,7 @@ export default function Header() {
   return (
     <header className="site-header">
       <div className="container header-inner">
-        <Link href="/rentals" className="brand">
+        <Link href="/" className="brand">
           <span className="brand-name">Rumah<span>Ya</span></span>
         </Link>
 
@@ -31,7 +31,8 @@ export default function Header() {
             <>
               <Link href="/rentals" className={isActive('/rentals') ? 'nav-link is-active' : 'nav-link'} onClick={closeMenu}>Rentals</Link>
               <Link href="/investments" className={isActive('/investments') ? 'nav-link is-active' : 'nav-link'} onClick={closeMenu}>Investments</Link>
-              <Link href="/" className={pathname === '/' ? 'nav-link is-active' : 'nav-link'} onClick={closeMenu}>About us</Link>
+              <Link href="/" className={pathname === '/' ? 'nav-link is-active' : 'nav-link'} onClick={closeMenu}>About</Link>
+              <Link href="/#contact" className="nav-cta" onClick={closeMenu}>Contact</Link>
             </>
           )}
           {isAdmin && (

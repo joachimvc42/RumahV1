@@ -77,7 +77,8 @@ export default function EditInvestmentPage() {
           setBedrooms(String(prop.bedrooms || '')); setBathrooms(String(prop.bathrooms || ''));
           setBuiltArea(String(prop.built_area || '')); setLandArea(String(prop.land_area || ''));
           setPool(prop.pool || false); setGarden(prop.garden || false); setFurnished(prop.furnished ?? true);
-          setPrice(String(prop.price || '')); setCurrency(prop.currency || 'USD');
+          setPrice(prop.price ? String((prop.currency || 'USD') === 'IDR' ? Number(prop.price) / 1_000_000 : prop.price) : '');
+          setCurrency(prop.currency || 'USD');
           setTenure(prop.tenure || 'freehold'); setLeaseDuration(String(prop.lease_years || ''));
           setStatus((prop.status as PropertyStatus) || 'draft');
           if (prop.latitude != null) setLat(Number(prop.latitude));
@@ -97,7 +98,8 @@ export default function EditInvestmentPage() {
         const { data: land } = await supabase.from('lands').select('*').eq('id', inv.asset_id).single();
         if (land) {
           setTitle(land.title || ''); setLocation(land.location || ''); setDescription(land.description || '');
-          setLandArea(String(land.land_size || '')); setPrice(String(land.price_per_are || ''));
+          setLandArea(String(land.land_size || ''));
+          setPrice(land.price_per_are ? String((land.currency || 'IDR') === 'IDR' ? Number(land.price_per_are) / 1_000_000 : land.price_per_are) : '');
           setCurrency(land.currency || 'IDR'); setTenure(land.tenure || 'freehold');
           setLeaseDuration(String(land.lease_years || ''));
           setStatus((land.status as PropertyStatus) || 'draft');
@@ -223,7 +225,8 @@ export default function EditInvestmentPage() {
           built_area: builtArea ? Number(builtArea) : null,
           land_area: landArea ? Number(landArea) : null,
           pool, garden, furnished,
-          price: Number(price), currency, tenure,
+          price: currency === 'IDR' ? Number(price) * 1_000_000 : Number(price),
+          currency, tenure,
           lease_years: tenure === 'leasehold' ? Number(leaseDuration) : null,
           images: allImages, videos: allVideos,
           status: normalizeStatus(status),
@@ -235,7 +238,8 @@ export default function EditInvestmentPage() {
         const { error: landErr } = await supabase.from('lands').update({
           title, location, description,
           land_size: landArea ? Number(landArea) : null,
-          price_per_are: Number(price), currency, tenure,
+          price_per_are: currency === 'IDR' ? Number(price) * 1_000_000 : Number(price),
+          currency, tenure,
           lease_years: tenure === 'leasehold' ? Number(leaseDuration) : null,
           images: allImages, videos: allVideos,
           status: normalizeStatus(status),
@@ -322,12 +326,12 @@ export default function EditInvestmentPage() {
           <h2 style={s.sectionTitle}>💰 Investment conditions</h2>
           <div style={s.grid2}>
             <div style={s.field}>
-              <label style={s.label}>Price {assetType === 'land' ? '(per are)' : ''} *</label>
+              <label style={s.label}>Price {assetType === 'land' ? '(per are)' : ''} {currency === 'IDR' ? '(IDR millions)' : '(USD)'} *</label>
               <div style={s.priceInput}>
-                <input style={{ ...s.input, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} type="number" value={price} onChange={e => setPrice(e.target.value)} required />
+                <input style={{ ...s.input, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} type="number" step={currency === 'IDR' ? '0.5' : '1'} value={price} onChange={e => setPrice(e.target.value)} required />
                 <select style={s.currencySelect} value={currency} onChange={e => setCurrency(e.target.value as any)}>
                   <option value="USD">USD</option>
-                  <option value="IDR">IDR</option>
+                  <option value="IDR">IDR (M)</option>
                 </select>
               </div>
             </div>

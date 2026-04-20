@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { dualPrice } from '../../lib/priceUtils';
-import MapThumb from '../../components/MapThumb';
 
 const WA = '6287873487940';
 
@@ -78,11 +77,6 @@ function InvCard({ item }: { item: Item }) {
             )}
             {item.description && <p style={C.desc}>{item.description}</p>}
           </div>
-          {item.latitude != null && item.longitude != null && (
-            <div style={{ marginTop: 10 }}>
-              <MapThumb lat={Number(item.latitude)} lng={Number(item.longitude)} />
-            </div>
-          )}
           <div style={C.priceBlock}>
             {(() => { const { main, approx } = dualPrice(item.price, item.currency, item.type === 'land' ? '/are' : ''); return (<><p style={C.price}>{main}</p><p style={C.approx}>{approx}</p></>); })()}
             {item.expectedYield && <p style={C.yield}>{item.expectedYield}% est. yield / year</p>}
@@ -266,7 +260,7 @@ export default function InvestmentsPage() {
 
 const C: { [k: string]: React.CSSProperties } = {
   card: { background:'#FDFAF5', borderRadius:14, overflow:'hidden', boxShadow:'0 2px 16px rgba(47,42,38,0.08)', border:'1px solid #DDD6C8', display:'flex', flexDirection:'column' },
-  imgWrap: { position:'relative', width:'100%', height:180, flexShrink:0, background:'#DDD6C8', overflow:'hidden' },
+  imgWrap: { position:'relative', width:'100%', aspectRatio:'4 / 3', flexShrink:0, background:'#DDD6C8', overflow:'hidden' },
   img: { position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', transition:'opacity 0.35s ease', pointerEvents:'none', userSelect:'none' },
   noImg: { position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:56, color:'#DDD6C8' },
   metaRow: { display:'flex', gap:5, flexWrap:'wrap', alignItems:'center', marginBottom:8 },
@@ -306,5 +300,5 @@ const P: { [k: string]: React.CSSProperties } = {
   checkRow: { display:'flex', alignItems:'center', gap:11, padding:'10px 0', borderBottom:'1px solid #F0E8DC', cursor:'pointer' },
   checkLabel: { fontSize:15, fontWeight:500, color:'#2F2A26' },
   resultRow: { display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20 },
-  grid: { display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(260px, 1fr))', gap:24 },
+  grid: { display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(min(100%, 380px), 1fr))', gap:28 },
 };

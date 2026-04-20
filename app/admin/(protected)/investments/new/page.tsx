@@ -139,7 +139,8 @@ export default function NewInvestmentPage() {
             built_area: builtArea ? Number(builtArea) : null,
             land_area: landArea ? Number(landArea) : null,
             pool, garden, furnished,
-            price: Number(price), currency, tenure,
+            price: currency === 'IDR' ? Number(price) * 1_000_000 : Number(price),
+            currency, tenure,
             lease_years: tenure === 'leasehold' ? Number(leaseDuration) : null,
             status: normalizeStatus(status),
             property_type: 'investment',
@@ -167,7 +168,8 @@ export default function NewInvestmentPage() {
           .insert({
             title, location, description,
             land_size: landArea ? Number(landArea) : null,
-            price_per_are: Number(price), currency, tenure,
+            price_per_are: currency === 'IDR' ? Number(price) * 1_000_000 : Number(price),
+            currency, tenure,
             lease_years: tenure === 'leasehold' ? Number(leaseDuration) : null,
             status: normalizeStatus(status),
             zoning: 'investment',
@@ -263,12 +265,12 @@ export default function NewInvestmentPage() {
           <h2 style={s.sectionTitle}>💰 Investment conditions</h2>
           <div style={s.grid2}>
             <div style={s.field}>
-              <label style={s.label}>Price {assetType === 'land' ? '(per are)' : ''} *</label>
+              <label style={s.label}>Price {assetType === 'land' ? '(per are)' : ''} {currency === 'IDR' ? '(IDR millions)' : '(USD)'} *</label>
               <div style={s.priceInput}>
-                <input style={{ ...s.input, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} type="number" value={price} onChange={e => setPrice(e.target.value)} placeholder={assetType === 'villa' ? '350000' : '50000000'} required />
+                <input style={{ ...s.input, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} type="number" step={currency === 'IDR' ? '0.5' : '1'} value={price} onChange={e => setPrice(e.target.value)} placeholder={currency === 'IDR' ? (assetType === 'villa' ? '190' : '50') : (assetType === 'villa' ? '350000' : '3000')} required />
                 <select style={s.currencySelect} value={currency} onChange={e => setCurrency(e.target.value as any)}>
                   <option value="USD">USD</option>
-                  <option value="IDR">IDR</option>
+                  <option value="IDR">IDR (M)</option>
                 </select>
               </div>
             </div>

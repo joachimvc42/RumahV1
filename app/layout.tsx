@@ -1,14 +1,21 @@
 import type { Metadata } from 'next';
-import { Nunito } from 'next/font/google';
+import { Inter, Cormorant_Garamond } from 'next/font/google';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import './globals.css';
 
-const nunito = Nunito({
+const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
-  variable: '--font-nunito',
+  variable: '--font-sans',
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-display',
 });
 
 const BASE_URL = 'https://rumahya.com';
@@ -63,13 +70,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={nunito.variable}>
+    <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
       <body>
         <Header />
         <main className="page-main">
-          <div className="container">
-            {children}
-          </div>
+          {children}
         </main>
         <Footer />
       </body>
