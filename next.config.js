@@ -20,6 +20,7 @@ const nextConfig = {
 
   // Security + caching headers
   async headers() {
+    const isProd = process.env.NODE_ENV === 'production';
     return [
       {
         source: '/(.*)',
@@ -29,20 +30,21 @@ const nextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
         ],
       },
-      {
-        // Cache static assets aggressively
-        source: '/_next/static/(.*)',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
-        ],
-      },
-      {
-        // Cache public images
-        source: '/images/(.*)',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' },
-        ],
-      },
+      // Only cache aggressively in production — in dev this breaks hot-reload
+      ...(isProd ? [
+        {
+          source: '/_next/static/(.*)',
+          headers: [
+            { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+          ],
+        },
+        {
+          source: '/images/(.*)',
+          headers: [
+            { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' },
+          ],
+        },
+      ] : []),
     ];
   },
 };
