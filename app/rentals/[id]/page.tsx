@@ -21,7 +21,7 @@ type PropertyData = {
 
 type RentalData = {
   id: string; min_duration_months: number; max_duration_months: number;
-  monthly_price_idr: number; upfront_months: number; legal_checked: boolean;
+  monthly_price_idr: number; yearly_price_idr?: number | null; upfront_months: number; legal_checked: boolean;
   available_from: string | null; available_to: string | null;
   properties: PropertyData | null;
 };
@@ -49,11 +49,11 @@ export default function RentalDetailPage() {
   useEffect(() => {
     const load = async () => {
       let { data } = await supabase.from('long_term_rentals')
-        .select(`*, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, images, videos, status, latitude, longitude)`)
+        .select(`*, yearly_price_idr, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, images, videos, status, latitude, longitude)`)
         .eq('property_id', id).single();
       if (!data) {
         const res = await supabase.from('long_term_rentals')
-          .select(`*, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, images, videos, status, latitude, longitude)`)
+          .select(`*, yearly_price_idr, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, images, videos, status, latitude, longitude)`)
           .eq('id', id).single();
         data = res.data;
       }
@@ -148,6 +148,12 @@ export default function RentalDetailPage() {
               <span style={s.priceVal}>{fmtIDR(rental.monthly_price_idr)}</span>
               <span style={s.pricePer}>IDR / month</span>
             </div>
+            {rental.yearly_price_idr && (
+              <div style={{ ...s.priceRow, marginTop: 6 }}>
+                <span style={{ ...s.priceVal, fontSize: 24 }}>{fmtIDR(rental.yearly_price_idr)}</span>
+                <span style={s.pricePer}>IDR / year</span>
+              </div>
+            )}
             <div style={s.priceMeta}>
               {rental.min_duration_months}–{rental.max_duration_months} months
               {rental.upfront_months > 0 && ` • ${rental.upfront_months} months upfront`}

@@ -10,6 +10,7 @@ type RentalRow = {
   min_duration_months: number;
   max_duration_months: number;
   monthly_price_idr: number;
+  yearly_price_idr: number | null;
   upfront_months: number;
   legal_checked: boolean;
   available_from: string | null;
@@ -24,6 +25,7 @@ type RentalRow = {
     garden: boolean;
     images: string[] | null;
     status?: string | null;
+    internal_ref?: string | null;
   } | null;
 };
 
@@ -46,6 +48,7 @@ export default function AdminHomePage() {
           min_duration_months,
           max_duration_months,
           monthly_price_idr,
+          yearly_price_idr,
           upfront_months,
           legal_checked,
           available_from,
@@ -59,7 +62,8 @@ export default function AdminHomePage() {
             pool,
             garden,
             images,
-            status
+            status,
+            internal_ref
           )
         `)
         .order('created_at', { ascending: false });
@@ -191,8 +195,18 @@ export default function AdminHomePage() {
 
                 {/* Price */}
                 <div style={styles.priceSection}>
-                  <span style={styles.price}>{fmtIDR(rental.monthly_price_idr)}</span>
-                  <span style={styles.perMonth}>/month</span>
+                  {rental.monthly_price_idr > 0 && (
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+                      <span style={styles.price}>{fmtIDR(rental.monthly_price_idr)}</span>
+                      <span style={styles.perMonth}>/month</span>
+                    </div>
+                  )}
+                  {rental.yearly_price_idr && (
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginTop: 2 }}>
+                      <span style={{ ...styles.price, fontSize: 15, color: '#1F4E5F' }}>{fmtIDR(rental.yearly_price_idr)}</span>
+                      <span style={styles.perMonth}>/year</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Duration */}
@@ -200,6 +214,11 @@ export default function AdminHomePage() {
                   {rental.min_duration_months}–{rental.max_duration_months} months
                   {rental.upfront_months > 0 && ` • ${rental.upfront_months} months upfront`}
                 </p>
+
+                {/* Internal ref badge */}
+                {rental.properties?.internal_ref && (
+                  <div style={styles.refBadge}>🔖 {rental.properties.internal_ref}</div>
+                )}
 
                 {/* Actions */}
                 <div style={styles.actions}>
@@ -407,4 +426,5 @@ const styles: { [key: string]: React.CSSProperties } = {
     cursor: 'pointer',
     fontSize: 14,
   },
+  refBadge: { display: 'inline-block', padding: '3px 10px', background: '#f5eedc', color: '#7A6030', borderRadius: 6, fontSize: 12, fontWeight: 700, marginBottom: 12, border: '1px solid #DDD6C8' },
 };

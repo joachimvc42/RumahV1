@@ -28,6 +28,7 @@ export default function EditInvestmentPage() {
 
   const [investment, setInvestment] = useState<any>(null);
   const [assetType, setAssetType] = useState<'property' | 'land'>('property');
+  const [internalRef, setInternalRef] = useState('');
 
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
@@ -81,6 +82,7 @@ export default function EditInvestmentPage() {
           setStatus((prop.status as PropertyStatus) || 'draft');
           if (prop.latitude != null) setLat(Number(prop.latitude));
           if (prop.longitude != null) setLng(Number(prop.longitude));
+          setInternalRef(prop.internal_ref || '');
           setGalleryItems(urlsToGalleryItems(prop.images || []));
           if (prop.videos && Array.isArray(prop.videos)) {
             setVideoItems(prop.videos.map((url: string, i: number) => ({
@@ -101,6 +103,7 @@ export default function EditInvestmentPage() {
           setStatus((land.status as PropertyStatus) || 'draft');
           if (land.latitude != null) setLat(Number(land.latitude));
           if (land.longitude != null) setLng(Number(land.longitude));
+          setInternalRef(land.internal_ref || '');
           setGalleryItems(urlsToGalleryItems(land.images || []));
           if (land.videos && Array.isArray(land.videos)) {
             setVideoItems(land.videos.map((url: string, i: number) => ({
@@ -225,6 +228,7 @@ export default function EditInvestmentPage() {
           images: allImages, videos: allVideos,
           status: normalizeStatus(status),
           latitude: lat, longitude: lng,
+          internal_ref: internalRef || null,
         }).eq('id', investment.asset_id);
         if (propErr) throw propErr;
       } else {
@@ -236,6 +240,7 @@ export default function EditInvestmentPage() {
           images: allImages, videos: allVideos,
           status: normalizeStatus(status),
           latitude: lat, longitude: lng,
+          internal_ref: internalRef || null,
         }).eq('id', investment.asset_id);
         if (landErr) throw landErr;
       }
@@ -290,6 +295,7 @@ export default function EditInvestmentPage() {
             <div style={s.field}><label style={s.label}>Title *</label><input style={s.input} value={title} onChange={e => setTitle(e.target.value)} required /></div>
             <div style={s.field}><label style={s.label}>Location *</label><LocationInput value={location} onChange={setLocation} required /></div>
           </div>
+          <div style={s.field}><label style={s.label}>Internal reference</label><input style={s.input} value={internalRef} onChange={e => setInternalRef(e.target.value)} placeholder="Ex: RY-001" /></div>
           <div style={s.field}><label style={s.label}>Description</label><textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} rows={4} /></div>
           {assetType === 'property' && (
             <>

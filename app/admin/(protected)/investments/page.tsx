@@ -23,6 +23,7 @@ type InvestmentRow = {
   lease_years?: number;
   images?: string[];
   status?: string | null;
+  internal_ref?: string | null;
 };
 
 type Search = { type: 'all'|'property'|'land'; tenure: 'all'|'freehold'|'leasehold'; location: string };
@@ -50,17 +51,17 @@ export default function AdminInvestmentsPage() {
       const landIds = invs.filter(i => i.asset_type === 'land').map(i => i.asset_id);
 
       const [{ data: properties }, { data: lands }] = await Promise.all([
-        propertyIds.length ? supabase.from('properties').select('id,title,location,price,currency,tenure,lease_years,images,status').in('id', propertyIds) : Promise.resolve({ data: [] }),
-        landIds.length ? supabase.from('lands').select('id,title,location,price_per_are_idr,price_per_are,currency,tenure,lease_years,images,status').in('id', landIds) : Promise.resolve({ data: [] }),
+        propertyIds.length ? supabase.from('properties').select('id,title,location,price,currency,tenure,lease_years,images,status,internal_ref').in('id', propertyIds) : Promise.resolve({ data: [] }),
+        landIds.length ? supabase.from('lands').select('id,title,location,price_per_are_idr,price_per_are,currency,tenure,lease_years,images,status,internal_ref').in('id', landIds) : Promise.resolve({ data: [] }),
       ]);
 
       const enriched: InvestmentRow[] = invs.map(inv => {
         if (inv.asset_type === 'property') {
           const p = properties?.find(p => p.id === inv.asset_id);
-          return { ...inv, title: p?.title, location: p?.location, price: p?.price, currency: p?.currency || 'USD', tenure: p?.tenure, lease_years: p?.lease_years, images: p?.images, status: p?.status };
+          return { ...inv, title: p?.title, location: p?.location, price: p?.price, currency: p?.currency || 'USD', tenure: p?.tenure, lease_years: p?.lease_years, images: p?.images, status: p?.status, internal_ref: p?.internal_ref };
         } else {
           const l = lands?.find(l => l.id === inv.asset_id);
-          return { ...inv, title: l?.title, location: l?.location, price: l?.price_per_are_idr ?? l?.price_per_are, currency: l?.currency || 'IDR', tenure: l?.tenure, lease_years: l?.lease_years, images: l?.images, status: l?.status };
+          return { ...inv, title: l?.title, location: l?.location, price: l?.price_per_are_idr ?? l?.price_per_are, currency: l?.currency || 'IDR', tenure: l?.tenure, lease_years: l?.lease_years, images: l?.images, status: l?.status, internal_ref: l?.internal_ref };
         }
       });
 
@@ -184,6 +185,10 @@ export default function AdminInvestmentsPage() {
                   <h3 style={s.cardTitle}>{inv.title || 'Untitled'}</h3>
                   <p style={s.location}>📍 {inv.location || '—'}</p>
 
+                  {inv.internal_ref && (
+                    <div style={s.refBadge}>🔖 {inv.internal_ref}</div>
+                  )}
+
                   <div style={s.priceSection}>
                     <span style={s.price}>{inv.price ? fmtPrice(inv.price, inv.currency || 'USD') : '—'}</span>
                     {inv.asset_type === 'land' && <span style={s.priceUnit}>/are</span>}
@@ -252,4 +257,5 @@ const s: { [key: string]: React.CSSProperties } = {
   btnEdit: { flex: 1, padding: '9px 12px', background: '#f3f4f6', color: '#374151', borderRadius: 8, textDecoration: 'none', fontWeight: 600, fontSize: 12, textAlign: 'center', border: '1px solid #e5e7eb' },
   btnWa: { padding: '9px 12px', background: '#dcfce7', borderRadius: 8, textDecoration: 'none', fontSize: 15, textAlign: 'center', border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   btnDelete: { padding: '9px 10px', background: '#fef2f2', color: '#b91c1c', borderRadius: 8, border: '1px solid #fca5a5', cursor: 'pointer', fontSize: 13 },
+  refBadge: { display: 'inline-block', padding: '3px 10px', background: '#f5eedc', color: '#7A6030', borderRadius: 6, fontSize: 12, fontWeight: 700, marginBottom: 8, border: '1px solid #DDD6C8' },
 };

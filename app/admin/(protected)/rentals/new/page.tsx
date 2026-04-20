@@ -38,6 +38,8 @@ export default function NewRentalPage() {
   const [status, setStatus] = useState<'draft' | 'published' | 'paused'>('draft');
 
   const [monthlyPrice, setMonthlyPrice] = useState('');
+  const [yearlyPrice, setYearlyPrice] = useState('');
+  const [internalRef, setInternalRef] = useState('');
   const [minDuration, setMinDuration] = useState('1');
   const [maxDuration, setMaxDuration] = useState('12');
   const [upfrontMonths, setUpfrontMonths] = useState('0');
@@ -119,6 +121,7 @@ export default function NewRentalPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!monthlyPrice && !yearlyPrice) { setError('Set at least monthly or yearly price'); return; }
     if (loading) return;
     setLoading(true);
     setError(null);
@@ -140,6 +143,7 @@ export default function NewRentalPage() {
           property_type: 'rental',
           latitude: lat,
           longitude: lng,
+          internal_ref: internalRef || null,
         })
         .select()
         .single();
@@ -165,7 +169,8 @@ export default function NewRentalPage() {
         .from('long_term_rentals')
         .insert({
           property_id: propertyId,
-          monthly_price_idr: Number(monthlyPrice),
+          monthly_price_idr: monthlyPrice ? Number(monthlyPrice) : null,
+          yearly_price_idr: yearlyPrice ? Number(yearlyPrice) : null,
           min_duration_months: Number(minDuration),
           max_duration_months: Number(maxDuration),
           upfront_months: Number(upfrontMonths),
@@ -206,6 +211,7 @@ export default function NewRentalPage() {
               <LocationInput value={location} onChange={setLocation} required placeholder="Ex: Kuta, Senggigi…" />
             </div>
           </div>
+          <div style={s.field}><label style={s.label}>Internal reference</label><input style={s.input} value={internalRef} onChange={e => setInternalRef(e.target.value)} placeholder="Ex: RY-001" /></div>
           <div style={s.field}>
             <label style={s.label}>Description</label>
             <textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} placeholder="Detailed property description..." rows={4} />
@@ -229,8 +235,9 @@ export default function NewRentalPage() {
         {/* ── Rental terms ── */}
         <section style={s.section}>
           <h2 style={s.sectionTitle}>💰 Rental conditions</h2>
-          <div style={s.grid2}>
-            <div style={s.field}><label style={s.label}>Monthly price (IDR) *</label><input style={s.input} type="number" value={monthlyPrice} onChange={e => setMonthlyPrice(e.target.value)} required /></div>
+          <div style={s.grid3}>
+            <div style={s.field}><label style={s.label}>Monthly price (IDR)</label><input style={s.input} type="number" value={monthlyPrice} onChange={e => setMonthlyPrice(e.target.value)} placeholder="Optional if yearly set" /></div>
+            <div style={s.field}><label style={s.label}>Yearly price (IDR)</label><input style={s.input} type="number" value={yearlyPrice} onChange={e => setYearlyPrice(e.target.value)} placeholder="Optional if monthly set" /></div>
             <div style={s.field}><label style={s.label}>Upfront months required</label><input style={s.input} type="number" value={upfrontMonths} onChange={e => setUpfrontMonths(e.target.value)} min="0" /></div>
           </div>
           <div style={s.field}>

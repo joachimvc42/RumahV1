@@ -42,6 +42,8 @@ export default function EditRentalPage() {
   const [status, setStatus] = useState<'draft' | 'published' | 'paused'>('draft');
 
   const [monthlyPrice, setMonthlyPrice] = useState('');
+  const [yearlyPrice, setYearlyPrice] = useState('');
+  const [internalRef, setInternalRef] = useState('');
   const [minDuration, setMinDuration] = useState('');
   const [maxDuration, setMaxDuration] = useState('');
   const [upfrontMonths, setUpfrontMonths] = useState('');
@@ -68,6 +70,7 @@ export default function EditRentalPage() {
       if (error || !data) { setError('Rental not found'); setLoading(false); return; }
 
       setMonthlyPrice(String(data.monthly_price_idr || ''));
+      setYearlyPrice(String(data.yearly_price_idr || ''));
       setMinDuration(String(data.min_duration_months || ''));
       setMaxDuration(String(data.max_duration_months || ''));
       setUpfrontMonths(String(data.upfront_months || ''));
@@ -94,6 +97,7 @@ export default function EditRentalPage() {
         setStatus((p.status as any) || 'draft');
         setLat(p.latitude ?? null);
         setLng(p.longitude ?? null);
+        setInternalRef(p.internal_ref || '');
 
         // Load existing videos
         if (p.videos && Array.isArray(p.videos)) {
@@ -215,10 +219,12 @@ export default function EditRentalPage() {
         status: normalizeStatus(status),
         latitude: lat,
         longitude: lng,
+        internal_ref: internalRef || null,
       }).eq('id', propertyId);
 
       await supabase.from('long_term_rentals').update({
-        monthly_price_idr: Number(monthlyPrice),
+        monthly_price_idr: monthlyPrice ? Number(monthlyPrice) : null,
+        yearly_price_idr: yearlyPrice ? Number(yearlyPrice) : null,
         min_duration_months: Number(minDuration),
         max_duration_months: Number(maxDuration),
         upfront_months: Number(upfrontMonths),
@@ -261,6 +267,7 @@ export default function EditRentalPage() {
             <div style={s.field}><label style={s.label}>Property title *</label><input style={s.input} value={title} onChange={e => setTitle(e.target.value)} required /></div>
             <div style={s.field}><label style={s.label}>Location *</label><LocationInput value={location} onChange={setLocation} required /></div>
           </div>
+          <div style={s.field}><label style={s.label}>Internal reference</label><input style={s.input} value={internalRef} onChange={e => setInternalRef(e.target.value)} placeholder="Ex: RY-001" /></div>
           <div style={s.field}><label style={s.label}>Description</label><textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} rows={4} /></div>
           <div style={s.grid4}>
             <div style={s.field}><label style={s.label}>Bedrooms</label><input style={s.input} type="number" value={bedrooms} onChange={e => setBedrooms(e.target.value)} /></div>
@@ -278,8 +285,9 @@ export default function EditRentalPage() {
         {/* ── Rental terms ── */}
         <section style={s.section}>
           <h2 style={s.sectionTitle}>💰 Rental conditions</h2>
-          <div style={s.grid2}>
-            <div style={s.field}><label style={s.label}>Monthly price (IDR) *</label><input style={s.input} type="number" value={monthlyPrice} onChange={e => setMonthlyPrice(e.target.value)} required /></div>
+          <div style={s.grid3}>
+            <div style={s.field}><label style={s.label}>Monthly price (IDR)</label><input style={s.input} type="number" value={monthlyPrice} onChange={e => setMonthlyPrice(e.target.value)} placeholder="Optional if yearly set" /></div>
+            <div style={s.field}><label style={s.label}>Yearly price (IDR)</label><input style={s.input} type="number" value={yearlyPrice} onChange={e => setYearlyPrice(e.target.value)} placeholder="Optional if monthly set" /></div>
             <div style={s.field}><label style={s.label}>Upfront months required</label><input style={s.input} type="number" value={upfrontMonths} onChange={e => setUpfrontMonths(e.target.value)} min="0" /></div>
           </div>
           <div style={s.grid3}>
