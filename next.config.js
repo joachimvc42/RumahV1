@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Force Turbopack to use this directory as the workspace root — without
+  // this, Turbopack picks the parent folder because of a stray lockfile,
+  // and resolves modules (Header, pages) from the wrong source tree.
+  turbopack: {
+    root: __dirname,
+  },
+
   // Remove X-Powered-By header
   poweredByHeader: false,
 
