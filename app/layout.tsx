@@ -73,9 +73,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
       <body>
         <Header />
-        <main className="page-main">
+        <div className="page-main">
           {children}
-        </main>
+        </div>
         <Footer />
       </body>
     </html>
