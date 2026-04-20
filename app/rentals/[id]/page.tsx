@@ -13,7 +13,7 @@ type PropertyData = {
   id: string; title: string; description: string | null; location: string | null;
   bedrooms: number | null; bathrooms: number | null; built_area: number | null;
   land_area: number | null; pool: boolean; garden: boolean; furnished: boolean;
-  aircon: boolean; wifi: boolean; parking: boolean;
+  aircon: boolean; wifi: boolean; parking: boolean; kitchen?: boolean; private_space?: boolean;
   images: string[] | null; videos: string[] | null;
   status?: 'draft' | 'published' | 'paused';
   latitude?: number | null; longitude?: number | null;
@@ -21,7 +21,8 @@ type PropertyData = {
 
 type RentalData = {
   id: string; min_duration_months: number; max_duration_months: number;
-  monthly_price_idr: number; yearly_price_idr?: number | null; upfront_months: number; legal_checked: boolean;
+  monthly_price_idr: number; yearly_price_idr?: number | null;
+  upfront_months: number; upfront_amount_idr?: number | null; legal_checked: boolean;
   available_from: string | null; available_to: string | null;
   properties: PropertyData | null;
 };
@@ -49,11 +50,11 @@ export default function RentalDetailPage() {
   useEffect(() => {
     const load = async () => {
       let { data } = await supabase.from('long_term_rentals')
-        .select(`*, yearly_price_idr, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, images, videos, status, latitude, longitude)`)
+        .select(`*, yearly_price_idr, upfront_amount_idr, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, kitchen, private_space, images, videos, status, latitude, longitude)`)
         .eq('property_id', id).single();
       if (!data) {
         const res = await supabase.from('long_term_rentals')
-          .select(`*, yearly_price_idr, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, images, videos, status, latitude, longitude)`)
+          .select(`*, yearly_price_idr, upfront_amount_idr, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, kitchen, private_space, images, videos, status, latitude, longitude)`)
           .eq('id', id).single();
         data = res.data;
       }
@@ -156,7 +157,9 @@ export default function RentalDetailPage() {
             )}
             <div style={s.priceMeta}>
               {rental.min_duration_months}–{rental.max_duration_months} months
-              {rental.upfront_months > 0 && ` • ${rental.upfront_months} months upfront`}
+              {rental.upfront_amount_idr && rental.upfront_amount_idr > 0
+                ? ` • ${fmtIDR(rental.upfront_amount_idr)} IDR upfront`
+                : rental.upfront_months > 0 ? ` • ${rental.upfront_months} months upfront` : ''}
             </div>
             {(rental.available_from || rental.available_to) && (
               <p style={s.avail}>
@@ -181,6 +184,8 @@ export default function RentalDetailPage() {
             {p.aircon && <span style={s.amenity}>❄️ Air con</span>}
             {p.wifi && <span style={s.amenity}>📶 WiFi</span>}
             {p.parking && <span style={s.amenity}>🚗 Parking</span>}
+            {p.kitchen && <span style={s.amenity}>🍳 Kitchen</span>}
+            {p.private_space && <span style={s.amenity}>🚪 Private space</span>}
           </div>
 
           {p.description && (

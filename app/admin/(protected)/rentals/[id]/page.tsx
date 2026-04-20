@@ -39,6 +39,8 @@ export default function EditRentalPage() {
   const [aircon, setAircon] = useState(true);
   const [wifi, setWifi] = useState(true);
   const [parking, setParking] = useState(false);
+  const [kitchen, setKitchen] = useState(false);
+  const [privateSpace, setPrivateSpace] = useState(false);
   const [status, setStatus] = useState<'draft' | 'published' | 'paused'>('draft');
 
   const [monthlyPrice, setMonthlyPrice] = useState('');
@@ -46,8 +48,9 @@ export default function EditRentalPage() {
   const [internalRef, setInternalRef] = useState('');
   const [minDuration, setMinDuration] = useState('');
   const [maxDuration, setMaxDuration] = useState('');
-  const [upfrontMonths, setUpfrontMonths] = useState('');
+  const [upfrontAmount, setUpfrontAmount] = useState('');
   const [availableFrom, setAvailableFrom] = useState('');
+  const [availableTo, setAvailableTo] = useState('');
   const [legalChecked, setLegalChecked] = useState(false);
 
   const [lat, setLat] = useState<number | null>(null);
@@ -73,8 +76,9 @@ export default function EditRentalPage() {
       setYearlyPrice(String(data.yearly_price_idr || ''));
       setMinDuration(String(data.min_duration_months || ''));
       setMaxDuration(String(data.max_duration_months || ''));
-      setUpfrontMonths(String(data.upfront_months || ''));
+      setUpfrontAmount(data.upfront_amount_idr ? String(data.upfront_amount_idr / 1_000_000) : '');
       setAvailableFrom(data.available_from || '');
+      setAvailableTo(data.available_to || '');
       setLegalChecked(data.legal_checked || false);
 
       if (data.properties) {
@@ -93,6 +97,8 @@ export default function EditRentalPage() {
         setAircon(p.aircon ?? true);
         setWifi(p.wifi ?? true);
         setParking(p.parking || false);
+        setKitchen(p.kitchen || false);
+        setPrivateSpace(p.private_space || false);
         setGalleryItems(urlsToGalleryItems(p.images || []));
         setStatus((p.status as any) || 'draft');
         setLat(p.latitude ?? null);
@@ -214,6 +220,7 @@ export default function EditRentalPage() {
         built_area: builtArea ? Number(builtArea) : null,
         land_area: landArea ? Number(landArea) : null,
         pool, garden, furnished, aircon, wifi, parking,
+        kitchen, private_space: privateSpace,
         images: allImages,
         videos: allVideos,
         status: normalizeStatus(status),
@@ -227,8 +234,9 @@ export default function EditRentalPage() {
         yearly_price_idr: yearlyPrice ? Number(yearlyPrice) : null,
         min_duration_months: Number(minDuration),
         max_duration_months: Number(maxDuration),
-        upfront_months: Number(upfrontMonths),
+        upfront_amount_idr: upfrontAmount ? Number(upfrontAmount) * 1_000_000 : null,
         available_from: availableFrom || null,
+        available_to: availableTo || null,
         legal_checked: legalChecked,
       }).eq('id', id);
 
@@ -276,7 +284,7 @@ export default function EditRentalPage() {
             <div style={s.field}><label style={s.label}>Land (are)</label><input style={s.input} type="number" step="0.1" value={landArea} onChange={e => setLandArea(e.target.value)} /></div>
           </div>
           <div style={s.amenities}>
-            {([['pool', pool, setPool, '🏊', 'Pool'], ['garden', garden, setGarden, '🌳', 'Garden'], ['furnished', furnished, setFurnished, '🛋️', 'Furnished'], ['aircon', aircon, setAircon, '❄️', 'Air conditioning'], ['wifi', wifi, setWifi, '📶', 'WiFi'], ['parking', parking, setParking, '🚗', 'Parking']] as const).map(([key, state, setter, icon, label]) => (
+            {([['pool', pool, setPool, '🏊', 'Pool'], ['garden', garden, setGarden, '🌳', 'Garden'], ['furnished', furnished, setFurnished, '🛋️', 'Furnished'], ['aircon', aircon, setAircon, '❄️', 'Air conditioning'], ['wifi', wifi, setWifi, '📶', 'WiFi'], ['parking', parking, setParking, '🚗', 'Parking'], ['kitchen', kitchen, setKitchen, '🍳', 'Kitchen'], ['privateSpace', privateSpace, setPrivateSpace, '🚪', 'Private space']] as const).map(([key, state, setter, icon, label]) => (
               <label key={key} style={s.checkbox}><input type="checkbox" checked={state} onChange={e => (setter as any)(e.target.checked)} /><span>{icon} {label}</span></label>
             ))}
           </div>
@@ -288,12 +296,15 @@ export default function EditRentalPage() {
           <div style={s.grid3}>
             <div style={s.field}><label style={s.label}>Monthly price (IDR)</label><input style={s.input} type="number" value={monthlyPrice} onChange={e => setMonthlyPrice(e.target.value)} placeholder="Optional if yearly set" /></div>
             <div style={s.field}><label style={s.label}>Yearly price (IDR)</label><input style={s.input} type="number" value={yearlyPrice} onChange={e => setYearlyPrice(e.target.value)} placeholder="Optional if monthly set" /></div>
-            <div style={s.field}><label style={s.label}>Upfront months required</label><input style={s.input} type="number" value={upfrontMonths} onChange={e => setUpfrontMonths(e.target.value)} min="0" /></div>
+            <div style={s.field}><label style={s.label}>Upfront payment required (IDR millions)</label><input style={s.input} type="number" value={upfrontAmount} onChange={e => setUpfrontAmount(e.target.value)} min="0" step="0.5" placeholder="Ex: 6 = 6 000 000 IDR" /></div>
           </div>
           <div style={s.grid3}>
             <div style={s.field}><label style={s.label}>Min duration (months)</label><input style={s.input} type="number" value={minDuration} onChange={e => setMinDuration(e.target.value)} /></div>
             <div style={s.field}><label style={s.label}>Max duration (months)</label><input style={s.input} type="number" value={maxDuration} onChange={e => setMaxDuration(e.target.value)} /></div>
             <div style={s.field}><label style={s.label}>Available from</label><input style={s.input} type="date" value={availableFrom} onChange={e => setAvailableFrom(e.target.value)} /></div>
+          </div>
+          <div style={s.grid3}>
+            <div style={s.field}><label style={s.label}>Available until</label><input style={s.input} type="date" value={availableTo} onChange={e => setAvailableTo(e.target.value)} /></div>
           </div>
           <div style={s.field}>
             <label style={s.label}>Status *</label>

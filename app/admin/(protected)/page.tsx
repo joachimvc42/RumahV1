@@ -12,8 +12,10 @@ type RentalRow = {
   monthly_price_idr: number;
   yearly_price_idr: number | null;
   upfront_months: number;
+  upfront_amount_idr: number | null;
   legal_checked: boolean;
   available_from: string | null;
+  available_to: string | null;
   created_at: string;
   properties: {
     id: string;
@@ -50,8 +52,10 @@ export default function AdminHomePage() {
           monthly_price_idr,
           yearly_price_idr,
           upfront_months,
+          upfront_amount_idr,
           legal_checked,
           available_from,
+          available_to,
           created_at,
           properties (
             id,
@@ -212,7 +216,9 @@ export default function AdminHomePage() {
                 {/* Duration */}
                 <p style={styles.duration}>
                   {rental.min_duration_months}–{rental.max_duration_months} months
-                  {rental.upfront_months > 0 && ` • ${rental.upfront_months} months upfront`}
+                  {rental.upfront_amount_idr && rental.upfront_amount_idr > 0
+                    ? ` • ${fmtIDR(rental.upfront_amount_idr)} upfront`
+                    : rental.upfront_months > 0 ? ` • ${rental.upfront_months} months upfront` : ''}
                 </p>
 
                 {/* Internal ref badge */}

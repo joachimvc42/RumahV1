@@ -8,8 +8,9 @@ import MapThumb from '../../components/MapThumb';
 
 type RentalRow = {
   id: string; min_duration_months: number; max_duration_months: number;
-  monthly_price_idr: number; monthly_price_usd?: number | null; yearly_price_idr?: number | null; upfront_months: number; legal_checked: boolean;
-  available_from: string | null;
+  monthly_price_idr: number; monthly_price_usd?: number | null; yearly_price_idr?: number | null;
+  upfront_months: number; upfront_amount_idr?: number | null; legal_checked: boolean;
+  available_from: string | null; available_to?: string | null;
   properties: {
     id: string; title: string; location: string | null;
     bedrooms: number | null; bathrooms: number | null;
@@ -111,7 +112,11 @@ function RentalCard({ rental }: { rental: RentalRow }) {
                 <span style={C.per}>IDR / year</span>
               </div>
             )}
-            <p style={C.dur}>{rental.min_duration_months}–{rental.max_duration_months} months{rental.upfront_months > 0 ? ` · ${rental.upfront_months} months upfront` : ''}</p>
+            <p style={C.dur}>{rental.min_duration_months}–{rental.max_duration_months} months{
+              rental.upfront_amount_idr && rental.upfront_amount_idr > 0
+                ? ` · ${fmtIDR(rental.upfront_amount_idr)} IDR upfront`
+                : rental.upfront_months > 0 ? ` · ${rental.upfront_months} months upfront` : ''
+            }</p>
           </div>
         </div>
       </Link>
@@ -131,7 +136,7 @@ export default function RentalsPage() {
 
   useEffect(() => {
     supabase.from('long_term_rentals')
-      .select(`id, min_duration_months, max_duration_months, monthly_price_idr, yearly_price_idr, upfront_months, legal_checked, available_from,
+      .select(`id, min_duration_months, max_duration_months, monthly_price_idr, yearly_price_idr, upfront_months, upfront_amount_idr, legal_checked, available_from, available_to,
         properties (id, title, description, location, bedrooms, bathrooms, pool, garden, furnished, aircon, wifi, parking, private_space, kitchen, images, status, latitude, longitude)`)
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {
