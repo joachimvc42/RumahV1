@@ -68,10 +68,42 @@ export const metadata: Metadata = {
   alternates: { canonical: BASE_URL },
 };
 
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'RealEstateAgent',
+  name: 'RumahYa',
+  url: BASE_URL,
+  logo: `${BASE_URL}/og-image.jpg`,
+  image: `${BASE_URL}/og-image.jpg`,
+  description:
+    'Long-term villa rentals and land investments in Lombok, Indonesia. Local expertise, verified titles, on-the-ground coordination.',
+  areaServed: {
+    '@type': 'Place',
+    name: 'Lombok, Indonesia',
+  },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Lombok',
+    addressCountry: 'ID',
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: '+62-878-7348-7940',
+    contactType: 'customer service',
+    availableLanguage: ['en', 'fr', 'id'],
+  },
+  sameAs: [],
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
       <body>
+        <script
+          type="application/ld+json"
+          // Next.js-safe inline JSON-LD injection
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
         <Header />
         <div className="page-main">
           {children}

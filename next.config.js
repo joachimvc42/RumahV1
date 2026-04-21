@@ -25,6 +25,16 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
 
+  // Route redirects — permanent moves for SEO
+  async redirects() {
+    return [
+      // The old rentals listing lives on the homepage now
+      { source: '/rentals', destination: '/', permanent: true },
+      // Legacy contact page → About (contact section)
+      { source: '/contact', destination: '/about#contact', permanent: true },
+    ];
+  },
+
   // Security + caching headers
   async headers() {
     const isProd = process.env.NODE_ENV === 'production';
