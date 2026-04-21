@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState, useCallback } from 'react';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import MapView from '../../../components/MapView';
@@ -30,7 +31,7 @@ type RentalData = {
 function fmtIDR(v: number) { return new Intl.NumberFormat('id-ID').format(v); }
 function isVid(url: string) {
   const ext = url.split('?')[0].split('.').pop()?.toLowerCase();
-  return !!ext && ['mp4','mov','webm','avi','m4v','mkv'].includes(ext);
+  return !!ext && ['mp4', 'mov', 'webm', 'avi', 'm4v', 'mkv'].includes(ext);
 }
 
 export default function RentalDetailPage() {
@@ -40,7 +41,7 @@ export default function RentalDetailPage() {
   const [idx, setIdx] = useState(0);
   const [lightbox, setLightbox] = useState(false);
 
-  // Dynamic page title for SEO
+  // Dynamic title
   useEffect(() => {
     if (rental?.properties?.title) {
       document.title = `${rental.properties.title} — Long-term rental in Lombok | RumahYa`;
@@ -64,14 +65,31 @@ export default function RentalDetailPage() {
     load();
   }, [id]);
 
-  if (loading) return <main style={s.page}><div style={s.loading}>Loading...</div></main>;
+  // Keyboard shortcuts for lightbox
+  useEffect(() => {
+    if (!lightbox) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightbox(false);
+      if (e.key === 'ArrowLeft') setIdx(i => (i - 1 + media.length) % media.length);
+      if (e.key === 'ArrowRight') setIdx(i => (i + 1) % media.length);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lightbox, rental]);
+
+  if (loading) return (
+    <main className="detail-page">
+      <div className="home-loading"><div className="home-spinner" /><span>Loading property…</span></div>
+    </main>
+  );
 
   if (!rental?.properties || rental.properties.status !== 'published') {
     return (
-      <main style={s.page}>
-        <div style={s.notFound}>
+      <main className="detail-page">
+        <div className="detail-notfound">
           <h1>Property not available</h1>
-          <Link href="/rentals" style={s.backBtn}>← Back to rentals</Link>
+          <Link href="/" className="btn-secondary">Back to rentals</Link>
         </div>
       </main>
     );
@@ -84,85 +102,121 @@ export default function RentalDetailPage() {
   ];
   const cur = media[idx];
 
-  return (
-    <main style={s.page}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'RealEstateListing',
-        name: p.title,
-        description: p.description ?? undefined,
-        address: { '@type': 'PostalAddress', addressLocality: p.location ?? 'Lombok', addressCountry: 'ID' },
-        ...(p.images?.[0] ? { image: p.images[0] } : {}),
-        offers: {
-          '@type': 'Offer',
-          price: rental.monthly_price_idr,
-          priceCurrency: 'IDR',
-          availability: 'https://schema.org/InStock',
-        },
-      })}} />
-      <Link href="/rentals" style={s.backLink}>← Back to rentals</Link>
+  const ldJson = {
+    '@context': 'https://schema.org',
+    '@type': 'Accommodation',
+    additionalType: 'https://schema.org/House',
+    name: p.title,
+    description: p.description ?? undefined,
+    address: { '@type': 'PostalAddress', addressLocality: p.location ?? 'Lombok', addressCountry: 'ID' },
+    ...(p.latitude != null && p.longitude != null
+      ? { geo: { '@type': 'GeoCoordinates', latitude: Number(p.latitude), longitude: Number(p.longitude) } }
+      : {}),
+    ...(p.images?.[0] ? { image: p.images.slice(0, 6) } : {}),
+    numberOfRooms: p.bedrooms ?? undefined,
+    numberOfBathroomsTotal: p.bathrooms ?? undefined,
+    floorSize: p.built_area ? { '@type': 'QuantitativeValue', value: p.built_area, unitCode: 'MTK' } : undefined,
+    amenityFeature: [
+      p.pool && { '@type': 'LocationFeatureSpecification', name: 'Pool', value: true },
+      p.garden && { '@type': 'LocationFeatureSpecification', name: 'Garden', value: true },
+      p.furnished && { '@type': 'LocationFeatureSpecification', name: 'Furnished', value: true },
+      p.aircon && { '@type': 'LocationFeatureSpecification', name: 'Air conditioning', value: true },
+      p.wifi && { '@type': 'LocationFeatureSpecification', name: 'WiFi', value: true },
+      p.parking && { '@type': 'LocationFeatureSpecification', name: 'Parking', value: true },
+    ].filter(Boolean),
+    offers: {
+      '@type': 'Offer',
+      price: rental.monthly_price_idr,
+      priceCurrency: 'IDR',
+      priceSpecification: {
+        '@type': 'UnitPriceSpecification',
+        price: rental.monthly_price_idr,
+        priceCurrency: 'IDR',
+        unitText: 'MONTH',
+      },
+      availability: 'https://schema.org/InStock',
+      ...(rental.available_from ? { availabilityStarts: rental.available_from } : {}),
+      ...(rental.available_to ? { availabilityEnds: rental.available_to } : {}),
+    },
+  };
 
-      <div style={s.layout}>
+  return (
+    <main className="detail-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ldJson) }} />
+      <Link href="/" className="detail-back">← Back to rentals</Link>
+
+      <div className="detail-layout">
         {/* Gallery */}
-        <div style={{ minWidth: 0 }}>
+        <div className="gallery">
           {media.length > 0 ? (
             <>
-              <div style={s.mainMedia}>
-                {cur.isVideo
-                  ? <video key={cur.src} src={cur.src} style={s.mediaEl} controls autoPlay playsInline />
-                  : <img src={cur.src} alt={`${p.title} ${idx + 1}`} style={{ ...s.mediaEl, cursor: 'zoom-in' }} onClick={() => setLightbox(true)} />
-                }
+              <div className="gallery-main">
+                {cur.isVideo ? (
+                  <video key={cur.src} src={cur.src} className="gallery-media" controls autoPlay playsInline />
+                ) : (
+                  <button className="gallery-img-btn" onClick={() => setLightbox(true)} aria-label="Open in lightbox">
+                    <Image
+                      src={cur.src}
+                      alt={`${p.title} — photo ${idx + 1}`}
+                      fill
+                      sizes="(max-width: 900px) 100vw, 60vw"
+                      priority={idx === 0}
+                      className="gallery-media"
+                      style={{ objectFit: 'cover' }}
+                      unoptimized
+                    />
+                  </button>
+                )}
                 {media.length > 1 && (
                   <>
-                    <button onClick={() => setIdx(i => (i - 1 + media.length) % media.length)} style={{ ...s.navBtn, left: 14 }}>‹</button>
-                    <button onClick={() => setIdx(i => (i + 1) % media.length)} style={{ ...s.navBtn, right: 14 }}>›</button>
-                    <div style={s.counter}>{idx + 1} / {media.length}</div>
+                    <button onClick={() => setIdx(i => (i - 1 + media.length) % media.length)} className="gallery-nav gallery-nav-left" aria-label="Previous">‹</button>
+                    <button onClick={() => setIdx(i => (i + 1) % media.length)} className="gallery-nav gallery-nav-right" aria-label="Next">›</button>
+                    <div className="gallery-counter">{idx + 1} / {media.length}</div>
                   </>
                 )}
               </div>
               {media.length > 1 && (
-                <div style={s.thumbRow}>
+                <div className="gallery-thumbs">
                   {media.map((m, i) => (
-                    <button key={i} onClick={() => setIdx(i)} style={{ ...s.thumb, borderColor: i === idx ? '#2FB7A6' : 'transparent' }}>
-                      {m.isVideo
-                        ? <div style={s.vidThumb}>▶</div>
-                        : <img src={m.src} alt="" style={s.thumbImg} />
-                      }
+                    <button key={i} onClick={() => setIdx(i)} className={`gallery-thumb ${i === idx ? 'is-active' : ''}`} aria-label={`Show photo ${i + 1}`}>
+                      {m.isVideo ? <div className="gallery-thumb-video">▶</div> : <img src={m.src} alt="" loading="lazy" />}
                     </button>
                   ))}
                 </div>
               )}
             </>
           ) : (
-            <div style={s.noMedia}>🏠</div>
+            <div className="gallery-no-media">Rumah<em>Ya</em></div>
           )}
         </div>
 
         {/* Details */}
-        <div style={{ minWidth: 0 }}>
-          {rental.legal_checked && <div style={s.verifiedBadge}>✓ Verified by RumahYa</div>}
-          <h1 style={s.title}>{p.title}</h1>
-          <p style={s.location}>📍 {p.location || 'Lombok'}</p>
+        <div className="detail-body">
+          <div className="detail-badges">
+            {rental.legal_checked && <span className="detail-badge detail-badge-verified">✓ Verified by RumahYa</span>}
+          </div>
+          <h1 className="detail-title">{p.title}</h1>
+          <p className="detail-location">{p.location || 'Lombok'}</p>
 
-          <div style={s.priceCard}>
-            <div style={s.priceRow}>
-              <span style={s.priceVal}>{fmtIDR(rental.monthly_price_idr)}</span>
-              <span style={s.pricePer}>IDR / month</span>
+          <div className="detail-price-card">
+            <div className="detail-price-main">
+              <span className="detail-price-value">{fmtIDR(rental.monthly_price_idr)}</span>
+              <span className="detail-price-unit">IDR / month</span>
             </div>
             {rental.yearly_price_idr && (
-              <div style={{ ...s.priceRow, marginTop: 6 }}>
-                <span style={{ ...s.priceVal, fontSize: 24 }}>{fmtIDR(rental.yearly_price_idr)}</span>
-                <span style={s.pricePer}>IDR / year</span>
+              <div className="detail-price-secondary">
+                <strong>{fmtIDR(rental.yearly_price_idr)}</strong>
+                <span>IDR / year</span>
               </div>
             )}
-            <div style={s.priceMeta}>
+            <p className="detail-price-meta">
               {rental.min_duration_months}–{rental.max_duration_months} months
               {rental.upfront_amount_idr && rental.upfront_amount_idr > 0
-                ? ` • ${fmtIDR(rental.upfront_amount_idr)} IDR upfront`
-                : rental.upfront_months > 0 ? ` • ${rental.upfront_months} months upfront` : ''}
-            </div>
+                ? ` · ${fmtIDR(rental.upfront_amount_idr)} IDR upfront`
+                : rental.upfront_months > 0 ? ` · ${rental.upfront_months} months upfront` : ''}
+            </p>
             {(rental.available_from || rental.available_to) && (
-              <p style={s.avail}>
+              <p className="detail-price-avail">
                 {rental.available_from && !rental.available_to && `Available from ${new Date(rental.available_from).toLocaleDateString('en-US')}`}
                 {rental.available_from && rental.available_to && `${new Date(rental.available_from).toLocaleDateString('en-US')} → ${new Date(rental.available_to).toLocaleDateString('en-US')}`}
                 {!rental.available_from && rental.available_to && `Available until ${new Date(rental.available_to).toLocaleDateString('en-US')}`}
@@ -170,41 +224,72 @@ export default function RentalDetailPage() {
             )}
           </div>
 
-          <div style={s.specs}>
-            {p.bedrooms && <div style={s.spec}><span style={s.specIcon}>🛏️</span>{p.bedrooms} bed{p.bedrooms > 1 ? 's' : ''}</div>}
-            {p.bathrooms && <div style={s.spec}><span style={s.specIcon}>🚿</span>{p.bathrooms} bath{p.bathrooms > 1 ? 's' : ''}</div>}
-            {p.built_area && <div style={s.spec}><span style={s.specIcon}>📐</span>{p.built_area} m²</div>}
-            {p.land_area && <div style={s.spec}><span style={s.specIcon}>🌍</span>{p.land_area} are</div>}
+          <div className="detail-specs">
+            {p.bedrooms != null && p.bedrooms > 0 && (
+              <div className="detail-spec">
+                <p className="detail-spec-label">Bedrooms</p>
+                <div className="detail-spec-value">{p.bedrooms}</div>
+              </div>
+            )}
+            {p.bathrooms != null && p.bathrooms > 0 && (
+              <div className="detail-spec">
+                <p className="detail-spec-label">Bathrooms</p>
+                <div className="detail-spec-value">{p.bathrooms}</div>
+              </div>
+            )}
+            {p.built_area && (
+              <div className="detail-spec">
+                <p className="detail-spec-label">Built area</p>
+                <div className="detail-spec-value">{p.built_area} m²</div>
+              </div>
+            )}
+            {p.land_area && (
+              <div className="detail-spec">
+                <p className="detail-spec-label">Land area</p>
+                <div className="detail-spec-value">{p.land_area} are</div>
+              </div>
+            )}
           </div>
 
-          <div style={s.amenities}>
-            {p.pool && <span style={s.amenity}>🏊 Pool</span>}
-            {p.garden && <span style={s.amenity}>🌳 Garden</span>}
-            {p.furnished && <span style={s.amenity}>🛋️ Furnished</span>}
-            {p.aircon && <span style={s.amenity}>❄️ Air con</span>}
-            {p.wifi && <span style={s.amenity}>📶 WiFi</span>}
-            {p.parking && <span style={s.amenity}>🚗 Parking</span>}
-            {p.kitchen && <span style={s.amenity}>🍳 Kitchen</span>}
-            {p.private_space && <span style={s.amenity}>🚪 Private space</span>}
-          </div>
+          {(p.pool || p.garden || p.furnished || p.aircon || p.wifi || p.parking || p.kitchen || p.private_space) && (
+            <div className="detail-amenities">
+              {p.pool && <span className="detail-amenity">Pool</span>}
+              {p.garden && <span className="detail-amenity">Garden</span>}
+              {p.furnished && <span className="detail-amenity">Furnished</span>}
+              {p.aircon && <span className="detail-amenity">Air conditioning</span>}
+              {p.wifi && <span className="detail-amenity">WiFi</span>}
+              {p.parking && <span className="detail-amenity">Parking</span>}
+              {p.kitchen && <span className="detail-amenity">Kitchen</span>}
+              {p.private_space && <span className="detail-amenity">Private space</span>}
+            </div>
+          )}
 
           {p.description && (
-            <div style={s.desc}>
-              <h3 style={s.descTitle}>Description</h3>
-              <p style={s.descText}>{p.description}</p>
+            <div className="detail-section">
+              <h2 className="detail-section-title">Description</h2>
+              <p className="detail-desc">{p.description}</p>
             </div>
           )}
 
           {p.latitude != null && p.longitude != null && (
-            <div style={{ marginBottom: 24 }}>
-              <h3 style={s.descTitle}>Location</h3>
+            <div className="detail-section">
+              <h2 className="detail-section-title">Location</h2>
               <MapView lat={Number(p.latitude)} lng={Number(p.longitude)} title={p.title} />
             </div>
           )}
 
-          <div style={s.cta}>
-            <a href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hello, I am interested in the rental: ${p.title}`)}`} target="_blank" rel="noopener noreferrer" style={s.ctaWa}>
-              <span style={{ fontSize: 18 }}>💬</span> Request info
+          <div className="detail-cta">
+            <a
+              href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hello, I am interested in the rental: ${p.title}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="wa-button"
+            >
+              <span className="wa-icon" aria-hidden>✉</span>
+              <div className="wa-text">
+                <span className="wa-label">Request info</span>
+                <span className="wa-number">WhatsApp · +62 878 7348 7940</span>
+              </div>
             </a>
           </div>
         </div>
@@ -212,63 +297,18 @@ export default function RentalDetailPage() {
 
       {/* Lightbox */}
       {lightbox && cur && !cur.isVideo && (
-        <div style={lb.overlay} onClick={() => setLightbox(false)}>
-          <button style={lb.close} onClick={() => setLightbox(false)}>✕</button>
+        <div className="lightbox-overlay" onClick={() => setLightbox(false)}>
+          <button className="lightbox-close" onClick={() => setLightbox(false)} aria-label="Close">✕</button>
           {media.length > 1 && (
-            <button style={{ ...lb.nav, left: 20 }} onClick={e => { e.stopPropagation(); setIdx(i => (i - 1 + media.length) % media.length); }}>‹</button>
+            <button className="lightbox-nav lightbox-nav-left" onClick={e => { e.stopPropagation(); setIdx(i => (i - 1 + media.length) % media.length); }} aria-label="Previous">‹</button>
           )}
-          <img src={cur.src} alt="" style={lb.img} onClick={e => e.stopPropagation()} />
+          <img src={cur.src} alt="" className="lightbox-img" onClick={e => e.stopPropagation()} />
           {media.length > 1 && (
-            <button style={{ ...lb.nav, right: 20 }} onClick={e => { e.stopPropagation(); setIdx(i => (i + 1) % media.length); }}>›</button>
+            <button className="lightbox-nav lightbox-nav-right" onClick={e => { e.stopPropagation(); setIdx(i => (i + 1) % media.length); }} aria-label="Next">›</button>
           )}
-          {media.length > 1 && <div style={lb.counter}>{idx + 1} / {media.length}</div>}
+          {media.length > 1 && <div className="lightbox-counter">{idx + 1} / {media.length}</div>}
         </div>
       )}
     </main>
   );
 }
-
-const lb: { [k: string]: React.CSSProperties } = {
-  overlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.93)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' },
-  close: { position: 'absolute', top: 20, right: 24, background: 'none', border: 'none', color: '#fff', fontSize: 32, cursor: 'pointer', zIndex: 1001, lineHeight: 1, padding: '4px 10px' },
-  nav: { position: 'absolute', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', fontSize: 52, fontWeight: 300, cursor: 'pointer', zIndex: 1001, borderRadius: 8, padding: '6px 18px', lineHeight: 1 },
-  img: { maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain', borderRadius: 8, boxShadow: '0 20px 60px rgba(0,0,0,0.5)' },
-  counter: { position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.65)', fontSize: 14, fontWeight: 600 },
-};
-
-const s: { [k: string]: React.CSSProperties } = {
-  page: { maxWidth: 1200, margin: '0 auto', padding: '24px 24px 60px' },
-  loading: { textAlign: 'center', padding: 80, color: '#6F6A64', fontSize: 18 },
-  notFound: { textAlign: 'center', padding: 80 },
-  backBtn: { display: 'inline-block', marginTop: 20, padding: '13px 26px', background: '#2FB7A6', color: '#fff', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: 15 },
-  backLink: { display: 'inline-block', marginBottom: 28, color: '#6F6A64', textDecoration: 'none', fontSize: 15, fontWeight: 600 },
-  layout: { display: 'grid', gridTemplateColumns: '1fr minmax(0, 420px)', gap: 48 },
-  mainMedia: { position: 'relative', aspectRatio: '16/10', borderRadius: 20, overflow: 'hidden', background: '#2F2A26' },
-  mediaEl: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
-  navBtn: { position: 'absolute', top: '50%', transform: 'translateY(-50%)', width: 48, height: 48, borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', fontSize: 28, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', color: '#111' },
-  counter: { position: 'absolute', bottom: 14, left: '50%', transform: 'translateX(-50%)', padding: '7px 16px', background: 'rgba(0,0,0,0.6)', color: '#fff', borderRadius: 20, fontSize: 14, fontWeight: 600 },
-  thumbRow: { display: 'flex', gap: 10, marginTop: 14, overflowX: 'auto', paddingBottom: 4 },
-  thumb: { flexShrink: 0, width: 80, height: 60, borderRadius: 10, overflow: 'hidden', border: '3px solid transparent', cursor: 'pointer', padding: 0, background: '#2F2A26' },
-  thumbImg: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
-  vidThumb: { width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#fff', background: '#2F2A26' },
-  noMedia: { aspectRatio: '16/10', borderRadius: 20, background: '#F6F1E9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 80, color: '#DDD6C8' },
-  verifiedBadge: { display: 'inline-block', padding: '7px 14px', background: '#1F4E5F', color: '#fff', borderRadius: 20, fontSize: 13, fontWeight: 700, marginBottom: 14 },
-  title: { fontSize: 32, fontWeight: 800, color: '#2F2A26', margin: '0 0 8px', wordBreak: 'break-word' },
-  location: { fontSize: 16, color: '#6F6A64', margin: '0 0 24px' },
-  priceCard: { background: 'linear-gradient(135deg,#f0fbf9,#f5f0e8)', borderRadius: 16, padding: 24, marginBottom: 24, border: '2px solid #c2e8e3' },
-  priceRow: { display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 8 },
-  priceVal: { fontSize: 34, fontWeight: 800, color: '#2FB7A6' },
-  pricePer: { fontSize: 16, color: '#6F6A64' },
-  priceMeta: { fontSize: 15, color: '#2F2A26' },
-  avail: { marginTop: 12, fontSize: 14, color: '#2FB7A6', fontWeight: 600 },
-  specs: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 },
-  spec: { display: 'flex', alignItems: 'center', gap: 10, padding: '13px 16px', background: '#F6F1E9', borderRadius: 12, fontSize: 15, fontWeight: 500 },
-  specIcon: { fontSize: 20 },
-  amenities: { display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 },
-  amenity: { padding: '10px 16px', background: '#FDFAF5', border: '2px solid #DDD6C8', borderRadius: 10, fontSize: 14, fontWeight: 600 },
-  desc: { marginBottom: 28 },
-  descTitle: { fontSize: 18, fontWeight: 700, color: '#2F2A26', marginBottom: 10 },
-  descText: { fontSize: 15, color: '#6F6A64', lineHeight: 1.75 },
-  cta: { display: 'flex' },
-  ctaWa: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '16px 24px', background: '#25a244', color: '#fff', borderRadius: 12, textDecoration: 'none', fontWeight: 700, fontSize: 16, textAlign: 'center' as const },
-};

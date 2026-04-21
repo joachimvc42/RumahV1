@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
@@ -22,7 +23,7 @@ type InvestmentData = {
 
 function isVid(url: string) {
   const ext = url.split('?')[0].split('.').pop()?.toLowerCase();
-  return !!ext && ['mp4','mov','webm','avi','m4v','mkv'].includes(ext);
+  return !!ext && ['mp4', 'mov', 'webm', 'avi', 'm4v', 'mkv'].includes(ext);
 }
 function buildMedia(images: string[], videos: string[]): MediaItem[] {
   return [
@@ -38,7 +39,6 @@ export default function InvestmentDetailPage() {
   const [idx, setIdx] = useState(0);
   const [lightbox, setLightbox] = useState(false);
 
-  // Dynamic page title for SEO
   useEffect(() => {
     if (data?.title) {
       document.title = `${data.title} — ${data.type === 'villa' ? 'Villa' : 'Land'} investment in Lombok | RumahYa`;
@@ -51,7 +51,6 @@ export default function InvestmentDetailPage() {
       if (!inv) { setLoading(false); return; }
 
       let item: InvestmentData | null = null;
-
       if (inv.asset_type === 'property') {
         const { data: prop } = await supabase.from('properties').select('*').eq('id', inv.asset_id).single();
         if (prop && prop.status === 'published') {
@@ -92,14 +91,30 @@ export default function InvestmentDetailPage() {
     load();
   }, [id]);
 
-  if (loading) return <main style={s.page}><div style={s.loading}>Loading...</div></main>;
+  // Keyboard shortcuts for lightbox
+  useEffect(() => {
+    if (!lightbox) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightbox(false);
+      if (e.key === 'ArrowLeft' && data) setIdx(i => (i - 1 + data.media.length) % data.media.length);
+      if (e.key === 'ArrowRight' && data) setIdx(i => (i + 1) % data.media.length);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [lightbox, data]);
+
+  if (loading) return (
+    <main className="detail-page">
+      <div className="home-loading"><div className="home-spinner" /><span>Loading opportunity…</span></div>
+    </main>
+  );
 
   if (!data) {
     return (
-      <main style={s.page}>
-        <div style={s.notFound}>
+      <main className="detail-page">
+        <div className="detail-notfound">
           <h1>Opportunity not found</h1>
-          <Link href="/investments" style={s.backBtn}>← Back to investments</Link>
+          <Link href="/investments" className="btn-secondary">Back to investments</Link>
         </div>
       </main>
     );
@@ -107,128 +122,185 @@ export default function InvestmentDetailPage() {
 
   const { media } = data;
   const cur = media[idx];
+  const { main: priceMain, approx: priceApprox } = dualPrice(data.price, data.currency, data.type === 'land' ? '/are' : '');
+
+  const ldJson = {
+    '@context': 'https://schema.org',
+    '@type': data.type === 'villa' ? 'Accommodation' : 'Place',
+    name: data.title,
+    description: data.description ?? undefined,
+    address: { '@type': 'PostalAddress', addressLocality: data.location, addressCountry: 'ID' },
+    ...(data.latitude != null && data.longitude != null
+      ? { geo: { '@type': 'GeoCoordinates', latitude: Number(data.latitude), longitude: Number(data.longitude) } }
+      : {}),
+    ...(data.media[0] && !data.media[0].isVideo
+      ? { image: data.media.filter(m => !m.isVideo).map(m => m.src).slice(0, 6) }
+      : {}),
+    ...(data.type === 'villa' ? {
+      numberOfRooms: data.bedrooms,
+      numberOfBathroomsTotal: data.bathrooms,
+      floorSize: data.builtArea ? { '@type': 'QuantitativeValue', value: data.builtArea, unitCode: 'MTK' } : undefined,
+    } : {}),
+    offers: {
+      '@type': 'Offer',
+      price: data.price,
+      priceCurrency: data.currency,
+      availability: 'https://schema.org/InStock',
+    },
+  };
 
   return (
-    <main style={s.page}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'RealEstateListing',
-        name: data.title,
-        description: data.description ?? undefined,
-        address: { '@type': 'PostalAddress', addressLocality: data.location, addressCountry: 'ID' },
-        ...(data.media[0] && !data.media[0].isVideo ? { image: data.media[0].src } : {}),
-        offers: {
-          '@type': 'Offer',
-          price: data.price,
-          priceCurrency: data.currency,
-          availability: 'https://schema.org/InStock',
-        },
-      })}} />
-      <Link href="/investments" style={s.backLink}>← Back to investments</Link>
+    <main className="detail-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ldJson) }} />
+      <Link href="/investments" className="detail-back">← Back to investments</Link>
 
-      <div style={s.layout}>
+      <div className="detail-layout">
         {/* Gallery */}
-        <div style={{ minWidth: 0 }}>
+        <div className="gallery">
           {media.length > 0 ? (
             <>
-              <div style={s.mainMedia}>
-                {cur.isVideo
-                  ? <video key={cur.src} src={cur.src} style={s.mediaEl} controls autoPlay playsInline />
-                  : <img src={cur.src} alt={`${data.title} ${idx + 1}`} style={{ ...s.mediaEl, cursor: 'zoom-in' }} onClick={() => setLightbox(true)} />
-                }
+              <div className="gallery-main">
+                <span className="detail-badge-type">{data.type === 'villa' ? 'Villa' : 'Land'}</span>
+                {cur.isVideo ? (
+                  <video key={cur.src} src={cur.src} className="gallery-media" controls autoPlay playsInline />
+                ) : (
+                  <button className="gallery-img-btn" onClick={() => setLightbox(true)} aria-label="Open in lightbox">
+                    <Image
+                      src={cur.src}
+                      alt={`${data.title} — photo ${idx + 1}`}
+                      fill
+                      sizes="(max-width: 900px) 100vw, 60vw"
+                      priority={idx === 0}
+                      className="gallery-media"
+                      style={{ objectFit: 'cover' }}
+                      unoptimized
+                    />
+                  </button>
+                )}
                 {media.length > 1 && (
                   <>
-                    <button onClick={() => setIdx(i => (i - 1 + media.length) % media.length)} style={{ ...s.navBtn, left: 14 }}>‹</button>
-                    <button onClick={() => setIdx(i => (i + 1) % media.length)} style={{ ...s.navBtn, right: 14 }}>›</button>
-                    <div style={s.counter}>{idx + 1} / {media.length}</div>
+                    <button onClick={() => setIdx(i => (i - 1 + media.length) % media.length)} className="gallery-nav gallery-nav-left" aria-label="Previous">‹</button>
+                    <button onClick={() => setIdx(i => (i + 1) % media.length)} className="gallery-nav gallery-nav-right" aria-label="Next">›</button>
+                    <div className="gallery-counter">{idx + 1} / {media.length}</div>
                   </>
                 )}
-                <div style={{ ...s.typeBadge, background: data.type === 'villa' ? '#1F4E5F' : '#2FB7A6' }}>
-                  {data.type === 'villa' ? '🏠 Villa' : '🌴 Land'}
-                </div>
               </div>
               {media.length > 1 && (
-                <div style={s.thumbRow}>
+                <div className="gallery-thumbs">
                   {media.map((m, i) => (
-                    <button key={i} onClick={() => setIdx(i)} style={{ ...s.thumb, borderColor: i === idx ? '#C9A96A' : 'transparent' }}>
-                      {m.isVideo
-                        ? <div style={s.vidThumb}>▶</div>
-                        : <img src={m.src} alt="" style={s.thumbImg} />
-                      }
+                    <button key={i} onClick={() => setIdx(i)} className={`gallery-thumb ${i === idx ? 'is-active' : ''}`} aria-label={`Show photo ${i + 1}`}>
+                      {m.isVideo ? <div className="gallery-thumb-video">▶</div> : <img src={m.src} alt="" loading="lazy" />}
                     </button>
                   ))}
                 </div>
               )}
             </>
           ) : (
-            <div style={s.noMedia}>{data.type === 'villa' ? '🏠' : '🌴'}</div>
+            <div className="gallery-no-media">Rumah<em>Ya</em></div>
           )}
         </div>
 
         {/* Details */}
-        <div style={{ minWidth: 0 }}>
-          <div style={s.badges}>
-            {data.legalChecked && <span style={s.verifiedBadge}>✓ Verified by RumahYa</span>}
-            {data.managementAvailable && <span style={s.mgmtBadge}>🏢 Management available</span>}
+        <div className="detail-body">
+          <div className="detail-badges">
+            {data.legalChecked && <span className="detail-badge detail-badge-verified">✓ Verified by RumahYa</span>}
+            {data.managementAvailable && <span className="detail-badge detail-badge-mgmt">Management available</span>}
           </div>
-          <h1 style={s.title}>{data.title}</h1>
-          <p style={s.location}>📍 {data.location}</p>
+          <h1 className="detail-title">{data.title}</h1>
+          <p className="detail-location">{data.location}</p>
 
-          <div style={s.priceCard}>
-            {(() => {
-              const { main, approx } = dualPrice(data.price, data.currency, data.type === 'land' ? '/are' : '');
-              return (
-                <div style={s.priceRow}>
-                  <span style={s.priceVal}>{main}</span>
-                  <span style={s.priceApprox}>{approx}</span>
-                </div>
-              );
-            })()}
-            <div style={{ ...s.tenureBadge, background: data.tenure === 'freehold' ? '#d4f0ec' : '#f5eedc', color: data.tenure === 'freehold' ? '#1F4E5F' : '#7A6030' }}>
-              {data.tenure === 'freehold' ? '🔑 Freehold — Full ownership' : `📋 Leasehold — ${data.leaseYears} years`}
+          <div className="detail-price-card">
+            <div className="detail-price-main">
+              <span className="detail-price-value">{priceMain}</span>
             </div>
+            {priceApprox && <p className="detail-price-approx">{priceApprox}</p>}
+
+            <div className="detail-tenure">
+              {data.tenure === 'freehold'
+                ? <><strong>Freehold</strong> — Full ownership</>
+                : <><strong>Leasehold</strong> — {data.leaseYears} years</>}
+            </div>
+
             {data.expectedYield && (
-              <div style={s.yieldRow}>
-                <span style={{ fontSize: 14, color: '#2F2A26' }}>Estimated yield</span>
-                <span style={{ fontSize: 22, fontWeight: 800, color: '#C9A96A' }}>{data.expectedYield}% / year</span>
+              <div className="detail-yield">
+                <span className="detail-yield-label">Estimated yield</span>
+                <span className="detail-yield-value">{data.expectedYield}% / yr</span>
               </div>
             )}
           </div>
 
           {data.type === 'villa' && (
-            <div style={s.specs}>
-              {data.bedrooms && <div style={s.spec}><span>🛏️</span>{data.bedrooms} bed{data.bedrooms > 1 ? 's' : ''}</div>}
-              {data.bathrooms && <div style={s.spec}><span>🚿</span>{data.bathrooms} bath{data.bathrooms > 1 ? 's' : ''}</div>}
-              {data.builtArea && <div style={s.spec}><span>📐</span>{data.builtArea} m²</div>}
-              {data.landArea && <div style={s.spec}><span>🌍</span>{data.landArea} are</div>}
+            <div className="detail-specs">
+              {data.bedrooms != null && data.bedrooms > 0 && (
+                <div className="detail-spec">
+                  <p className="detail-spec-label">Bedrooms</p>
+                  <div className="detail-spec-value">{data.bedrooms}</div>
+                </div>
+              )}
+              {data.bathrooms != null && data.bathrooms > 0 && (
+                <div className="detail-spec">
+                  <p className="detail-spec-label">Bathrooms</p>
+                  <div className="detail-spec-value">{data.bathrooms}</div>
+                </div>
+              )}
+              {data.builtArea && (
+                <div className="detail-spec">
+                  <p className="detail-spec-label">Built area</p>
+                  <div className="detail-spec-value">{data.builtArea} m²</div>
+                </div>
+              )}
+              {data.landArea && (
+                <div className="detail-spec">
+                  <p className="detail-spec-label">Land area</p>
+                  <div className="detail-spec-value">{data.landArea} are</div>
+                </div>
+              )}
             </div>
           )}
 
-          {data.type === 'villa' && (
-            <div style={s.amenities}>
-              {data.pool && <span style={s.amenity}>🏊 Pool</span>}
-              {data.garden && <span style={s.amenity}>🌳 Garden</span>}
-              {data.furnished && <span style={s.amenity}>🛋️ Furnished</span>}
+          {data.type === 'land' && data.landSize && (
+            <div className="detail-specs">
+              <div className="detail-spec">
+                <p className="detail-spec-label">Total area</p>
+                <div className="detail-spec-value">{data.landSize} are</div>
+              </div>
+            </div>
+          )}
+
+          {data.type === 'villa' && (data.pool || data.garden || data.furnished) && (
+            <div className="detail-amenities">
+              {data.pool && <span className="detail-amenity">Pool</span>}
+              {data.garden && <span className="detail-amenity">Garden</span>}
+              {data.furnished && <span className="detail-amenity">Furnished</span>}
             </div>
           )}
 
           {data.description && (
-            <div style={s.desc}>
-              <h3 style={s.descTitle}>Description</h3>
-              <p style={s.descText}>{data.description}</p>
+            <div className="detail-section">
+              <h2 className="detail-section-title">Description</h2>
+              <p className="detail-desc">{data.description}</p>
             </div>
           )}
 
           {data.latitude != null && data.longitude != null && (
-            <div style={{ marginBottom: 24 }}>
-              <h3 style={s.descTitle}>Location</h3>
+            <div className="detail-section">
+              <h2 className="detail-section-title">Location</h2>
               <MapView lat={Number(data.latitude)} lng={Number(data.longitude)} title={data.title} />
             </div>
           )}
 
-          <div style={s.cta}>
-            <a href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hello, I am interested in: ${data.title}`)}`} target="_blank" rel="noopener noreferrer" style={s.ctaWa}>
-              <span style={{ fontSize: 18 }}>💬</span> Request info
+          <div className="detail-cta">
+            <a
+              href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hello, I am interested in: ${data.title}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="wa-button"
+            >
+              <span className="wa-icon" aria-hidden>✉</span>
+              <div className="wa-text">
+                <span className="wa-label">Request info</span>
+                <span className="wa-number">WhatsApp · +62 878 7348 7940</span>
+              </div>
             </a>
           </div>
         </div>
@@ -236,65 +308,18 @@ export default function InvestmentDetailPage() {
 
       {/* Lightbox */}
       {lightbox && cur && !cur.isVideo && (
-        <div style={lb.overlay} onClick={() => setLightbox(false)}>
-          <button style={lb.close} onClick={() => setLightbox(false)}>✕</button>
+        <div className="lightbox-overlay" onClick={() => setLightbox(false)}>
+          <button className="lightbox-close" onClick={() => setLightbox(false)} aria-label="Close">✕</button>
           {media.length > 1 && (
-            <button style={{ ...lb.nav, left: 20 }} onClick={e => { e.stopPropagation(); setIdx(i => (i - 1 + media.length) % media.length); }}>‹</button>
+            <button className="lightbox-nav lightbox-nav-left" onClick={e => { e.stopPropagation(); setIdx(i => (i - 1 + media.length) % media.length); }} aria-label="Previous">‹</button>
           )}
-          <img src={cur.src} alt="" style={lb.img} onClick={e => e.stopPropagation()} />
+          <img src={cur.src} alt="" className="lightbox-img" onClick={e => e.stopPropagation()} />
           {media.length > 1 && (
-            <button style={{ ...lb.nav, right: 20 }} onClick={e => { e.stopPropagation(); setIdx(i => (i + 1) % media.length); }}>›</button>
+            <button className="lightbox-nav lightbox-nav-right" onClick={e => { e.stopPropagation(); setIdx(i => (i + 1) % media.length); }} aria-label="Next">›</button>
           )}
-          {media.length > 1 && <div style={lb.counter}>{idx + 1} / {media.length}</div>}
+          {media.length > 1 && <div className="lightbox-counter">{idx + 1} / {media.length}</div>}
         </div>
       )}
     </main>
   );
 }
-
-const lb: { [k: string]: React.CSSProperties } = {
-  overlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.93)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' },
-  close: { position: 'absolute', top: 20, right: 24, background: 'none', border: 'none', color: '#fff', fontSize: 32, cursor: 'pointer', zIndex: 1001, lineHeight: 1, padding: '4px 10px' },
-  nav: { position: 'absolute', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', fontSize: 52, fontWeight: 300, cursor: 'pointer', zIndex: 1001, borderRadius: 8, padding: '6px 18px', lineHeight: 1 },
-  img: { maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain', borderRadius: 8, boxShadow: '0 20px 60px rgba(0,0,0,0.5)' },
-  counter: { position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.65)', fontSize: 14, fontWeight: 600 },
-};
-
-const s: { [k: string]: React.CSSProperties } = {
-  page: { maxWidth: 1200, margin: '0 auto', padding: '24px 24px 60px' },
-  loading: { textAlign: 'center', padding: 80, color: '#6F6A64', fontSize: 18 },
-  notFound: { textAlign: 'center', padding: 80 },
-  backBtn: { display: 'inline-block', marginTop: 20, padding: '13px 26px', background: '#2FB7A6', color: '#fff', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: 15 },
-  backLink: { display: 'inline-block', marginBottom: 28, color: '#6F6A64', textDecoration: 'none', fontSize: 15, fontWeight: 600 },
-  layout: { display: 'grid', gridTemplateColumns: '1fr minmax(0, 420px)', gap: 48 },
-  mainMedia: { position: 'relative', aspectRatio: '16/10', borderRadius: 20, overflow: 'hidden', background: '#2F2A26' },
-  mediaEl: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
-  navBtn: { position: 'absolute', top: '50%', transform: 'translateY(-50%)', width: 48, height: 48, borderRadius: '50%', background: 'rgba(255,255,255,0.92)', border: 'none', fontSize: 28, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', color: '#111' },
-  counter: { position: 'absolute', bottom: 14, left: '50%', transform: 'translateX(-50%)', padding: '7px 16px', background: 'rgba(0,0,0,0.6)', color: '#fff', borderRadius: 20, fontSize: 14, fontWeight: 600 },
-  typeBadge: { position: 'absolute', top: 16, left: 16, padding: '8px 16px', borderRadius: 24, color: '#fff', fontSize: 14, fontWeight: 700 },
-  thumbRow: { display: 'flex', gap: 10, marginTop: 14, overflowX: 'auto', paddingBottom: 4 },
-  thumb: { flexShrink: 0, width: 80, height: 60, borderRadius: 10, overflow: 'hidden', border: '3px solid transparent', cursor: 'pointer', padding: 0, background: '#2F2A26' },
-  thumbImg: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
-  vidThumb: { width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#fff', background: '#2F2A26' },
-  noMedia: { aspectRatio: '16/10', borderRadius: 20, background: '#F6F1E9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 80, color: '#DDD6C8' },
-  badges: { display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 14 },
-  verifiedBadge: { display: 'inline-block', padding: '7px 14px', background: '#059669', color: '#fff', borderRadius: 20, fontSize: 13, fontWeight: 700 },
-  mgmtBadge: { display: 'inline-block', padding: '7px 14px', background: '#1F4E5F', color: '#fff', borderRadius: 20, fontSize: 13, fontWeight: 700 },
-  title: { fontSize: 32, fontWeight: 800, color: '#2F2A26', margin: '0 0 8px', wordBreak: 'break-word' },
-  location: { fontSize: 16, color: '#6F6A64', margin: '0 0 24px' },
-  priceCard: { background: 'linear-gradient(135deg,#f5eedc,#f0fbf9)', borderRadius: 16, padding: 24, marginBottom: 24, border: '2px solid #DDD6C8' },
-  priceRow: { display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 14, flexWrap: 'wrap' as const },
-  priceVal: { fontSize: 34, fontWeight: 800, color: '#2F2A26' },
-  priceApprox: { fontSize: 14, color: '#6F6A64', fontWeight: 500 },
-  tenureBadge: { display: 'inline-block', padding: '10px 16px', borderRadius: 10, fontSize: 14, fontWeight: 700, marginBottom: 14 },
-  yieldRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: '#f5eedc', borderRadius: 10 },
-  specs: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 },
-  spec: { display: 'flex', alignItems: 'center', gap: 10, padding: '13px 16px', background: '#F6F1E9', borderRadius: 12, fontSize: 15, fontWeight: 500 },
-  amenities: { display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 24 },
-  amenity: { padding: '10px 16px', background: '#FDFAF5', border: '2px solid #DDD6C8', borderRadius: 10, fontSize: 14, fontWeight: 600 },
-  desc: { marginBottom: 28 },
-  descTitle: { fontSize: 18, fontWeight: 700, color: '#2F2A26', marginBottom: 10 },
-  descText: { fontSize: 15, color: '#6F6A64', lineHeight: 1.75 },
-  cta: { display: 'flex' },
-  ctaWa: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '16px 24px', background: '#25a244', color: '#fff', borderRadius: 12, textDecoration: 'none', fontWeight: 700, fontSize: 16, textAlign: 'center' as const },
-};
