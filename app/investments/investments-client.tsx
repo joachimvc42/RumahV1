@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { supabase } from '../../lib/supabaseClient';
 import { dualPrice } from '../../lib/priceUtils';
+import { getDict, prefixFor, type Locale } from '../../lib/i18n';
 
 /* ─────────── Types ─────────── */
 type Item = {
@@ -56,7 +57,8 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 }
 
 /* ─────────── Investment card ─────────── */
-function InvCard({ item }: { item: Item }) {
+function InvCard({ item, locale }: { item: Item; locale: Locale }) {
+  const t = getDict(locale);
   const [idx, setIdx] = useState(0);
   const [hover, setHover] = useState(false);
   const prev = useCallback((e: React.MouseEvent) => {
@@ -109,10 +111,10 @@ function InvCard({ item }: { item: Item }) {
       <div className="listing-body">
         <div className="inv-meta-row">
           <span className={`inv-badge ${item.type === 'villa' ? 'inv-badge-villa' : 'inv-badge-land'}`}>
-            {item.type === 'villa' ? 'Villa' : 'Land'}
+            {item.type === 'villa' ? t.inv.badgeVilla : t.inv.badgeLand}
           </span>
           <span className={`inv-badge ${item.tenure === 'freehold' ? 'inv-badge-freehold' : 'inv-badge-lease'}`}>
-            {item.tenure === 'freehold' ? 'Freehold' : item.leaseYears ? `Lease ${item.leaseYears}y` : 'Leasehold'}
+            {item.tenure === 'freehold' ? t.inv.freehold : item.leaseYears ? `${t.inv.leaseY} ${item.leaseYears}y` : t.inv.leasehold}
           </span>
           <span className="inv-loc">{item.location}</span>
         </div>
@@ -121,18 +123,18 @@ function InvCard({ item }: { item: Item }) {
 
         {item.type === 'villa' && (
           <div className="inv-chips">
-            {item.bedrooms ? <span>{item.bedrooms} bed{item.bedrooms !== 1 ? 's' : ''}</span> : null}
-            {item.bathrooms ? <span>{item.bathrooms} bath{item.bathrooms !== 1 ? 's' : ''}</span> : null}
-            {item.pool ? <span>Pool</span> : null}
-            {item.garden ? <span>Garden</span> : null}
+            {item.bedrooms ? <span>{item.bedrooms} {item.bedrooms === 1 ? t.inv.bed : t.inv.beds}</span> : null}
+            {item.bathrooms ? <span>{item.bathrooms} {item.bathrooms === 1 ? t.inv.bath : t.inv.baths}</span> : null}
+            {item.pool ? <span>{t.inv.pool}</span> : null}
+            {item.garden ? <span>{t.inv.garden}</span> : null}
           </div>
         )}
         {item.type === 'land' && item.landSize && (
           <div className="inv-chips">
-            <span>{item.landSize} are</span>
-            {item.hasWater ? <span>Water</span> : null}
-            {item.hasElectricity ? <span>Power</span> : null}
-            {item.hasRoad ? <span>Road</span> : null}
+            <span>{item.landSize} {t.inv.areSuffix}</span>
+            {item.hasWater ? <span>{t.inv.water}</span> : null}
+            {item.hasElectricity ? <span>{t.inv.electricity}</span> : null}
+            {item.hasRoad ? <span>{t.inv.road}</span> : null}
           </div>
         )}
 
@@ -148,7 +150,7 @@ function InvCard({ item }: { item: Item }) {
               </>
             );
           })()}
-          {item.expectedYield && <p className="inv-yield">{item.expectedYield}% est. yield / year</p>}
+          {item.expectedYield && <p className="inv-yield">{item.expectedYield}{t.inv.yieldSuffix}</p>}
         </div>
       </div>
     </Link>
@@ -156,7 +158,8 @@ function InvCard({ item }: { item: Item }) {
 }
 
 /* ─────────── Page ─────────── */
-export default function InvestmentsClient() {
+export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }) {
+  const t = getDict(locale);
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState<Search>({ type: 'all', tenure: 'all', location: '' });
@@ -181,7 +184,7 @@ export default function InvestmentsClient() {
             id: inv.id, type: 'villa', title: p.title, location: p.location || 'Lombok',
             price: p.price || 0, currency: p.currency || 'USD', tenure: p.tenure || 'freehold',
             leaseYears: p.lease_years, expectedYield: inv.expected_yield, images: p.images || [],
-            href: `/investments/${inv.id}`, bedrooms: p.bedrooms, bathrooms: p.bathrooms,
+            href: prefixFor(locale, `/investments/${inv.id}`), bedrooms: p.bedrooms, bathrooms: p.bathrooms,
             pool: p.pool, garden: p.garden, furnished: p.furnished, condition: p.condition,
             latitude: p.latitude, longitude: p.longitude, description: p.description,
           });
@@ -193,7 +196,7 @@ export default function InvestmentsClient() {
             price: l.price_per_are_idr ?? l.price_per_are ?? 0, currency: l.currency || 'IDR',
             tenure: l.tenure || 'freehold', leaseYears: l.lease_years,
             expectedYield: inv.expected_yield, images: l.images || [],
-            href: `/investments/${inv.id}`,
+            href: prefixFor(locale, `/investments/${inv.id}`),
             landSize: l.land_size ? Number(l.land_size) : null, condition: l.condition,
             hasWater: l.has_water, hasElectricity: l.has_electricity, hasRoad: l.has_road,
             latitude: l.latitude, longitude: l.longitude, description: l.description,
@@ -203,7 +206,7 @@ export default function InvestmentsClient() {
       setItems(merged); setLoading(false);
     };
     load();
-  }, []);
+  }, [locale]);
 
   const locations = [...new Set(items.map(i => i.location))].sort();
 
@@ -240,19 +243,15 @@ export default function InvestmentsClient() {
       <section className="inv-hero">
         <div className="container">
           <Reveal>
-            <p className="eyebrow" style={{ marginBottom: 20 }}>Investment opportunities · Lombok</p>
+            <p className="eyebrow" style={{ marginBottom: 20 }}>{t.inv.heroEyebrow}</p>
           </Reveal>
           <Reveal delay={100}>
             <h1 className="inv-hero-title">
-              Freehold land,<br /><em>curated villas,</em><br />long-term structure.
+              {t.inv.heroTitleA}<br /><em>{t.inv.heroTitleB}</em><br />{t.inv.heroTitleC}
             </h1>
           </Reveal>
           <Reveal delay={200}>
-            <p className="inv-hero-lead">
-              Every opportunity is pre-checked on paper and on the ground. We present only what we
-              would recommend to a close friend — with clear titles, realistic yields, and a local
-              team to manage delivery.
-            </p>
+            <p className="inv-hero-lead">{t.inv.heroLead}</p>
           </Reveal>
         </div>
       </section>
@@ -261,27 +260,27 @@ export default function InvestmentsClient() {
         {/* Search bar */}
         <div className="inv-searchbar">
           <div className="inv-search-seg">
-            <span className="eyebrow inv-search-label">Asset type</span>
+            <span className="eyebrow inv-search-label">{t.inv.assetType}</span>
             <select value={search.type} onChange={e => setSearch(s => ({ ...s, type: e.target.value as Search['type'] }))}>
-              <option value="all">All assets</option>
-              <option value="villa">Villas</option>
-              <option value="land">Land</option>
+              <option value="all">{t.inv.allAssets}</option>
+              <option value="villa">{t.inv.villas}</option>
+              <option value="land">{t.inv.land}</option>
             </select>
           </div>
           <div className="inv-search-div" />
           <div className="inv-search-seg">
-            <span className="eyebrow inv-search-label">Tenure</span>
+            <span className="eyebrow inv-search-label">{t.inv.tenure}</span>
             <select value={search.tenure} onChange={e => setSearch(s => ({ ...s, tenure: e.target.value as Search['tenure'] }))}>
-              <option value="all">All</option>
-              <option value="freehold">Freehold</option>
-              <option value="leasehold">Leasehold</option>
+              <option value="all">{t.inv.all}</option>
+              <option value="freehold">{t.inv.freehold}</option>
+              <option value="leasehold">{t.inv.leasehold}</option>
             </select>
           </div>
           <div className="inv-search-div" />
           <div className="inv-search-seg">
-            <span className="eyebrow inv-search-label">Location</span>
+            <span className="eyebrow inv-search-label">{t.inv.location}</span>
             <select value={search.location} onChange={e => setSearch(s => ({ ...s, location: e.target.value }))}>
-              <option value="">All areas</option>
+              <option value="">{t.inv.allAreas}</option>
               {locations.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
           </div>
@@ -290,7 +289,7 @@ export default function InvestmentsClient() {
         {loading ? (
           <div className="home-loading">
             <div className="home-spinner" />
-            <span>Loading opportunities…</span>
+            <span>{t.inv.loading}</span>
           </div>
         ) : (
           <div className="inv-layout">
@@ -299,8 +298,8 @@ export default function InvestmentsClient() {
               {(search.type === 'villa' || search.type === 'all') && (
                 <>
                   <div className="inv-sidebar-group">
-                    <p className="eyebrow">Villa amenities</p>
-                    {([['pool', 'Pool'], ['garden', 'Garden'], ['furnished', 'Furnished']] as [keyof VillaSidebar, string][]).map(([key, label]) => (
+                    <p className="eyebrow">{t.inv.villaAmenities}</p>
+                    {([['pool', t.inv.pool], ['garden', t.inv.garden], ['furnished', t.inv.furnished]] as [keyof VillaSidebar, string][]).map(([key, label]) => (
                       <label key={key} className="inv-check-row">
                         <input
                           type="checkbox"
@@ -312,7 +311,7 @@ export default function InvestmentsClient() {
                     ))}
                   </div>
                   <div className="inv-sidebar-group">
-                    <p className="eyebrow">Bedrooms</p>
+                    <p className="eyebrow">{t.inv.bedrooms}</p>
                     {[['1', '1+'], ['2', '2+'], ['3', '3+'], ['4', '4+']].map(([v, l]) => (
                       <label key={v} className="inv-check-row">
                         <input
@@ -320,7 +319,7 @@ export default function InvestmentsClient() {
                           checked={villa.minBedrooms === v}
                           onChange={e => setVilla(s => ({ ...s, minBedrooms: e.target.checked ? v : '' }))}
                         />
-                        <span className="inv-check-label">{l} beds</span>
+                        <span className="inv-check-label">{l} {t.inv.beds}</span>
                       </label>
                     ))}
                   </div>
@@ -330,8 +329,8 @@ export default function InvestmentsClient() {
               {(search.type === 'land' || search.type === 'all') && (
                 <>
                   <div className="inv-sidebar-group">
-                    <p className="eyebrow">Utilities</p>
-                    {([['hasWater', 'Water access'], ['hasElectricity', 'Electricity'], ['hasRoad', 'Road access']] as [keyof LandSidebar, string][]).map(([key, label]) => (
+                    <p className="eyebrow">{t.inv.utilities}</p>
+                    {([['hasWater', t.inv.water], ['hasElectricity', t.inv.electricity], ['hasRoad', t.inv.road]] as [keyof LandSidebar, string][]).map(([key, label]) => (
                       <label key={key} className="inv-check-row">
                         <input
                           type="checkbox"
@@ -343,7 +342,7 @@ export default function InvestmentsClient() {
                     ))}
                   </div>
                   <div className="inv-sidebar-group">
-                    <p className="eyebrow">Min area (are)</p>
+                    <p className="eyebrow">{t.inv.minArea}</p>
                     {[['5', '5+'], ['10', '10+'], ['20', '20+'], ['50', '50+']].map(([v, l]) => (
                       <label key={v} className="inv-check-row">
                         <input
@@ -351,12 +350,12 @@ export default function InvestmentsClient() {
                           checked={land.minArea === v}
                           onChange={e => setLand(s => ({ ...s, minArea: e.target.checked ? v : '' }))}
                         />
-                        <span className="inv-check-label">{l} are</span>
+                        <span className="inv-check-label">{l} {t.inv.areSuffix}</span>
                       </label>
                     ))}
                   </div>
                   <div className="inv-sidebar-group">
-                    <p className="eyebrow">Max price / are</p>
+                    <p className="eyebrow">{t.inv.maxPricePerAre}</p>
                     {[['100000000', '100 M IDR'], ['200000000', '200 M IDR'], ['300000000', '300 M IDR']].map(([v, l]) => (
                       <label key={v} className="inv-check-row">
                         <input
@@ -372,7 +371,7 @@ export default function InvestmentsClient() {
               )}
 
               {hasActiveFilters && (
-                <button onClick={resetFilters} className="inv-reset">Reset filters</button>
+                <button onClick={resetFilters} className="inv-reset">{t.inv.resetFilters}</button>
               )}
             </aside>
 
@@ -380,20 +379,20 @@ export default function InvestmentsClient() {
             <div>
               <div className="inv-result-row">
                 <p className="inv-result-count">
-                  {filtered.length} opportunit{filtered.length !== 1 ? 'ies' : 'y'}
-                  {hasActiveFilters && <span> · filtered</span>}
+                  {filtered.length} {filtered.length === 1 ? t.inv.opportunityOne : t.inv.opportunityMany}
+                  {hasActiveFilters && <span> · {t.inv.filtered}</span>}
                 </p>
               </div>
               {filtered.length === 0 ? (
                 <div className="inv-empty">
-                  <p>No opportunities match your criteria.</p>
-                  <button onClick={resetFilters} className="btn-secondary">Reset filters</button>
+                  <p>{t.inv.empty}</p>
+                  <button onClick={resetFilters} className="btn-secondary">{t.inv.resetFilters}</button>
                 </div>
               ) : (
                 <div className="inv-grid">
                   {filtered.map((item, i) => (
                     <Reveal key={item.id} delay={Math.min(i * 60, 400)}>
-                      <InvCard item={item} />
+                      <InvCard item={item} locale={locale} />
                     </Reveal>
                   ))}
                 </div>

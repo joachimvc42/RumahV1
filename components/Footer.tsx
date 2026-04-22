@@ -1,10 +1,33 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useMemo } from 'react';
+import { LOCALES, getDict, type Locale } from '../lib/i18n';
 
 const WA = '6287873487940';
 const EMAIL = 'info@rumahya.com';
 
+function parseLocale(pathname: string | null): { locale: Locale; rest: string } {
+  if (!pathname) return { locale: 'en', rest: '/' };
+  const m = pathname.match(/^\/(fr|es)(\/.*)?$/);
+  if (m) return { locale: m[1] as Locale, rest: m[2] || '/' };
+  return { locale: 'en', rest: pathname };
+}
+
+function prefixFor(locale: Locale, path: string): string {
+  const p = path.startsWith('/') ? path : `/${path}`;
+  if (locale === 'en') return p;
+  return p === '/' ? `/${locale}` : `/${locale}${p}`;
+}
+
 export default function Footer() {
+  const pathname = usePathname();
+  const { locale, rest } = useMemo(() => parseLocale(pathname), [pathname]);
+  const t = getDict(locale);
   const currentYear = new Date().getFullYear();
+
+  const switchTo = (target: Locale) => prefixFor(target, rest);
 
   return (
     <footer className="site-footer">
@@ -12,58 +35,62 @@ export default function Footer() {
         <div className="footer-grid">
           <div className="footer-brand">
             <span className="brand-name">Rumah<span>Ya</span></span>
-            <p className="footer-brand-tag">
-              A local point of contact for long-term living and real estate investment in Lombok.
-              Verified properties, honest terms, on-the-ground coordination.
-            </p>
+            <p className="footer-brand-tag">{t.footer.tagline}</p>
           </div>
 
           <div className="footer-col">
-            <h3>Explore</h3>
+            <h3>{t.footer.explore}</h3>
             <ul>
-              <li><Link href="/">Long-term rentals</Link></li>
-              <li><Link href="/investments">Investments</Link></li>
-              <li><Link href="/about">About</Link></li>
-              <li><Link href="/about#contact">Contact</Link></li>
+              <li><Link href={prefixFor(locale, '/')}>{t.footer.rentalsLink}</Link></li>
+              <li><Link href={prefixFor(locale, '/investments')}>{t.footer.investmentsLink}</Link></li>
+              <li><Link href={prefixFor(locale, '/about')}>{t.footer.aboutLink}</Link></li>
+              <li><Link href={`${prefixFor(locale, '/about')}#contact`}>{t.footer.contactLink}</Link></li>
             </ul>
           </div>
 
           <div className="footer-col">
-            <h3>Contact</h3>
+            <h3>{t.footer.contact}</h3>
             <ul>
               <li>
                 <a href={`https://wa.me/${WA}`} target="_blank" rel="noopener noreferrer">
-                  WhatsApp
+                  {t.footer.whatsapp}
                 </a>
               </li>
               <li>
                 <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
               </li>
-              <li>Lombok, Indonesia</li>
+              <li>{t.footer.location}</li>
             </ul>
           </div>
 
           <div className="footer-col">
-            <h3>Services</h3>
+            <h3>{t.footer.services}</h3>
             <ul>
-              <li>Long-term rentals</li>
-              <li>Legal verification</li>
-              <li>Property management</li>
-              <li>Land &amp; villa investment</li>
+              <li>{t.footer.svcRentals}</li>
+              <li>{t.footer.svcLegal}</li>
+              <li>{t.footer.svcMgmt}</li>
+              <li>{t.footer.svcInvest}</li>
             </ul>
           </div>
         </div>
 
         <div className="footer-bottom">
-          <span>© {currentYear} RumahYa. All rights reserved.</span>
+          <span>© {currentYear} RumahYa. {t.footer.rights}</span>
           <span className="footer-langs">
-            <span>EN</span>
-            <span>·</span>
-            <span>FR</span>
-            <span>·</span>
-            <span>ID</span>
+            {LOCALES.map((l, i) => (
+              <span key={l} className="footer-lang-wrap">
+                {i > 0 && <span className="footer-lang-sep">·</span>}
+                <Link
+                  href={switchTo(l)}
+                  className={`footer-lang ${l === locale ? 'is-active' : ''}`}
+                  hrefLang={l}
+                >
+                  {l.toUpperCase()}
+                </Link>
+              </span>
+            ))}
           </span>
-          <span>Based in Lombok, Indonesia</span>
+          <span>{t.footer.based}</span>
         </div>
       </div>
     </footer>

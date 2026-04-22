@@ -2,15 +2,40 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { LOCALES, getDict, type Locale } from '../lib/i18n';
+
+/**
+ * Detect locale from URL: /fr/* → 'fr', /es/* → 'es', everything else → 'en'.
+ * Returns the locale and the path *without* the locale prefix (always starting with '/').
+ */
+function parseLocale(pathname: string | null): { locale: Locale; rest: string } {
+  if (!pathname) return { locale: 'en', rest: '/' };
+  const m = pathname.match(/^\/(fr|es)(\/.*)?$/);
+  if (m) {
+    const locale = m[1] as Locale;
+    const rest = m[2] || '/';
+    return { locale, rest };
+  }
+  return { locale: 'en', rest: pathname };
+}
+
+function prefixFor(locale: Locale, path: string): string {
+  const p = path.startsWith('/') ? path : `/${path}`;
+  if (locale === 'en') return p;
+  return p === '/' ? `/${locale}` : `/${locale}${p}`;
+}
 
 export default function Header() {
   const pathname = usePathname();
+  const { locale, rest } = useMemo(() => parseLocale(pathname), [pathname]);
+  const t = getDict(locale);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   // isAdmin must default to false so SSR and first client render match;
   // useEffect then promotes it client-side, avoiding hydration mismatch.
   const [isAdmin, setIsAdmin] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
 
   useEffect(() => {
     setIsAdmin(pathname?.startsWith('/admin') ?? false);
@@ -24,14 +49,26 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const isActive = (href: string) =>
-    pathname === href || pathname?.startsWith(href + '/');
+  const homeHref = prefixFor(locale, '/');
+  const investmentsHref = prefixFor(locale, '/investments');
+  const aboutHref = prefixFor(locale, '/about');
+  const contactHref = `${aboutHref}#contact`;
+
+  const isActive = (href: string) => {
+    if (href === homeHref) return rest === '/' || rest === '';
+    const checkRest = href.replace(/^\/(fr|es)/, '') || '/';
+    return rest === checkRest || rest.startsWith(checkRest + '/');
+  };
+
   const closeMenu = () => setMenuOpen(false);
+
+  // Language switcher: swap prefix, keep rest of path
+  const switchTo = (target: Locale): string => prefixFor(target, rest);
 
   return (
     <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
       <div className="container header-inner">
-        <Link href="/" className="brand" onClick={closeMenu}>
+        <Link href={homeHref} className="brand" onClick={closeMenu}>
           <span className="brand-name">Rumah<span>Ya</span></span>
         </Link>
 
@@ -48,33 +85,68 @@ export default function Header() {
           {!isAdmin && (
             <>
               <Link
-                href="/"
-                className={pathname === '/' ? 'nav-link is-active' : 'nav-link'}
+                href={homeHref}
+                className={isActive(homeHref) ? 'nav-link is-active' : 'nav-link'}
                 onClick={closeMenu}
               >
-                Rentals
+                {t.nav.rentals}
               </Link>
               <Link
-                href="/investments"
-                className={isActive('/investments') ? 'nav-link is-active' : 'nav-link'}
+                href={investmentsHref}
+                className={isActive(investmentsHref) ? 'nav-link is-active' : 'nav-link'}
                 onClick={closeMenu}
               >
-                Investments
+                {t.nav.investments}
               </Link>
               <Link
-                href="/about"
-                className={isActive('/about') ? 'nav-link is-active' : 'nav-link'}
+                href={aboutHref}
+                className={isActive(aboutHref) ? 'nav-link is-active' : 'nav-link'}
                 onClick={closeMenu}
               >
-                About
+                {t.nav.about}
               </Link>
               <Link
-                href="/about#contact"
+                href={contactHref}
                 className="nav-cta"
                 onClick={closeMenu}
               >
-                Contact
+                {t.nav.contact}
               </Link>
+
+              {/* Language switcher */}
+              <div
+                className="lang-switcher"
+                onMouseEnter={() => setLangOpen(true)}
+                onMouseLeave={() => setLangOpen(false)}
+              >
+                <button
+                  type="button"
+                  className="lang-trigger"
+                  onClick={() => setLangOpen(v => !v)}
+                  aria-haspopup="listbox"
+                  aria-expanded={langOpen}
+                  aria-label="Language"
+                >
+                  {locale.toUpperCase()}
+                  <span className="lang-caret" aria-hidden>▾</span>
+                </button>
+                {langOpen && (
+                  <ul className="lang-menu" role="listbox">
+                    {LOCALES.map(l => (
+                      <li key={l}>
+                        <Link
+                          href={switchTo(l)}
+                          className={`lang-option ${l === locale ? 'is-active' : ''}`}
+                          onClick={() => { setLangOpen(false); closeMenu(); }}
+                          hrefLang={l}
+                        >
+                          {l.toUpperCase()}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </>
           )}
           {isAdmin && (
@@ -88,7 +160,7 @@ export default function Header() {
               </Link>
               <Link
                 href="/admin/investments"
-                className={isActive('/admin/investments') ? 'nav-link is-active' : 'nav-link'}
+                className={pathname?.startsWith('/admin/investments') ? 'nav-link is-active' : 'nav-link'}
                 onClick={closeMenu}
               >
                 Investments

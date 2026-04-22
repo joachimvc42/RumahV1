@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import { getDict, prefixFor, type Locale } from '../lib/i18n';
 
 /* ─────────── Types ─────────── */
 type RentalRow = {
@@ -74,7 +75,8 @@ function Reveal({ children, delay = 0, as: Tag = 'div' }: { children: React.Reac
 }
 
 /* ─────────── Rental card ─────────── */
-function RentalCard({ rental }: { rental: RentalRow }) {
+function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
+  const t = getDict(locale);
   const images = rental.properties?.images ?? [];
   const [idx, setIdx] = useState(0);
   const [hover, setHover] = useState(false);
@@ -93,7 +95,7 @@ function RentalCard({ rental }: { rental: RentalRow }) {
 
   return (
     <Link
-      href={`/rentals/${p?.id}`}
+      href={prefixFor(locale, `/rentals/${p?.id}`)}
       className="listing-card"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
@@ -111,7 +113,7 @@ function RentalCard({ rental }: { rental: RentalRow }) {
         )) : (
           <div className="listing-img-placeholder">Rumah<em>Ya</em></div>
         )}
-        {rental.legal_checked && <span className="listing-verified">Verified</span>}
+        {rental.legal_checked && <span className="listing-verified">{t.home.verified}</span>}
         {images.length > 1 && (
           <>
             <button onClick={prev} className="listing-arrow listing-arrow-left" aria-label="Previous">‹</button>
@@ -135,23 +137,23 @@ function RentalCard({ rental }: { rental: RentalRow }) {
         <h3 className="listing-title">{p?.title ?? 'Property'}</h3>
 
         <div className="listing-meta">
-          {p?.bedrooms != null && p.bedrooms > 0 && <span>{p.bedrooms} bed{p.bedrooms !== 1 ? 's' : ''}</span>}
-          {p?.bathrooms != null && p.bathrooms > 0 && <span>· {p.bathrooms} bath{p.bathrooms !== 1 ? 's' : ''}</span>}
-          {p?.pool && <span>· Pool</span>}
-          {p?.furnished && <span>· Furnished</span>}
+          {p?.bedrooms != null && p.bedrooms > 0 && <span>{p.bedrooms} {p.bedrooms === 1 ? t.home.bed : t.home.beds}</span>}
+          {p?.bathrooms != null && p.bathrooms > 0 && <span>· {p.bathrooms} {p.bathrooms === 1 ? t.home.bath : t.home.baths}</span>}
+          {p?.pool && <span>· {t.home.chip.pool}</span>}
+          {p?.furnished && <span>· {t.home.chip.furnished}</span>}
         </div>
 
         <div className="listing-price-row">
           <div>
             {rental.monthly_price_idr > 0 && (
-              <p className="listing-price"><span>{fmtIDR(rental.monthly_price_idr)}</span><em> IDR / month</em></p>
+              <p className="listing-price"><span>{fmtIDR(rental.monthly_price_idr)}</span><em> {t.home.perMonth}</em></p>
             )}
             {rental.yearly_price_idr ? (
-              <p className="listing-price-sub">{fmtIDR(rental.yearly_price_idr)} IDR / year</p>
+              <p className="listing-price-sub">{fmtIDR(rental.yearly_price_idr)} {t.home.perYear}</p>
             ) : null}
           </div>
           <div className="listing-duration">
-            {rental.min_duration_months}–{rental.max_duration_months} months
+            {rental.min_duration_months}–{rental.max_duration_months} {t.home.months}
           </div>
         </div>
       </div>
@@ -160,7 +162,8 @@ function RentalCard({ rental }: { rental: RentalRow }) {
 }
 
 /* ─────────── Page ─────────── */
-export default function HomeClient() {
+export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
+  const t = getDict(locale);
   const [rentals, setRentals] = useState<RentalRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -217,18 +220,15 @@ export default function HomeClient() {
       <section className="home-hero">
         <div className="container">
           <Reveal>
-            <p className="eyebrow">Long-term rentals · Lombok</p>
+            <p className="eyebrow">{t.home.heroEyebrow}</p>
           </Reveal>
           <Reveal delay={100}>
             <h1 className="home-hero-title">
-              Verified villas,<br />honest terms,<br /><em>local coordination.</em>
+              {t.home.heroTitleA}<br />{t.home.heroTitleB}<br /><em>{t.home.heroTitleC}</em>
             </h1>
           </Reveal>
           <Reveal delay={200}>
-            <p className="home-hero-lead">
-              From a six-month stay to a ten-year home. We verify the titles, meet the owners,
-              and coordinate every detail on the ground.
-            </p>
+            <p className="home-hero-lead">{t.home.heroLead}</p>
           </Reveal>
         </div>
       </section>
@@ -237,23 +237,23 @@ export default function HomeClient() {
       <div className="container">
         <div className="home-searchbar">
           <div className="home-search-seg">
-            <span className="eyebrow home-search-label">Location</span>
+            <span className="eyebrow home-search-label">{t.home.location}</span>
             <select
               value={filters.location}
               onChange={e => setFilters(f => ({ ...f, location: e.target.value }))}
             >
-              <option value="">All areas</option>
+              <option value="">{t.home.allAreas}</option>
               {locations.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
           </div>
           <div className="home-search-div" />
           <div className="home-search-seg">
-            <span className="eyebrow home-search-label">Max budget</span>
+            <span className="eyebrow home-search-label">{t.home.maxBudget}</span>
             <select
               value={filters.maxPrice}
               onChange={e => setFilters(f => ({ ...f, maxPrice: e.target.value }))}
             >
-              <option value="">All budgets</option>
+              <option value="">{t.home.allBudgets}</option>
               <option value="15000000">15 M IDR / mo</option>
               <option value="25000000">25 M IDR / mo</option>
               <option value="35000000">35 M IDR / mo</option>
@@ -263,12 +263,12 @@ export default function HomeClient() {
           </div>
           <div className="home-search-div" />
           <div className="home-search-seg">
-            <span className="eyebrow home-search-label">Bedrooms</span>
+            <span className="eyebrow home-search-label">{t.home.bedrooms}</span>
             <select
               value={filters.minBeds}
               onChange={e => setFilters(f => ({ ...f, minBeds: e.target.value }))}
             >
-              <option value="">Any</option>
+              <option value="">{t.home.any}</option>
               <option value="1">1+</option>
               <option value="2">2+</option>
               <option value="3">3+</option>
@@ -280,7 +280,7 @@ export default function HomeClient() {
             onClick={() => setFiltersOpen(o => !o)}
             aria-expanded={filtersOpen}
           >
-            {filtersOpen ? 'Hide filters' : 'More filters'}
+            {filtersOpen ? t.home.hideFilters : t.home.moreFilters}
           </button>
         </div>
 
@@ -288,17 +288,17 @@ export default function HomeClient() {
         {filtersOpen && (
           <div className="home-filters-extra">
             <div className="home-filters-group">
-              <p className="eyebrow">Amenities</p>
+              <p className="eyebrow">{t.home.amenities}</p>
               <div className="home-chip-row">
                 {([
-                  ['pool', 'Pool'],
-                  ['garden', 'Garden'],
-                  ['aircon', 'Air conditioning'],
-                  ['furnished', 'Furnished'],
-                  ['kitchen', 'Kitchen'],
-                  ['wifi', 'WiFi'],
-                  ['parking', 'Parking'],
-                  ['privateSpace', 'Private space'],
+                  ['pool', t.home.chip.pool],
+                  ['garden', t.home.chip.garden],
+                  ['aircon', t.home.chip.aircon],
+                  ['furnished', t.home.chip.furnished],
+                  ['kitchen', t.home.chip.kitchen],
+                  ['wifi', t.home.chip.wifi],
+                  ['parking', t.home.chip.parking],
+                  ['privateSpace', t.home.chip.privateSpace],
                 ] as [keyof Filters, string][]).map(([key, label]) => (
                   <button
                     key={key}
@@ -312,7 +312,7 @@ export default function HomeClient() {
               </div>
             </div>
             <div className="home-filters-group">
-              <p className="eyebrow">Bathrooms</p>
+              <p className="eyebrow">{t.home.bathrooms}</p>
               <div className="home-chip-row">
                 {[['1', '1+'], ['2', '2+'], ['3', '3+']].map(([v, l]) => (
                   <button
@@ -332,11 +332,11 @@ export default function HomeClient() {
         {/* Result row */}
         <div className="home-result-row">
           <p className="home-result-count">
-            {loading ? 'Loading…' : `${filtered.length} propert${filtered.length !== 1 ? 'ies' : 'y'}`}
-            {!loading && hasActive && <span> · filtered</span>}
+            {loading ? t.home.loading : `${filtered.length} ${filtered.length === 1 ? t.home.resultOne : t.home.resultMany}`}
+            {!loading && hasActive && <span> · {t.home.filtered}</span>}
           </p>
           {hasActive && (
-            <button onClick={reset} className="text-link" style={{ fontSize: '0.82rem' }}>Reset filters</button>
+            <button onClick={reset} className="text-link" style={{ fontSize: '0.82rem' }}>{t.home.resetFilters}</button>
           )}
         </div>
 
@@ -344,18 +344,18 @@ export default function HomeClient() {
         {loading ? (
           <div className="home-loading">
             <div className="home-spinner" />
-            <span>Loading properties…</span>
+            <span>{t.home.loading}</span>
           </div>
         ) : filtered.length === 0 ? (
           <div className="home-empty">
-            <p>No properties match your criteria.</p>
-            <button onClick={reset} className="btn-secondary">Reset filters</button>
+            <p>{t.home.empty}</p>
+            <button onClick={reset} className="btn-secondary">{t.home.resetFilters}</button>
           </div>
         ) : (
           <div className="home-grid">
             {filtered.map((r, i) => (
               <Reveal key={r.id} delay={Math.min(i * 60, 400)}>
-                <RentalCard rental={r} />
+                <RentalCard rental={r} locale={locale} />
               </Reveal>
             ))}
           </div>
