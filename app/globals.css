@@ -4,36 +4,37 @@
    ============================================================ */
 
 :root {
-    /* Colors — refined minimal luxury */
-    --bg:           #FFFFFF;
-    --bg-warm:      #FAF8F3;
-    --bg-alt:       #F4F1EA;
-    --bg-card:      #FFFFFF;
+    /* Colors — tropical-luxury palette (ivory sable + lagoon turquoise) */
+    --bg:           #F6F1E9;     /* Ivory sable — main background */
+    --bg-warm:      #E8DCCB;     /* Warm beige — section backgrounds */
+    --bg-alt:       #EFE5D4;     /* Intermediate warm tone */
+    --bg-card:      #FFFFFF;     /* Card elevations stay crisp */
 
-    --text:         #0F0F0F;
-    --text-main:    #0F0F0F;
-    --text-muted:   #6B6B6B;
-    --text-subtle:  #9A9A9A;
+    --text:         #2F2A26;     /* Deep brown — headings/body */
+    --text-main:    #2F2A26;
+    --text-muted:   #6F6A64;     /* Stone grey — secondary text */
+    --text-subtle:  #A19C95;
 
-    --border:        #E8E4DB;
-    --border-subtle: #E8E4DB;
-    --border-hover:  #C9C5BB;
+    --border:        #DDD2C0;
+    --border-subtle: #E5DCCC;
+    --border-hover:  #BFB5A3;
 
-    /* Accent — deep refined, used sparingly */
-    --accent:       #1C3A2E;     /* deep green, editorial */
-    --accent-soft:  #EDF1EC;
-    --gold:         #8B7550;     /* warm gold */
-    --gold-soft:    #F4EDE0;
+    /* Accent — lagoon turquoise for CTAs, deep ocean blue for hover/key */
+    --accent:        #2FB7A6;    /* Lagoon turquoise — buttons / CTA */
+    --accent-hover:  #1F4E5F;    /* Deep ocean blue — hover / key elements */
+    --accent-soft:   #E0F3F0;
+    --gold:          #C9A96A;    /* Soft gold — subtle premium detail */
+    --gold-soft:     #F3E8CF;
 
     /* Kept as aliases for backward compat */
-    --primary:       #1C3A2E;
-    --primary-soft:  #EDF1EC;
+    --primary:       #2FB7A6;
+    --primary-soft:  #E0F3F0;
 
-    /* Shadows — extremely subtle */
-    --shadow-sm:   0 1px 2px rgba(15,15,15,0.04);
-    --shadow:      0 4px 20px rgba(15,15,15,0.06);
-    --shadow-lg:   0 24px 48px rgba(15,15,15,0.10);
-    --shadow-soft: 0 4px 20px rgba(15,15,15,0.06);
+    /* Shadows — warm-neutral, extremely subtle */
+    --shadow-sm:   0 1px 2px rgba(47,42,38,0.05);
+    --shadow:      0 4px 20px rgba(47,42,38,0.07);
+    --shadow-lg:   0 24px 48px rgba(47,42,38,0.12);
+    --shadow-soft: 0 4px 20px rgba(47,42,38,0.07);
 
     /* Typography scale */
     --font-sans: var(--font-sans, 'Inter'), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -186,7 +187,7 @@ p {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgba(255,255,255,0.85);
+    background: rgba(246,241,233,0.85);
     backdrop-filter: blur(14px) saturate(1.1);
     -webkit-backdrop-filter: blur(14px) saturate(1.1);
     border-bottom: 1px solid transparent;
@@ -194,9 +195,9 @@ p {
 }
 
 .site-header.is-scrolled {
-    background: rgba(255,255,255,0.96);
+    background: rgba(246,241,233,0.96);
     border-bottom-color: var(--border);
-    box-shadow: 0 1px 0 rgba(15,15,15,0.02), 0 8px 24px rgba(15,15,15,0.04);
+    box-shadow: 0 1px 0 rgba(47,42,38,0.02), 0 8px 24px rgba(47,42,38,0.05);
 }
 
 .header-inner {
@@ -271,7 +272,7 @@ p {
     right: 18px;
     bottom: 2px;
     height: 1px;
-    background: var(--text);
+    background: var(--accent);
 }
 
 /* Dark CTA in header — like Uluwatu's CONTACT button */
@@ -279,7 +280,7 @@ p {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: var(--text);
+    background: var(--accent);
     color: #fff !important;
     padding: 12px 24px;
     font-size: 0.72rem;
@@ -292,7 +293,7 @@ p {
 }
 
 .nav-cta:hover {
-    background: #2a2a2a;
+    background: var(--accent-hover);
     opacity: 1;
 }
 
@@ -443,13 +444,13 @@ p {
 
 .btn-primary,
 .button {
-    background: var(--text);
+    background: var(--accent);
     color: #fff;
 }
 
 .btn-primary:hover,
 .button:hover {
-    background: #2a2a2a;
+    background: var(--accent-hover);
     opacity: 1;
 }
 
@@ -736,7 +737,7 @@ textarea {
 input:focus,
 select:focus,
 textarea:focus {
-    border-color: var(--text);
+    border-color: var(--accent);
 }
 
 .form-group { margin-bottom: 20px; }
@@ -875,8 +876,8 @@ textarea:focus {
 .home-hero {
     padding: clamp(64px, 10vw, 120px) 0 clamp(40px, 6vw, 72px);
     background:
-      radial-gradient(1200px 500px at 15% 0%, rgba(28,58,46,0.05), transparent 60%),
-      radial-gradient(900px 400px at 85% 100%, rgba(139,117,80,0.06), transparent 60%),
+      radial-gradient(1200px 500px at 15% 0%, rgba(47,183,166,0.07), transparent 60%),
+      radial-gradient(900px 400px at 85% 100%, rgba(201,169,106,0.08), transparent 60%),
       var(--bg);
 }
 
@@ -968,7 +969,7 @@ textarea:focus {
     align-self: center;
     margin: 0 8px 0 16px;
     padding: 12px 22px;
-    background: var(--text);
+    background: var(--accent);
     color: #fff;
     border: none;
     border-radius: 2px;
@@ -981,7 +982,7 @@ textarea:focus {
     white-space: nowrap;
 }
 
-.home-filters-toggle:hover { background: #2a2a2a; }
+.home-filters-toggle:hover { background: var(--accent-hover); }
 
 /* Expandable amenity panel */
 .home-filters-extra {
@@ -1016,14 +1017,15 @@ textarea:focus {
 }
 
 .home-chip:hover {
-    border-color: var(--text);
+    border-color: var(--accent);
+    color: var(--accent);
     transform: translateY(-1px);
 }
 
 .home-chip.is-active {
-    background: var(--text);
+    background: var(--accent);
     color: #fff;
-    border-color: var(--text);
+    border-color: var(--accent);
 }
 
 /* Result row */
@@ -1284,7 +1286,8 @@ textarea:focus {
 .about-hero {
     padding: clamp(72px, 10vw, 140px) 0 clamp(48px, 6vw, 80px);
     background:
-      radial-gradient(1200px 500px at 80% 0%, rgba(28,58,46,0.05), transparent 60%),
+      radial-gradient(1200px 500px at 80% 0%, rgba(47,183,166,0.07), transparent 60%),
+      radial-gradient(900px 400px at 10% 100%, rgba(31,78,95,0.05), transparent 65%),
       var(--bg);
 }
 
@@ -1502,7 +1505,7 @@ textarea:focus {
     align-items: center;
     gap: 14px;
     padding: 16px 22px;
-    background: var(--text);
+    background: var(--accent);
     color: #fff !important;
     text-decoration: none;
     border-radius: 2px;
@@ -1510,7 +1513,7 @@ textarea:focus {
 }
 
 .wa-button:hover {
-    background: var(--accent);
+    background: var(--accent-hover);
     opacity: 1;
     transform: translateY(-1px);
 }
@@ -1578,8 +1581,8 @@ textarea:focus {
 .contact-form input:focus,
 .contact-form select:focus,
 .contact-form textarea:focus {
-    border-color: var(--text);
-    box-shadow: 0 0 0 3px rgba(15,15,15,0.04);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(47,183,166,0.15);
 }
 
 .contact-form textarea {
@@ -1679,7 +1682,8 @@ textarea:focus {
 .inv-hero {
     padding: clamp(64px, 9vw, 120px) 0 clamp(32px, 5vw, 60px);
     background:
-      radial-gradient(1000px 420px at 85% 0%, rgba(139,117,80,0.08), transparent 60%),
+      radial-gradient(1000px 420px at 85% 0%, rgba(201,169,106,0.10), transparent 60%),
+      radial-gradient(800px 380px at 10% 100%, rgba(47,183,166,0.06), transparent 65%),
       var(--bg);
 }
 
@@ -1823,9 +1827,9 @@ textarea:focus {
 }
 
 .inv-reset:hover {
-    background: var(--text);
+    background: var(--accent);
     color: #fff;
-    border-color: var(--text);
+    border-color: var(--accent);
 }
 
 /* Result row */
@@ -2132,7 +2136,7 @@ textarea:focus {
 .gallery-thumb:hover { opacity: 1; }
 
 .gallery-thumb.is-active {
-    border-color: var(--text);
+    border-color: var(--accent);
     opacity: 1;
 }
 
@@ -2525,7 +2529,7 @@ textarea:focus {
 .site-footer {
     margin-top: clamp(80px, 10vw, 120px);
     background: var(--text);
-    color: #C9C5BB;
+    color: #D8CEBE;
     padding: clamp(56px, 7vw, 80px) 0 32px;
 }
 
@@ -2553,7 +2557,7 @@ textarea:focus {
     margin: 0;
     font-size: 0.92rem;
     line-height: 1.65;
-    color: #C9C5BB;
+    color: #D8CEBE;
     max-width: 320px;
 }
 
@@ -2577,7 +2581,7 @@ textarea:focus {
 }
 
 .footer-col a {
-    color: #C9C5BB;
+    color: #D8CEBE;
     font-size: 0.9rem;
     text-decoration: none;
     transition: color 0.2s ease;
@@ -2630,7 +2634,7 @@ textarea:focus {
 
 .footer-lang.is-active {
     color: #fff;
-    border-bottom: 1px solid var(--gold, #8B7550);
+    border-bottom: 1px solid var(--gold, #C9A96A);
 }
 
 .footer-lang-sep {
@@ -2661,7 +2665,7 @@ textarea:focus {
 }
 
 .lang-trigger:hover {
-    border-color: var(--accent, #1C3A2E);
+    border-color: var(--accent, #2FB7A6);
     background: rgba(0,0,0,0.02);
 }
 
@@ -2703,13 +2707,13 @@ textarea:focus {
 }
 
 .lang-option:hover {
-    background: var(--bg-warm, #FAF8F3);
-    color: var(--accent, #1C3A2E);
+    background: var(--bg-warm, #E8DCCB);
+    color: var(--accent, #2FB7A6);
 }
 
 .lang-option.is-active {
-    color: var(--accent, #1C3A2E);
-    background: var(--bg-warm, #FAF8F3);
+    color: var(--accent, #2FB7A6);
+    background: var(--bg-warm, #E8DCCB);
     font-weight: 600;
 }
 
