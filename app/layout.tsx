@@ -90,7 +90,7 @@ const organizationJsonLd = {
     '@type': 'ContactPoint',
     telephone: '+62-878-7348-7940',
     contactType: 'customer service',
-    availableLanguage: ['en', 'fr', 'id'],
+    availableLanguage: ['en', 'fr', 'es'],
   },
   sameAs: [],
 };

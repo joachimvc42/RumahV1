@@ -41,6 +41,13 @@ export default function Header() {
     setIsAdmin(pathname?.startsWith('/admin') ?? false);
   }, [pathname]);
 
+  // Sync <html lang> with the current locale (SEO + accessibility)
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = locale;
+    }
+  }, [locale]);
+
   // Subtle header state on scroll — denser shadow + tighter padding
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
