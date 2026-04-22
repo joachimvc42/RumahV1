@@ -59,7 +59,6 @@ export default function Header() {
   const homeHref = prefixFor(locale, '/');
   const investmentsHref = prefixFor(locale, '/investments');
   const aboutHref = prefixFor(locale, '/about');
-  const contactHref = `${aboutHref}#contact`;
 
   const isActive = (href: string) => {
     if (href === homeHref) return rest === '/' || rest === '';
@@ -111,13 +110,6 @@ export default function Header() {
                 onClick={closeMenu}
               >
                 {t.nav.about}
-              </Link>
-              <Link
-                href={contactHref}
-                className="nav-cta"
-                onClick={closeMenu}
-              >
-                {t.nav.contact}
               </Link>
 
               {/* Language switcher */}
