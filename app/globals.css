@@ -1085,21 +1085,6 @@ textarea:focus {
     color: var(--gold);
 }
 
-.listing-verified {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    padding: 6px 12px;
-    background: rgba(255,255,255,0.95);
-    color: var(--text);
-    font-size: 0.66rem;
-    font-weight: 600;
-    letter-spacing: var(--tracking-wide);
-    text-transform: uppercase;
-    border-radius: 2px;
-    backdrop-filter: blur(6px);
-}
-
 .listing-arrow {
     position: absolute;
     top: 50%;

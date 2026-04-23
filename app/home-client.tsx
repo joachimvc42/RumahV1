@@ -112,7 +112,6 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
         )) : (
           <div className="listing-img-placeholder">Rumah<em>Ya</em></div>
         )}
-        {rental.legal_checked && <span className="listing-verified">{t.home.verified}</span>}
         {images.length > 1 && (
           <>
             <button onClick={prev} className="listing-arrow listing-arrow-left" aria-label="Previous">‹</button>

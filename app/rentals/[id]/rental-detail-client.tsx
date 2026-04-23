@@ -197,9 +197,6 @@ export default function RentalDetailClient({ locale = 'en' }: { locale?: Locale 
 
         {/* Details */}
         <div className="detail-body">
-          <div className="detail-badges">
-            {rental.legal_checked && <span className="detail-badge detail-badge-verified">{t.detail.badgeVerified}</span>}
-          </div>
           <h1 className="detail-title">{p.title}</h1>
           <p className="detail-location">{p.location || 'Lombok'}</p>
 
