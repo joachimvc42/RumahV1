@@ -29,12 +29,11 @@ export default function Footer() {
   return (
     <footer className="site-footer">
       <div className="container">
-        <div className="footer-brand">
-          <span className="brand-name">Rumah<span>Ya</span></span>
-        </div>
-
         <div className="footer-bottom">
-          <span>© {currentYear} RumahYa. {t.footer.rights}</span>
+          <span className="footer-brand-inline">
+            <span className="brand-name">Rumah<span>Ya</span></span>
+          </span>
+          <span>© {currentYear} · {t.footer.rights}</span>
           <span className="footer-langs">
             {LOCALES.map((l, i) => (
               <span key={l} className="footer-lang-wrap">

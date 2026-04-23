@@ -58,6 +58,7 @@ export default function Header() {
 
   const homeHref = prefixFor(locale, '/');
   const investmentsHref = prefixFor(locale, '/investments');
+  const mapHref = prefixFor(locale, '/map');
   const aboutHref = prefixFor(locale, '/about');
 
   const isActive = (href: string) => {
@@ -103,6 +104,13 @@ export default function Header() {
                 onClick={closeMenu}
               >
                 {t.nav.investments}
+              </Link>
+              <Link
+                href={mapHref}
+                className={isActive(mapHref) ? 'nav-link is-active' : 'nav-link'}
+                onClick={closeMenu}
+              >
+                {t.nav.map}
               </Link>
               <Link
                 href={aboutHref}

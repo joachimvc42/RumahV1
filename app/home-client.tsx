@@ -221,23 +221,6 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
 
   return (
     <main>
-      {/* ── Hero ── */}
-      <section className="home-hero">
-        <div className="container">
-          <Reveal>
-            <p className="eyebrow">{t.home.heroEyebrow}</p>
-          </Reveal>
-          <Reveal delay={100}>
-            <h1 className="home-hero-title">
-              {t.home.heroTitleA}<br />{t.home.heroTitleB}<br /><em>{t.home.heroTitleC}</em>
-            </h1>
-          </Reveal>
-          <Reveal delay={200}>
-            <p className="home-hero-lead">{t.home.heroLead}</p>
-          </Reveal>
-        </div>
-      </section>
-
       {/* ── Search bar ── */}
       <div className="container">
         <div className="home-searchbar">
