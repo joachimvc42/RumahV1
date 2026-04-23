@@ -5,9 +5,6 @@ import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 import { LOCALES, getDict, type Locale } from '../lib/i18n';
 
-const WA = '6287873487940';
-const EMAIL = 'info@rumahya.com';
-
 function parseLocale(pathname: string | null): { locale: Locale; rest: string } {
   if (!pathname) return { locale: 'en', rest: '/' };
   const m = pathname.match(/^\/(fr|es)(\/.*)?$/);
@@ -32,46 +29,8 @@ export default function Footer() {
   return (
     <footer className="site-footer">
       <div className="container">
-        <div className="footer-grid">
-          <div className="footer-brand">
-            <span className="brand-name">Rumah<span>Ya</span></span>
-            <p className="footer-brand-tag">{t.footer.tagline}</p>
-          </div>
-
-          <div className="footer-col">
-            <h3>{t.footer.explore}</h3>
-            <ul>
-              <li><Link href={prefixFor(locale, '/')}>{t.footer.rentalsLink}</Link></li>
-              <li><Link href={prefixFor(locale, '/investments')}>{t.footer.investmentsLink}</Link></li>
-              <li><Link href={prefixFor(locale, '/about')}>{t.footer.aboutLink}</Link></li>
-              <li><Link href={`${prefixFor(locale, '/about')}#contact`}>{t.footer.contactLink}</Link></li>
-            </ul>
-          </div>
-
-          <div className="footer-col">
-            <h3>{t.footer.contact}</h3>
-            <ul>
-              <li>
-                <a href={`https://wa.me/${WA}`} target="_blank" rel="noopener noreferrer">
-                  {t.footer.whatsapp}
-                </a>
-              </li>
-              <li>
-                <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
-              </li>
-              <li>{t.footer.location}</li>
-            </ul>
-          </div>
-
-          <div className="footer-col">
-            <h3>{t.footer.services}</h3>
-            <ul>
-              <li>{t.footer.svcRentals}</li>
-              <li>{t.footer.svcLegal}</li>
-              <li>{t.footer.svcMgmt}</li>
-              <li>{t.footer.svcInvest}</li>
-            </ul>
-          </div>
+        <div className="footer-brand">
+          <span className="brand-name">Rumah<span>Ya</span></span>
         </div>
 
         <div className="footer-bottom">

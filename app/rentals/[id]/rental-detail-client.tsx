@@ -22,9 +22,9 @@ type PropertyData = {
 };
 
 type RentalData = {
-  id: string; min_duration_months: number; max_duration_months: number;
+  id: string; min_duration_months: number | null; max_duration_months: number | null;
   monthly_price_idr: number; yearly_price_idr?: number | null;
-  upfront_months: number; upfront_amount_idr?: number | null; legal_checked: boolean;
+  payment_terms?: string | null; legal_checked: boolean;
   available_from: string | null; available_to: string | null;
   properties: PropertyData | null;
 };
@@ -53,11 +53,11 @@ export default function RentalDetailClient({ locale = 'en' }: { locale?: Locale 
   useEffect(() => {
     const load = async () => {
       let { data } = await supabase.from('long_term_rentals')
-        .select(`*, yearly_price_idr, upfront_amount_idr, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, kitchen, private_space, images, videos, status, latitude, longitude)`)
+        .select(`*, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, kitchen, private_space, images, videos, status, latitude, longitude)`)
         .eq('property_id', id).single();
       if (!data) {
         const res = await supabase.from('long_term_rentals')
-          .select(`*, yearly_price_idr, upfront_amount_idr, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, kitchen, private_space, images, videos, status, latitude, longitude)`)
+          .select(`*, properties (id, title, description, location, bedrooms, bathrooms, built_area, land_area, pool, garden, furnished, aircon, wifi, parking, kitchen, private_space, images, videos, status, latitude, longitude)`)
           .eq('id', id).single();
         data = res.data;
       }
@@ -214,12 +214,22 @@ export default function RentalDetailClient({ locale = 'en' }: { locale?: Locale 
                 <span>{t.detail.perYear}</span>
               </div>
             )}
-            <p className="detail-price-meta">
-              {rental.min_duration_months}–{rental.max_duration_months} {t.detail.months}
-              {rental.upfront_amount_idr && rental.upfront_amount_idr > 0
-                ? ` · ${fmtIDR(rental.upfront_amount_idr)} ${t.detail.upfrontAmount}`
-                : rental.upfront_months > 0 ? ` · ${rental.upfront_months} ${t.detail.upfrontMonthsSuffix}` : ''}
-            </p>
+            {(() => {
+              const min = rental.min_duration_months ?? 0;
+              const max = rental.max_duration_months ?? 0;
+              let durationText = '';
+              if (min > 0 && max > 0) durationText = `${min}–${max} ${t.detail.months}`;
+              else if (min > 0) durationText = `${min}+ ${t.detail.months}`;
+              else if (max > 0) durationText = `≤ ${max} ${t.detail.months}`;
+              if (!durationText) return null;
+              return <p className="detail-price-meta">{durationText}</p>;
+            })()}
+            {rental.payment_terms && rental.payment_terms.trim() && (
+              <p className="detail-price-terms">
+                <span className="detail-price-terms-label">{t.detail.paymentTerms}</span>
+                <span className="detail-price-terms-value">{rental.payment_terms}</span>
+              </p>
+            )}
             {(rental.available_from || rental.available_to) && (
               <p className="detail-price-avail">
                 {rental.available_from && !rental.available_to && `${t.detail.availableFrom} ${new Date(rental.available_from).toLocaleDateString(localeForDate)}`}

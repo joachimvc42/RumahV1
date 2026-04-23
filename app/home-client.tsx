@@ -8,13 +8,12 @@ import { getDict, prefixFor, type Locale } from '../lib/i18n';
 /* ─────────── Types ─────────── */
 type RentalRow = {
   id: string;
-  min_duration_months: number;
-  max_duration_months: number;
+  min_duration_months: number | null;
+  max_duration_months: number | null;
   monthly_price_idr: number;
   monthly_price_usd?: number | null;
   yearly_price_idr?: number | null;
-  upfront_months: number;
-  upfront_amount_idr?: number | null;
+  payment_terms?: string | null;
   legal_checked: boolean;
   available_from: string | null;
   available_to?: string | null;
@@ -152,9 +151,15 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
               <p className="listing-price-sub">{fmtIDR(rental.yearly_price_idr)} {t.home.perYear}</p>
             ) : null}
           </div>
-          <div className="listing-duration">
-            {rental.min_duration_months}–{rental.max_duration_months} {t.home.months}
-          </div>
+          {((rental.min_duration_months ?? 0) > 0 || (rental.max_duration_months ?? 0) > 0) && (
+            <div className="listing-duration">
+              {(rental.min_duration_months ?? 0) > 0 && (rental.max_duration_months ?? 0) > 0
+                ? `${rental.min_duration_months}–${rental.max_duration_months}`
+                : (rental.min_duration_months ?? 0) > 0
+                  ? `${rental.min_duration_months}+`
+                  : `≤ ${rental.max_duration_months}`} {t.home.months}
+            </div>
+          )}
         </div>
       </div>
     </Link>
@@ -176,7 +181,7 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
 
   useEffect(() => {
     supabase.from('long_term_rentals')
-      .select(`id, min_duration_months, max_duration_months, monthly_price_idr, yearly_price_idr, upfront_months, upfront_amount_idr, legal_checked, available_from, available_to,
+      .select(`id, min_duration_months, max_duration_months, monthly_price_idr, yearly_price_idr, legal_checked, available_from, available_to,
         properties (id, title, description, location, bedrooms, bathrooms, pool, garden, furnished, aircon, wifi, parking, private_space, kitchen, images, status, latitude, longitude)`)
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {

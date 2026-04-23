@@ -7,12 +7,11 @@ import { getStatusLabel, getStatusColor, normalizeStatus, type PropertyStatus } 
 
 type RentalRow = {
   id: string;
-  min_duration_months: number;
-  max_duration_months: number;
+  min_duration_months: number | null;
+  max_duration_months: number | null;
   monthly_price_idr: number;
   yearly_price_idr: number | null;
-  upfront_months: number;
-  upfront_amount_idr: number | null;
+  payment_terms: string | null;
   legal_checked: boolean;
   available_from: string | null;
   available_to: string | null;
@@ -46,17 +45,7 @@ export default function AdminHomePage() {
       const { data, error } = await supabase
         .from('long_term_rentals')
         .select(`
-          id,
-          min_duration_months,
-          max_duration_months,
-          monthly_price_idr,
-          yearly_price_idr,
-          upfront_months,
-          upfront_amount_idr,
-          legal_checked,
-          available_from,
-          available_to,
-          created_at,
+          *,
           properties (
             id,
             title,
@@ -207,19 +196,25 @@ export default function AdminHomePage() {
                   )}
                   {rental.yearly_price_idr && (
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginTop: 2 }}>
-                      <span style={{ ...styles.price, fontSize: 15, color: '#1F4E5F' }}>{fmtIDR(rental.yearly_price_idr)}</span>
+                      <span style={{ ...styles.price, fontSize: 15, color: '#4F7D75' }}>{fmtIDR(rental.yearly_price_idr)}</span>
                       <span style={styles.perMonth}>/year</span>
                     </div>
                   )}
                 </div>
 
                 {/* Duration */}
-                <p style={styles.duration}>
-                  {rental.min_duration_months}–{rental.max_duration_months} months
-                  {rental.upfront_amount_idr && rental.upfront_amount_idr > 0
-                    ? ` • ${fmtIDR(rental.upfront_amount_idr)} upfront`
-                    : rental.upfront_months > 0 ? ` • ${rental.upfront_months} months upfront` : ''}
-                </p>
+                {((rental.min_duration_months ?? 0) > 0 || (rental.max_duration_months ?? 0) > 0) && (
+                  <p style={styles.duration}>
+                    {(rental.min_duration_months ?? 0) > 0 && (rental.max_duration_months ?? 0) > 0
+                      ? `${rental.min_duration_months}–${rental.max_duration_months} months`
+                      : (rental.min_duration_months ?? 0) > 0
+                        ? `${rental.min_duration_months}+ months`
+                        : `≤ ${rental.max_duration_months} months`}
+                  </p>
+                )}
+                {rental.payment_terms && rental.payment_terms.trim() && (
+                  <p style={styles.paymentTerms}>💬 {rental.payment_terms}</p>
+                )}
 
                 {/* Internal ref badge */}
                 {rental.properties?.internal_ref && (
@@ -405,7 +400,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: '#6b7280',
     fontSize: 13,
     margin: 0,
-    marginBottom: 16,
+    marginBottom: 8,
+  },
+  paymentTerms: {
+    color: '#4b5563',
+    fontSize: 12,
+    margin: 0,
+    marginBottom: 12,
+    fontStyle: 'italic',
+    lineHeight: 1.4,
   },
   actions: {
     display: 'flex',

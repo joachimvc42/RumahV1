@@ -48,7 +48,7 @@ export default function EditRentalPage() {
   const [internalRef, setInternalRef] = useState('');
   const [minDuration, setMinDuration] = useState('');
   const [maxDuration, setMaxDuration] = useState('');
-  const [upfrontAmount, setUpfrontAmount] = useState('');
+  const [paymentTerms, setPaymentTerms] = useState('');
   const [availableFrom, setAvailableFrom] = useState('');
   const [availableTo, setAvailableTo] = useState('');
   const [legalChecked, setLegalChecked] = useState(false);
@@ -76,7 +76,7 @@ export default function EditRentalPage() {
       setYearlyPrice(String(data.yearly_price_idr || ''));
       setMinDuration(String(data.min_duration_months || ''));
       setMaxDuration(String(data.max_duration_months || ''));
-      setUpfrontAmount(data.upfront_amount_idr ? String(data.upfront_amount_idr / 1_000_000) : '');
+      setPaymentTerms(data.payment_terms || '');
       setAvailableFrom(data.available_from || '');
       setAvailableTo(data.available_to || '');
       setLegalChecked(data.legal_checked || false);
@@ -229,16 +229,21 @@ export default function EditRentalPage() {
         internal_ref: internalRef || null,
       }).eq('id', propertyId);
 
-      await supabase.from('long_term_rentals').update({
+      const rentalUpdate: Record<string, any> = {
         monthly_price_idr: monthlyPrice ? Number(monthlyPrice) : null,
         yearly_price_idr: yearlyPrice ? Number(yearlyPrice) : null,
-        min_duration_months: Number(minDuration),
-        max_duration_months: Number(maxDuration),
-        upfront_amount_idr: upfrontAmount ? Number(upfrontAmount) * 1_000_000 : null,
+        min_duration_months: minDuration ? Number(minDuration) : null,
+        max_duration_months: maxDuration ? Number(maxDuration) : null,
+        payment_terms: paymentTerms.trim() || null,
         available_from: availableFrom || null,
         available_to: availableTo || null,
         legal_checked: legalChecked,
-      }).eq('id', id);
+      };
+      let { error: updErr } = await supabase.from('long_term_rentals').update(rentalUpdate).eq('id', id);
+      if (updErr && /payment_terms/i.test(updErr.message || '')) {
+        delete rentalUpdate.payment_terms;
+        await supabase.from('long_term_rentals').update(rentalUpdate).eq('id', id);
+      }
 
       router.push('/admin');
     } catch (err: any) {
@@ -293,14 +298,24 @@ export default function EditRentalPage() {
         {/* ── Rental terms ── */}
         <section style={s.section}>
           <h2 style={s.sectionTitle}>💰 Rental conditions</h2>
-          <div style={s.grid3}>
+          <div style={s.grid2}>
             <div style={s.field}><label style={s.label}>Monthly price (IDR)</label><input style={s.input} type="number" value={monthlyPrice} onChange={e => setMonthlyPrice(e.target.value)} placeholder="Optional if yearly set" /></div>
             <div style={s.field}><label style={s.label}>Yearly price (IDR)</label><input style={s.input} type="number" value={yearlyPrice} onChange={e => setYearlyPrice(e.target.value)} placeholder="Optional if monthly set" /></div>
-            <div style={s.field}><label style={s.label}>Upfront payment required (IDR millions)</label><input style={s.input} type="number" value={upfrontAmount} onChange={e => setUpfrontAmount(e.target.value)} min="0" step="0.5" placeholder="Ex: 6 = 6 000 000 IDR" /></div>
+          </div>
+          <div style={s.field}>
+            <label style={s.label}>Payment terms (free text)</label>
+            <textarea
+              style={s.textarea}
+              value={paymentTerms}
+              onChange={e => setPaymentTerms(e.target.value)}
+              rows={3}
+              placeholder="Ex: 5-year lease — 2 years paid upfront, then annual · or: 1 month upfront · leave empty if standard"
+            />
+            <span style={s.hint}>Free text describing how and when the tenant must pay. Leave empty to hide this line on the listing.</span>
           </div>
           <div style={s.grid3}>
-            <div style={s.field}><label style={s.label}>Min duration (months)</label><input style={s.input} type="number" value={minDuration} onChange={e => setMinDuration(e.target.value)} /></div>
-            <div style={s.field}><label style={s.label}>Max duration (months)</label><input style={s.input} type="number" value={maxDuration} onChange={e => setMaxDuration(e.target.value)} /></div>
+            <div style={s.field}><label style={s.label}>Min duration (months) <span style={s.optional}>— optional</span></label><input style={s.input} type="number" value={minDuration} onChange={e => setMinDuration(e.target.value)} placeholder="Leave empty to hide" /></div>
+            <div style={s.field}><label style={s.label}>Max duration (months) <span style={s.optional}>— optional</span></label><input style={s.input} type="number" value={maxDuration} onChange={e => setMaxDuration(e.target.value)} placeholder="Leave empty to hide" /></div>
             <div style={s.field}><label style={s.label}>Available from</label><input style={s.input} type="date" value={availableFrom} onChange={e => setAvailableFrom(e.target.value)} /></div>
           </div>
           <div style={s.grid3}>
@@ -402,6 +417,8 @@ const s: { [key: string]: React.CSSProperties } = {
   grid4: { display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 16 },
   field: { display: 'flex', flexDirection: 'column', gap: 6 },
   label: { fontSize: 13, fontWeight: 600, color: '#4b5563' },
+  optional: { fontWeight: 400, color: '#9ca3af', fontSize: 12 },
+  hint: { fontSize: 12, color: '#6b7280', marginTop: 4 },
   input: { padding: '12px 14px', borderRadius: 10, border: '2px solid #e5e7eb', fontSize: 15, outline: 'none' },
   textarea: { padding: '12px 14px', borderRadius: 10, border: '2px solid #e5e7eb', fontSize: 15, resize: 'vertical' as const, fontFamily: 'inherit' },
   amenities: { display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 16 },
