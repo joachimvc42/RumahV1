@@ -221,6 +221,16 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
 
   return (
     <main>
+      <section className="page-title">
+        <div className="container">
+          <Reveal>
+            <h1 className="page-title-h">
+              {t.home.heroTitleA} <em>{t.home.heroTitleB.replace(/,\s*$/, '')}</em>
+            </h1>
+          </Reveal>
+        </div>
+      </section>
+
       {/* ── Search bar ── */}
       <div className="container">
         <div className="home-searchbar">

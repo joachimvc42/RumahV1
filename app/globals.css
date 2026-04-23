@@ -830,39 +830,26 @@ textarea:focus {
    HOME (rentals listing) — premium editorial
    ============================================================ */
 
-.home-hero {
-    padding: clamp(64px, 10vw, 120px) 0 clamp(40px, 6vw, 72px);
-    background:
-      radial-gradient(1200px 500px at 15% 0%, rgba(126,176,167,0.08), transparent 60%),
-      radial-gradient(900px 400px at 85% 100%, rgba(196,172,125,0.07), transparent 60%),
-      var(--bg);
+/* Shared slim title used above search bars on /, /investments */
+.page-title {
+    padding: clamp(40px, 6vw, 72px) 0 clamp(8px, 1.5vw, 16px);
 }
 
-.home-hero .eyebrow { margin-bottom: 20px; }
-
-.home-hero-title {
+.page-title-h {
     font-family: var(--font-display);
-    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    font-size: clamp(1.9rem, 3.6vw, 2.8rem);
     font-weight: 400;
-    line-height: 1.02;
-    letter-spacing: -0.025em;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
     color: var(--text);
-    margin: 0 0 28px;
-    max-width: 960px;
+    margin: 0;
+    max-width: 900px;
 }
 
-.home-hero-title em {
+.page-title-h em {
     font-style: italic;
     color: var(--accent);
     font-weight: 400;
-}
-
-.home-hero-lead {
-    font-size: clamp(1.02rem, 1.2vw, 1.18rem);
-    line-height: 1.65;
-    color: var(--text-muted);
-    max-width: 620px;
-    margin: 0;
 }
 
 /* ── Search bar ── */
@@ -1626,7 +1613,7 @@ textarea:focus {
 }
 
 @media (max-width: 600px) {
-    .home-hero-title { font-size: 2.2rem; }
+    .page-title-h { font-size: 1.7rem; }
     .about-hero-headline { font-size: 2rem; }
     .listing-body { padding: 16px 2px 4px; }
     .listing-title { font-size: 1.2rem; }
@@ -1635,39 +1622,6 @@ textarea:focus {
 /* ============================================================
    INVESTMENTS page — premium editorial listing
    ============================================================ */
-
-.inv-hero {
-    padding: clamp(64px, 9vw, 120px) 0 clamp(32px, 5vw, 60px);
-    background:
-      radial-gradient(1000px 420px at 85% 0%, rgba(196,172,125,0.10), transparent 60%),
-      radial-gradient(800px 380px at 10% 100%, rgba(126,176,167,0.07), transparent 65%),
-      var(--bg);
-}
-
-.inv-hero-title {
-    font-family: var(--font-display);
-    font-size: clamp(2.4rem, 6vw, 4.4rem);
-    font-weight: 400;
-    line-height: 1.02;
-    letter-spacing: -0.025em;
-    color: var(--text);
-    margin: 0 0 20px;
-    max-width: 900px;
-}
-
-.inv-hero-title em {
-    font-style: italic;
-    color: var(--gold);
-    font-weight: 400;
-}
-
-.inv-hero-lead {
-    font-size: clamp(1rem, 1.15vw, 1.15rem);
-    line-height: 1.7;
-    color: var(--text-muted);
-    max-width: 640px;
-    margin: 0;
-}
 
 /* Search bar — shared with home but namespaced */
 .inv-searchbar {

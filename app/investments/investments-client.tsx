@@ -240,18 +240,12 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
 
   return (
     <main>
-      <section className="inv-hero">
+      <section className="page-title">
         <div className="container">
           <Reveal>
-            <p className="eyebrow" style={{ marginBottom: 20 }}>{t.inv.heroEyebrow}</p>
-          </Reveal>
-          <Reveal delay={100}>
-            <h1 className="inv-hero-title">
-              {t.inv.heroTitleA}<br /><em>{t.inv.heroTitleB}</em><br />{t.inv.heroTitleC}
+            <h1 className="page-title-h">
+              {t.inv.heroTitleA} <em>{t.inv.heroTitleB.replace(/,\s*$/, '')}</em>
             </h1>
-          </Reveal>
-          <Reveal delay={200}>
-            <p className="inv-hero-lead">{t.inv.heroLead}</p>
           </Reveal>
         </div>
       </section>
