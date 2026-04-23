@@ -14,7 +14,10 @@ import { IDR_PER_USD, toMillions, fmtIDR, fmtUSD } from '../../lib/priceUtils';
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const LOMBOK_CENTER = { lat: -8.65, lng: 116.32 };
-const MAP_LIBRARIES: ('places')[] = [];
+// Must match the `libraries` array used by MapPicker and MapView — the
+// @react-google-maps/api loader is a singleton and throws if re-initialized
+// with different options.
+const MAP_LIBRARIES: ('places')[] = ['places'];
 
 type Category = 'rental' | 'villa-sale' | 'land-sale';
 type Tenure = 'freehold' | 'leasehold';

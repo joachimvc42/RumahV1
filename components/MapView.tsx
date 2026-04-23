@@ -10,13 +10,15 @@ export type MapViewProps = {
 };
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+// Must match MapPicker / map-client — singleton loader throws on mismatch.
+const LIBRARIES: ('places')[] = ['places'];
 
 export default function MapView({ lat, lng, title }: MapViewProps) {
   const [infoOpen, setInfoOpen] = useState(true);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: API_KEY ?? '',
-    libraries: [],
+    libraries: LIBRARIES,
   });
 
   const handleMarkerClick = useCallback(() => setInfoOpen(o => !o), []);
