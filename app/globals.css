@@ -2983,3 +2983,47 @@ textarea:focus {
         left: 12px;
     }
 }
+
+/* ============================================================
+   Mobile polish — iOS auto-zoom guards, bigger touch targets
+   ============================================================ */
+@media (max-width: 768px) {
+    /* iOS zooms any form field whose font-size is below 16px when focused.
+       Force 16px across every interactive field on mobile. */
+    input, select, textarea,
+    .inv-search-seg select {
+        font-size: 16px !important;
+    }
+
+    /* Make the whole search segment a tap target, not just the tiny select. */
+    .inv-search-seg {
+        padding: 14px 16px !important;
+        min-height: 56px;
+    }
+    .inv-search-seg select { width: 100%; }
+
+    /* Always-visible carousel arrows on touch devices (no hover state). */
+    .listing-arrow {
+        opacity: 1;
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+    }
+
+    /* Slightly larger dots so they're easier to see. */
+    .listing-dot { width: 7px; height: 7px; }
+
+    /* Give checkboxes a comfortable hit area. */
+    .inv-check-row {
+        padding: 12px 0;
+        min-height: 44px;
+    }
+    .inv-check-row input {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Tighten listing meta so long rows don't wrap awkwardly. */
+    .listing-meta { font-size: 0.86rem; }
+    .listing-title { font-size: 1.1rem; }
+}
