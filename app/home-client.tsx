@@ -170,7 +170,6 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
   const t = getDict(locale);
   const [rentals, setRentals] = useState<RentalRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filtersOpen, setFiltersOpen] = useState(false);
   const [filters, setFilters] = useState<Filters>({
     location: '', minBeds: '', minBaths: '', maxPrice: '',
     pool: false, garden: false, aircon: false,
@@ -230,11 +229,11 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
         </div>
       </section>
 
-      {/* ── Search bar ── */}
       <div className="container">
-        <div className="home-searchbar">
-          <div className="home-search-seg">
-            <span className="eyebrow home-search-label">{t.home.location}</span>
+        {/* Top quick search */}
+        <div className="inv-searchbar">
+          <div className="inv-search-seg">
+            <span className="eyebrow inv-search-label">{t.home.location}</span>
             <select
               value={filters.location}
               onChange={e => setFilters(f => ({ ...f, location: e.target.value }))}
@@ -243,9 +242,9 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
               {locations.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
           </div>
-          <div className="home-search-div" />
-          <div className="home-search-seg">
-            <span className="eyebrow home-search-label">{t.home.maxBudget}</span>
+          <div className="inv-search-div" />
+          <div className="inv-search-seg">
+            <span className="eyebrow inv-search-label">{t.home.maxBudget}</span>
             <select
               value={filters.maxPrice}
               onChange={e => setFilters(f => ({ ...f, maxPrice: e.target.value }))}
@@ -258,9 +257,9 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
               <option value="75000000">75 M IDR / mo</option>
             </select>
           </div>
-          <div className="home-search-div" />
-          <div className="home-search-seg">
-            <span className="eyebrow home-search-label">{t.home.bedrooms}</span>
+          <div className="inv-search-div" />
+          <div className="inv-search-seg">
+            <span className="eyebrow inv-search-label">{t.home.bedrooms}</span>
             <select
               value={filters.minBeds}
               onChange={e => setFilters(f => ({ ...f, minBeds: e.target.value }))}
@@ -272,21 +271,19 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
               <option value="4">4+</option>
             </select>
           </div>
-          <button
-            className="home-filters-toggle"
-            onClick={() => setFiltersOpen(o => !o)}
-            aria-expanded={filtersOpen}
-          >
-            {filtersOpen ? t.home.hideFilters : t.home.moreFilters}
-          </button>
         </div>
 
-        {/* Expandable extra filters */}
-        {filtersOpen && (
-          <div className="home-filters-extra">
-            <div className="home-filters-group">
-              <p className="eyebrow">{t.home.amenities}</p>
-              <div className="home-chip-row">
+        {loading ? (
+          <div className="home-loading">
+            <div className="home-spinner" />
+            <span>{t.home.loading}</span>
+          </div>
+        ) : (
+          <div className="inv-layout">
+            {/* Sidebar filters */}
+            <aside className="inv-sidebar">
+              <div className="inv-sidebar-group">
+                <p className="eyebrow">{t.home.amenities}</p>
                 {([
                   ['pool', t.home.chip.pool],
                   ['garden', t.home.chip.garden],
@@ -297,64 +294,59 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
                   ['parking', t.home.chip.parking],
                   ['privateSpace', t.home.chip.privateSpace],
                 ] as [keyof Filters, string][]).map(([key, label]) => (
-                  <button
-                    key={key}
-                    type="button"
-                    className={`home-chip ${filters[key] ? 'is-active' : ''}`}
-                    onClick={() => setFilters(f => ({ ...f, [key]: !(f[key] as boolean) }))}
-                  >
-                    {label}
-                  </button>
+                  <label key={key} className="inv-check-row">
+                    <input
+                      type="checkbox"
+                      checked={filters[key] as boolean}
+                      onChange={e => setFilters(f => ({ ...f, [key]: e.target.checked }))}
+                    />
+                    <span className="inv-check-label">{label}</span>
+                  </label>
                 ))}
               </div>
-            </div>
-            <div className="home-filters-group">
-              <p className="eyebrow">{t.home.bathrooms}</p>
-              <div className="home-chip-row">
+
+              <div className="inv-sidebar-group">
+                <p className="eyebrow">{t.home.bathrooms}</p>
                 {[['1', '1+'], ['2', '2+'], ['3', '3+']].map(([v, l]) => (
-                  <button
-                    key={v}
-                    type="button"
-                    className={`home-chip ${filters.minBaths === v ? 'is-active' : ''}`}
-                    onClick={() => setFilters(f => ({ ...f, minBaths: f.minBaths === v ? '' : v }))}
-                  >
-                    {l}
-                  </button>
+                  <label key={v} className="inv-check-row">
+                    <input
+                      type="checkbox"
+                      checked={filters.minBaths === v}
+                      onChange={e => setFilters(f => ({ ...f, minBaths: e.target.checked ? v : '' }))}
+                    />
+                    <span className="inv-check-label">{l} {t.home.baths}</span>
+                  </label>
                 ))}
               </div>
+
+              {hasActive && (
+                <button onClick={reset} className="inv-reset">{t.home.resetFilters}</button>
+              )}
+            </aside>
+
+            {/* Grid */}
+            <div>
+              <div className="inv-result-row">
+                <p className="inv-result-count">
+                  {filtered.length} {filtered.length === 1 ? t.home.resultOne : t.home.resultMany}
+                  {hasActive && <span> · {t.home.filtered}</span>}
+                </p>
+              </div>
+              {filtered.length === 0 ? (
+                <div className="inv-empty">
+                  <p>{t.home.empty}</p>
+                  <button onClick={reset} className="btn-secondary">{t.home.resetFilters}</button>
+                </div>
+              ) : (
+                <div className="home-grid">
+                  {filtered.map((r, i) => (
+                    <Reveal key={r.id} delay={Math.min(i * 60, 400)}>
+                      <RentalCard rental={r} locale={locale} />
+                    </Reveal>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        )}
-
-        {/* Result row */}
-        <div className="home-result-row">
-          <p className="home-result-count">
-            {loading ? t.home.loading : `${filtered.length} ${filtered.length === 1 ? t.home.resultOne : t.home.resultMany}`}
-            {!loading && hasActive && <span> · {t.home.filtered}</span>}
-          </p>
-          {hasActive && (
-            <button onClick={reset} className="text-link" style={{ fontSize: '0.82rem' }}>{t.home.resetFilters}</button>
-          )}
-        </div>
-
-        {/* Grid */}
-        {loading ? (
-          <div className="home-loading">
-            <div className="home-spinner" />
-            <span>{t.home.loading}</span>
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="home-empty">
-            <p>{t.home.empty}</p>
-            <button onClick={reset} className="btn-secondary">{t.home.resetFilters}</button>
-          </div>
-        ) : (
-          <div className="home-grid">
-            {filtered.map((r, i) => (
-              <Reveal key={r.id} delay={Math.min(i * 60, 400)}>
-                <RentalCard rental={r} locale={locale} />
-              </Reveal>
-            ))}
           </div>
         )}
       </div>
