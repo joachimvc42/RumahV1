@@ -45,30 +45,31 @@ type MapItem = {
   maxDuration?: number | null;
 };
 
+type Amenity = 'pool' | 'garden' | 'furnished';
+
+// Filters follow an "empty = everything" convention: nothing selected means
+// no restriction. Multi-select groups use OR logic — adding chips widens
+// the match set, so users never need to deselect to broaden results.
 type Filters = {
   categories: Set<Category>;
   location: string;
-  tenure: 'all' | Tenure;
+  tenures: Set<Tenure>;
   minBedrooms: string;
   maxRentMonthlyIDR: string;
   maxSalePriceIDR: string;
   minDurationMonths: string;
-  pool: boolean;
-  garden: boolean;
-  furnished: boolean;
+  amenities: Set<Amenity>;
 };
 
 const defaultFilters: Filters = {
-  categories: new Set<Category>(['rental', 'villa-sale', 'land-sale']),
+  categories: new Set<Category>(),
   location: '',
-  tenure: 'all',
+  tenures: new Set<Tenure>(),
   minBedrooms: '',
   maxRentMonthlyIDR: '',
   maxSalePriceIDR: '',
   minDurationMonths: '',
-  pool: false,
-  garden: false,
-  furnished: false,
+  amenities: new Set<Amenity>(),
 };
 
 function priceForRental(monthlyIDR: number): { label: string; idr: number } {
@@ -219,9 +220,15 @@ export default function MapClient({ locale = 'en' }: { locale?: Locale }) {
 
   /* ─── Filter ─── */
   const filtered = useMemo(() => items.filter(item => {
-    if (!filters.categories.has(item.category)) return false;
+    if (filters.categories.size > 0 && !filters.categories.has(item.category)) return false;
     if (filters.location && item.location !== filters.location) return false;
-    if (filters.tenure !== 'all' && item.category !== 'rental' && item.tenure !== filters.tenure) return false;
+
+    // Tenure only applies to sale items (rentals have no tenure concept).
+    // Non-empty tenure set excludes items without a matching tenure — which
+    // naturally excludes rentals, so we don't short-circuit for them.
+    if (filters.tenures.size > 0) {
+      if (!item.tenure || !filters.tenures.has(item.tenure)) return false;
+    }
 
     // Bedrooms: only applies to rental + villa-sale
     if (filters.minBedrooms && (item.category === 'rental' || item.category === 'villa-sale')) {
@@ -242,11 +249,10 @@ export default function MapClient({ locale = 'en' }: { locale?: Locale }) {
       if (maxAvail < Number(filters.minDurationMonths)) return false;
     }
 
-    // Amenities — rentals + villas
-    if (item.category !== 'land-sale') {
-      if (filters.pool && !item.pool) return false;
-      if (filters.garden && !item.garden) return false;
-      if (filters.furnished && !item.furnished) return false;
+    // Amenities — OR logic: item must have at least one of the selected amenities
+    if (filters.amenities.size > 0) {
+      const hasAny = [...filters.amenities].some(a => item[a]);
+      if (!hasAny) return false;
     }
 
     return true;
@@ -267,22 +273,39 @@ export default function MapClient({ locale = 'en' }: { locale?: Locale }) {
     mapRef.current = map;
   }, []);
 
-  const toggleCategory = (c: Category) => {
+  const toggleInSet = <K extends 'categories' | 'tenures' | 'amenities'>(
+    key: K,
+    value: K extends 'categories' ? Category : K extends 'tenures' ? Tenure : Amenity,
+  ) => {
     setFilters(f => {
-      const next = new Set(f.categories);
-      if (next.has(c)) next.delete(c); else next.add(c);
-      return { ...f, categories: next };
+      const current = f[key] as Set<typeof value>;
+      const next = new Set(current);
+      if (next.has(value)) next.delete(value); else next.add(value);
+      return { ...f, [key]: next };
     });
   };
 
-  const resetFilters = () => setFilters({ ...defaultFilters, categories: new Set(defaultFilters.categories) });
+  const resetFilters = () => setFilters({
+    ...defaultFilters,
+    categories: new Set<Category>(),
+    tenures: new Set<Tenure>(),
+    amenities: new Set<Amenity>(),
+  });
 
   const selectedItem = filtered.find(i => i.id === selectedId) ?? null;
 
-  const showRentalFilters = filters.categories.has('rental');
-  const showSaleFilters = filters.categories.has('villa-sale') || filters.categories.has('land-sale');
-  const showBedroomFilter = filters.categories.has('rental') || filters.categories.has('villa-sale');
-  const showAmenityFilters = filters.categories.has('rental') || filters.categories.has('villa-sale');
+  // When the categories set is empty it means "all", so every optional filter
+  // group stays visible. Once the user narrows to a single category the
+  // groups that don't apply to it get hidden.
+  const anyCategorySelected = filters.categories.size > 0;
+  const catHasRental = !anyCategorySelected || filters.categories.has('rental');
+  const catHasVilla = !anyCategorySelected || filters.categories.has('villa-sale');
+  const catHasLand = !anyCategorySelected || filters.categories.has('land-sale');
+
+  const showRentalFilters = catHasRental;
+  const showSaleFilters = catHasVilla || catHasLand;
+  const showBedroomFilter = catHasRental || catHasVilla;
+  const showAmenityFilters = catHasRental || catHasVilla;
 
   if (!API_KEY) {
     return (
@@ -328,7 +351,7 @@ export default function MapClient({ locale = 'en' }: { locale?: Locale }) {
                 <button
                   key={key}
                   className={`map-chip ${filters.categories.has(key) ? 'is-active' : ''}`}
-                  onClick={() => toggleCategory(key)}
+                  onClick={() => toggleInSet('categories', key)}
                   type="button"
                 >
                   {label}
@@ -358,14 +381,13 @@ export default function MapClient({ locale = 'en' }: { locale?: Locale }) {
               <label className="map-filter-label">{t.map.tenure}</label>
               <div className="map-filter-chips">
                 {([
-                  ['all', t.map.allLabel],
                   ['freehold', t.map.freehold],
                   ['leasehold', t.map.leasehold],
-                ] as [Filters['tenure'], string][]).map(([k, label]) => (
+                ] as [Tenure, string][]).map(([k, label]) => (
                   <button
                     key={k}
-                    className={`map-chip ${filters.tenure === k ? 'is-active' : ''}`}
-                    onClick={() => setFilters(f => ({ ...f, tenure: k }))}
+                    className={`map-chip ${filters.tenures.has(k) ? 'is-active' : ''}`}
+                    onClick={() => toggleInSet('tenures', k)}
                     type="button"
                   >
                     {label}
@@ -456,11 +478,11 @@ export default function MapClient({ locale = 'en' }: { locale?: Locale }) {
                   ['pool', t.map.pool],
                   ['garden', t.map.garden],
                   ['furnished', t.map.furnished],
-                ] as [keyof Pick<Filters, 'pool' | 'garden' | 'furnished'>, string][]).map(([k, label]) => (
+                ] as [Amenity, string][]).map(([k, label]) => (
                   <button
                     key={k}
-                    className={`map-chip ${filters[k] ? 'is-active' : ''}`}
-                    onClick={() => setFilters(f => ({ ...f, [k]: !f[k] }))}
+                    className={`map-chip ${filters.amenities.has(k) ? 'is-active' : ''}`}
+                    onClick={() => toggleInSet('amenities', k)}
                     type="button"
                   >
                     {label}
