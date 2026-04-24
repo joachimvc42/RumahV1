@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { supabase } from '../../lib/supabaseClient';
 import { dualPrice } from '../../lib/priceUtils';
 import { getDict, prefixFor, type Locale } from '../../lib/i18n';
@@ -79,10 +80,12 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
     >
       <div className="listing-media">
         {item.images.length > 0 ? item.images.map((src, i) => (
-          <img
+          <Image
             key={src}
             src={src}
             alt={item.title}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             loading={i === 0 ? 'eager' : 'lazy'}
             className="listing-img"
             style={{ opacity: i === idx ? 1 : 0, transform: i === idx && hover ? 'scale(1.04)' : 'scale(1)' }}

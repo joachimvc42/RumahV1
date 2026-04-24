@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { getDict, prefixFor, type Locale } from '../lib/i18n';
@@ -101,10 +102,12 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
     >
       <div className="listing-media">
         {images.length > 0 ? images.map((src, i) => (
-          <img
+          <Image
             key={src}
             src={src}
             alt={p?.title ?? ''}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             loading={i === 0 ? 'eager' : 'lazy'}
             className="listing-img"
             style={{ opacity: i === idx ? 1 : 0, transform: i === idx && hover ? 'scale(1.04)' : 'scale(1)' }}
