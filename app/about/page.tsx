@@ -5,7 +5,15 @@ export const metadata: Metadata = {
   title: 'About — A local partner for Lombok living & investment',
   description:
     'RumahYa is a local point of contact for expatriates and investors in Lombok. We verify properties, coordinate with owners, and support long-term projects from the ground up.',
-  alternates: { canonical: 'https://rumahya.com/about' },
+  alternates: {
+    canonical: 'https://rumahya.com/about',
+    languages: {
+      'en': 'https://rumahya.com/about',
+      'fr': 'https://rumahya.com/fr/about',
+      'es': 'https://rumahya.com/es/about',
+      'x-default': 'https://rumahya.com/about',
+    },
+  },
   openGraph: {
     title: 'About RumahYa — Lombok real estate specialists',
     description:

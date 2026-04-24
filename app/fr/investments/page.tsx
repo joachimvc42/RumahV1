@@ -5,7 +5,15 @@ export const metadata: Metadata = {
   title: 'Opportunités d\'investissement à Lombok — terrains & villas',
   description:
     'Terrains en freehold et villas sélectionnés à Lombok, Indonésie. Titres vérifiés, rendements réalistes, coordination locale de la découverte à la livraison.',
-  alternates: { canonical: 'https://rumahya.com/fr/investments' },
+  alternates: {
+    canonical: 'https://rumahya.com/fr/investments',
+    languages: {
+      'en': 'https://rumahya.com/investments',
+      'fr': 'https://rumahya.com/fr/investments',
+      'es': 'https://rumahya.com/es/investments',
+      'x-default': 'https://rumahya.com/investments',
+    },
+  },
   openGraph: {
     title: 'Investir à Lombok — RumahYa',
     description: 'Terrains en freehold et villas sélectionnées à Lombok. Documents vérifiés, rendements réalistes, équipe locale.',

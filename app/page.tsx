@@ -5,7 +5,15 @@ export const metadata: Metadata = {
   title: 'Long-term villa rentals in Lombok',
   description:
     'Verified long-term villa rentals in Lombok, Indonesia. Honest terms from 1 month to 10 years, legal verification, and on-the-ground coordination by a local partner.',
-  alternates: { canonical: 'https://rumahya.com/' },
+  alternates: {
+    canonical: 'https://rumahya.com/',
+    languages: {
+      'en': 'https://rumahya.com/',
+      'fr': 'https://rumahya.com/fr',
+      'es': 'https://rumahya.com/es',
+      'x-default': 'https://rumahya.com/',
+    },
+  },
   openGraph: {
     title: 'Long-term villa rentals in Lombok — RumahYa',
     description: 'Verified villas, clear terms, local coordination. Your Lombok rental, done right.',

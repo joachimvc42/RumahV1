@@ -5,7 +5,15 @@ export const metadata: Metadata = {
   title: 'Mapa de propiedades — Alquileres e inversiones en Lombok',
   description:
     'Mapa interactivo de todas las propiedades verificadas por RumahYa. Alquileres de larga duración, villas en venta y oportunidades de terrenos en Lombok — filtra por tipo, titularidad, presupuesto y más.',
-  alternates: { canonical: 'https://rumahya.com/es/map' },
+  alternates: {
+    canonical: 'https://rumahya.com/es/map',
+    languages: {
+      'en': 'https://rumahya.com/map',
+      'fr': 'https://rumahya.com/fr/map',
+      'es': 'https://rumahya.com/es/map',
+      'x-default': 'https://rumahya.com/map',
+    },
+  },
   openGraph: {
     title: 'Mapa de propiedades — RumahYa Lombok',
     description: 'Explora en un mapa interactivo los alquileres, villas y terrenos verificados en Lombok.',
