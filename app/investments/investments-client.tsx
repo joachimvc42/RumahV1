@@ -104,7 +104,7 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
         onMouseLeave={() => setHover(false)}
       >
         <div className="lc2-media listing-media">
-          {/* Type + tenure badges */}
+          {/* Type + tenure overlay badges */}
           <div className="lc2-inv-badges">
             <span className={`lc2-inv-badge ${item.type === 'villa' ? 'lc2-inv-badge-villa' : 'lc2-inv-badge-land'}`}>
               {item.type === 'villa' ? t.inv.badgeVilla : t.inv.badgeLand}

@@ -125,8 +125,6 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
         onMouseLeave={() => setHover(false)}
       >
         <div className="lc2-media listing-media">
-          <div className="lc2-verified">✓ {t.home.verified}</div>
-
           {images.length > 0 ? images.map((src, i) => (
             <Image
               key={src}

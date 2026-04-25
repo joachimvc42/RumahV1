@@ -231,8 +231,13 @@ p {
 }
 
 .brand-name span {
-    color: var(--text);
+    color: var(--accent);
     font-style: italic;
+    font-weight: 300;
+}
+
+html[data-theme="dark"] .brand-name span {
+    color: var(--accent);
 }
 
 /* Nav */

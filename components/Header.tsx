@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { LOCALES, getDict, type Locale } from '../lib/i18n';
 
 /**
@@ -37,6 +37,16 @@ export default function Header() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [dark, setDark] = useState(false);
+  const langCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const onLangEnter = useCallback(() => {
+    if (langCloseTimer.current) clearTimeout(langCloseTimer.current);
+    setLangOpen(true);
+  }, []);
+
+  const onLangLeave = useCallback(() => {
+    langCloseTimer.current = setTimeout(() => setLangOpen(false), 160);
+  }, []);
 
   // Initialise from localStorage on mount
   useEffect(() => {
@@ -153,8 +163,8 @@ export default function Header() {
               {/* Language switcher */}
               <div
                 className="lang-switcher"
-                onMouseEnter={() => setLangOpen(true)}
-                onMouseLeave={() => setLangOpen(false)}
+                onMouseEnter={onLangEnter}
+                onMouseLeave={onLangLeave}
               >
                 <button
                   type="button"
