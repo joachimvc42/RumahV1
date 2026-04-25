@@ -3027,3 +3027,530 @@ textarea:focus {
     .listing-meta { font-size: 0.86rem; }
     .listing-title { font-size: 1.1rem; }
 }
+
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+
+html[data-theme="dark"] {
+    --bg:           #0e1513;
+    --bg-warm:      #141e1b;
+    --bg-alt:       #111918;
+    --bg-card:      #18211e;
+
+    --text:         #e4ddd4;
+    --text-main:    #e4ddd4;
+    --text-muted:   #8a9e99;
+    --text-subtle:  #506461;
+
+    --border:        #263330;
+    --border-subtle: #1c2a27;
+    --border-hover:  #3a504c;
+
+    --accent:        #7EB0A7;
+    --accent-hover:  #6ba39b;
+    --accent-soft:   rgba(126,176,167,0.12);
+
+    --gold:          #c4ac7d;
+    --gold-soft:     rgba(196,172,125,0.12);
+
+    --primary:       #7EB0A7;
+    --primary-soft:  rgba(126,176,167,0.12);
+
+    --shadow-sm:   0 1px 2px rgba(0,0,0,0.35);
+    --shadow:      0 4px 20px rgba(0,0,0,0.45);
+    --shadow-lg:   0 24px 48px rgba(0,0,0,0.65);
+    --shadow-soft: 0 4px 20px rgba(0,0,0,0.45);
+}
+
+html[data-theme="dark"] body {
+    background-color: var(--bg);
+    color: var(--text);
+}
+
+html[data-theme="dark"] .site-header {
+    background: rgba(11, 17, 15, 0.85);
+}
+
+html[data-theme="dark"] .site-header.is-scrolled {
+    background: rgba(11, 17, 15, 0.96);
+    border-bottom-color: var(--border);
+}
+
+html[data-theme="dark"] input[type="text"],
+html[data-theme="dark"] input[type="email"],
+html[data-theme="dark"] input[type="number"],
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea {
+    background: var(--bg-alt);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+html[data-theme="dark"] .inv-searchbar,
+html[data-theme="dark"] .home-searchbar {
+    background: var(--bg-card);
+    border-color: var(--border);
+}
+
+/* ─── Theme toggle button ─── */
+.theme-toggle {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    line-height: 1;
+    transition: background 0.2s ease, transform 0.25s ease, border-color 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 6px;
+    padding: 0;
+}
+.theme-toggle:hover {
+    background: var(--bg-warm);
+    transform: rotate(22deg);
+    border-color: var(--border-hover);
+}
+
+/* ============================================================
+   REDESIGNED LISTING CARD v2 — lc2-*
+   ============================================================ */
+
+.lc2-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s cubic-bezier(0.2,0.8,0.2,1),
+                box-shadow 0.3s ease,
+                border-color 0.2s ease;
+}
+
+.lc2-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border-hover);
+}
+
+.lc2-media-link {
+    display: block;
+    text-decoration: none;
+}
+
+/* Media area: reuse existing .listing-media sizing */
+.lc2-media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: var(--bg-alt);
+    overflow: hidden;
+    border-radius: 14px 14px 0 0;
+}
+
+/* ✓ Verified badge */
+.lc2-verified {
+    position: absolute;
+    top: 12px; left: 12px;
+    z-index: 3;
+    padding: 5px 11px;
+    background: rgba(255,255,255,0.94);
+    color: var(--accent-hover, #4F7D75);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.12);
+    line-height: 1;
+}
+
+html[data-theme="dark"] .lc2-verified {
+    background: rgba(20,30,27,0.95);
+    color: var(--accent);
+}
+
+/* Investment type/tenure badges overlay */
+.lc2-inv-badges {
+    position: absolute;
+    top: 12px; left: 12px;
+    z-index: 3;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.lc2-inv-badge {
+    padding: 5px 10px;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
+    line-height: 1;
+    background: rgba(255,255,255,0.94);
+    color: var(--text);
+}
+
+html[data-theme="dark"] .lc2-inv-badge {
+    background: rgba(20,30,27,0.95);
+}
+
+.lc2-inv-badge-villa { color: var(--accent-hover, #4F7D75); }
+.lc2-inv-badge-land  { color: var(--gold); }
+.lc2-inv-badge-freehold { color: var(--accent-hover, #4F7D75); }
+.lc2-inv-badge-lease    { color: var(--gold); }
+
+html[data-theme="dark"] .lc2-inv-badge-villa { color: var(--accent); }
+html[data-theme="dark"] .lc2-inv-badge-land  { color: var(--gold); }
+html[data-theme="dark"] .lc2-inv-badge-freehold { color: var(--accent); }
+html[data-theme="dark"] .lc2-inv-badge-lease    { color: var(--gold); }
+
+/* Card body */
+.lc2-body {
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+/* Location line */
+.lc2-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0 0 7px;
+    line-height: 1;
+}
+
+.lc2-pin {
+    width: 9px; height: 12px;
+    flex-shrink: 0;
+    color: var(--accent);
+    opacity: 0.85;
+}
+
+/* Title */
+.lc2-title {
+    font-family: var(--font-display);
+    font-size: 1.22rem;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin: 0 0 10px;
+}
+
+/* Bed/bath meta */
+.lc2-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.lc2-meta-item {
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Amenity pill tags */
+.lc2-amenities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.lc2-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    background: var(--accent-soft);
+    color: var(--accent-hover, #4F7D75);
+    font-size: 0.74rem;
+    font-weight: 500;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    line-height: 1.3;
+    transition: background 0.15s ease;
+}
+
+html[data-theme="dark"] .lc2-pill {
+    background: rgba(126,176,167,0.10);
+    color: var(--accent);
+}
+
+/* Price block */
+.lc2-price-block {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-subtle);
+    margin-bottom: 14px;
+}
+
+.lc2-price {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.3;
+    font-weight: 400;
+}
+
+.lc2-price span {
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+}
+
+.lc2-price em {
+    font-style: normal;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.lc2-price-year {
+    margin: 3px 0 0;
+    font-size: 0.78rem;
+    color: var(--text-subtle);
+}
+
+.lc2-duration {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin: 4px 0 0;
+}
+
+.lc2-yield {
+    margin: 8px 0 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+/* CTA row */
+.lc2-ctas {
+    display: flex;
+    gap: 8px;
+}
+
+.lc2-btn-detail {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    background: var(--bg-warm);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.81rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+    white-space: nowrap;
+}
+
+.lc2-btn-detail:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    opacity: 1;
+    transform: translateY(-1px);
+}
+
+.lc2-btn-wa {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px 14px;
+    background: #25D366;
+    color: #fff;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 0.81rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.15s ease;
+    white-space: nowrap;
+}
+
+.lc2-btn-wa:hover {
+    background: #1ebe5c;
+    opacity: 1;
+    transform: translateY(-1px);
+}
+
+/* ============================================================
+   ACTIVE FILTER CHIPS
+   ============================================================ */
+
+.active-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 0 18px;
+    align-items: center;
+}
+
+.active-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--accent-soft);
+    color: var(--accent-hover, #4F7D75);
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    font-size: 0.80rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
+    font-family: inherit;
+    line-height: 1;
+}
+
+.active-chip:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    transform: scale(0.97);
+}
+
+.active-chip span {
+    opacity: 0.65;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.active-chip-reset {
+    background: transparent;
+    color: var(--text-muted);
+    border-color: var(--border);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.active-chip-reset:hover {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+}
+
+html[data-theme="dark"] .active-chip {
+    background: rgba(126,176,167,0.10);
+    color: var(--accent);
+    border-color: rgba(126,176,167,0.35);
+}
+
+html[data-theme="dark"] .active-chip:hover {
+    background: var(--accent);
+    color: #0e1513;
+}
+
+html[data-theme="dark"] .active-chip-reset {
+    border-color: var(--border);
+    color: var(--text-muted);
+}
+
+/* ============================================================
+   SORT ROW
+   ============================================================ */
+
+.sort-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sort-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.sort-select {
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--bg-card);
+    color: var(--text);
+    font-size: 0.82rem;
+    font-weight: 500;
+    font-family: inherit;
+    padding: 6px 28px 6px 10px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238a9e99' stroke-width='1.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    width: auto;
+    min-width: 0;
+}
+
+.sort-select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(126,176,167,0.18);
+}
+
+/* ============================================================
+   SIDEBAR — emoji icon next to checkbox
+   ============================================================ */
+
+.inv-check-icon {
+    font-size: 1rem;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+    display: inline-block;
+}
+
+/* Slightly rounder cards on the home grid when using lc2 */
+.home-grid .lc2-card {
+    height: 100%;
+}
+
+/* ============================================================
+   MOBILE — lc2 card responsive
+   ============================================================ */
+
+@media (max-width: 600px) {
+    .lc2-title { font-size: 1.1rem; }
+    .lc2-body { padding: 14px 16px 16px; }
+    .lc2-btn-detail,
+    .lc2-btn-wa { font-size: 0.78rem; padding: 9px 10px; }
+    .lc2-ctas { gap: 6px; }
+    .sort-select { font-size: 14px; }
+}
+
+@media (max-width: 768px) {
+    .sort-select { font-size: 16px !important; }
+    .active-chip { font-size: 0.78rem; padding: 6px 10px; }
+}

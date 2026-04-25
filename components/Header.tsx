@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { LOCALES, getDict, type Locale } from '../lib/i18n';
 
 /**
@@ -36,6 +36,25 @@ export default function Header() {
   // useEffect then promotes it client-side, avoiding hydration mismatch.
   const [isAdmin, setIsAdmin] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [dark, setDark] = useState(false);
+
+  // Initialise from localStorage on mount
+  useEffect(() => {
+    const stored = typeof window !== 'undefined' ? localStorage.getItem('theme') : null;
+    const prefersDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = stored ? stored === 'dark' : prefersDark;
+    setDark(isDark);
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setDark(prev => {
+      const next = !prev;
+      document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light');
+      localStorage.setItem('theme', next ? 'dark' : 'light');
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     setIsAdmin(pathname?.startsWith('/admin') ?? false);
@@ -119,6 +138,17 @@ export default function Header() {
               >
                 {t.nav.about}
               </Link>
+
+              {/* Dark mode toggle */}
+              <button
+                type="button"
+                className="theme-toggle"
+                onClick={toggleTheme}
+                aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+                title={dark ? 'Light mode' : 'Dark mode'}
+              >
+                {dark ? '☀️' : '🌙'}
+              </button>
 
               {/* Language switcher */}
               <div

@@ -7,6 +7,13 @@ import { supabase } from '../../lib/supabaseClient';
 import { dualPrice } from '../../lib/priceUtils';
 import { getDict, prefixFor, type Locale } from '../../lib/i18n';
 
+const WA_NUMBER = '6287873487940';
+
+const AMENITY_ICONS: Record<string, string> = {
+  pool: '🏊', garden: '🌿', furnished: '🛋️',
+  water: '💧', electricity: '⚡', road: '🛣️',
+};
+
 /* ─────────── Types ─────────── */
 type Item = {
   id: string; type: 'villa' | 'land'; title: string; location: string;
@@ -23,6 +30,7 @@ type Item = {
 type Search = { type: 'all' | 'villa' | 'land'; tenure: 'all' | 'freehold' | 'leasehold'; location: string };
 type VillaSidebar = { pool: boolean; garden: boolean; furnished: boolean; minBedrooms: string; minBathrooms: string };
 type LandSidebar = { hasWater: boolean; hasElectricity: boolean; hasRoad: boolean; minArea: string; maxPrice: string };
+type SortBy = 'recent' | 'price_asc' | 'price_desc';
 
 /* ─────────── Reveal on scroll ─────────── */
 function useReveal<T extends HTMLElement>() {
@@ -49,7 +57,7 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
       style={{
         opacity: shown ? 1 : 0,
         transform: shown ? 'translateY(0)' : 'translateY(20px)',
-        transition: `opacity 0.8s cubic-bezier(0.2,0.8,0.2,1) ${delay}ms, transform 0.8s cubic-bezier(0.2,0.8,0.2,1) ${delay}ms`,
+        transition: `opacity 0.7s cubic-bezier(0.2,0.8,0.2,1) ${delay}ms, transform 0.7s cubic-bezier(0.2,0.8,0.2,1) ${delay}ms`,
       }}
     >
       {children}
@@ -57,106 +65,158 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
   );
 }
 
-/* ─────────── Investment card ─────────── */
+/* ─────────── Investment card v2 ─────────── */
 function InvCard({ item, locale }: { item: Item; locale: Locale }) {
   const t = getDict(locale);
   const [idx, setIdx] = useState(0);
   const [hover, setHover] = useState(false);
+
   const prev = useCallback((e: React.MouseEvent) => {
     e.preventDefault(); e.stopPropagation();
     setIdx(i => (i - 1 + item.images.length) % item.images.length);
   }, [item.images.length]);
+
   const next = useCallback((e: React.MouseEvent) => {
     e.preventDefault(); e.stopPropagation();
     setIdx(i => (i + 1) % item.images.length);
   }, [item.images.length]);
 
+  const waMsg = encodeURIComponent(`Hi, I'm interested in ${item.title}`);
+  const waUrl = `https://wa.me/${WA_NUMBER}?text=${waMsg}`;
+
+  const { main: priceMain, approx: priceApprox } = dualPrice(item.price, item.currency, item.type === 'land' ? '/are' : '');
+
+  const villaAmenities = ([
+    item.pool && 'pool', item.garden && 'garden', item.furnished && 'furnished',
+  ] as (string | false)[]).filter(Boolean) as string[];
+
+  const villaAmenityLabels: Record<string, string> = {
+    pool: t.inv.pool, garden: t.inv.garden, furnished: t.inv.furnished,
+  };
+
   return (
-    <Link
-      href={item.href}
-      className="inv-card"
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-    >
-      <div className="listing-media">
-        {item.images.length > 0 ? item.images.map((src, i) => (
-          <Image
-            key={src}
-            src={src}
-            alt={item.title}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            loading={i === 0 ? 'eager' : 'lazy'}
-            className="listing-img"
-            style={{ opacity: i === idx ? 1 : 0, transform: i === idx && hover ? 'scale(1.04)' : 'scale(1)' }}
-          />
-        )) : (
-          <div className="listing-img-placeholder">Rumah<em>Ya</em></div>
-        )}
-        {item.images.length > 1 && (
-          <>
-            <button onClick={prev} className="listing-arrow listing-arrow-left" aria-label="Previous">‹</button>
-            <button onClick={next} className="listing-arrow listing-arrow-right" aria-label="Next">›</button>
-            <div className="listing-dots">
-              {item.images.map((_, i) => (
-                <button
-                  key={i}
-                  aria-label={`Photo ${i + 1}`}
-                  onClick={e => { e.preventDefault(); e.stopPropagation(); setIdx(i); }}
-                  className={`listing-dot ${i === idx ? 'is-active' : ''}`}
-                />
-              ))}
-            </div>
-          </>
-        )}
-      </div>
+    <div className="lc2-card">
+      {/* Media */}
+      <Link
+        href={item.href}
+        className="lc2-media-link"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
+        <div className="lc2-media listing-media">
+          {/* Type + tenure badges */}
+          <div className="lc2-inv-badges">
+            <span className={`lc2-inv-badge ${item.type === 'villa' ? 'lc2-inv-badge-villa' : 'lc2-inv-badge-land'}`}>
+              {item.type === 'villa' ? t.inv.badgeVilla : t.inv.badgeLand}
+            </span>
+            <span className={`lc2-inv-badge ${item.tenure === 'freehold' ? 'lc2-inv-badge-freehold' : 'lc2-inv-badge-lease'}`}>
+              {item.tenure === 'freehold' ? t.inv.freehold : item.leaseYears ? `${t.inv.leaseY} ${item.leaseYears}y` : t.inv.leasehold}
+            </span>
+          </div>
 
-      <div className="listing-body">
-        <div className="inv-meta-row">
-          <span className={`inv-badge ${item.type === 'villa' ? 'inv-badge-villa' : 'inv-badge-land'}`}>
-            {item.type === 'villa' ? t.inv.badgeVilla : t.inv.badgeLand}
-          </span>
-          <span className={`inv-badge ${item.tenure === 'freehold' ? 'inv-badge-freehold' : 'inv-badge-lease'}`}>
-            {item.tenure === 'freehold' ? t.inv.freehold : item.leaseYears ? `${t.inv.leaseY} ${item.leaseYears}y` : t.inv.leasehold}
-          </span>
-          <span className="inv-loc">{item.location}</span>
+          {item.images.length > 0 ? item.images.map((src, i) => (
+            <Image
+              key={src}
+              src={src}
+              alt={item.title}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              loading={i === 0 ? 'eager' : 'lazy'}
+              className="listing-img"
+              style={{
+                opacity: i === idx ? 1 : 0,
+                transform: i === idx && hover ? 'scale(1.04)' : 'scale(1)',
+              }}
+            />
+          )) : (
+            <div className="listing-img-placeholder">Rumah<em>Ya</em></div>
+          )}
+
+          {item.images.length > 1 && (
+            <>
+              <button onClick={prev} className="listing-arrow listing-arrow-left" aria-label="Previous">‹</button>
+              <button onClick={next} className="listing-arrow listing-arrow-right" aria-label="Next">›</button>
+              <div className="listing-dots">
+                {item.images.map((_, i) => (
+                  <button
+                    key={i}
+                    aria-label={`Photo ${i + 1}`}
+                    onClick={e => { e.preventDefault(); e.stopPropagation(); setIdx(i); }}
+                    className={`listing-dot ${i === idx ? 'is-active' : ''}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
+      </Link>
 
-        <h3 className="inv-title">{item.title}</h3>
+      {/* Body */}
+      <div className="lc2-body">
+        <p className="lc2-location">
+          <svg className="lc2-pin" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <path d="M6 0C3.24 0 1 2.24 1 5c0 3.75 5 11 5 11s5-7.25 5-11c0-2.76-2.24-5-5-5zm0 6.5C5.17 6.5 4.5 5.83 4.5 5S5.17 3.5 6 3.5 7.5 4.17 7.5 5 6.83 6.5 6 6.5z" fill="currentColor" />
+          </svg>
+          {item.location}
+        </p>
+
+        <h3 className="lc2-title">{item.title}</h3>
 
         {item.type === 'villa' && (
-          <div className="inv-chips">
-            {item.bedrooms ? <span>{item.bedrooms} {item.bedrooms === 1 ? t.inv.bed : t.inv.beds}</span> : null}
-            {item.bathrooms ? <span>{item.bathrooms} {item.bathrooms === 1 ? t.inv.bath : t.inv.baths}</span> : null}
-            {item.pool ? <span>{t.inv.pool}</span> : null}
-            {item.garden ? <span>{t.inv.garden}</span> : null}
+          <div className="lc2-meta">
+            {item.bedrooms ? <span className="lc2-meta-item">🛏 {item.bedrooms} {item.bedrooms === 1 ? t.inv.bed : t.inv.beds}</span> : null}
+            {item.bathrooms ? <span className="lc2-meta-item">🚿 {item.bathrooms} {item.bathrooms === 1 ? t.inv.bath : t.inv.baths}</span> : null}
           </div>
         )}
         {item.type === 'land' && item.landSize && (
-          <div className="inv-chips">
-            <span>{item.landSize} {t.inv.areSuffix}</span>
-            {item.hasWater ? <span>{t.inv.water}</span> : null}
-            {item.hasElectricity ? <span>{t.inv.electricity}</span> : null}
-            {item.hasRoad ? <span>{t.inv.road}</span> : null}
+          <div className="lc2-meta">
+            <span className="lc2-meta-item">📐 {item.landSize} {t.inv.areSuffix}</span>
           </div>
         )}
 
-        {item.description && <p className="inv-desc">{item.description}</p>}
+        {/* Amenity pills */}
+        {item.type === 'villa' && villaAmenities.length > 0 && (
+          <div className="lc2-amenities">
+            {villaAmenities.map(key => (
+              <span key={key} className="lc2-pill">
+                {AMENITY_ICONS[key]} {villaAmenityLabels[key]}
+              </span>
+            ))}
+          </div>
+        )}
+        {item.type === 'land' && (
+          <div className="lc2-amenities">
+            {item.hasWater && <span className="lc2-pill">{AMENITY_ICONS.water} {t.inv.water}</span>}
+            {item.hasElectricity && <span className="lc2-pill">{AMENITY_ICONS.electricity} {t.inv.electricity}</span>}
+            {item.hasRoad && <span className="lc2-pill">{AMENITY_ICONS.road} {t.inv.road}</span>}
+          </div>
+        )}
 
-        <div className="inv-price-block">
-          {(() => {
-            const { main, approx } = dualPrice(item.price, item.currency, item.type === 'land' ? '/are' : '');
-            return (
-              <>
-                <p className="inv-price">{main}</p>
-                <p className="inv-price-approx">{approx}</p>
-              </>
-            );
-          })()}
-          {item.expectedYield && <p className="inv-yield">{item.expectedYield}{t.inv.yieldSuffix}</p>}
+        <div className="lc2-price-block">
+          <p className="lc2-price">
+            <span>{priceMain}</span>
+          </p>
+          {priceApprox && <p className="lc2-price-year">{priceApprox}</p>}
+          {item.expectedYield && (
+            <p className="lc2-yield">{item.expectedYield}{t.inv.yieldSuffix}</p>
+          )}
+        </div>
+
+        <div className="lc2-ctas">
+          <Link href={item.href} className="lc2-btn-detail">
+            View details →
+          </Link>
+          <a
+            href={waUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="lc2-btn-wa"
+          >
+            💬 WhatsApp
+          </a>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 
@@ -165,6 +225,7 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
   const t = getDict(locale);
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState<SortBy>('recent');
   const [search, setSearch] = useState<Search>({ type: 'all', tenure: 'all', location: '' });
   const [villa, setVilla] = useState<VillaSidebar>({ pool: false, garden: false, furnished: false, minBedrooms: '', minBathrooms: '' });
   const [land, setLand] = useState<LandSidebar>({ hasWater: false, hasElectricity: false, hasRoad: false, minArea: '', maxPrice: '' });
@@ -234,12 +295,35 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
     return true;
   });
 
+  /* Sort */
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortBy === 'price_asc') return a.price - b.price;
+    if (sortBy === 'price_desc') return b.price - a.price;
+    return 0;
+  });
+
   const resetFilters = () => {
     setVilla({ pool: false, garden: false, furnished: false, minBedrooms: '', minBathrooms: '' });
     setLand({ hasWater: false, hasElectricity: false, hasRoad: false, minArea: '', maxPrice: '' });
   };
+
   const hasActiveFilters = villa.pool || villa.garden || villa.furnished || !!villa.minBedrooms || !!villa.minBathrooms
     || land.hasWater || land.hasElectricity || land.hasRoad || !!land.minArea || !!land.maxPrice;
+
+  /* Active chips */
+  const activeChips: { key: string; label: string; dismiss: () => void }[] = [];
+  if (search.location) activeChips.push({ key: 'location', label: search.location, dismiss: () => setSearch(s => ({ ...s, location: '' })) });
+  if (search.type !== 'all') activeChips.push({ key: 'type', label: search.type === 'villa' ? t.inv.villas : t.inv.land, dismiss: () => setSearch(s => ({ ...s, type: 'all' })) });
+  if (search.tenure !== 'all') activeChips.push({ key: 'tenure', label: search.tenure === 'freehold' ? t.inv.freehold : t.inv.leasehold, dismiss: () => setSearch(s => ({ ...s, tenure: 'all' })) });
+  if (villa.pool) activeChips.push({ key: 'pool', label: t.inv.pool, dismiss: () => setVilla(s => ({ ...s, pool: false })) });
+  if (villa.garden) activeChips.push({ key: 'garden', label: t.inv.garden, dismiss: () => setVilla(s => ({ ...s, garden: false })) });
+  if (villa.furnished) activeChips.push({ key: 'furnished', label: t.inv.furnished, dismiss: () => setVilla(s => ({ ...s, furnished: false })) });
+  if (villa.minBedrooms) activeChips.push({ key: 'minBedrooms', label: `${villa.minBedrooms}+ ${t.inv.beds}`, dismiss: () => setVilla(s => ({ ...s, minBedrooms: '' })) });
+  if (land.hasWater) activeChips.push({ key: 'water', label: t.inv.water, dismiss: () => setLand(s => ({ ...s, hasWater: false })) });
+  if (land.hasElectricity) activeChips.push({ key: 'elec', label: t.inv.electricity, dismiss: () => setLand(s => ({ ...s, hasElectricity: false })) });
+  if (land.hasRoad) activeChips.push({ key: 'road', label: t.inv.road, dismiss: () => setLand(s => ({ ...s, hasRoad: false })) });
+
+  const resetAll = () => { resetFilters(); setSearch({ type: 'all', tenure: 'all', location: '' }); };
 
   return (
     <main>
@@ -290,19 +374,20 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
           </div>
         ) : (
           <div className="inv-layout">
-            {/* Sidebar filters */}
+            {/* ── Sidebar filters ── */}
             <aside className="inv-sidebar">
               {(search.type === 'villa' || search.type === 'all') && (
                 <>
                   <div className="inv-sidebar-group">
                     <p className="eyebrow">{t.inv.villaAmenities}</p>
-                    {([['pool', t.inv.pool], ['garden', t.inv.garden], ['furnished', t.inv.furnished]] as [keyof VillaSidebar, string][]).map(([key, label]) => (
+                    {([['pool', t.inv.pool, '🏊'], ['garden', t.inv.garden, '🌿'], ['furnished', t.inv.furnished, '🛋️']] as [keyof VillaSidebar, string, string][]).map(([key, label, icon]) => (
                       <label key={key} className="inv-check-row">
                         <input
                           type="checkbox"
                           checked={villa[key] as boolean}
                           onChange={e => setVilla(s => ({ ...s, [key]: e.target.checked }))}
                         />
+                        <span className="inv-check-icon" aria-hidden>{icon}</span>
                         <span className="inv-check-label">{label}</span>
                       </label>
                     ))}
@@ -327,13 +412,14 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
                 <>
                   <div className="inv-sidebar-group">
                     <p className="eyebrow">{t.inv.utilities}</p>
-                    {([['hasWater', t.inv.water], ['hasElectricity', t.inv.electricity], ['hasRoad', t.inv.road]] as [keyof LandSidebar, string][]).map(([key, label]) => (
+                    {([['hasWater', t.inv.water, '💧'], ['hasElectricity', t.inv.electricity, '⚡'], ['hasRoad', t.inv.road, '🛣️']] as [keyof LandSidebar, string, string][]).map(([key, label, icon]) => (
                       <label key={key} className="inv-check-row">
                         <input
                           type="checkbox"
                           checked={land[key] as boolean}
                           onChange={e => setLand(s => ({ ...s, [key]: e.target.checked }))}
                         />
+                        <span className="inv-check-icon" aria-hidden>{icon}</span>
                         <span className="inv-check-label">{label}</span>
                       </label>
                     ))}
@@ -372,22 +458,51 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
               )}
             </aside>
 
-            {/* Grid */}
+            {/* ── Results area ── */}
             <div>
+              {/* Active filter chips */}
+              {activeChips.length > 0 && (
+                <div className="active-chips-row">
+                  {activeChips.map(chip => (
+                    <button key={chip.key} className="active-chip" onClick={chip.dismiss}>
+                      {chip.label} <span aria-hidden>×</span>
+                    </button>
+                  ))}
+                  <button className="active-chip active-chip-reset" onClick={resetAll}>
+                    {t.inv.resetFilters}
+                  </button>
+                </div>
+              )}
+
+              {/* Result count + sort */}
               <div className="inv-result-row">
                 <p className="inv-result-count">
                   {filtered.length} {filtered.length === 1 ? t.inv.opportunityOne : t.inv.opportunityMany}
                   {hasActiveFilters && <span> · {t.inv.filtered}</span>}
                 </p>
+                <div className="sort-row">
+                  <span className="sort-label">Sort by</span>
+                  <select
+                    className="sort-select"
+                    value={sortBy}
+                    onChange={e => setSortBy(e.target.value as SortBy)}
+                    aria-label="Sort investments"
+                  >
+                    <option value="recent">Most recent</option>
+                    <option value="price_asc">Price ↑</option>
+                    <option value="price_desc">Price ↓</option>
+                  </select>
+                </div>
               </div>
-              {filtered.length === 0 ? (
+
+              {sorted.length === 0 ? (
                 <div className="inv-empty">
                   <p>{t.inv.empty}</p>
-                  <button onClick={resetFilters} className="btn-secondary">{t.inv.resetFilters}</button>
+                  <button onClick={resetAll} className="btn-secondary">{t.inv.resetFilters}</button>
                 </div>
               ) : (
                 <div className="inv-grid">
-                  {filtered.map((item, i) => (
+                  {sorted.map((item, i) => (
                     <Reveal key={item.id} delay={Math.min(i * 60, 400)}>
                       <InvCard item={item} locale={locale} />
                     </Reveal>

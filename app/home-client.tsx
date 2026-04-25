@@ -6,6 +6,13 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { getDict, prefixFor, type Locale } from '../lib/i18n';
 
+const WA_NUMBER = '6287873487940';
+
+const AMENITY_ICONS: Record<string, string> = {
+  pool: '🏊', garden: '🌿', aircon: '❄️', furnished: '🛋️',
+  kitchen: '🍳', wifi: '📶', parking: '🅿️', privateSpace: '🔒',
+};
+
 /* ─────────── Types ─────────── */
 type RentalRow = {
   id: string;
@@ -37,6 +44,8 @@ type Filters = {
   privateSpace: boolean; kitchen: boolean;
 };
 
+type SortBy = 'recent' | 'price_asc' | 'price_desc';
+
 /* ─────────── Utilities ─────────── */
 function fmtIDR(v: number) { return new Intl.NumberFormat('id-ID').format(v); }
 
@@ -57,29 +66,29 @@ function useReveal<T extends HTMLElement>() {
   return { ref, shown };
 }
 
-function Reveal({ children, delay = 0, as: Tag = 'div' }: { children: React.ReactNode; delay?: number; as?: 'div' | 'section' | 'article' }) {
+function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const { ref, shown } = useReveal<HTMLDivElement>();
-  const Component = Tag as any;
   return (
-    <Component
+    <div
       ref={ref}
       style={{
         opacity: shown ? 1 : 0,
         transform: shown ? 'translateY(0)' : 'translateY(20px)',
-        transition: `opacity 0.8s cubic-bezier(0.2,0.8,0.2,1) ${delay}ms, transform 0.8s cubic-bezier(0.2,0.8,0.2,1) ${delay}ms`,
+        transition: `opacity 0.7s cubic-bezier(0.2,0.8,0.2,1) ${delay}ms, transform 0.7s cubic-bezier(0.2,0.8,0.2,1) ${delay}ms`,
       }}
     >
       {children}
-    </Component>
+    </div>
   );
 }
 
-/* ─────────── Rental card ─────────── */
+/* ─────────── Rental card v2 ─────────── */
 function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
   const t = getDict(locale);
   const images = rental.properties?.images ?? [];
   const [idx, setIdx] = useState(0);
   const [hover, setHover] = useState(false);
+  const p = rental.properties;
 
   const prev = useCallback((e: React.MouseEvent) => {
     e.preventDefault(); e.stopPropagation();
@@ -91,80 +100,136 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
     setIdx(i => (i + 1) % images.length);
   }, [images.length]);
 
-  const p = rental.properties;
+  const chipDict: Record<string, string> = {
+    pool: t.home.chip.pool, garden: t.home.chip.garden, aircon: t.home.chip.aircon,
+    furnished: t.home.chip.furnished, kitchen: t.home.chip.kitchen, wifi: t.home.chip.wifi,
+    parking: t.home.chip.parking, privateSpace: t.home.chip.privateSpace,
+  };
+
+  const amenityKeys = ([
+    p?.pool && 'pool', p?.garden && 'garden', p?.aircon && 'aircon',
+    p?.furnished && 'furnished', p?.kitchen && 'kitchen',
+    p?.wifi && 'wifi', p?.parking && 'parking', p?.private_space && 'privateSpace',
+  ] as (string | false)[]).filter(Boolean) as string[];
+
+  const waMsg = encodeURIComponent(`Hi, I'm interested in ${p?.title ?? 'your property'}`);
+  const waUrl = `https://wa.me/${WA_NUMBER}?text=${waMsg}`;
 
   return (
-    <Link
-      href={prefixFor(locale, `/rentals/${p?.id}`)}
-      className="listing-card"
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-    >
-      <div className="listing-media">
-        {images.length > 0 ? images.map((src, i) => (
-          <Image
-            key={src}
-            src={src}
-            alt={p?.title ?? ''}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            loading={i === 0 ? 'eager' : 'lazy'}
-            className="listing-img"
-            style={{ opacity: i === idx ? 1 : 0, transform: i === idx && hover ? 'scale(1.04)' : 'scale(1)' }}
-          />
-        )) : (
-          <div className="listing-img-placeholder">Rumah<em>Ya</em></div>
-        )}
-        {images.length > 1 && (
-          <>
-            <button onClick={prev} className="listing-arrow listing-arrow-left" aria-label="Previous">‹</button>
-            <button onClick={next} className="listing-arrow listing-arrow-right" aria-label="Next">›</button>
-            <div className="listing-dots">
-              {images.map((_, i) => (
-                <button
-                  key={i}
-                  aria-label={`Photo ${i + 1}`}
-                  onClick={e => { e.preventDefault(); e.stopPropagation(); setIdx(i); }}
-                  className={`listing-dot ${i === idx ? 'is-active' : ''}`}
-                />
-              ))}
-            </div>
-          </>
-        )}
-      </div>
+    <div className="lc2-card">
+      {/* Media section */}
+      <Link
+        href={prefixFor(locale, `/rentals/${p?.id}`)}
+        className="lc2-media-link"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
+        <div className="lc2-media listing-media">
+          <div className="lc2-verified">✓ {t.home.verified}</div>
 
-      <div className="listing-body">
-        <p className="listing-location">{p?.location ?? 'Lombok'}</p>
-        <h3 className="listing-title">{p?.title ?? 'Property'}</h3>
+          {images.length > 0 ? images.map((src, i) => (
+            <Image
+              key={src}
+              src={src}
+              alt={p?.title ?? ''}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              loading={i === 0 ? 'eager' : 'lazy'}
+              className="listing-img"
+              style={{
+                opacity: i === idx ? 1 : 0,
+                transform: i === idx && hover ? 'scale(1.04)' : 'scale(1)',
+              }}
+            />
+          )) : (
+            <div className="listing-img-placeholder">Rumah<em>Ya</em></div>
+          )}
 
-        <div className="listing-meta">
-          {p?.bedrooms != null && p.bedrooms > 0 && <span>{p.bedrooms} {p.bedrooms === 1 ? t.home.bed : t.home.beds}</span>}
-          {p?.bathrooms != null && p.bathrooms > 0 && <span>· {p.bathrooms} {p.bathrooms === 1 ? t.home.bath : t.home.baths}</span>}
-          {p?.pool && <span>· {t.home.chip.pool}</span>}
-          {p?.furnished && <span>· {t.home.chip.furnished}</span>}
+          {images.length > 1 && (
+            <>
+              <button onClick={prev} className="listing-arrow listing-arrow-left" aria-label="Previous">‹</button>
+              <button onClick={next} className="listing-arrow listing-arrow-right" aria-label="Next">›</button>
+              <div className="listing-dots">
+                {images.map((_, i) => (
+                  <button
+                    key={i}
+                    aria-label={`Photo ${i + 1}`}
+                    onClick={e => { e.preventDefault(); e.stopPropagation(); setIdx(i); }}
+                    className={`listing-dot ${i === idx ? 'is-active' : ''}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </Link>
+
+      {/* Body */}
+      <div className="lc2-body">
+        <p className="lc2-location">
+          <svg className="lc2-pin" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <path d="M6 0C3.24 0 1 2.24 1 5c0 3.75 5 11 5 11s5-7.25 5-11c0-2.76-2.24-5-5-5zm0 6.5C5.17 6.5 4.5 5.83 4.5 5S5.17 3.5 6 3.5 7.5 4.17 7.5 5 6.83 6.5 6 6.5z" fill="currentColor" />
+          </svg>
+          {p?.location ?? 'Lombok'}
+        </p>
+
+        <h3 className="lc2-title">{p?.title ?? 'Property'}</h3>
+
+        <div className="lc2-meta">
+          {p?.bedrooms != null && p.bedrooms > 0 && (
+            <span className="lc2-meta-item">🛏 {p.bedrooms} {p.bedrooms === 1 ? t.home.bed : t.home.beds}</span>
+          )}
+          {p?.bathrooms != null && p.bathrooms > 0 && (
+            <span className="lc2-meta-item">🚿 {p.bathrooms} {p.bathrooms === 1 ? t.home.bath : t.home.baths}</span>
+          )}
         </div>
 
-        <div className="listing-price-row">
-          <div>
-            {rental.monthly_price_idr > 0 && (
-              <p className="listing-price"><span>{fmtIDR(rental.monthly_price_idr)}</span><em> {t.home.perMonth}</em></p>
-            )}
-            {rental.yearly_price_idr ? (
-              <p className="listing-price-sub">{fmtIDR(rental.yearly_price_idr)} {t.home.perYear}</p>
-            ) : null}
+        {amenityKeys.length > 0 && (
+          <div className="lc2-amenities">
+            {amenityKeys.slice(0, 4).map(key => (
+              <span key={key} className="lc2-pill">
+                {AMENITY_ICONS[key]} {chipDict[key]}
+              </span>
+            ))}
           </div>
+        )}
+
+        <div className="lc2-price-block">
+          {rental.monthly_price_idr > 0 && (
+            <p className="lc2-price">
+              <span>IDR {fmtIDR(rental.monthly_price_idr)}</span>
+              <em> / {t.home.perMonth}</em>
+            </p>
+          )}
+          {rental.yearly_price_idr ? (
+            <p className="lc2-price-year">IDR {fmtIDR(rental.yearly_price_idr)} {t.home.perYear}</p>
+          ) : null}
           {((rental.min_duration_months ?? 0) > 0 || (rental.max_duration_months ?? 0) > 0) && (
-            <div className="listing-duration">
+            <p className="lc2-duration">
               {(rental.min_duration_months ?? 0) > 0 && (rental.max_duration_months ?? 0) > 0
                 ? `${rental.min_duration_months}–${rental.max_duration_months}`
                 : (rental.min_duration_months ?? 0) > 0
                   ? `${rental.min_duration_months}+`
                   : `≤ ${rental.max_duration_months}`} {t.home.months}
-            </div>
+            </p>
           )}
         </div>
+
+        <div className="lc2-ctas">
+          <Link href={prefixFor(locale, `/rentals/${p?.id}`)} className="lc2-btn-detail">
+            View details →
+          </Link>
+          <a
+            href={waUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="lc2-btn-wa"
+          >
+            💬 WhatsApp
+          </a>
+        </div>
       </div>
-    </Link>
+    </div>
   );
 }
 
@@ -173,6 +238,7 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
   const t = getDict(locale);
   const [rentals, setRentals] = useState<RentalRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState<SortBy>('recent');
   const [filters, setFilters] = useState<Filters>({
     location: '', minBeds: '', minBaths: '', maxPrice: '',
     pool: false, garden: false, aircon: false,
@@ -212,13 +278,36 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
     return true;
   });
 
+  /* Sort */
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortBy === 'price_asc') return a.monthly_price_idr - b.monthly_price_idr;
+    if (sortBy === 'price_desc') return b.monthly_price_idr - a.monthly_price_idr;
+    return 0;
+  });
+
+  /* Active chips */
+  const chipLabels: Record<string, string> = {
+    pool: t.home.chip.pool, garden: t.home.chip.garden, aircon: t.home.chip.aircon,
+    furnished: t.home.chip.furnished, kitchen: t.home.chip.kitchen, wifi: t.home.chip.wifi,
+    parking: t.home.chip.parking, privateSpace: t.home.chip.privateSpace,
+  };
+
+  const activeChips: { key: string; label: string; dismiss: () => void }[] = [];
+  if (filters.location) activeChips.push({ key: 'location', label: filters.location, dismiss: () => setFilters(f => ({ ...f, location: '' })) });
+  if (filters.minBeds) activeChips.push({ key: 'minBeds', label: `${filters.minBeds}+ ${t.home.beds}`, dismiss: () => setFilters(f => ({ ...f, minBeds: '' })) });
+  if (filters.minBaths) activeChips.push({ key: 'minBaths', label: `${filters.minBaths}+ ${t.home.baths}`, dismiss: () => setFilters(f => ({ ...f, minBaths: '' })) });
+  if (filters.maxPrice) activeChips.push({ key: 'maxPrice', label: `≤ IDR ${fmtIDR(Number(filters.maxPrice))}`, dismiss: () => setFilters(f => ({ ...f, maxPrice: '' })) });
+  (['pool', 'garden', 'aircon', 'furnished', 'kitchen', 'wifi', 'parking', 'privateSpace'] as (keyof Filters)[]).forEach(key => {
+    if (filters[key]) activeChips.push({ key, label: chipLabels[key], dismiss: () => setFilters(f => ({ ...f, [key]: false })) });
+  });
+
   const reset = () => setFilters({
     location: '', minBeds: '', minBaths: '', maxPrice: '',
     pool: false, garden: false, aircon: false,
     furnished: false, wifi: false, parking: false,
     privateSpace: false, kitchen: false,
   });
-  const hasActive = Object.values(filters).some(v => v !== '' && v !== false);
+  const hasActive = activeChips.length > 0;
 
   return (
     <main>
@@ -283,7 +372,7 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
           </div>
         ) : (
           <div className="inv-layout">
-            {/* Sidebar filters */}
+            {/* ── Sidebar filters ── */}
             <aside className="inv-sidebar">
               <div className="inv-sidebar-group">
                 <p className="eyebrow">{t.home.amenities}</p>
@@ -303,6 +392,7 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
                       checked={filters[key] as boolean}
                       onChange={e => setFilters(f => ({ ...f, [key]: e.target.checked }))}
                     />
+                    <span className="inv-check-icon" aria-hidden>{AMENITY_ICONS[key]}</span>
                     <span className="inv-check-label">{label}</span>
                   </label>
                 ))}
@@ -327,22 +417,51 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
               )}
             </aside>
 
-            {/* Grid */}
+            {/* ── Results area ── */}
             <div>
+              {/* Active filter chips */}
+              {activeChips.length > 0 && (
+                <div className="active-chips-row">
+                  {activeChips.map(chip => (
+                    <button key={chip.key} className="active-chip" onClick={chip.dismiss}>
+                      {chip.label} <span aria-hidden>×</span>
+                    </button>
+                  ))}
+                  <button className="active-chip active-chip-reset" onClick={reset}>
+                    {t.home.resetFilters}
+                  </button>
+                </div>
+              )}
+
+              {/* Result count + sort */}
               <div className="inv-result-row">
                 <p className="inv-result-count">
                   {filtered.length} {filtered.length === 1 ? t.home.resultOne : t.home.resultMany}
                   {hasActive && <span> · {t.home.filtered}</span>}
                 </p>
+                <div className="sort-row">
+                  <span className="sort-label">Sort by</span>
+                  <select
+                    className="sort-select"
+                    value={sortBy}
+                    onChange={e => setSortBy(e.target.value as SortBy)}
+                    aria-label="Sort listings"
+                  >
+                    <option value="recent">Most recent</option>
+                    <option value="price_asc">Price ↑</option>
+                    <option value="price_desc">Price ↓</option>
+                  </select>
+                </div>
               </div>
-              {filtered.length === 0 ? (
+
+              {sorted.length === 0 ? (
                 <div className="inv-empty">
                   <p>{t.home.empty}</p>
                   <button onClick={reset} className="btn-secondary">{t.home.resetFilters}</button>
                 </div>
               ) : (
                 <div className="home-grid">
-                  {filtered.map((r, i) => (
+                  {sorted.map((r, i) => (
                     <Reveal key={r.id} delay={Math.min(i * 60, 400)}>
                       <RentalCard rental={r} locale={locale} />
                     </Reveal>
