@@ -1099,18 +1099,24 @@ textarea:focus {
     border-radius: 50%;
     border: none;
     background: rgba(255,255,255,0.92);
-    color: var(--text);
+    color: #333;
     font-size: 1.3rem;
     line-height: 1;
     cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.25s ease, background 0.2s ease;
-    z-index: 2;
+    opacity: 0.55;
+    transition: opacity 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
 }
 
 .listing-card:hover .listing-arrow,
-.lc2-card:hover .listing-arrow { opacity: 1; }
-.listing-arrow:hover { background: #fff; }
+.lc2-card:hover .listing-arrow,
+.lc2-media:hover .listing-arrow,
+.listing-media:hover .listing-arrow { opacity: 1; }
+.listing-arrow:hover { background: #fff; transform: translateY(-50%) scale(1.08); }
 .listing-arrow-left { left: 12px; }
 .listing-arrow-right { right: 12px; }
 
