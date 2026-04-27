@@ -1108,7 +1108,8 @@ textarea:focus {
     z-index: 2;
 }
 
-.listing-card:hover .listing-arrow { opacity: 1; }
+.listing-card:hover .listing-arrow,
+.lc2-card:hover .listing-arrow { opacity: 1; }
 .listing-arrow:hover { background: #fff; }
 .listing-arrow-left { left: 12px; }
 .listing-arrow-right { right: 12px; }
