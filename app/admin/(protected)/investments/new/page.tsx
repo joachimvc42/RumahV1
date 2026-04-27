@@ -309,6 +309,17 @@ export default function NewInvestmentPage() {
           </div>
         </section>
 
+        {/* ── Location ── */}
+        <section style={s.section}>
+          <h2 style={s.sectionTitle}>🗺️ Location</h2>
+          <p style={s.sectionHint}>Click on the map or search an address to pin the exact location.</p>
+          <MapPicker
+            lat={lat} lng={lng}
+            onChange={(la, lo) => { setLat(la); setLng(lo); }}
+            onClear={() => { setLat(null); setLng(null); }}
+          />
+        </section>
+
         {/* ── Photos ── */}
         <section style={s.section}>
           <h2 style={s.sectionTitle}>📸 Photo gallery</h2>

@@ -24,6 +24,7 @@ type InvestmentRow = {
   lease_years?: number;
   images?: string[];
   status?: string | null;
+  landSize?: number | null;
 };
 
 type Search = { type: 'all'|'property'|'land'; tenure: 'all'|'freehold'|'leasehold'; location: string };
@@ -52,7 +53,7 @@ export default function AdminInvestmentsPage() {
 
       const [{ data: properties }, { data: lands }] = await Promise.all([
         propertyIds.length ? supabase.from('properties').select('id,title,location,price,currency,tenure,lease_years,images,status').in('id', propertyIds) : Promise.resolve({ data: [] }),
-        landIds.length ? supabase.from('lands').select('id,title,location,price_per_are_idr,price_per_are,currency,tenure,lease_years,images,status').in('id', landIds) : Promise.resolve({ data: [] }),
+        landIds.length ? supabase.from('lands').select('id,title,location,price_per_are_idr,price_per_are,currency,tenure,lease_years,land_size,images,status').in('id', landIds) : Promise.resolve({ data: [] }),
       ]);
 
       const enriched: InvestmentRow[] = invs.map(inv => {
@@ -61,7 +62,7 @@ export default function AdminInvestmentsPage() {
           return { ...inv, title: p?.title, location: p?.location, price: p?.price, currency: p?.currency || 'USD', tenure: p?.tenure, lease_years: p?.lease_years, images: p?.images, status: p?.status };
         } else {
           const l = lands?.find(l => l.id === inv.asset_id);
-          return { ...inv, title: l?.title, location: l?.location, price: l?.price_per_are_idr ?? l?.price_per_are, currency: l?.currency || 'IDR', tenure: l?.tenure, lease_years: l?.lease_years, images: l?.images, status: l?.status };
+          return { ...inv, title: l?.title, location: l?.location, price: l?.price_per_are_idr ?? l?.price_per_are, currency: l?.currency || 'IDR', tenure: l?.tenure, lease_years: l?.lease_years, images: l?.images, status: l?.status, landSize: l?.land_size ? Number(l.land_size) : null };
         }
       });
 
@@ -185,6 +186,10 @@ export default function AdminInvestmentsPage() {
                   <h3 style={s.cardTitle}>{inv.title || 'Untitled'}</h3>
                   <p style={s.location}>📍 {inv.location || '—'}</p>
 
+                  {inv.asset_type === 'land' && inv.landSize && (
+                    <p style={s.landArea}>📐 {inv.landSize} are</p>
+                  )}
+
                   {inv.reference && (
                     <div style={s.refBadge}>🔖 {inv.reference}</div>
                   )}
@@ -200,7 +205,7 @@ export default function AdminInvestmentsPage() {
 
                   <div style={s.tagRow}>
                     {inv.legal_checked && <span style={s.tag}>✅ Verified</span>}
-                    {inv.management_available && <span style={s.tag}>🏢 Management</span>}
+                    {inv.asset_type === 'property' && inv.management_available && <span style={s.tag}>🏢 Management</span>}
                   </div>
 
                   <div style={s.actions}>
@@ -246,7 +251,8 @@ const s: { [key: string]: React.CSSProperties } = {
   metaRow: { display: 'flex', gap: 5, flexWrap: 'wrap', marginBottom: 10 },
   metaBadge: { fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 6 },
   cardTitle: { fontSize: 15, fontWeight: 700, color: '#111827', margin: '0 0 3px', lineHeight: 1.3 },
-  location: { color: '#9ca3af', fontSize: 12, margin: '0 0 8px' },
+  location: { color: '#9ca3af', fontSize: 12, margin: '0 0 4px' },
+  landArea: { color: '#374151', fontSize: 13, fontWeight: 600, margin: '0 0 8px' },
   priceSection: { display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 6 },
   price: { fontSize: 18, fontWeight: 800, color: '#f59e0b' },
   priceUnit: { fontSize: 12, color: '#6b7280' },
