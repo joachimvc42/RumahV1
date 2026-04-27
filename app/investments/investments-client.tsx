@@ -97,24 +97,27 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
 
   return (
     <div className="lc2-card">
-      {/* Media */}
-      <Link
-        href={item.href}
-        className="lc2-media-link"
+      {/* Media — Link wraps only images; controls are siblings, not nested in <a> */}
+      <div
+        className="lc2-media listing-media"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
       >
-        <div className="lc2-media listing-media">
-          {/* Type + tenure overlay badges */}
-          <div className="lc2-inv-badges">
-            <span className={`lc2-inv-badge ${item.type === 'villa' ? 'lc2-inv-badge-villa' : 'lc2-inv-badge-land'}`}>
-              {item.type === 'villa' ? t.inv.badgeVilla : t.inv.badgeLand}
-            </span>
-            <span className={`lc2-inv-badge ${item.tenure === 'freehold' ? 'lc2-inv-badge-freehold' : 'lc2-inv-badge-lease'}`}>
-              {item.tenure === 'freehold' ? t.inv.freehold : item.leaseYears ? `${t.inv.leaseY} ${item.leaseYears}y` : t.inv.leasehold}
-            </span>
-          </div>
+        {/* Type + tenure overlay badges */}
+        <div className="lc2-inv-badges">
+          <span className={`lc2-inv-badge ${item.type === 'villa' ? 'lc2-inv-badge-villa' : 'lc2-inv-badge-land'}`}>
+            {item.type === 'villa' ? t.inv.badgeVilla : t.inv.badgeLand}
+          </span>
+          <span className={`lc2-inv-badge ${item.tenure === 'freehold' ? 'lc2-inv-badge-freehold' : 'lc2-inv-badge-lease'}`}>
+            {item.tenure === 'freehold' ? t.inv.freehold : item.leaseYears ? `${t.inv.leaseY} ${item.leaseYears}y` : t.inv.leasehold}
+          </span>
+        </div>
 
+        <Link
+          href={item.href}
+          className="lc2-media-link"
+          aria-label={item.title}
+        >
           {item.images.length > 0 ? item.images.map((src, i) => (
             <Image
               key={src}
@@ -132,25 +135,26 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
           )) : (
             <div className="listing-img-placeholder">Rumah<em>Ya</em></div>
           )}
+        </Link>
 
-          {item.images.length > 1 && (
-            <>
-              <button onClick={prev} className="listing-arrow listing-arrow-left" aria-label="Previous">‹</button>
-              <button onClick={next} className="listing-arrow listing-arrow-right" aria-label="Next">›</button>
-              <div className="listing-dots">
-                {item.images.map((_, i) => (
-                  <button
-                    key={i}
-                    aria-label={`Photo ${i + 1}`}
-                    onClick={e => { e.preventDefault(); e.stopPropagation(); setIdx(i); }}
-                    className={`listing-dot ${i === idx ? 'is-active' : ''}`}
-                  />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-      </Link>
+        {item.images.length > 1 && (
+          <>
+            <button type="button" onClick={prev} className="listing-arrow listing-arrow-left" aria-label="Previous">‹</button>
+            <button type="button" onClick={next} className="listing-arrow listing-arrow-right" aria-label="Next">›</button>
+            <div className="listing-dots">
+              {item.images.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  aria-label={`Photo ${i + 1}`}
+                  onClick={e => { e.preventDefault(); e.stopPropagation(); setIdx(i); }}
+                  className={`listing-dot ${i === idx ? 'is-active' : ''}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
 
       {/* Body */}
       <div className="lc2-body">

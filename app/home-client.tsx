@@ -118,14 +118,17 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
 
   return (
     <div className="lc2-card">
-      {/* Media section */}
-      <Link
-        href={prefixFor(locale, `/rentals/${p?.id}`)}
-        className="lc2-media-link"
+      {/* Media section — Link wraps only images; controls are siblings, not nested in <a> */}
+      <div
+        className="lc2-media listing-media"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
       >
-        <div className="lc2-media listing-media">
+        <Link
+          href={prefixFor(locale, `/rentals/${p?.id}`)}
+          className="lc2-media-link"
+          aria-label={p?.title ?? 'View property'}
+        >
           {images.length > 0 ? images.map((src, i) => (
             <Image
               key={src}
@@ -143,25 +146,26 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
           )) : (
             <div className="listing-img-placeholder">Rumah<em>Ya</em></div>
           )}
+        </Link>
 
-          {images.length > 1 && (
-            <>
-              <button onClick={prev} className="listing-arrow listing-arrow-left" aria-label="Previous">‹</button>
-              <button onClick={next} className="listing-arrow listing-arrow-right" aria-label="Next">›</button>
-              <div className="listing-dots">
-                {images.map((_, i) => (
-                  <button
-                    key={i}
-                    aria-label={`Photo ${i + 1}`}
-                    onClick={e => { e.preventDefault(); e.stopPropagation(); setIdx(i); }}
-                    className={`listing-dot ${i === idx ? 'is-active' : ''}`}
-                  />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-      </Link>
+        {images.length > 1 && (
+          <>
+            <button type="button" onClick={prev} className="listing-arrow listing-arrow-left" aria-label="Previous">‹</button>
+            <button type="button" onClick={next} className="listing-arrow listing-arrow-right" aria-label="Next">›</button>
+            <div className="listing-dots">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  aria-label={`Photo ${i + 1}`}
+                  onClick={e => { e.preventDefault(); e.stopPropagation(); setIdx(i); }}
+                  className={`listing-dot ${i === idx ? 'is-active' : ''}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
 
       {/* Body */}
       <div className="lc2-body">
