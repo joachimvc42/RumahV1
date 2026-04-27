@@ -249,7 +249,7 @@ export default function EditInvestmentPage() {
       await supabase.from('investments').update({
         expected_yield: expectedYield ? Number(expectedYield) : null,
         legal_checked: legalChecked,
-        management_available: managementAvailable,
+        management_available: assetType === 'property' ? managementAvailable : false,
       }).eq('id', id);
 
       router.push('/admin/investments');

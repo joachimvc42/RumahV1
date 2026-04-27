@@ -196,7 +196,7 @@ export default function NewInvestmentPage() {
         asset_id: assetId,
         expected_yield: expectedYield ? Number(expectedYield) : null,
         legal_checked: legalChecked,
-        management_available: managementAvailable,
+        management_available: assetType === 'villa' ? managementAvailable : false,
       });
 
       if (investmentError) throw investmentError;
