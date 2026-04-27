@@ -3407,6 +3407,21 @@ html[data-theme="dark"] .lc2-pill {
     transform: translateY(-1px);
 }
 
+/* Property reference badge */
+.lc2-ref {
+    display: inline-block;
+    margin: 0 0 10px;
+    padding: 3px 9px;
+    background: var(--accent-soft);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--text-muted, #888);
+    text-transform: uppercase;
+}
+
 /* ============================================================
    ACTIVE FILTER CHIPS
    ============================================================ */

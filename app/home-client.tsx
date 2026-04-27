@@ -16,6 +16,7 @@ const AMENITY_ICONS: Record<string, string> = {
 /* ─────────── Types ─────────── */
 type RentalRow = {
   id: string;
+  reference?: string | null;
   min_duration_months: number | null;
   max_duration_months: number | null;
   monthly_price_idr: number;
@@ -213,6 +214,10 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
           )}
         </div>
 
+        {rental.reference && (
+          <p className="lc2-ref">{rental.reference}</p>
+        )}
+
         <div className="lc2-ctas">
           <Link href={prefixFor(locale, `/rentals/${p?.id}`)} className="lc2-btn-detail">
             View details →
@@ -246,7 +251,7 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
 
   useEffect(() => {
     supabase.from('long_term_rentals')
-      .select(`id, min_duration_months, max_duration_months, monthly_price_idr, yearly_price_idr, legal_checked, available_from, available_to,
+      .select(`id, reference, min_duration_months, max_duration_months, monthly_price_idr, yearly_price_idr, legal_checked, available_from, available_to,
         properties (id, title, description, location, bedrooms, bathrooms, pool, garden, furnished, aircon, wifi, parking, private_space, kitchen, images, status, latitude, longitude)`)
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {

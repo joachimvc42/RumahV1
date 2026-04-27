@@ -45,7 +45,7 @@ export default function EditRentalPage() {
 
   const [monthlyPrice, setMonthlyPrice] = useState('');
   const [yearlyPrice, setYearlyPrice] = useState('');
-  const [internalRef, setInternalRef] = useState('');
+  const [reference, setReference] = useState('');
   const [minDuration, setMinDuration] = useState('');
   const [maxDuration, setMaxDuration] = useState('');
   const [paymentTerms, setPaymentTerms] = useState('');
@@ -74,6 +74,7 @@ export default function EditRentalPage() {
 
       setMonthlyPrice(String(data.monthly_price_idr || ''));
       setYearlyPrice(String(data.yearly_price_idr || ''));
+      setReference(data.reference || '');
       setMinDuration(String(data.min_duration_months || ''));
       setMaxDuration(String(data.max_duration_months || ''));
       setPaymentTerms(data.payment_terms || '');
@@ -103,7 +104,6 @@ export default function EditRentalPage() {
         setStatus((p.status as any) || 'draft');
         setLat(p.latitude ?? null);
         setLng(p.longitude ?? null);
-        setInternalRef(p.internal_ref || '');
 
         // Load existing videos
         if (p.videos && Array.isArray(p.videos)) {
@@ -226,7 +226,6 @@ export default function EditRentalPage() {
         status: normalizeStatus(status),
         latitude: lat,
         longitude: lng,
-        internal_ref: internalRef || null,
       }).eq('id', propertyId);
 
       const rentalUpdate: Record<string, any> = {
@@ -280,7 +279,14 @@ export default function EditRentalPage() {
             <div style={s.field}><label style={s.label}>Property title *</label><input style={s.input} value={title} onChange={e => setTitle(e.target.value)} required /></div>
             <div style={s.field}><label style={s.label}>Location *</label><LocationInput value={location} onChange={setLocation} required /></div>
           </div>
-          <div style={s.field}><label style={s.label}>Internal reference</label><input style={s.input} value={internalRef} onChange={e => setInternalRef(e.target.value)} placeholder="Ex: RY-001" /></div>
+          {reference && (
+            <div style={s.field}>
+              <label style={s.label}>Reference (auto-generated)</label>
+              <div style={{ padding: '10px 14px', background: '#f5eedc', border: '1px solid #DDD6C8', borderRadius: 10, fontSize: 15, fontWeight: 700, color: '#7A6030', letterSpacing: '0.05em' }}>
+                🔖 {reference}
+              </div>
+            </div>
+          )}
           <div style={s.field}><label style={s.label}>Description</label><textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} rows={4} /></div>
           <div style={s.grid4}>
             <div style={s.field}><label style={s.label}>Bedrooms</label><input style={s.input} type="number" value={bedrooms} onChange={e => setBedrooms(e.target.value)} /></div>

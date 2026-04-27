@@ -11,6 +11,7 @@ type InvestmentRow = {
   id: string;
   asset_type: 'property' | 'land';
   asset_id: string;
+  reference?: string | null;
   expected_yield: number | null;
   management_available: boolean;
   legal_checked: boolean;
@@ -23,7 +24,6 @@ type InvestmentRow = {
   lease_years?: number;
   images?: string[];
   status?: string | null;
-  internal_ref?: string | null;
 };
 
 type Search = { type: 'all'|'property'|'land'; tenure: 'all'|'freehold'|'leasehold'; location: string };
@@ -51,17 +51,17 @@ export default function AdminInvestmentsPage() {
       const landIds = invs.filter(i => i.asset_type === 'land').map(i => i.asset_id);
 
       const [{ data: properties }, { data: lands }] = await Promise.all([
-        propertyIds.length ? supabase.from('properties').select('id,title,location,price,currency,tenure,lease_years,images,status,internal_ref').in('id', propertyIds) : Promise.resolve({ data: [] }),
-        landIds.length ? supabase.from('lands').select('id,title,location,price_per_are_idr,price_per_are,currency,tenure,lease_years,images,status,internal_ref').in('id', landIds) : Promise.resolve({ data: [] }),
+        propertyIds.length ? supabase.from('properties').select('id,title,location,price,currency,tenure,lease_years,images,status').in('id', propertyIds) : Promise.resolve({ data: [] }),
+        landIds.length ? supabase.from('lands').select('id,title,location,price_per_are_idr,price_per_are,currency,tenure,lease_years,images,status').in('id', landIds) : Promise.resolve({ data: [] }),
       ]);
 
       const enriched: InvestmentRow[] = invs.map(inv => {
         if (inv.asset_type === 'property') {
           const p = properties?.find(p => p.id === inv.asset_id);
-          return { ...inv, title: p?.title, location: p?.location, price: p?.price, currency: p?.currency || 'USD', tenure: p?.tenure, lease_years: p?.lease_years, images: p?.images, status: p?.status, internal_ref: p?.internal_ref };
+          return { ...inv, title: p?.title, location: p?.location, price: p?.price, currency: p?.currency || 'USD', tenure: p?.tenure, lease_years: p?.lease_years, images: p?.images, status: p?.status };
         } else {
           const l = lands?.find(l => l.id === inv.asset_id);
-          return { ...inv, title: l?.title, location: l?.location, price: l?.price_per_are_idr ?? l?.price_per_are, currency: l?.currency || 'IDR', tenure: l?.tenure, lease_years: l?.lease_years, images: l?.images, status: l?.status, internal_ref: l?.internal_ref };
+          return { ...inv, title: l?.title, location: l?.location, price: l?.price_per_are_idr ?? l?.price_per_are, currency: l?.currency || 'IDR', tenure: l?.tenure, lease_years: l?.lease_years, images: l?.images, status: l?.status };
         }
       });
 
@@ -185,8 +185,8 @@ export default function AdminInvestmentsPage() {
                   <h3 style={s.cardTitle}>{inv.title || 'Untitled'}</h3>
                   <p style={s.location}>📍 {inv.location || '—'}</p>
 
-                  {inv.internal_ref && (
-                    <div style={s.refBadge}>🔖 {inv.internal_ref}</div>
+                  {inv.reference && (
+                    <div style={s.refBadge}>🔖 {inv.reference}</div>
                   )}
 
                   <div style={s.priceSection}>

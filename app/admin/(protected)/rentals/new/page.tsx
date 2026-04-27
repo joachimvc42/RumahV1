@@ -41,7 +41,6 @@ export default function NewRentalPage() {
 
   const [monthlyPrice, setMonthlyPrice] = useState('');
   const [yearlyPrice, setYearlyPrice] = useState('');
-  const [internalRef, setInternalRef] = useState('');
   const [minDuration, setMinDuration] = useState('');
   const [maxDuration, setMaxDuration] = useState('');
   const [paymentTerms, setPaymentTerms] = useState('');
@@ -147,7 +146,6 @@ export default function NewRentalPage() {
           property_type: 'rental',
           latitude: lat,
           longitude: lng,
-          internal_ref: internalRef || null,
         })
         .select()
         .single();
@@ -224,7 +222,9 @@ export default function NewRentalPage() {
               <LocationInput value={location} onChange={setLocation} required placeholder="Ex: Kuta, Senggigi…" />
             </div>
           </div>
-          <div style={s.field}><label style={s.label}>Internal reference</label><input style={s.input} value={internalRef} onChange={e => setInternalRef(e.target.value)} placeholder="Ex: RY-001" /></div>
+          <div style={{ padding: '10px 14px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 10, fontSize: 13, color: '#166534' }}>
+            ℹ️ A reference (R#####) will be automatically assigned when this property is created.
+          </div>
           <div style={s.field}>
             <label style={s.label}>Description</label>
             <textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} placeholder="Detailed property description..." rows={4} />

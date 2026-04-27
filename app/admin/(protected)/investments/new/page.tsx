@@ -23,7 +23,6 @@ export default function NewInvestmentPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [assetType, setAssetType] = useState<'villa' | 'land'>('villa');
-  const [internalRef, setInternalRef] = useState('');
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
@@ -146,7 +145,6 @@ export default function NewInvestmentPage() {
             property_type: 'investment',
             latitude: lat,
             longitude: lng,
-            internal_ref: internalRef || null,
           })
           .select('id')
           .single();
@@ -175,7 +173,6 @@ export default function NewInvestmentPage() {
             zoning: 'investment',
             latitude: lat,
             longitude: lng,
-            internal_ref: internalRef || null,
           })
           .select('id')
           .single();
@@ -238,7 +235,9 @@ export default function NewInvestmentPage() {
             <div style={s.field}><label style={s.label}>Title *</label><input style={s.input} value={title} onChange={e => setTitle(e.target.value)} placeholder={assetType === 'villa' ? 'Ex: Luxury seafront villa' : 'Ex: Buildable land Kuta'} required /></div>
             <div style={s.field}><label style={s.label}>Location *</label><LocationInput value={location} onChange={setLocation} required placeholder="Ex: Kuta, Senggigi…" /></div>
           </div>
-          <div style={s.field}><label style={s.label}>Internal reference</label><input style={s.input} value={internalRef} onChange={e => setInternalRef(e.target.value)} placeholder="Ex: RY-001" /></div>
+          <div style={{ padding: '10px 14px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 10, fontSize: 13, color: '#166534' }}>
+            ℹ️ A reference (I#####) will be automatically assigned when this investment is created.
+          </div>
           <div style={s.field}><label style={s.label}>Description</label><textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} placeholder="Detailed description..." rows={4} /></div>
           {assetType === 'villa' && (
             <>

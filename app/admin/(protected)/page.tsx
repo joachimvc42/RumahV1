@@ -7,6 +7,7 @@ import { getStatusLabel, getStatusColor, normalizeStatus, type PropertyStatus } 
 
 type RentalRow = {
   id: string;
+  reference?: string | null;
   min_duration_months: number | null;
   max_duration_months: number | null;
   monthly_price_idr: number;
@@ -26,7 +27,6 @@ type RentalRow = {
     garden: boolean;
     images: string[] | null;
     status?: string | null;
-    internal_ref?: string | null;
   } | null;
 };
 
@@ -55,8 +55,7 @@ export default function AdminHomePage() {
             pool,
             garden,
             images,
-            status,
-            internal_ref
+            status
           )
         `)
         .order('created_at', { ascending: false });
@@ -216,9 +215,9 @@ export default function AdminHomePage() {
                   <p style={styles.paymentTerms}>💬 {rental.payment_terms}</p>
                 )}
 
-                {/* Internal ref badge */}
-                {rental.properties?.internal_ref && (
-                  <div style={styles.refBadge}>🔖 {rental.properties.internal_ref}</div>
+                {/* Auto-generated reference */}
+                {rental.reference && (
+                  <div style={styles.refBadge}>🔖 {rental.reference}</div>
                 )}
 
                 {/* Actions */}

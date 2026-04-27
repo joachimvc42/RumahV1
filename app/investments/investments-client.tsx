@@ -17,6 +17,7 @@ const AMENITY_ICONS: Record<string, string> = {
 /* ─────────── Types ─────────── */
 type Item = {
   id: string; type: 'villa' | 'land'; title: string; location: string;
+  reference?: string | null;
   price: number; currency: string; tenure: 'freehold' | 'leasehold'; leaseYears?: number;
   expectedYield: number | null; images: string[]; href: string;
   bedrooms?: number | null; bathrooms?: number | null;
@@ -202,6 +203,10 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
           )}
         </div>
 
+        {item.reference && (
+          <p className="lc2-ref">{item.reference}</p>
+        )}
+
         <div className="lc2-ctas">
           <Link href={item.href} className="lc2-btn-detail">
             View details →
@@ -246,6 +251,7 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
           const p = (props as any[])?.find(x => x.id === inv.asset_id);
           if (p && p.status === 'published') merged.push({
             id: inv.id, type: 'villa', title: p.title, location: p.location || 'Lombok',
+            reference: inv.reference,
             price: p.price || 0, currency: p.currency || 'USD', tenure: p.tenure || 'freehold',
             leaseYears: p.lease_years, expectedYield: inv.expected_yield, images: p.images || [],
             href: prefixFor(locale, `/investments/${inv.id}`), bedrooms: p.bedrooms, bathrooms: p.bathrooms,
@@ -257,6 +263,7 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
           const l = (lands as any[])?.find(x => x.id === inv.asset_id);
           if (l && l.status === 'published') merged.push({
             id: inv.id, type: 'land', title: l.title, location: l.location || 'Lombok',
+            reference: inv.reference,
             price: l.price_per_are_idr ?? l.price_per_are ?? 0, currency: l.currency || 'IDR',
             tenure: l.tenure || 'freehold', leaseYears: l.lease_years,
             expectedYield: inv.expected_yield, images: l.images || [],
