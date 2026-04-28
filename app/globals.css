@@ -1669,13 +1669,16 @@ textarea:focus {
     margin: 8px 0;
 }
 
-/* Two-column: sidebar + grid */
+/* Two-column: sidebar + grid. Falls back to single column when sidebar is absent */
 .inv-layout {
     display: grid;
-    grid-template-columns: 240px 1fr;
+    grid-template-columns: 1fr;
     gap: 40px;
     align-items: start;
     padding-bottom: 80px;
+}
+.inv-layout:has(.inv-sidebar) {
+    grid-template-columns: 240px 1fr;
 }
 
 .inv-sidebar {

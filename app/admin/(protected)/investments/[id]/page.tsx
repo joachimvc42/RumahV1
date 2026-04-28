@@ -40,6 +40,9 @@ export default function EditInvestmentPage() {
   const [pool, setPool] = useState(false);
   const [garden, setGarden] = useState(false);
   const [furnished, setFurnished] = useState(true);
+  const [hasWater, setHasWater] = useState(false);
+  const [hasElectricity, setHasElectricity] = useState(false);
+  const [hasRoad, setHasRoad] = useState(false);
 
   const [price, setPrice] = useState('');
   const [currency, setCurrency] = useState<'USD' | 'IDR'>('USD');
@@ -103,6 +106,9 @@ export default function EditInvestmentPage() {
           setCurrency(land.currency || 'IDR'); setTenure(land.tenure || 'freehold');
           setLeaseDuration(String(land.lease_years || ''));
           setStatus((land.status as PropertyStatus) || 'draft');
+          setHasWater(land.has_water || false);
+          setHasElectricity(land.has_electricity || false);
+          setHasRoad(land.has_road || false);
           if (land.latitude != null) setLat(Number(land.latitude));
           if (land.longitude != null) setLng(Number(land.longitude));
           setGalleryItems(urlsToGalleryItems(land.images || []));
@@ -241,6 +247,9 @@ export default function EditInvestmentPage() {
           lease_years: tenure === 'leasehold' ? Number(leaseDuration) : null,
           images: allImages, videos: allVideos,
           status: normalizeStatus(status),
+          has_water: hasWater,
+          has_electricity: hasElectricity,
+          has_road: hasRoad,
           latitude: lat, longitude: lng,
         }).eq('id', investment.asset_id);
         if (landErr) throw landErr;
@@ -321,7 +330,14 @@ export default function EditInvestmentPage() {
             </>
           )}
           {assetType === 'land' && (
-            <div style={s.field}><label style={s.label}>Land area (are)</label><input style={s.input} type="number" step="0.1" value={landArea} onChange={e => setLandArea(e.target.value)} /></div>
+            <>
+              <div style={s.field}><label style={s.label}>Land area (are)</label><input style={s.input} type="number" step="0.1" value={landArea} onChange={e => setLandArea(e.target.value)} /></div>
+              <div style={s.amenities}>
+                <label style={s.checkbox}><input type="checkbox" checked={hasWater} onChange={e => setHasWater(e.target.checked)} /><span>💧 Water access</span></label>
+                <label style={s.checkbox}><input type="checkbox" checked={hasElectricity} onChange={e => setHasElectricity(e.target.checked)} /><span>⚡ Electricity</span></label>
+                <label style={s.checkbox}><input type="checkbox" checked={hasRoad} onChange={e => setHasRoad(e.target.checked)} /><span>🛣️ Road access</span></label>
+              </div>
+            </>
           )}
         </section>
 

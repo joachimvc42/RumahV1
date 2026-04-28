@@ -33,6 +33,9 @@ export default function NewInvestmentPage() {
   const [pool, setPool] = useState(false);
   const [garden, setGarden] = useState(false);
   const [furnished, setFurnished] = useState(true);
+  const [hasWater, setHasWater] = useState(false);
+  const [hasElectricity, setHasElectricity] = useState(false);
+  const [hasRoad, setHasRoad] = useState(false);
 
   const [price, setPrice] = useState('');
   const [currency, setCurrency] = useState<'USD' | 'IDR'>('USD');
@@ -171,6 +174,9 @@ export default function NewInvestmentPage() {
             lease_years: tenure === 'leasehold' ? Number(leaseDuration) : null,
             status: normalizeStatus(status),
             zoning: 'investment',
+            has_water: hasWater,
+            has_electricity: hasElectricity,
+            has_road: hasRoad,
             latitude: lat,
             longitude: lng,
           })
@@ -255,7 +261,14 @@ export default function NewInvestmentPage() {
             </>
           )}
           {assetType === 'land' && (
-            <div style={s.field}><label style={s.label}>Land area (are) *</label><input style={s.input} type="number" step="0.1" value={landArea} onChange={e => setLandArea(e.target.value)} placeholder="15" required /></div>
+            <>
+              <div style={s.field}><label style={s.label}>Land area (are) *</label><input style={s.input} type="number" step="0.1" value={landArea} onChange={e => setLandArea(e.target.value)} placeholder="15" required /></div>
+              <div style={s.amenities}>
+                <label style={s.checkbox}><input type="checkbox" checked={hasWater} onChange={e => setHasWater(e.target.checked)} /><span>💧 Water access</span></label>
+                <label style={s.checkbox}><input type="checkbox" checked={hasElectricity} onChange={e => setHasElectricity(e.target.checked)} /><span>⚡ Electricity</span></label>
+                <label style={s.checkbox}><input type="checkbox" checked={hasRoad} onChange={e => setHasRoad(e.target.checked)} /><span>🛣️ Road access</span></label>
+              </div>
+            </>
           )}
         </section>
 

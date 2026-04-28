@@ -385,89 +385,104 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
           </div>
         ) : (
           <div className="inv-layout">
-            {/* ── Sidebar filters ── */}
-            <aside className="inv-sidebar">
-              {(search.type === 'villa' || search.type === 'all') && (
-                <>
-                  <div className="inv-sidebar-group">
-                    <p className="eyebrow">{t.inv.villaAmenities}</p>
-                    {([['pool', t.inv.pool, '🏊'], ['garden', t.inv.garden, '🌿'], ['furnished', t.inv.furnished, '🛋️']] as [keyof VillaSidebar, string, string][]).map(([key, label, icon]) => (
-                      <label key={key} className="inv-check-row">
-                        <input
-                          type="checkbox"
-                          checked={villa[key] as boolean}
-                          onChange={e => setVilla(s => ({ ...s, [key]: e.target.checked }))}
-                        />
-                        <span className="inv-check-icon" aria-hidden>{icon}</span>
-                        <span className="inv-check-label">{label}</span>
-                      </label>
-                    ))}
-                  </div>
-                  <div className="inv-sidebar-group">
-                    <p className="eyebrow">{t.inv.bedrooms}</p>
-                    {[['1', '1+'], ['2', '2+'], ['3', '3+'], ['4', '4+']].map(([v, l]) => (
-                      <label key={v} className="inv-check-row">
-                        <input
-                          type="checkbox"
-                          checked={villa.minBedrooms === v}
-                          onChange={e => setVilla(s => ({ ...s, minBedrooms: e.target.checked ? v : '' }))}
-                        />
-                        <span className="inv-check-label">{l} {t.inv.beds}</span>
-                      </label>
-                    ))}
-                  </div>
-                </>
-              )}
+            {/* ── Sidebar filters — only shown when a specific type is selected ── */}
+            {search.type !== 'all' && (
+              <aside className="inv-sidebar">
+                {search.type === 'villa' && (
+                  <>
+                    <div className="inv-sidebar-group">
+                      <p className="eyebrow">{t.inv.villaAmenities}</p>
+                      {([['pool', t.inv.pool, '🏊'], ['garden', t.inv.garden, '🌿'], ['furnished', t.inv.furnished, '🛋️']] as [keyof VillaSidebar, string, string][]).map(([key, label, icon]) => (
+                        <label key={key} className="inv-check-row">
+                          <input
+                            type="checkbox"
+                            checked={villa[key] as boolean}
+                            onChange={e => setVilla(s => ({ ...s, [key]: e.target.checked }))}
+                          />
+                          <span className="inv-check-icon" aria-hidden>{icon}</span>
+                          <span className="inv-check-label">{label}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <div className="inv-sidebar-group">
+                      <p className="eyebrow">{t.inv.bedrooms}</p>
+                      {[['1', '1+'], ['2', '2+'], ['3', '3+'], ['4', '4+']].map(([v, l]) => (
+                        <label key={v} className="inv-check-row">
+                          <input
+                            type="checkbox"
+                            checked={villa.minBedrooms === v}
+                            onChange={e => setVilla(s => ({ ...s, minBedrooms: e.target.checked ? v : '' }))}
+                          />
+                          <span className="inv-check-label">{l} {t.inv.beds}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <div className="inv-sidebar-group">
+                      <p className="eyebrow">{t.inv.bathrooms}</p>
+                      {[['1', '1+'], ['2', '2+'], ['3', '3+']].map(([v, l]) => (
+                        <label key={v} className="inv-check-row">
+                          <input
+                            type="checkbox"
+                            checked={villa.minBathrooms === v}
+                            onChange={e => setVilla(s => ({ ...s, minBathrooms: e.target.checked ? v : '' }))}
+                          />
+                          <span className="inv-check-label">{l} {t.inv.baths}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </>
+                )}
 
-              {(search.type === 'land' || search.type === 'all') && (
-                <>
-                  <div className="inv-sidebar-group">
-                    <p className="eyebrow">{t.inv.utilities}</p>
-                    {([['hasWater', t.inv.water, '💧'], ['hasElectricity', t.inv.electricity, '⚡'], ['hasRoad', t.inv.road, '🛣️']] as [keyof LandSidebar, string, string][]).map(([key, label, icon]) => (
-                      <label key={key} className="inv-check-row">
-                        <input
-                          type="checkbox"
-                          checked={land[key] as boolean}
-                          onChange={e => setLand(s => ({ ...s, [key]: e.target.checked }))}
-                        />
-                        <span className="inv-check-icon" aria-hidden>{icon}</span>
-                        <span className="inv-check-label">{label}</span>
-                      </label>
-                    ))}
-                  </div>
-                  <div className="inv-sidebar-group">
-                    <p className="eyebrow">{t.inv.minArea}</p>
-                    {[['5', '5+'], ['10', '10+'], ['20', '20+'], ['50', '50+']].map(([v, l]) => (
-                      <label key={v} className="inv-check-row">
-                        <input
-                          type="checkbox"
-                          checked={land.minArea === v}
-                          onChange={e => setLand(s => ({ ...s, minArea: e.target.checked ? v : '' }))}
-                        />
-                        <span className="inv-check-label">{l} {t.inv.areSuffix}</span>
-                      </label>
-                    ))}
-                  </div>
-                  <div className="inv-sidebar-group">
-                    <p className="eyebrow">{t.inv.maxPricePerAre}</p>
-                    {[['100000000', '100 M IDR'], ['200000000', '200 M IDR'], ['300000000', '300 M IDR']].map(([v, l]) => (
-                      <label key={v} className="inv-check-row">
-                        <input
-                          type="checkbox"
-                          checked={land.maxPrice === v}
-                          onChange={e => setLand(s => ({ ...s, maxPrice: e.target.checked ? v : '' }))}
-                        />
-                        <span className="inv-check-label">{l}</span>
-                      </label>
-                    ))}
-                  </div>
-                </>
-              )}
+                {search.type === 'land' && (
+                  <>
+                    <div className="inv-sidebar-group">
+                      <p className="eyebrow">{t.inv.utilities}</p>
+                      {([['hasWater', t.inv.water, '💧'], ['hasElectricity', t.inv.electricity, '⚡'], ['hasRoad', t.inv.road, '🛣️']] as [keyof LandSidebar, string, string][]).map(([key, label, icon]) => (
+                        <label key={key} className="inv-check-row">
+                          <input
+                            type="checkbox"
+                            checked={land[key] as boolean}
+                            onChange={e => setLand(s => ({ ...s, [key]: e.target.checked }))}
+                          />
+                          <span className="inv-check-icon" aria-hidden>{icon}</span>
+                          <span className="inv-check-label">{label}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <div className="inv-sidebar-group">
+                      <p className="eyebrow">{t.inv.minArea}</p>
+                      {[['5', '5+'], ['10', '10+'], ['20', '20+'], ['50', '50+']].map(([v, l]) => (
+                        <label key={v} className="inv-check-row">
+                          <input
+                            type="checkbox"
+                            checked={land.minArea === v}
+                            onChange={e => setLand(s => ({ ...s, minArea: e.target.checked ? v : '' }))}
+                          />
+                          <span className="inv-check-label">{l} {t.inv.areSuffix}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <div className="inv-sidebar-group">
+                      <p className="eyebrow">{t.inv.maxPricePerAre}</p>
+                      {[['100000000', '100 M IDR'], ['200000000', '200 M IDR'], ['300000000', '300 M IDR']].map(([v, l]) => (
+                        <label key={v} className="inv-check-row">
+                          <input
+                            type="checkbox"
+                            checked={land.maxPrice === v}
+                            onChange={e => setLand(s => ({ ...s, maxPrice: e.target.checked ? v : '' }))}
+                          />
+                          <span className="inv-check-label">{l}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </>
+                )}
 
-              {hasActiveFilters && (
-                <button onClick={resetFilters} className="inv-reset">{t.inv.resetFilters}</button>
-              )}
-            </aside>
+                {hasActiveFilters && (
+                  <button onClick={resetFilters} className="inv-reset">{t.inv.resetFilters}</button>
+                )}
+              </aside>
+            )}
 
             {/* ── Results area ── */}
             <div>
