@@ -1,10 +1,18 @@
 'use client';
 
-import { useRef, useCallback } from 'react';
-import { GoogleMap, Marker, StandaloneSearchBox, useJsApiLoader } from '@react-google-maps/api';
+import { useRef, useCallback, useState } from 'react';
+import { GoogleMap, Marker, Autocomplete, useJsApiLoader } from '@react-google-maps/api';
 
 const LOMBOK_CENTER = { lat: -8.65, lng: 116.32 };
 const LIBRARIES: ('places')[] = ['places'];
+
+/** Bounding box that covers all of Lombok island */
+const LOMBOK_BOUNDS = {
+  south: -9.07,
+  west: 115.72,
+  north: -8.07,
+  east: 116.72,
+};
 
 export type MapPickerProps = {
   lat: number | null;
@@ -16,18 +24,49 @@ export type MapPickerProps = {
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export default function MapPicker({ lat, lng, onChange, onClear }: MapPickerProps) {
-  const searchBoxRef = useRef<google.maps.places.SearchBox | null>(null);
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const [outOfBounds, setOutOfBounds] = useState(false);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: API_KEY ?? '',
     libraries: LIBRARIES,
   });
 
+  const onAutocompleteLoad = useCallback((ac: google.maps.places.Autocomplete) => {
+    autocompleteRef.current = ac;
+    ac.setOptions({
+      componentRestrictions: { country: 'id' },
+      bounds: new google.maps.LatLngBounds(
+        { lat: LOMBOK_BOUNDS.south, lng: LOMBOK_BOUNDS.west },
+        { lat: LOMBOK_BOUNDS.north, lng: LOMBOK_BOUNDS.east },
+      ),
+      strictBounds: true,
+    });
+  }, []);
+
+  const onPlaceChanged = useCallback(() => {
+    const ac = autocompleteRef.current;
+    if (!ac) return;
+    const place = ac.getPlace();
+    const loc = place.geometry?.location;
+    if (!loc) return;
+    const pLat = loc.lat();
+    const pLng = loc.lng();
+    // Extra guard: reject anything outside Lombok bounding box
+    if (
+      pLat < LOMBOK_BOUNDS.south || pLat > LOMBOK_BOUNDS.north ||
+      pLng < LOMBOK_BOUNDS.west  || pLng > LOMBOK_BOUNDS.east
+    ) {
+      setOutOfBounds(true);
+      return;
+    }
+    setOutOfBounds(false);
+    onChange(pLat, pLng);
+  }, [onChange]);
+
   const onMarkerDragEnd = useCallback(
     (e: google.maps.MapMouseEvent) => {
-      if (e.latLng) {
-        onChange(e.latLng.lat(), e.latLng.lng());
-      }
+      if (e.latLng) onChange(e.latLng.lat(), e.latLng.lng());
     },
     [onChange],
   );
@@ -35,22 +74,12 @@ export default function MapPicker({ lat, lng, onChange, onClear }: MapPickerProp
   const onMapClick = useCallback(
     (e: google.maps.MapMouseEvent) => {
       if (e.latLng) {
+        setOutOfBounds(false);
         onChange(e.latLng.lat(), e.latLng.lng());
       }
     },
     [onChange],
   );
-
-  const onPlacesChanged = useCallback(() => {
-    const sb = searchBoxRef.current;
-    if (!sb) return;
-    const places = sb.getPlaces();
-    if (!places || places.length === 0) return;
-    const loc = places[0].geometry?.location;
-    if (loc) {
-      onChange(loc.lat(), loc.lng());
-    }
-  }, [onChange]);
 
   if (!API_KEY) {
     return (
@@ -71,16 +100,23 @@ export default function MapPicker({ lat, lng, onChange, onClear }: MapPickerProp
 
   return (
     <div style={s.wrapper}>
-      <StandaloneSearchBox
-        onLoad={ref => { searchBoxRef.current = ref; }}
-        onPlacesChanged={onPlacesChanged}
+      <Autocomplete
+        onLoad={onAutocompleteLoad}
+        onPlaceChanged={onPlaceChanged}
       >
         <input
           type="text"
-          placeholder="Search an address or place…"
-          style={s.searchInput}
+          placeholder="Search a place in Lombok…"
+          style={{ ...s.searchInput, ...(outOfBounds ? s.searchInputError : {}) }}
+          onChange={() => setOutOfBounds(false)}
         />
-      </StandaloneSearchBox>
+      </Autocomplete>
+
+      {outOfBounds && (
+        <div style={s.errorBanner}>
+          ⚠️ This location is outside Lombok. Please select a place on the island.
+        </div>
+      )}
 
       <div style={s.mapContainer}>
         <GoogleMap
@@ -111,7 +147,7 @@ export default function MapPicker({ lat, lng, onChange, onClear }: MapPickerProp
             </button>
           </>
         ) : (
-          <span style={s.hint}>Click on the map or search an address to pin a location.</span>
+          <span style={s.hint}>Click on the map or search a place in Lombok to pin a location.</span>
         )}
       </div>
     </div>
@@ -138,6 +174,19 @@ const s: { [k: string]: React.CSSProperties } = {
     padding: 12, border: '2px solid #e5e7eb',
     borderRadius: 10, fontSize: 15, outline: 'none',
     fontFamily: 'inherit',
+  },
+  searchInputError: {
+    borderColor: '#fca5a5',
+    background: '#fef2f2',
+  },
+  errorBanner: {
+    padding: '10px 14px',
+    background: '#fef2f2',
+    border: '1px solid #fca5a5',
+    borderRadius: 8,
+    fontSize: 13,
+    color: '#b91c1c',
+    fontWeight: 500,
   },
   mapContainer: {
     width: '100%', height: 320, borderRadius: 12,
