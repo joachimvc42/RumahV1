@@ -20,6 +20,14 @@ export const metadata: Metadata = {
     url: 'https://rumahya.com/map',
     type: 'website',
     locale: 'en_US',
+    images: [
+      {
+        url: 'https://rumahya.com/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'RumahYa — Property map of Lombok, Indonesia',
+      },
+    ],
   },
 };
 

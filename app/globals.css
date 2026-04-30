@@ -3587,3 +3587,54 @@ html[data-theme="dark"] .active-chip-reset {
     .sort-select { font-size: 16px !important; }
     .active-chip { font-size: 0.78rem; padding: 6px 10px; }
 }
+
+/* ============================================================
+   SEO — visually hidden server-rendered content
+   Accessible to crawlers & screen readers; invisible on screen.
+   Never use display:none or visibility:hidden (removes from a11y tree).
+   ============================================================ */
+
+.seo-content {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ============================================================
+   Mobile touch target improvements — WCAG 2.5.5 (44×44 px)
+   ============================================================ */
+
+@media (max-width: 768px) {
+    /* Minimum 44px touch targets for interactive elements */
+    .nav-link,
+    .nav-cta {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .btn,
+    .button,
+    .btn-primary,
+    .btn-secondary,
+    .button-outline {
+        min-height: 44px;
+        padding: 12px 24px;
+    }
+
+    /* Container padding tighter on small screens */
+    .container {
+        padding: 0 16px;
+    }
+
+    /* Hero text slightly reduced for small screens */
+    .hero {
+        padding: 48px 0 40px;
+    }
+}

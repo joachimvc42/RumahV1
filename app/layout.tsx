@@ -1,5 +1,6 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Cormorant_Garamond } from 'next/font/google';
+import { headers } from 'next/headers';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import './globals.css';
@@ -20,14 +21,25 @@ const cormorant = Cormorant_Garamond({
 
 const BASE_URL = 'https://rumahya.com';
 
+/* ─── Viewport — critical for Mobile Friendly ─── */
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#F6F1E9' },
+    { media: '(prefers-color-scheme: dark)',  color: '#0F0E0C' },
+  ],
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'RumahYa — Long-term rentals & investment in Lombok',
+    default: 'RumahYa — Rentals & investment in Lombok',
     template: '%s | RumahYa Lombok',
   },
   description:
-    'RumahYa helps expatriates and investors find verified long-term villa rentals and land investments in Lombok, Indonesia. Local expertise, legal verification, on-the-ground support.',
+    'Verified long-term villa rentals and land investments in Lombok. Local expertise, legal checks, on-the-ground support.',
   keywords: [
     'Lombok real estate', 'villa rental Lombok', 'land investment Lombok',
     'long-term rental Lombok', 'buy land Lombok', 'invest Lombok',
@@ -42,12 +54,12 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: BASE_URL,
     siteName: 'RumahYa',
-    title: 'RumahYa — Long-term rentals & investment in Lombok',
+    title: 'RumahYa — Rentals & investment in Lombok',
     description:
-      'Find verified villas and land in Lombok. Long-term rentals and investment opportunities with local expertise.',
+      'Verified villas and land in Lombok. Rentals and investments with local expertise.',
     images: [
       {
-        url: '/og-image.jpg',
+        url: `${BASE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
         alt: 'RumahYa — Real estate in Lombok, Indonesia',
@@ -56,16 +68,26 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
+    site: '@rumahya',
+    creator: '@rumahya',
     title: 'RumahYa — Lombok real estate',
     description: 'Long-term villa rentals and land investments in Lombok, Indonesia.',
-    images: ['/og-image.jpg'],
+    images: [`${BASE_URL}/og-image.jpg`],
   },
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },
   },
-  alternates: { canonical: BASE_URL },
+  alternates: {
+    canonical: BASE_URL,
+    languages: {
+      'en': BASE_URL,
+      'fr': `${BASE_URL}/fr`,
+      'es': `${BASE_URL}/es`,
+      'x-default': BASE_URL,
+    },
+  },
 };
 
 const organizationJsonLd = {
@@ -95,9 +117,12 @@ const organizationJsonLd = {
   sameAs: [],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const headersList = await headers();
+  const locale = (headersList.get('x-locale') || 'en') as string;
+
   return (
-    <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
+    <html lang={locale} className={`${inter.variable} ${cormorant.variable}`}>
       <body>
         <script
           type="application/ld+json"

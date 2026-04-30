@@ -21,6 +21,14 @@ export const metadata: Metadata = {
     url: 'https://rumahya.com/es/about',
     type: 'website',
     locale: 'es_ES',
+    images: [
+      {
+        url: 'https://rumahya.com/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'RumahYa — Especialistas inmobiliarios locales en Lombok',
+      },
+    ],
   },
 };
 

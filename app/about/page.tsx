@@ -20,6 +20,14 @@ export const metadata: Metadata = {
       'Based in Lombok. Local partners, verified information, long-term coordination. Contact us for rentals or investment projects.',
     url: 'https://rumahya.com/about',
     type: 'website',
+    images: [
+      {
+        url: 'https://rumahya.com/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'RumahYa — Local Lombok real estate specialists',
+      },
+    ],
   },
 };
 
