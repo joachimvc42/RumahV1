@@ -1,9 +1,12 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Cormorant_Garamond } from 'next/font/google';
 import { headers } from 'next/headers';
+import Script from 'next/script';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import './globals.css';
+
+const GA_ID = 'G-EZQZF072WR';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -124,6 +127,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={`${inter.variable} ${cormorant.variable}`}>
       <body>
+        {/* Google Analytics gtag.js — loads after hydration on every page */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="ga-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_ID}');
+          `}
+        </Script>
+
         <script
           type="application/ld+json"
           // Next.js-safe inline JSON-LD injection
