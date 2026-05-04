@@ -25,6 +25,8 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const switchTo = (target: Locale) => prefixFor(target, rest);
+  const privacyHref = prefixFor(locale, '/privacy');
+  const termsHref = prefixFor(locale, '/terms');
 
   return (
     <footer className="site-footer">
@@ -34,6 +36,11 @@ export default function Footer() {
             <span className="brand-name">Rumah<span>Ya</span></span>
           </span>
           <span>© {currentYear} · {t.footer.rights}</span>
+          <span className="footer-legal">
+            <Link href={privacyHref}>{t.footer.privacy}</Link>
+            <span className="footer-lang-sep">·</span>
+            <Link href={termsHref}>{t.footer.terms}</Link>
+          </span>
           <span className="footer-langs">
             {LOCALES.map((l, i) => (
               <span key={l} className="footer-lang-wrap">

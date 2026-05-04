@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import Script from 'next/script';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import ConsentBanner from '@/components/ConsentBanner';
 import './globals.css';
 
 const GA_ID = 'G-EZQZF072WR';
@@ -127,6 +128,41 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={`${inter.variable} ${cormorant.variable}`}>
       <body>
+        {/*
+          Google Consent Mode v2 — must run BEFORE gtag.js loads, hence
+          beforeInteractive. Default state = DENIED for everything except
+          functional/security. Banner calls gtag('consent','update',...) after
+          user choice. Re-reads localStorage on every load so prior consent
+          persists without showing the banner again.
+        */}
+        <Script id="ga-consent-default" strategy="beforeInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            window.gtag = gtag;
+            gtag('consent', 'default', {
+              ad_storage: 'denied',
+              ad_user_data: 'denied',
+              ad_personalization: 'denied',
+              analytics_storage: 'denied',
+              functionality_storage: 'granted',
+              security_storage: 'granted',
+              wait_for_update: 500
+            });
+            try {
+              var stored = localStorage.getItem('rumahya_consent_v1');
+              if (stored) {
+                var c = JSON.parse(stored);
+                if (c && c.version === 1) {
+                  gtag('consent', 'update', {
+                    analytics_storage: c.analytics ? 'granted' : 'denied'
+                  });
+                }
+              }
+            } catch (e) {}
+          `}
+        </Script>
+
         {/* Google Analytics gtag.js — loads after hydration on every page */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
@@ -134,10 +170,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
         <Script id="ga-init" strategy="afterInteractive">
           {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${GA_ID}');
+            gtag('config', '${GA_ID}', { anonymize_ip: true });
           `}
         </Script>
 
@@ -151,6 +185,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {children}
         </div>
         <Footer />
+        <ConsentBanner />
       </body>
     </html>
   );
