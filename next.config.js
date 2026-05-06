@@ -28,8 +28,9 @@ const nextConfig = {
   // Route redirects — permanent moves for SEO
   async redirects() {
     return [
-      // The old rentals listing lives on the homepage now
-      { source: '/rentals', destination: '/', permanent: true },
+      // Legacy /investments path — now the homepage IS the investments page
+      // Keep /investments accessible for deep links; canonical set to /
+      // { source: '/investments', destination: '/', permanent: true },
       // Legacy contact page → About (contact section)
       { source: '/contact', destination: '/about#contact', permanent: true },
     ];

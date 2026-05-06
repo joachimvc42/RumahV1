@@ -87,7 +87,7 @@ function priceForLand(pricePerAreIDR: number): { label: string; idr: number } {
   return { label: `${toMillions(pricePerAreIDR)} IDR/are`, idr: pricePerAreIDR };
 }
 
-export default function MapClient({ locale = 'en' }: { locale?: Locale }) {
+export default function MapClient({ locale = 'en', mode = 'all' }: { locale?: Locale; mode?: 'all' | 'rentals' | 'invest' }) {
   const t = getDict(locale);
   const [items, setItems] = useState<MapItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -107,8 +107,12 @@ export default function MapClient({ locale = 'en' }: { locale?: Locale }) {
     let cancelled = false;
     const load = async () => {
       const [rentalsRes, investmentsRes] = await Promise.all([
-        supabase.from('long_term_rentals').select('*, properties (*)'),
-        supabase.from('investments').select('*'),
+        mode !== 'invest'
+          ? supabase.from('long_term_rentals').select('*, properties (*)')
+          : Promise.resolve({ data: [] as any[] }),
+        mode !== 'rentals'
+          ? supabase.from('investments').select('*')
+          : Promise.resolve({ data: [] as any[] }),
       ]);
 
       const merged: MapItem[] = [];

@@ -32,5 +32,5 @@ export const metadata: Metadata = {
 };
 
 export default function MapPageFR() {
-  return <MapClient locale="fr" />;
+  return <MapClient locale="fr" mode="invest" />;
 }

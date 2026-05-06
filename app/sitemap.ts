@@ -10,32 +10,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  // Static pages — emit every locale prefix
+  // Static invest pages — emit every locale prefix
   const staticRoutes: MetadataRoute.Sitemap = LOCALE_PREFIXES.flatMap(prefix => [
     { url: `${BASE_URL}${prefix}/`, lastModified: new Date(), changeFrequency: 'daily', priority: prefix === '' ? 1 : 0.9 },
     { url: `${BASE_URL}${prefix}/investments`, lastModified: new Date(), changeFrequency: 'daily', priority: prefix === '' ? 0.9 : 0.8 },
     { url: `${BASE_URL}${prefix}/map`, lastModified: new Date(), changeFrequency: 'daily', priority: prefix === '' ? 0.8 : 0.7 },
     { url: `${BASE_URL}${prefix}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: prefix === '' ? 0.7 : 0.6 },
+    { url: `${BASE_URL}${prefix}/property-management`, lastModified: new Date(), changeFrequency: 'monthly', priority: prefix === '' ? 0.7 : 0.6 },
     { url: `${BASE_URL}${prefix}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE_URL}${prefix}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
   ]);
-
-  // Dynamic rental detail pages — one entry per locale
-  const { data: rentals } = await supabase
-    .from('long_term_rentals')
-    .select('id, updated_at, properties(status)')
-    .eq('properties.status', 'published');
-
-  const rentalRoutes: MetadataRoute.Sitemap = (rentals ?? [])
-    .filter((r: any) => r.properties?.status === 'published')
-    .flatMap((r: any) =>
-      LOCALE_PREFIXES.map(prefix => ({
-        url: `${BASE_URL}${prefix}/rentals/${r.id}`,
-        lastModified: r.updated_at ? new Date(r.updated_at) : new Date(),
-        changeFrequency: 'weekly' as const,
-        priority: prefix === '' ? 0.8 : 0.7,
-      }))
-    );
 
   // Dynamic investment detail pages — one entry per locale
   const { data: investments } = await supabase
@@ -51,5 +35,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
-  return [...staticRoutes, ...rentalRoutes, ...investmentRoutes];
+  return [...staticRoutes, ...investmentRoutes];
 }

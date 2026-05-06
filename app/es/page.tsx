@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import HomeClient from '../home-client';
+import InvestmentsClient from '../investments/investments-client';
 
 export const metadata: Metadata = {
-  title: 'Alquileres de larga duración de villas en Lombok',
+  title: 'Inversión inmobiliaria en Lombok — terrenos y villas',
   description:
-    'Alquileres de larga duración de villas verificadas en Lombok, Indonesia. Condiciones honestas de 1 mes a 10 años, verificación legal y coordinación local sobre el terreno.',
+    'Terrenos y villas de inversión verificados en Lombok, Indonesia. Títulos comprobados, rendimientos realistas, coordinación local desde el descubrimiento hasta la entrega.',
   alternates: {
     canonical: 'https://rumahya.com/es',
     languages: {
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'Alquileres de larga duración en Lombok — RumahYa',
-    description: 'Villas verificadas, condiciones claras, coordinación local. Tu alquiler en Lombok, bien hecho.',
+    title: 'Invertir en Lombok — RumahYa',
+    description: 'Terrenos y villas en Lombok. Documentos verificados, rendimientos realistas, equipo local.',
     url: 'https://rumahya.com/es',
     type: 'website',
     locale: 'es_ES',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
         url: 'https://rumahya.com/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'RumahYa — Alquileres e inversiones inmobiliarias en Lombok, Indonesia',
+        alt: 'RumahYa — Inversión inmobiliaria en Lombok, Indonesia',
       },
     ],
   },
@@ -35,39 +35,31 @@ export default function HomePageES() {
   return (
     <>
       <div className="seo-content">
-        <h1>Alquileres de larga duración de villas en Lombok, Indonesia</h1>
+        <h1>Inversión inmobiliaria en Lombok, Indonesia</h1>
         <p>
-          RumahYa es tu socio local de confianza para encontrar alquileres de larga duración
-          verificados en Lombok. Ya sea que busques una villa frente al mar en Kuta Lombok,
-          una casa entre arrozales cerca de Selong Belanak, o una propiedad serena en las
-          colinas del norte, seleccionamos y verificamos cada anuncio para que puedas
-          instalarte con total confianza.
+          RumahYa conecta a inversores serios con parcelas de terreno verificadas y oportunidades
+          de inversión en villas en todo Lombok. Cada activo ha sido localizado por nuestro equipo
+          local y ha pasado una verificación de títulos antes de aparecer en esta página, porque
+          en Indonesia la diligencia debida lo es todo.
         </p>
-        <h2>¿Por qué alquilar a largo plazo en Lombok?</h2>
+        <h2>¿Por qué invertir en inmuebles en Lombok?</h2>
         <p>
-          Lombok ofrece playas vírgenes, surf de clase mundial y un ritmo de vida relajado,
-          a una fracción del coste de Bali. Expatriados y nómadas digitales eligen cada vez
-          más Lombok por sus paisajes intactos, su comunidad internacional en crecimiento y
-          sus alquileres asequibles. Los alquileres de larga duración — desde un mes hasta
-          diez años — te dan la flexibilidad para instalarte y vivir la isla a tu manera.
+          Lombok es uno de los destinos turísticos de más rápido crecimiento en el Sudeste
+          Asiático. Con el nuevo Aeropuerto Internacional de Lombok operando vuelos internacionales,
+          un nuevo circuito de Mandalika atrayendo al público del MotoGP y una demanda creciente
+          de villas de alquiler de calidad, los valores de terrenos y propiedades han crecido de
+          forma constante.
         </p>
-        <h2>Nuestro proceso de alquiler</h2>
-        <p>
-          Cada propiedad listada en RumahYa ha sido revisada personalmente por nuestro
-          equipo local. Verificamos certificados de tierra y permisos de construcción,
-          traducimos los contratos a español claro, y coordinamos directamente con los
-          propietarios para que no tengas que enfrentar la barrera del idioma. Desde tu
-          primera consulta hasta la entrega de llaves, estamos contigo en cada paso.
-        </p>
-        <h2>Zonas populares en Lombok</h2>
+        <h2>Nuestro proceso de inversión</h2>
         <ul>
-          <li><strong>Kuta Lombok</strong> — Surf, playas de arena blanca y comunidad expat vibrante.</li>
-          <li><strong>Selong Belanak</strong> — Bahía tranquila, atardeceres espectaculares, ideal para familias.</li>
-          <li><strong>Senggigi</strong> — Zona expat consolidada, buenas comodidades, cerca del aeropuerto.</li>
-          <li><strong>Tanjung y norte de Lombok</strong> — Fuera de los caminos trillados, selva exuberante, cerca de las Islas Gili.</li>
+          <li>Consulta inicial para entender tu presupuesto y objetivos</li>
+          <li>Selección de propiedades verificadas que se ajusten a tus criterios</li>
+          <li>Visitas al lugar coordinadas por nuestro equipo en Lombok</li>
+          <li>Due diligence jurídica: verificación de títulos, permisos, coordinación notarial</li>
+          <li>Acompañamiento de la transacción hasta la entrega</li>
         </ul>
       </div>
-      <HomeClient locale="es" />
+      <InvestmentsClient locale="es" />
     </>
   );
 }

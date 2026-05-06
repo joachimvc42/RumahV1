@@ -3,6 +3,7 @@ import { Inter, Cormorant_Garamond } from 'next/font/google';
 import { headers } from 'next/headers';
 import Script from 'next/script';
 import Header from '@/components/Header';
+import HeaderRentals from '@/components/HeaderRentals';
 import Footer from '@/components/Footer';
 import ConsentBanner from '@/components/ConsentBanner';
 import './globals.css';
@@ -39,16 +40,16 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'RumahYa — Rentals & investment in Lombok',
+    default: 'RumahYa — Real estate investment in Lombok',
     template: '%s | RumahYa Lombok',
   },
   description:
-    'Verified long-term villa rentals and land investments in Lombok. Local expertise, legal checks, on-the-ground support.',
+    'Curated land and villa investments in Lombok, Indonesia. Verified titles, realistic yields, local coordination.',
   keywords: [
-    'Lombok real estate', 'villa rental Lombok', 'land investment Lombok',
-    'long-term rental Lombok', 'buy land Lombok', 'invest Lombok',
-    'Kuta Lombok villa', 'Selong Belanak property', 'Indonesia property investment',
-    'expat living Lombok', 'freehold land Lombok', 'leasehold villa Lombok',
+    'Lombok real estate investment', 'buy land Lombok', 'invest Lombok',
+    'villa investment Lombok', 'land investment Lombok', 'freehold land Lombok',
+    'leasehold villa Lombok', 'Lombok property', 'Kuta Lombok land',
+    'Selong Belanak investment', 'Indonesia property investment', 'Mandalika real estate',
   ],
   authors: [{ name: 'RumahYa', url: BASE_URL }],
   creator: 'RumahYa',
@@ -58,9 +59,9 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: BASE_URL,
     siteName: 'RumahYa',
-    title: 'RumahYa — Rentals & investment in Lombok',
+    title: 'RumahYa — Real estate investment in Lombok',
     description:
-      'Verified villas and land in Lombok. Rentals and investments with local expertise.',
+      'Verified land and villa investments in Lombok, Indonesia. Local expertise, realistic yields.',
     images: [
       {
         url: `${BASE_URL}/og-image.jpg`,
@@ -74,8 +75,8 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@rumahya',
     creator: '@rumahya',
-    title: 'RumahYa — Lombok real estate',
-    description: 'Long-term villa rentals and land investments in Lombok, Indonesia.',
+    title: 'RumahYa — Lombok real estate investment',
+    description: 'Curated land and villa investments in Lombok, Indonesia. Verified titles, realistic yields.',
     images: [`${BASE_URL}/og-image.jpg`],
   },
   robots: {
@@ -124,6 +125,7 @@ const organizationJsonLd = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const headersList = await headers();
   const locale = (headersList.get('x-locale') || 'en') as string;
+  const site = (headersList.get('x-site') || 'invest') as 'invest' | 'rentals';
 
   return (
     <html lang={locale} className={`${inter.variable} ${cormorant.variable}`}>
@@ -180,11 +182,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           // Next.js-safe inline JSON-LD injection
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
-        <Header />
+        {site === 'rentals' ? <HeaderRentals /> : <Header />}
         <div className="page-main">
           {children}
         </div>
-        <Footer />
+        <Footer site={site} />
         <ConsentBanner />
       </body>
     </html>

@@ -89,6 +89,7 @@ export default function Header() {
   const investmentsHref = prefixFor(locale, '/investments');
   const mapHref = prefixFor(locale, '/map');
   const aboutHref = prefixFor(locale, '/about');
+  const propertyMgmtHref = prefixFor(locale, '/property-management');
 
   const isActive = (href: string) => {
     if (href === homeHref) return rest === '/' || rest === '';
@@ -121,15 +122,8 @@ export default function Header() {
           {!isAdmin && (
             <>
               <Link
-                href={homeHref}
-                className={isActive(homeHref) ? 'nav-link is-active' : 'nav-link'}
-                onClick={closeMenu}
-              >
-                {t.nav.rentals}
-              </Link>
-              <Link
                 href={investmentsHref}
-                className={isActive(investmentsHref) ? 'nav-link is-active' : 'nav-link'}
+                className={(isActive(homeHref) || isActive(investmentsHref)) ? 'nav-link is-active' : 'nav-link'}
                 onClick={closeMenu}
               >
                 {t.nav.investments}
@@ -147,6 +141,13 @@ export default function Header() {
                 onClick={closeMenu}
               >
                 {t.nav.about}
+              </Link>
+              <Link
+                href={propertyMgmtHref}
+                className={isActive(propertyMgmtHref) ? 'nav-link is-active' : 'nav-link'}
+                onClick={closeMenu}
+              >
+                Property Mgmt
               </Link>
 
               {/* Dark mode toggle */}
