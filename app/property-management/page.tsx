@@ -41,12 +41,12 @@ export default function PropertyManagementPage() {
       <div className="section-block">
         <h2>Fee structure</h2>
         <p>
-          Our standard management fee ranges from <strong>20% to 25% of gross rental revenue</strong>,
-          depending on the level of involvement and services required.
+          Our standard management fee is <strong>13% of gross rental revenue</strong>,
+          all-inclusive — no hidden charges, no variable add-ons.
         </p>
         <p>
-          For long-term contracts (1-year+ tenants), we can discuss a fixed monthly fee combined with
-          a smaller success commission on new tenant placements.
+          For long-term contracts (1-year+ tenants), we can discuss a flat monthly retainer
+          combined with a placement fee for new tenants.
         </p>
       </div>
 

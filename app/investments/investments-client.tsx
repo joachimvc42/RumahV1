@@ -258,7 +258,7 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
             reference: inv.reference,
             price: p.price || 0, currency: p.currency || 'USD', tenure: p.tenure || 'freehold',
             leaseYears: p.lease_years, expectedYield: inv.expected_yield, images: p.images || [],
-            href: prefixFor(locale, `/investments/${inv.id}`), bedrooms: p.bedrooms, bathrooms: p.bathrooms,
+            href: prefixFor(locale, `/opportunities/${inv.id}`), bedrooms: p.bedrooms, bathrooms: p.bathrooms,
             pool: p.pool, garden: p.garden, furnished: p.furnished, condition: p.condition,
             latitude: p.latitude, longitude: p.longitude, description: p.description,
           });
@@ -271,7 +271,7 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
             price: l.price_per_are_idr ?? l.price_per_are ?? 0, currency: l.currency || 'IDR',
             tenure: l.tenure || 'freehold', leaseYears: l.lease_years,
             expectedYield: inv.expected_yield, images: l.images || [],
-            href: prefixFor(locale, `/investments/${inv.id}`),
+            href: prefixFor(locale, `/opportunities/${inv.id}`),
             landSize: l.land_size ? Number(l.land_size) : null, condition: l.condition,
             hasWater: l.has_water, hasElectricity: l.has_electricity, hasRoad: l.has_road,
             latitude: l.latitude, longitude: l.longitude, description: l.description,

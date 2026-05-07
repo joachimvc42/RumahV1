@@ -28,11 +28,19 @@ const nextConfig = {
   // Route redirects — permanent moves for SEO
   async redirects() {
     return [
-      // Legacy /investments path — now the homepage IS the investments page
-      // Keep /investments accessible for deep links; canonical set to /
-      // { source: '/investments', destination: '/', permanent: true },
-      // Legacy contact page → About (contact section)
-      { source: '/contact', destination: '/about#contact', permanent: true },
+      // /investments → /opportunities (renamed slug, 301 for SEO)
+      { source: '/investments', destination: '/opportunities', permanent: true },
+      { source: '/investments/:id', destination: '/opportunities/:id', permanent: true },
+      { source: '/fr/investments', destination: '/fr/opportunities', permanent: true },
+      { source: '/fr/investments/:id', destination: '/fr/opportunities/:id', permanent: true },
+      { source: '/es/investments', destination: '/es/opportunities', permanent: true },
+      { source: '/es/investments/:id', destination: '/es/opportunities/:id', permanent: true },
+      // /about → / (about content is now the homepage)
+      { source: '/about', destination: '/', permanent: false },
+      { source: '/fr/about', destination: '/fr', permanent: false },
+      { source: '/es/about', destination: '/es', permanent: false },
+      // Legacy contact page → contact section on homepage
+      { source: '/contact', destination: '/#contact', permanent: true },
     ];
   },
 

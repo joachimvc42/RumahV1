@@ -86,7 +86,7 @@ export default function Header() {
   }, []);
 
   const homeHref = prefixFor(locale, '/');
-  const investmentsHref = prefixFor(locale, '/investments');
+  const investmentsHref = prefixFor(locale, '/opportunities');
   const mapHref = prefixFor(locale, '/map');
   const aboutHref = prefixFor(locale, '/about');
   const propertyMgmtHref = prefixFor(locale, '/property-management');

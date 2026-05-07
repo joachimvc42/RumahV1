@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0b1010" />
+<meta name="description" content="RumahYa — A locally rooted point of contact for long-term living and investment in Lombok. Verified villas, land opportunities and on-the-ground coordination." />
+<meta name="keywords" content="Lombok rentals, Lombok villas, Lombok land investment, Indonesia real estate, long-term rental Lombok, expat Lombok" />
+<meta name="author" content="RumahYa" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="RumahYa — Live & Invest in Lombok, the right way" />
+<meta property="og:description" content="A locally rooted point of contact for long-term living and investment in Lombok. Verified villas, land opportunities and on-the-ground coordination." />
+<meta property="og:locale" content="en_US" />
+<meta property="og:image" content="https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=1200" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="RumahYa — Live & Invest in Lombok" />
+<meta name="twitter:description" content="A locally rooted point of contact for long-term living and investment in Lombok." />
+
+<!-- JSON-LD structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "RealEstateAgent",
+  "name": "RumahYa",
+  "image": "https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=1200",
+  "description": "Long-term rentals, villa and land investment in Lombok with local due diligence.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressRegion": "West Nusa Tenggara",
+    "addressCountry": "ID"
+  },
+  "areaServed": "Lombok",
+  "telephone": "+62-878-7348-7940",
+  "email": "info@rumahya.com",
+  "url": "https://rumahya.com"
+}
+</script>
+
+<title>RumahYa — Live & Invest in Lombok, the right way</title>
+
+<!-- Preconnects for fonts and images -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://images.unsplash.com" />
+<link rel="dns-prefetch" href="https://images.unsplash.com" />
+
+<!-- Fonts: a sleek serif (Fraunces) + ultra-clean sans (Inter) -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" />
+
+<!-- Favicon (inline SVG, zero extra request) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23c97b50'/%3E%3Cpath d='M9 22V13l7-5 7 5v9' stroke='%23fafaf7' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+
+<style>
+/* =========================================================
+   RumahYa — Redesign v2
+   Design system • CSS-only (no framework)
+   ========================================================= */
+
+/* ----- TOKENS ----- */
+:root {
+  /* Earthy editorial palette */
+  --paper: #f5f1ea;
+  --paper-2: #ece6dc;
+  --ink: #14110d;
+  --ink-2: #2b251d;
+  --muted: #6b6357;
+  --line: #d9cfbf;
+  --line-soft: #e9e0cf;
+
+  /* Brand accents */
+  --terra: #c97b50;
+  --terra-deep: #a35d3c;
+  --terra-soft: #f3d9c8;
+  --sage: #7a9580;
+  --ocean: #2a5961;
+  --stone: #3a3833;
+
+  /* Effects */
+  --shadow-1: 0 1px 2px rgba(20,17,13,.05), 0 8px 28px -10px rgba(20,17,13,.08);
+  --shadow-2: 0 24px 60px -20px rgba(20,17,13,.18), 0 4px 12px -6px rgba(20,17,13,.08);
+  --radius: 18px;
+  --radius-lg: 28px;
+
+  /* Type */
+  --serif: "Fraunces", ui-serif, Georgia, serif;
+  --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Layout */
+  --maxw: 1240px;
+  --gutter: clamp(20px, 5vw, 64px);
+  --section: clamp(72px, 10vw, 128px);
+}
+
+[data-theme="dark"] {
+  --paper: #0b1010;
+  --paper-2: #131a1a;
+  --ink: #f5f1ea;
+  --ink-2: #d6cdbb;
+  --muted: #9a8f7e;
+  --line: #2a2f2f;
+  --line-soft: #1c2222;
+  --terra-soft: #3a2719;
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4), 0 8px 28px -10px rgba(0,0,0,.6);
+  --shadow-2: 0 30px 80px -30px rgba(0,0,0,.7), 0 4px 12px -6px rgba(0,0,0,.45);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; }
+
+::selection { background: var(--terra); color: var(--paper); }
+
+/* ----- Subtle paper noise (SVG inline) ----- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.08 0 0 0 0 0.07 0 0 0 0 0.05 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: .06;
+  mix-blend-mode: multiply;
+}
+[data-theme="dark"] body::before { mix-blend-mode: screen; opacity: .04; }
+
+/* ----- Container ----- */
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); position: relative; z-index: 1; }
+
+/* ----- Typography ----- */
+.kicker {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); font-weight: 500;
+}
+.kicker::before {
+  content: ""; width: 28px; height: 1px; background: currentColor; opacity: .5;
+}
+
+h1, h2, h3 { font-family: var(--serif); font-weight: 400; letter-spacing: -0.02em; line-height: 1.05; margin: 0; }
+h1 { font-size: clamp(2.6rem, 7vw, 5.8rem); font-variation-settings: "opsz" 144, "SOFT" 50; }
+h2 { font-size: clamp(2rem, 4.6vw, 3.6rem); }
+h3 { font-size: clamp(1.25rem, 2.2vw, 1.7rem); }
+p  { color: var(--ink-2); }
+
+.lead { font-size: clamp(1.05rem, 1.6vw, 1.25rem); line-height: 1.65; color: var(--ink-2); max-width: 60ch; }
+.italic { font-style: italic; }
+
+/* Italic accent inside serif headings */
+.fancy { font-style: italic; font-weight: 300; color: var(--terra-deep); }
+[data-theme="dark"] .fancy { color: var(--terra); }
+
+/* ----- Buttons ----- */
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 22px; border-radius: 999px; font-weight: 600; font-size: 15px;
+  border: 1px solid transparent; cursor: pointer;
+  transition: transform .25s cubic-bezier(.2,.7,.2,1), background .25s, color .25s, border-color .25s, box-shadow .25s;
+  white-space: nowrap;
+}
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 30px -12px rgba(20,17,13,.4); }
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn-ghost:hover { background: var(--paper-2); }
+.btn-terra { background: var(--terra); color: #fff; }
+.btn-terra:hover { background: var(--terra-deep); transform: translateY(-1px); }
+.btn-wa { background: #25d366; color: #fff; }
+.btn-wa:hover { background: #1ebe5c; transform: translateY(-1px); }
+.btn .arrow { transition: transform .25s; }
+.btn:hover .arrow { transform: translateX(3px); }
+
+/* ----- NAVBAR ----- */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 18px var(--gutter);
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background .35s, backdrop-filter .35s, border-color .35s;
+  border-bottom: 1px solid transparent;
+}
+.nav.scrolled {
+  background: color-mix(in srgb, var(--paper) 78%, transparent);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  border-bottom-color: var(--line-soft);
+}
+.brand { display: inline-flex; align-items: center; gap: 10px; font-family: var(--serif); font-size: 22px; font-weight: 500; }
+.brand .dot { width: 9px; height: 9px; background: var(--terra); border-radius: 50%; box-shadow: 0 0 0 4px color-mix(in srgb, var(--terra) 30%, transparent); }
+.brand em { font-style: italic; color: var(--terra-deep); font-weight: 400; }
+[data-theme="dark"] .brand em { color: var(--terra); }
+
+.nav-links { display: flex; align-items: center; gap: 6px; }
+.nav-links a { padding: 9px 14px; border-radius: 999px; font-size: 14.5px; color: var(--ink-2); position: relative; transition: color .25s, background .25s; }
+.nav-links a:hover { color: var(--ink); background: var(--paper-2); }
+.nav-actions { display: flex; align-items: center; gap: 10px; }
+.icon-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line);
+  background: transparent; color: var(--ink); display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .2s, transform .2s;
+}
+.icon-btn:hover { background: var(--paper-2); transform: rotate(15deg); }
+
+/* Mobile nav */
+.menu-toggle { display: none; }
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .menu-toggle { display: inline-flex; }
+  .nav-links.open {
+    display: flex; flex-direction: column; gap: 4px; align-items: stretch;
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--paper); padding: 16px var(--gutter) 24px; border-bottom: 1px solid var(--line-soft);
+  }
+  .nav-links.open a { padding: 14px 16px; font-size: 17px; }
+}
+
+/* ----- HERO ----- */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid; grid-template-rows: 1fr auto;
+  padding: calc(120px + 2vw) 0 64px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.hero::before {
+  content: ""; position: absolute; inset: 0; z-index: -2;
+  background:
+    radial-gradient(60% 50% at 80% 10%, color-mix(in srgb, var(--terra) 22%, transparent) 0%, transparent 60%),
+    radial-gradient(50% 60% at 10% 80%, color-mix(in srgb, var(--sage) 22%, transparent) 0%, transparent 60%),
+    radial-gradient(70% 80% at 50% 100%, color-mix(in srgb, var(--ocean) 14%, transparent) 0%, transparent 60%);
+}
+[data-theme="dark"] .hero::before {
+  background:
+    radial-gradient(60% 50% at 80% 10%, color-mix(in srgb, var(--terra) 30%, transparent) 0%, transparent 60%),
+    radial-gradient(50% 60% at 10% 80%, color-mix(in srgb, var(--sage) 18%, transparent) 0%, transparent 60%),
+    radial-gradient(70% 80% at 50% 100%, color-mix(in srgb, var(--ocean) 30%, transparent) 0%, transparent 60%);
+}
+/* Faint grid */
+.hero::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--ink) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ink) 6%, transparent) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 80%);
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: clamp(40px, 6vw, 90px);
+  align-items: center;
+}
+@media (max-width: 900px) { .hero-inner { grid-template-columns: 1fr; } }
+
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: color-mix(in srgb, var(--paper-2) 80%, transparent);
+  border: 1px solid var(--line);
+  padding: 8px 14px; border-radius: 999px;
+  font-size: 13px; color: var(--ink-2);
+  backdrop-filter: blur(6px);
+}
+.hero-tag .live {
+  width: 8px; height: 8px; border-radius: 50%; background: #4ade80;
+  box-shadow: 0 0 0 4px color-mix(in srgb, #4ade80 30%, transparent);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 50% { opacity: .4; transform: scale(.85); } }
+
+.hero h1 { margin-top: 22px; }
+.hero .lead { margin-top: 24px; }
+.hero-cta { margin-top: 36px; display: flex; gap: 12px; flex-wrap: wrap; }
+
+.hero-strip {
+  margin-top: 80px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 28px;
+}
+@media (max-width: 720px) { .hero-strip { grid-template-columns: repeat(2, 1fr); } }
+.hero-strip .stat .num { font-family: var(--serif); font-size: clamp(1.8rem, 3.4vw, 2.6rem); display: block; }
+.hero-strip .stat .lbl { font-size: 12.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+
+/* Hero visual: stacked image collage */
+.hero-visual {
+  position: relative; aspect-ratio: 4/5; min-height: 480px;
+}
+.hero-visual .photo {
+  position: absolute; border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: var(--shadow-2);
+  background: var(--paper-2);
+  transition: transform .8s cubic-bezier(.2,.7,.2,1);
+}
+.hero-visual .photo img { width: 100%; height: 100%; object-fit: cover; }
+
+.hero-visual .photo.p1 { inset: 0 18% 24% 0; transform: rotate(-2.5deg); }
+.hero-visual .photo.p2 { inset: 22% 0 12% 32%; transform: rotate(3deg); }
+.hero-visual .photo.p3 { inset: 56% 36% 0 8%; transform: rotate(-4deg); }
+
+.hero-visual:hover .photo.p1 { transform: rotate(-1.5deg) translate(-6px, -6px); }
+.hero-visual:hover .photo.p2 { transform: rotate(2deg) translate(6px, -4px); }
+.hero-visual:hover .photo.p3 { transform: rotate(-3deg) translate(-4px, 6px); }
+
+.hero-visual .badge-float {
+  position: absolute; right: -10px; top: 8%; z-index: 4;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 14px;
+  padding: 12px 14px; box-shadow: var(--shadow-2);
+  display: flex; gap: 10px; align-items: center;
+  font-size: 13px;
+}
+.hero-visual .badge-float .check {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--ink); color: var(--paper);
+  display: inline-flex; align-items: center; justify-content: center; font-size: 14px;
+}
+
+.scroll-cue {
+  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+  font-size: 12px; color: var(--muted); letter-spacing: .15em; text-transform: uppercase;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.scroll-cue .line { width: 1px; height: 36px; background: currentColor; opacity: .4; animation: drop 2.2s ease-in-out infinite; transform-origin: top; }
+@keyframes drop { 0%,100% { transform: scaleY(.4); opacity: .2; } 50% { transform: scaleY(1); opacity: .6; } }
+
+/* ----- SECTION TITLE ----- */
+.sec { padding: var(--section) 0; }
+.sec-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 56px; flex-wrap: wrap; }
+.sec-head .text { max-width: 720px; }
+.sec-head h2 { margin-top: 14px; }
+.sec-head p { margin-top: 16px; color: var(--muted); max-width: 60ch; }
+
+/* ----- LOGO STRIP / TRUST ----- */
+.trust {
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+  padding: 32px 0;
+}
+.trust-inner {
+  display: flex; align-items: center; gap: clamp(24px, 6vw, 70px);
+  flex-wrap: wrap; justify-content: space-between;
+}
+.trust-inner .label {
+  font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .14em;
+  flex-shrink: 0;
+}
+.trust-inner .marks {
+  display: flex; gap: clamp(20px, 5vw, 56px); align-items: center; flex-wrap: wrap; opacity: .75;
+}
+.trust-inner .marks span { font-family: var(--serif); font-size: 18px; font-weight: 500; letter-spacing: .02em; color: var(--ink-2); }
+
+/* ----- TWO PATHS ----- */
+.paths { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 900px) { .paths { grid-template-columns: 1fr; } }
+
+.path-card {
+  position: relative; border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--line); aspect-ratio: 4/5;
+  isolation: isolate; cursor: pointer;
+  transition: transform .5s cubic-bezier(.2,.7,.2,1);
+}
+.path-card:hover { transform: translateY(-6px); }
+.path-card .bg {
+  position: absolute; inset: 0; z-index: -2;
+  background-size: cover; background-position: center;
+  transition: transform 1.2s cubic-bezier(.2,.7,.2,1);
+}
+.path-card:hover .bg { transform: scale(1.06); }
+.path-card::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, transparent 0%, rgba(11,16,16,.05) 35%, rgba(11,16,16,.85) 100%);
+}
+.path-card .body {
+  position: absolute; inset: auto 0 0 0; padding: clamp(28px, 4vw, 44px);
+  color: #fff;
+}
+.path-card .body .num {
+  font-family: var(--serif); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; opacity: .7;
+}
+.path-card .body h3 {
+  color: #fff; font-size: clamp(1.8rem, 3vw, 2.6rem); margin: 8px 0 14px;
+}
+.path-card .body p { color: rgba(255,255,255,.85); max-width: 50ch; margin: 0 0 22px; font-size: 15.5px; }
+.path-card .body .pill {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 10px 18px; border-radius: 999px;
+  background: rgba(255,255,255,.14); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.25); font-size: 14px; color: #fff; font-weight: 500;
+  transition: background .25s, padding-right .25s;
+}
+.path-card:hover .pill { background: rgba(255,255,255,.24); padding-right: 22px; }
+.path-card .body .pill .arrow { transition: transform .25s; }
+.path-card:hover .pill .arrow { transform: translateX(4px); }
+
+.path-card .feature-pills {
+  position: absolute; top: clamp(20px, 3vw, 32px); left: clamp(20px, 3vw, 32px);
+  display: flex; flex-wrap: wrap; gap: 6px; max-width: 60%;
+}
+.path-card .feature-pills span {
+  background: rgba(255,255,255,.16); backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,.2);
+  color: #fff; font-size: 12px; padding: 5px 11px; border-radius: 999px;
+}
+
+/* ----- FEATURED ROW (editorial) ----- */
+.feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+@media (max-width: 900px) { .feat-grid { grid-template-columns: 1fr; } }
+
+.feat-card {
+  background: var(--paper); border: 1px solid var(--line-soft); border-radius: var(--radius);
+  overflow: hidden; transition: transform .35s, box-shadow .35s, border-color .25s;
+  display: flex; flex-direction: column;
+}
+.feat-card:hover { transform: translateY(-4px); border-color: var(--line); box-shadow: var(--shadow-1); }
+.feat-card .img {
+  aspect-ratio: 4/3; background-size: cover; background-position: center;
+  position: relative; transition: filter .4s;
+}
+.feat-card .tag {
+  position: absolute; top: 14px; left: 14px;
+  background: var(--paper); color: var(--ink); padding: 5px 12px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; letter-spacing: .04em;
+  border: 1px solid var(--line);
+}
+.feat-card .verified {
+  position: absolute; top: 14px; right: 14px;
+  background: var(--sage); color: #fff; padding: 5px 12px; border-radius: 999px;
+  font-size: 12px; font-weight: 600;
+}
+.feat-card .body { padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.feat-card h3 { font-size: 1.35rem; }
+.feat-card .loc { font-size: 14px; color: var(--muted); }
+.feat-card .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.feat-card .chips span { font-size: 12.5px; padding: 3px 10px; border-radius: 999px; background: var(--paper-2); color: var(--ink-2); }
+.feat-card .price-row {
+  margin-top: auto; display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  padding-top: 14px; border-top: 1px solid var(--line-soft);
+}
+.feat-card .price { font-family: var(--serif); font-size: 1.4rem; }
+.feat-card .per { color: var(--muted); font-size: 13px; }
+
+/* ----- WHY (editorial split) ----- */
+.why { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 80px); align-items: start; }
+@media (max-width: 900px) { .why { grid-template-columns: 1fr; } }
+.why .bullets { display: grid; gap: 20px; }
+.why-card {
+  display: grid; grid-template-columns: 56px 1fr; gap: 18px;
+  padding: 22px; border-radius: var(--radius); border: 1px solid var(--line-soft);
+  background: var(--paper);
+  transition: transform .35s, border-color .25s, box-shadow .25s;
+}
+.why-card:hover { transform: translateX(4px); border-color: var(--line); box-shadow: var(--shadow-1); }
+.why-card .ico {
+  width: 56px; height: 56px; border-radius: 16px; background: var(--terra-soft); color: var(--terra-deep);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+[data-theme="dark"] .why-card .ico { color: var(--terra); }
+.why-card h3 { font-size: 1.3rem; margin-bottom: 6px; }
+.why-card p { margin: 0; font-size: 15px; color: var(--muted); }
+
+.why-visual {
+  border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 4/5; position: relative;
+  background-size: cover; background-position: center;
+  box-shadow: var(--shadow-2);
+}
+.why-visual .quote {
+  position: absolute; left: 24px; right: 24px; bottom: 24px;
+  background: rgba(11,16,16,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  color: #fff; padding: 22px 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,.12);
+}
+.why-visual .quote p { color: #fff; font-family: var(--serif); font-size: 1.15rem; font-style: italic; line-height: 1.4; margin: 0 0 12px; }
+.why-visual .quote .author { font-size: 13px; opacity: .8; }
+
+/* ----- PROCESS / TIMELINE ----- */
+.process {
+  position: relative;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--radius-lg);
+  padding: clamp(48px, 7vw, 96px) clamp(28px, 5vw, 64px);
+  isolation: isolate; overflow: hidden;
+}
+[data-theme="dark"] .process { background: var(--paper-2); color: var(--ink); }
+.process::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(60% 50% at 90% 20%, color-mix(in srgb, var(--terra) 25%, transparent) 0%, transparent 60%),
+    radial-gradient(40% 40% at 10% 80%, color-mix(in srgb, var(--ocean) 25%, transparent) 0%, transparent 60%);
+}
+.process h2 { color: inherit; }
+.process .head { display: flex; justify-content: space-between; gap: 24px; margin-bottom: 56px; flex-wrap: wrap; align-items: end; }
+.process .head p { color: rgba(245,241,234,.7); max-width: 60ch; margin-top: 14px; }
+[data-theme="dark"] .process .head p { color: var(--muted); }
+
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+@media (max-width: 900px) { .steps { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .steps { grid-template-columns: 1fr; } }
+.step {
+  border-top: 1px solid rgba(245,241,234,.2);
+  padding-top: 22px;
+  position: relative;
+}
+[data-theme="dark"] .step { border-color: var(--line); }
+.step .n {
+  font-family: var(--serif); font-size: 13px; letter-spacing: .15em; opacity: .65;
+}
+.step h3 { color: inherit; margin-top: 8px; }
+.step p { color: rgba(245,241,234,.7); margin-top: 10px; font-size: 15px; }
+[data-theme="dark"] .step p { color: var(--muted); }
+.step::after {
+  content: ""; position: absolute; top: -1.5px; left: 0;
+  width: 38px; height: 3px; background: var(--terra); border-radius: 3px;
+}
+
+/* ----- TESTIMONIALS MARQUEE ----- */
+.marquee {
+  position: relative; overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee-track {
+  display: flex; gap: 22px; width: max-content;
+  animation: marquee 50s linear infinite;
+}
+.marquee:hover .marquee-track { animation-play-state: paused; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+.testi {
+  width: 380px; background: var(--paper); border: 1px solid var(--line-soft);
+  border-radius: var(--radius); padding: 28px; flex-shrink: 0;
+}
+.testi p { font-family: var(--serif); font-size: 1.1rem; line-height: 1.45; color: var(--ink); }
+.testi .meta { display: flex; align-items: center; gap: 12px; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line-soft); }
+.testi .av {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--terra-soft); color: var(--terra-deep);
+  display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-family: var(--serif);
+}
+.testi .who { font-size: 14px; }
+.testi .who small { display: block; color: var(--muted); font-size: 12.5px; }
+
+/* ----- MAP ----- */
+.map-wrap {
+  display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(40px, 6vw, 80px); align-items: center;
+}
+@media (max-width: 900px) { .map-wrap { grid-template-columns: 1fr; } }
+.map-svg {
+  background: var(--paper-2); border: 1px solid var(--line-soft); border-radius: var(--radius-lg);
+  padding: 36px; aspect-ratio: 4/3; position: relative; overflow: hidden;
+}
+.map-svg svg { width: 100%; height: 100%; }
+.map-svg .pin {
+  position: absolute; transform: translate(-50%, -100%);
+  cursor: pointer;
+}
+.map-svg .pin .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--terra); border: 3px solid var(--paper); box-shadow: 0 0 0 2px var(--terra), 0 0 0 8px color-mix(in srgb, var(--terra) 25%, transparent); animation: pulse 2.5s ease-in-out infinite; }
+.map-svg .pin .lbl { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 8px; padding: 4px 10px; background: var(--ink); color: var(--paper); border-radius: 999px; font-size: 11.5px; white-space: nowrap; opacity: 0; transition: opacity .2s; }
+.map-svg .pin:hover .lbl { opacity: 1; }
+
+.map-list { display: grid; gap: 14px; }
+.map-list-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px; border-radius: 14px; border: 1px solid var(--line-soft);
+  transition: background .2s, border-color .2s;
+}
+.map-list-item:hover { background: var(--paper-2); border-color: var(--line); }
+.map-list-item .marker { width: 10px; height: 10px; border-radius: 50%; background: var(--terra); flex-shrink: 0; }
+.map-list-item .name { font-weight: 600; font-size: 15px; }
+.map-list-item .meta { color: var(--muted); font-size: 13.5px; margin-left: auto; }
+
+/* ----- FAQ ----- */
+.faq { display: grid; gap: 8px; }
+details.faq-item {
+  border-bottom: 1px solid var(--line-soft);
+  transition: padding .2s;
+}
+details.faq-item summary {
+  list-style: none; cursor: pointer;
+  padding: 22px 0; display: flex; justify-content: space-between; align-items: center; gap: 24px;
+  font-family: var(--serif); font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+}
+details.faq-item summary::-webkit-details-marker { display: none; }
+details.faq-item summary .plus {
+  width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line);
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: transform .3s, background .25s;
+  font-family: var(--sans); font-weight: 400; font-size: 22px;
+}
+details[open].faq-item summary .plus { transform: rotate(45deg); background: var(--ink); color: var(--paper); }
+details.faq-item .answer {
+  padding: 4px 0 24px; max-width: 75ch; color: var(--muted); font-size: 15.5px; line-height: 1.7;
+}
+
+/* ----- CONTACT / CTA ----- */
+.cta-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: stretch; }
+@media (max-width: 900px) { .cta-grid { grid-template-columns: 1fr; } }
+
+.cta-card {
+  border-radius: var(--radius-lg); border: 1px solid var(--line);
+  background: var(--paper); padding: clamp(32px, 4vw, 48px);
+  display: flex; flex-direction: column; gap: 18px;
+}
+.cta-card.dark {
+  background: var(--ink); color: var(--paper); border-color: transparent; position: relative; overflow: hidden;
+}
+.cta-card.dark h3 { color: inherit; }
+.cta-card.dark p { color: rgba(245,241,234,.75); }
+[data-theme="dark"] .cta-card.dark { background: var(--paper-2); color: var(--ink); }
+[data-theme="dark"] .cta-card.dark p { color: var(--muted); }
+.cta-card.dark::before {
+  content: ""; position: absolute; right: -40%; top: -40%; width: 80%; height: 80%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--terra) 35%, transparent) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 12.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.field input, .field select, .field textarea {
+  font: inherit; padding: 14px 16px; border-radius: 12px;
+  border: 1px solid var(--line); background: var(--paper);
+  color: var(--ink); transition: border-color .2s, box-shadow .2s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-color: var(--terra);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--terra) 18%, transparent);
+}
+.field textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+.cta-card.dark .channels { display: grid; gap: 14px; margin-top: 14px; }
+.cta-card.dark .ch {
+  display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 14px;
+  background: rgba(245,241,234,.06); border: 1px solid rgba(245,241,234,.1); color: inherit;
+  transition: background .25s, transform .25s;
+}
+[data-theme="dark"] .cta-card.dark .ch { background: var(--paper); border-color: var(--line-soft); }
+.cta-card.dark .ch:hover { background: rgba(245,241,234,.12); transform: translateX(4px); }
+[data-theme="dark"] .cta-card.dark .ch:hover { background: var(--paper-2); }
+.cta-card.dark .ch .ico { width: 40px; height: 40px; border-radius: 50%; background: var(--terra); color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.cta-card.dark .ch .ico.wa { background: #25d366; }
+.cta-card.dark .ch strong { display: block; font-weight: 600; font-family: var(--sans); }
+.cta-card.dark .ch span { font-size: 13.5px; color: rgba(245,241,234,.6); }
+[data-theme="dark"] .cta-card.dark .ch span { color: var(--muted); }
+
+/* ----- FOOTER ----- */
+footer.site {
+  border-top: 1px solid var(--line-soft);
+  padding: 64px 0 32px;
+  background: var(--paper);
+}
+.foot-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 56px; }
+@media (max-width: 900px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .foot-grid { grid-template-columns: 1fr; } }
+.foot-grid h4 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 16px; font-weight: 600; }
+.foot-grid a { display: block; padding: 6px 0; font-size: 14.5px; color: var(--ink-2); transition: color .2s; }
+.foot-grid a:hover { color: var(--terra-deep); }
+.foot-bottom {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+  padding-top: 28px; border-top: 1px solid var(--line-soft);
+  font-size: 13px; color: var(--muted);
+}
+.foot-mark { font-family: var(--serif); font-size: clamp(3rem, 9vw, 7rem); line-height: .9; color: transparent; -webkit-text-stroke: 1px var(--line); margin: 32px 0 16px; letter-spacing: -0.04em; user-select: none; }
+
+/* ----- WhatsApp floating button ----- */
+.fab {
+  position: fixed; bottom: 22px; right: 22px; z-index: 90;
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 18px; background: #25d366; color: #fff; border-radius: 999px;
+  font-weight: 600; font-size: 14.5px; box-shadow: 0 14px 30px -10px rgba(37,211,102,.55);
+  transition: transform .25s, box-shadow .25s;
+}
+.fab:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -10px rgba(37,211,102,.7); }
+@media (max-width: 600px) { .fab span:not(.ico) { display: none; } .fab { padding: 14px; } }
+
+/* ----- Reveals on scroll ----- */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .9s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+.reveal-stagger > * { opacity: 0; transform: translateY(18px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
+.reveal-stagger.in > * { opacity: 1; transform: translateY(0); }
+.reveal-stagger.in > *:nth-child(1) { transition-delay: 60ms; }
+.reveal-stagger.in > *:nth-child(2) { transition-delay: 140ms; }
+.reveal-stagger.in > *:nth-child(3) { transition-delay: 220ms; }
+.reveal-stagger.in > *:nth-child(4) { transition-delay: 300ms; }
+
+/* ----- Reduce motion ----- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ============== NAV ============== -->
+<header class="nav" id="nav">
+  <a href="#top" class="brand" aria-label="RumahYa home">
+    <span class="dot" aria-hidden="true"></span>
+    Rumah<em>Ya</em>
+  </a>
+
+  <nav class="nav-links" id="navLinks" aria-label="Primary">
+    <a href="#paths">Live & Invest</a>
+    <a href="#featured">Properties</a>
+    <a href="#why">Why us</a>
+    <a href="#process">Process</a>
+    <a href="#faq">FAQ</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <div class="nav-actions">
+    <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+      </svg>
+    </button>
+    <a href="#contact" class="btn btn-primary" style="padding:10px 18px;">Book a call <span class="arrow">→</span></a>
+    <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="13" x2="20" y2="13"/><line x1="4" y1="19" x2="20" y2="19"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ============== HERO ============== -->
+<section class="hero" id="top">
+  <div class="wrap hero-inner">
+    <div class="reveal">
+      <span class="hero-tag"><span class="live"></span> Based in Lombok · On the ground since 2019</span>
+      <h1>
+        Live or invest <span class="fancy">in&nbsp;Lombok</span><br>
+        without the&nbsp;guesswork.
+      </h1>
+      <p class="lead">
+        RumahYa is a locally rooted point of contact for expatriates and investors —
+        verified villas, land opportunities, legal due diligence and on-the-ground
+        coordination, with no commission-driven pressure.
+      </p>
+      <div class="hero-cta">
+        <a href="#paths" class="btn btn-primary">Explore the two paths <span class="arrow">→</span></a>
+        <a href="https://wa.me/6287873487940" target="_blank" rel="noopener" class="btn btn-ghost">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.371-.025-.52-.075-.149-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+          WhatsApp us
+        </a>
+      </div>
+      <div class="hero-strip reveal-stagger">
+        <div class="stat"><span class="num" data-count="6">0</span><span class="lbl">Years on the ground</span></div>
+        <div class="stat"><span class="num" data-count="120">0</span><span class="lbl">Verified properties</span></div>
+        <div class="stat"><span class="num" data-count="45">0</span><span class="lbl">Long-term residents</span></div>
+        <div class="stat"><span class="num">0%</span><span class="lbl">Hidden commissions</span></div>
+      </div>
+    </div>
+
+    <div class="hero-visual reveal" data-parallax>
+      <div class="photo p1"><img loading="eager" decoding="async" src="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=900&q=70" alt="Tropical villa with pool in Lombok" width="900" height="1200"></div>
+      <div class="photo p2"><img loading="eager" decoding="async" src="https://images.unsplash.com/photo-1545579133-99bb5ab189bd?auto=format&fit=crop&w=900&q=70" alt="Lombok coastline" width="900" height="1200"></div>
+      <div class="photo p3"><img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?auto=format&fit=crop&w=900&q=70" alt="Lombok rice terrace" width="900" height="1200"></div>
+      <div class="badge-float">
+        <span class="check">✓</span>
+        <div>
+          <strong style="display:block;font-size:13px;">Legally verified</strong>
+          <span style="color:var(--muted);font-size:12px;">Notary &amp; title check</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-cue" aria-hidden="true">
+    <span>Scroll</span><span class="line"></span>
+  </div>
+</section>
+
+<!-- ============== TRUST ============== -->
+<section class="trust">
+  <div class="wrap trust-inner">
+    <span class="label">Trusted by residents &amp; investors from</span>
+    <div class="marks">
+      <span>France</span><span>Australia</span><span>Germany</span><span>Singapore</span><span>Netherlands</span><span>USA</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============== TWO PATHS ============== -->
+<section class="sec" id="paths">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="text">
+        <span class="kicker">Two paths, one method</span>
+        <h2>Whether you stay <span class="fancy">a season</span> or <span class="fancy">a decade.</span></h2>
+        <p>We help you settle and invest with the same lens: local context, verified information and long-term coordination — never rushed transactions.</p>
+      </div>
+    </div>
+
+    <div class="paths">
+      <a class="path-card reveal" href="#" aria-label="Live in Lombok">
+        <div class="bg" style="background-image: linear-gradient(180deg, rgba(11,16,16,0) 0%, rgba(11,16,16,.2) 100%), url('https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1400&q=70');"></div>
+        <div class="feature-pills">
+          <span>1 month – 10 years</span>
+          <span>Identified owners</span>
+          <span>Local mediation</span>
+        </div>
+        <div class="body">
+          <div class="num">— 01</div>
+          <h3>Live in Lombok</h3>
+          <p>Long-term rentals for those who want to live here without committing blindly or paying large sums upfront without local support.</p>
+          <span class="pill">Browse rentals <span class="arrow">→</span></span>
+        </div>
+      </a>
+
+      <a class="path-card reveal" href="#" aria-label="Invest in Lombok">
+        <div class="bg" style="background-image: linear-gradient(180deg, rgba(11,16,16,0) 0%, rgba(11,16,16,.2) 100%), url('https://images.unsplash.com/photo-1572276596237-5db2c3e16c5d?auto=format&fit=crop&w=1400&q=70');"></div>
+        <div class="feature-pills">
+          <span>Land &amp; villas</span>
+          <span>Legal verification</span>
+          <span>Optional management</span>
+        </div>
+        <div class="body">
+          <div class="num">— 02</div>
+          <h3>Invest in Lombok</h3>
+          <p>Land and villa opportunities for long-term investors looking for clarity, structure and patient on-the-ground execution.</p>
+          <span class="pill">See investments <span class="arrow">→</span></span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FEATURED PROPERTIES ============== -->
+<section class="sec" id="featured" style="padding-top:0;">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="text">
+        <span class="kicker">Hand-picked this month</span>
+        <h2>A glimpse of the <span class="fancy">current shortlist.</span></h2>
+        <p>Each property is visited, photographed and legally verified by our team before it appears on the platform.</p>
+      </div>
+      <a href="#" class="btn btn-ghost" style="height:fit-content;">View all properties <span class="arrow">→</span></a>
+    </div>
+
+    <div class="feat-grid reveal-stagger">
+      <article class="feat-card">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=800&q=70');">
+          <span class="tag">Rental · Long-term</span>
+          <span class="verified">✓ Verified</span>
+        </div>
+        <div class="body">
+          <h3>Villa Bukit Senggigi</h3>
+          <p class="loc">Senggigi, West Lombok</p>
+          <div class="chips"><span>3 beds</span><span>2 baths</span><span>Pool</span><span>Furnished</span></div>
+          <div class="price-row">
+            <span class="price">28,000,000 <span class="per">IDR / month</span></span>
+            <span class="per">Min 12 months</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="feat-card">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=800&q=70');">
+          <span class="tag">Investment · Villa</span>
+          <span class="verified">✓ Verified</span>
+        </div>
+        <div class="body">
+          <h3>Selong House</h3>
+          <p class="loc">Selong Belanak, South Lombok</p>
+          <div class="chips"><span>4 beds</span><span>Freehold</span><span>Yield ~9%</span></div>
+          <div class="price-row">
+            <span class="price">$ 385,000 <span class="per">USD</span></span>
+            <span class="per">Turn-key</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="feat-card">
+        <div class="img" style="background-image:url('https://images.unsplash.com/photo-1598944999451-272fdd309b29?auto=format&fit=crop&w=800&q=70');">
+          <span class="tag">Investment · Land</span>
+          <span class="verified">✓ Verified</span>
+        </div>
+        <div class="body">
+          <h3>Kuta Hill Plot</h3>
+          <p class="loc">Kuta, Central Lombok</p>
+          <div class="chips"><span>15 ares</span><span>Freehold</span><span>Ocean view</span></div>
+          <div class="price-row">
+            <span class="price">95,000,000 <span class="per">IDR / are</span></span>
+            <span class="per">Negotiable</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============== WHY US ============== -->
+<section class="sec" id="why" style="padding-top:0;">
+  <div class="wrap why">
+    <div class="reveal">
+      <span class="kicker">Why RumahYa</span>
+      <h2>A different way to <span class="fancy">do property</span> in Lombok.</h2>
+      <p style="margin: 18px 0 36px;">We don't act as commission-pushed agents. Our work is closer to a local lens: clarity over speed, verified facts over promises, and a long-term relationship rather than a one-off deal.</p>
+
+      <div class="bullets">
+        <div class="why-card">
+          <div class="ico">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-12a8 8 0 0 1 16 0c0 7.5-8 12-8 12z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <h3>On-the-ground presence</h3>
+            <p>Based in Lombok with a local network built over years of patient, in-person work — not a remote office.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <div class="ico">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div>
+            <h3>Verified documents</h3>
+            <p>Every property goes through legal verification with a partner notary before it ever reaches our shortlist.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <div class="ico">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+          </div>
+          <div>
+            <h3>Long-term focus</h3>
+            <p>Clarity and honest coordination, not commissions or rushed transactions. We expect you to come back — or not need to.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <div class="ico">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg>
+          </div>
+          <div>
+            <h3>End-to-end coordination</h3>
+            <p>From viewing to signature to property management — a single point of contact who actually picks up the phone.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="why-visual reveal" style="background-image:url('https://images.unsplash.com/photo-1542866789-6427c8c0e2bc?auto=format&fit=crop&w=1200&q=70');">
+      <div class="quote">
+        <p>"They visited four villas with me, said no to two of them on legal grounds, and helped me sign a clean lease in a week."</p>
+        <div class="author">— Marie L. · Long-term resident, Kuta Lombok</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PROCESS ============== -->
+<section class="sec" id="process">
+  <div class="wrap">
+    <div class="process reveal">
+      <div class="head">
+        <div>
+          <span class="kicker" style="color: rgba(245,241,234,.7);">How it works</span>
+          <h2>Four steps. <span class="fancy">No surprises.</span></h2>
+        </div>
+        <p>From the first message to the day you move in — or the day your investment is signed — we keep things readable and reversible.</p>
+      </div>
+      <div class="steps reveal-stagger">
+        <div class="step">
+          <span class="n">— Step 01</span>
+          <h3>Brief &amp; context</h3>
+          <p>You tell us what you're looking for. We share the local context most people don't have access to.</p>
+        </div>
+        <div class="step">
+          <span class="n">— Step 02</span>
+          <h3>Curated shortlist</h3>
+          <p>We hand-pick 3–5 properties matching your criteria — already legally pre-screened.</p>
+        </div>
+        <div class="step">
+          <span class="n">— Step 03</span>
+          <h3>On-site visits</h3>
+          <p>We accompany you on visits, in-person or via live video, with the right questions ready.</p>
+        </div>
+        <div class="step">
+          <span class="n">— Step 04</span>
+          <h3>Signature &amp; aftercare</h3>
+          <p>We coordinate notary, contracts and (if needed) property management — one person to call.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== TESTIMONIALS MARQUEE ============== -->
+<section class="sec" style="padding-top:0;">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="text">
+        <span class="kicker">In their words</span>
+        <h2>Real residents. <span class="fancy">Real investors.</span></h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="marquee" aria-label="Testimonials">
+    <div class="marquee-track">
+      <!-- duplicate set twice for seamless loop -->
+      <div class="testi">
+        <p>"It felt less like dealing with an agent and more like talking to a neighbour who happens to know every notary on the island."</p>
+        <div class="meta"><div class="av">M</div><div class="who">Marie L.<small>Kuta Lombok · 18 months</small></div></div>
+      </div>
+      <div class="testi">
+        <p>"They walked away from a deal that didn't feel right. That's the moment I trusted them with the actual purchase."</p>
+        <div class="meta"><div class="av">D</div><div class="who">David K.<small>Investor · Sydney → Selong</small></div></div>
+      </div>
+      <div class="testi">
+        <p>"Got a 3-year lease signed in 9 days, with everything translated and a real handover protocol."</p>
+        <div class="meta"><div class="av">A</div><div class="who">Anaïs &amp; T.<small>Long-term renters · Senggigi</small></div></div>
+      </div>
+      <div class="testi">
+        <p>"The legal due diligence saved us from a leasehold mess. Worth every rupiah of the fee."</p>
+        <div class="meta"><div class="av">S</div><div class="who">Sven R.<small>Investor · Berlin</small></div></div>
+      </div>
+      <!-- duplicate -->
+      <div class="testi">
+        <p>"It felt less like dealing with an agent and more like talking to a neighbour who happens to know every notary on the island."</p>
+        <div class="meta"><div class="av">M</div><div class="who">Marie L.<small>Kuta Lombok · 18 months</small></div></div>
+      </div>
+      <div class="testi">
+        <p>"They walked away from a deal that didn't feel right. That's the moment I trusted them with the actual purchase."</p>
+        <div class="meta"><div class="av">D</div><div class="who">David K.<small>Investor · Sydney → Selong</small></div></div>
+      </div>
+      <div class="testi">
+        <p>"Got a 3-year lease signed in 9 days, with everything translated and a real handover protocol."</p>
+        <div class="meta"><div class="av">A</div><div class="who">Anaïs &amp; T.<small>Long-term renters · Senggigi</small></div></div>
+      </div>
+      <div class="testi">
+        <p>"The legal due diligence saved us from a leasehold mess. Worth every rupiah of the fee."</p>
+        <div class="meta"><div class="av">S</div><div class="who">Sven R.<small>Investor · Berlin</small></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== MAP ============== -->
+<section class="sec" id="map" style="padding-top:0;">
+  <div class="wrap map-wrap">
+    <div class="reveal">
+      <span class="kicker">Where we work</span>
+      <h2>Lombok, end&nbsp;to&nbsp;end.</h2>
+      <p style="margin: 18px 0 28px;">From the surf coast in the south to the hills behind Senggigi — we cover the island where it matters and politely say "not yet" where it doesn't.</p>
+      <div class="map-list">
+        <div class="map-list-item"><span class="marker"></span><span class="name">Kuta &amp; Selong Belanak</span><span class="meta">South · surf &amp; investment</span></div>
+        <div class="map-list-item"><span class="marker"></span><span class="name">Senggigi &amp; Mangsit</span><span class="meta">West · long-term living</span></div>
+        <div class="map-list-item"><span class="marker"></span><span class="name">Tanjung &amp; Sira</span><span class="meta">North · quiet villas</span></div>
+        <div class="map-list-item"><span class="marker"></span><span class="name">Gili area mainland</span><span class="meta">Northwest · access points</span></div>
+      </div>
+    </div>
+
+    <div class="map-svg reveal" aria-label="Map of Lombok with our coverage areas">
+      <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="land" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="#c9b89a" />
+            <stop offset="1" stop-color="#a59175" />
+          </linearGradient>
+        </defs>
+        <!-- abstract Lombok shape -->
+        <path d="M60,150 C70,90 130,60 200,70 C260,78 320,85 340,140 C360,200 320,240 260,250 C220,256 170,260 120,240 C80,222 50,200 60,150 Z"
+          fill="url(#land)" stroke="#8a7960" stroke-width="1.5" opacity=".95" />
+        <!-- Rinjani -->
+        <circle cx="220" cy="135" r="14" fill="#6b5a42" opacity=".55"/>
+        <text x="220" y="120" text-anchor="middle" font-size="9" fill="#3a3833" font-family="Inter, sans-serif">Rinjani</text>
+      </svg>
+      <div class="pin" style="left:30%; top:75%;"><div class="dot"></div><div class="lbl">Kuta · Selong</div></div>
+      <div class="pin" style="left:22%; top:50%;"><div class="dot"></div><div class="lbl">Senggigi</div></div>
+      <div class="pin" style="left:55%; top:35%;"><div class="dot"></div><div class="lbl">Tanjung · Sira</div></div>
+      <div class="pin" style="left:18%; top:38%;"><div class="dot"></div><div class="lbl">Gili access</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FAQ ============== -->
+<section class="sec" id="faq" style="padding-top:0;">
+  <div class="wrap" style="max-width: 920px;">
+    <div class="sec-head reveal" style="margin-bottom:32px;">
+      <div class="text">
+        <span class="kicker">Questions</span>
+        <h2>The honest <span class="fancy">FAQ.</span></h2>
+        <p>Anything we didn't cover? Drop us a message — we usually answer the same day.</p>
+      </div>
+    </div>
+
+    <div class="faq reveal">
+      <details class="faq-item" open>
+        <summary>Can a foreigner own land in Lombok?</summary>
+        <div class="answer">
+          Not directly under freehold (Hak Milik), but freehold-like exposure exists through long leaseholds (Hak Sewa / Hak Pakai) or via a properly structured PT PMA. We walk you through which structure fits your goal, time horizon and tax situation — without pretending one size fits all.
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>Do you take a commission from owners?</summary>
+        <div class="answer">
+          We work on a transparent, flat coordination fee paid by the client — not a percentage commission from the seller. That removes the incentive to push you toward the most expensive deal.
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>How long does a typical rental signature take?</summary>
+        <div class="answer">
+          Once we've shortlisted and visited together, most long-term leases are signed within 5 to 10 working days, including translation and notary.
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>Can you manage a villa for me after I buy it?</summary>
+        <div class="answer">
+          Yes — optional property management (maintenance, staff, cleaning, owner reporting, short-term rental coordination) is one of our core services and the reason many investors come back.
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>What if I'm not in Lombok yet?</summary>
+        <div class="answer">
+          Most of our clients start the process remotely. We do live video walkthroughs, share full document packs, and only fly you over once we have a real shortlist worth your trip.
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============== CONTACT ============== -->
+<section class="sec" id="contact" style="padding-top:0;">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="text">
+        <span class="kicker">Let's talk</span>
+        <h2>Tell us about <span class="fancy">your project.</span></h2>
+        <p>No commitment, no pressure. We start by understanding your situation, then suggest the next concrete step.</p>
+      </div>
+    </div>
+
+    <div class="cta-grid">
+      <form class="cta-card reveal" id="contactForm" novalidate>
+        <h3 style="font-family:var(--sans); font-size:1.05rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin:0;">Send a message</h3>
+
+        <div class="form-row">
+          <div class="field">
+            <label for="name">Full name</label>
+            <input type="text" id="name" name="name" placeholder="Your name" required />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="you@email.com" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="topic">Topic</label>
+          <select id="topic" name="topic" required>
+            <option value="">Select a topic</option>
+            <option value="rentals">Living in Lombok (rentals)</option>
+            <option value="investment">Investing in Lombok</option>
+            <option value="management">Property management</option>
+            <option value="other">Other / not sure yet</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="4" placeholder="Briefly describe your situation, your timing and what would help most." required></textarea>
+        </div>
+
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:6px;">
+          <button type="submit" class="btn btn-primary" style="flex:1; min-width:200px; justify-content:center;">Send message <span class="arrow">→</span></button>
+          <a href="https://wa.me/6287873487940" target="_blank" rel="noopener" class="btn btn-wa" style="flex:1; min-width:200px; justify-content:center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.607z"/></svg>
+            WhatsApp instead
+          </a>
+        </div>
+
+        <small style="color:var(--muted); font-size:12.5px;">By sending, you agree to be contacted at the email above. We never share your data.</small>
+      </form>
+
+      <aside class="cta-card dark reveal">
+        <h3 style="font-family:var(--serif); font-size:1.6rem;">Prefer the direct line?</h3>
+        <p>The fastest answer is usually a WhatsApp. We typically reply within a few hours during Lombok daytime (UTC+8).</p>
+
+        <div class="channels">
+          <a href="https://wa.me/6287873487940" target="_blank" rel="noopener" class="ch">
+            <span class="ico wa">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24z"/></svg>
+            </span>
+            <div><strong>WhatsApp</strong><span>+62 878 7348 7940</span></div>
+          </a>
+          <a href="mailto:info@rumahya.com" class="ch">
+            <span class="ico">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </span>
+            <div><strong>Email</strong><span>info@rumahya.com</span></div>
+          </a>
+          <a href="#" class="ch">
+            <span class="ico">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-12a8 8 0 0 1 16 0c0 7.5-8 12-8 12z"/><circle cx="12" cy="10" r="3"/></svg>
+            </span>
+            <div><strong>Office</strong><span>Lombok, West Nusa Tenggara, Indonesia</span></div>
+          </a>
+        </div>
+
+        <p style="font-size:13.5px; margin-top: 14px;">RumahYa is based in Lombok and works with local partners. We do not act as agents pushing transactions — our role is clarity, context and coordination.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="#top"><span class="dot"></span>Rumah<em>Ya</em></a>
+        <p style="margin-top:14px; max-width:38ch; color:var(--muted); font-size:14.5px;">A locally rooted point of contact for long-term living and investment in Lombok.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <a href="#paths">Live &amp; Invest</a>
+        <a href="#featured">Properties</a>
+        <a href="#why">Why us</a>
+        <a href="#process">Process</a>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <a href="https://wa.me/6287873487940" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="mailto:info@rumahya.com">info@rumahya.com</a>
+        <a href="#contact">Send a message</a>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+
+    <div class="foot-mark" aria-hidden="true">RumahYa.</div>
+
+    <div class="foot-bottom">
+      <span>© <span id="yr"></span> RumahYa. All rights reserved.</span>
+      <span>Built with care in Lombok 🌴</span>
+    </div>
+  </div>
+</footer>
+
+<a class="fab" href="https://wa.me/6287873487940" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <span class="ico" aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24z"/></svg>
+  </span>
+  <span>Chat on WhatsApp</span>
+</a>
+
+<!-- ============== JS ============== -->
+<script>
+(function () {
+  // Year
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // Theme toggle (persists in localStorage)
+  const root = document.documentElement;
+  const tt = document.getElementById('themeToggle');
+  const stored = (function(){ try { return localStorage.getItem('ry_theme'); } catch(e) { return null; } })();
+  if (stored === 'dark' || (stored === null && matchMedia('(prefers-color-scheme: dark)').matches)) {
+    root.setAttribute('data-theme', 'dark');
+  }
+  tt.addEventListener('click', function () {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('ry_theme', next); } catch(e) {}
+  });
+
+  // Mobile menu
+  const mt = document.getElementById('menuToggle');
+  const nl = document.getElementById('navLinks');
+  mt.addEventListener('click', function () {
+    nl.classList.toggle('open');
+    mt.setAttribute('aria-expanded', nl.classList.contains('open') ? 'true' : 'false');
+  });
+  nl.addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') nl.classList.remove('open');
+  });
+
+  // Scrolled nav
+  const nav = document.getElementById('nav');
+  const onScroll = function () {
+    if (window.scrollY > 24) nav.classList.add('scrolled'); else nav.classList.remove('scrolled');
+  };
+  document.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // Reveal on scroll
+  const io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -10% 0px' });
+  document.querySelectorAll('.reveal, .reveal-stagger').forEach(function (el) { io.observe(el); });
+
+  // Hero parallax (cheap, transform only)
+  const visual = document.querySelector('[data-parallax]');
+  if (visual && matchMedia('(min-width: 901px)').matches) {
+    visual.addEventListener('mousemove', function (e) {
+      const r = visual.getBoundingClientRect();
+      const x = (e.clientX - r.left - r.width / 2) / r.width;
+      const y = (e.clientY - r.top - r.height / 2) / r.height;
+      visual.querySelectorAll('.photo').forEach(function (p, i) {
+        const f = (i + 1) * 6;
+        p.style.transform = (p.dataset.base || p.style.transform || '') + ' translate(' + (x * f) + 'px, ' + (y * f) + 'px)';
+      });
+    });
+    visual.addEventListener('mouseleave', function () {
+      visual.querySelectorAll('.photo').forEach(function (p) { p.style.transform = ''; });
+    });
+  }
+
+  // Animated counters
+  const counters = document.querySelectorAll('[data-count]');
+  const counterIO = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      const target = parseInt(el.getAttribute('data-count'), 10);
+      const dur = 1400; const start = performance.now();
+      function tick(now) {
+        const t = Math.min(1, (now - start) / dur);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(eased * target) + (target >= 100 ? '+' : '');
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      counterIO.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(function (c) { counterIO.observe(c); });
+
+  // Form (demo only — no real backend)
+  const form = document.getElementById('contactForm');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const btn = form.querySelector('button[type="submit"]');
+    const original = btn.innerHTML;
+    btn.disabled = true; btn.innerHTML = 'Sending…';
+    setTimeout(function () {
+      btn.innerHTML = '✓ Message sent';
+      setTimeout(function () { btn.disabled = false; btn.innerHTML = original; form.reset(); }, 2200);
+    }, 800);
+  });
+})();
+</script>
+</body>
+</html>

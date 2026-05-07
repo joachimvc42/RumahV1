@@ -66,10 +66,25 @@ export default function AboutClient({ locale = 'en' }: { locale?: Locale }) {
   return (
     <main>
       {/* ── Hero ── */}
-      <section className="about-hero">
-        <div className="container">
+      <section className="about-hero about-hero--video">
+        {/* Drone rice field video — place your video at /videos/hero-bg.mp4 */}
+        <video
+          className="about-hero-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+        >
+          <source src="/videos/hero-bg.mp4" type="video/mp4" />
+          <source src="/videos/hero-bg.webm" type="video/webm" />
+        </video>
+        <div className="about-hero-overlay" aria-hidden="true" />
+
+        <div className="container about-hero-content">
           <Reveal>
-            <p className="eyebrow" style={{ marginBottom: 20 }}>{t.about.heroEyebrow}</p>
+            <p className="eyebrow about-hero-eyebrow" style={{ marginBottom: 20 }}>{t.about.heroEyebrow}</p>
           </Reveal>
           <Reveal delay={100}>
             <h1 className="about-hero-headline">

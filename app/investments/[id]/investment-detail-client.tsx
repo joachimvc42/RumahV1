@@ -105,7 +105,7 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
     return () => window.removeEventListener('keydown', handler);
   }, [lightbox, data]);
 
-  const backHref = prefixFor(locale, '/investments');
+  const backHref = prefixFor(locale, '/opportunities');
 
   if (loading) return (
     <main className="detail-page">

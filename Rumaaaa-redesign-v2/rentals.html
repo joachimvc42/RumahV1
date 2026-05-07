@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Long-term rentals in Lombok — verified villas and houses curated for expatriates and long-stay residents." />
+<title>Long-term rentals in Lombok — RumahYa</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23c97b50'/%3E%3Cpath d='M9 22V13l7-5 7 5v9' stroke='%23fafaf7' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" />
+<style>
+:root {
+  --paper:#f5f1ea; --paper-2:#ece6dc; --ink:#14110d; --ink-2:#2b251d; --muted:#6b6357;
+  --line:#d9cfbf; --line-soft:#e9e0cf;
+  --terra:#c97b50; --terra-deep:#a35d3c; --terra-soft:#f3d9c8;
+  --sage:#7a9580; --ocean:#2a5961;
+  --shadow-1:0 1px 2px rgba(20,17,13,.05),0 8px 28px -10px rgba(20,17,13,.08);
+  --shadow-2:0 24px 60px -20px rgba(20,17,13,.18),0 4px 12px -6px rgba(20,17,13,.08);
+  --radius:18px; --radius-lg:28px;
+  --serif:"Fraunces",ui-serif,Georgia,serif;
+  --sans:"Inter",ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --maxw:1400px; --gutter:clamp(20px,5vw,48px);
+}
+[data-theme="dark"]{
+  --paper:#0b1010; --paper-2:#131a1a; --ink:#f5f1ea; --ink-2:#d6cdbb; --muted:#9a8f7e;
+  --line:#2a2f2f; --line-soft:#1c2222; --terra-soft:#3a2719;
+  --shadow-1:0 1px 2px rgba(0,0,0,.4),0 8px 28px -10px rgba(0,0,0,.6);
+  --shadow-2:0 30px 80px -30px rgba(0,0,0,.7),0 4px 12px -6px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{font-family:var(--sans);font-size:16px;line-height:1.55;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none} button{font:inherit}
+::selection{background:var(--terra);color:var(--paper)}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter);position:relative;z-index:1}
+h1,h2,h3{font-family:var(--serif);font-weight:400;letter-spacing:-0.02em;line-height:1.05;margin:0}
+h1{font-size:clamp(2.4rem,5.5vw,4.4rem)}
+.fancy{font-style:italic;font-weight:300;color:var(--terra-deep)}
+[data-theme="dark"] .fancy{color:var(--terra)}
+.kicker{display:inline-flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.kicker::before{content:"";width:28px;height:1px;background:currentColor;opacity:.5}
+.lead{font-size:clamp(1rem,1.6vw,1.15rem);color:var(--ink-2);max-width:60ch}
+
+.btn{display:inline-flex;align-items:center;gap:10px;padding:12px 20px;border-radius:999px;font-weight:600;font-size:14.5px;border:1px solid transparent;cursor:pointer;transition:all .25s}
+.btn-primary{background:var(--ink);color:var(--paper)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 30px -12px rgba(20,17,13,.4)}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn-ghost:hover{background:var(--paper-2)}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px var(--gutter);display:flex;align-items:center;justify-content:space-between;transition:all .3s;border-bottom:1px solid transparent}
+.nav.scrolled{background:color-mix(in srgb,var(--paper) 78%,transparent);backdrop-filter:saturate(160%) blur(14px);border-bottom-color:var(--line-soft)}
+.brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--serif);font-size:21px;font-weight:500}
+.brand .dot{width:9px;height:9px;background:var(--terra);border-radius:50%;box-shadow:0 0 0 4px color-mix(in srgb,var(--terra) 30%,transparent)}
+.brand em{font-style:italic;color:var(--terra-deep);font-weight:400}
+.nav-links{display:flex;gap:6px}
+.nav-links a{padding:8px 14px;border-radius:999px;font-size:14.5px;color:var(--ink-2);transition:all .25s}
+.nav-links a:hover,.nav-links a.active{color:var(--ink);background:var(--paper-2)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.icon-btn:hover{background:var(--paper-2)}
+@media(max-width:900px){.nav-links{display:none}}
+
+/* HERO compact */
+.hero-c{padding:140px 0 36px;position:relative;overflow:hidden;isolation:isolate}
+.hero-c::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(50% 60% at 80% 0%,color-mix(in srgb,var(--terra) 18%,transparent) 0%,transparent 60%),radial-gradient(40% 60% at 0% 100%,color-mix(in srgb,var(--sage) 16%,transparent) 0%,transparent 60%)}
+.hero-c h1{margin-top:14px;max-width:18ch}
+.hero-c .lead{margin-top:18px}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:280px 1fr;gap:36px;align-items:start;padding-bottom:96px}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}}
+
+aside.filters{position:sticky;top:84px;background:var(--paper);border:1px solid var(--line-soft);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-1)}
+@media(max-width:1000px){aside.filters{position:static}}
+aside.filters h3{font-family:var(--sans);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 16px}
+aside.filters h3:not(:first-child){margin-top:24px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:12.5px;font-weight:600;color:var(--muted)}
+.field select,.field input[type=text]{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:14px;transition:all .2s}
+.field select:focus,.field input:focus{outline:none;border-color:var(--terra);box-shadow:0 0 0 3px color-mix(in srgb,var(--terra) 18%,transparent)}
+.checkrow{display:flex;align-items:center;gap:11px;padding:8px 0;font-size:14.5px;color:var(--ink-2);cursor:pointer}
+.checkrow input{accent-color:var(--terra);width:17px;height:17px;cursor:pointer}
+.range{display:flex;align-items:center;gap:8px}
+.reset-btn{margin-top:10px;width:100%;padding:11px;background:var(--paper-2);color:var(--ink);border:1px solid var(--line-soft);border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;transition:all .2s}
+.reset-btn:hover{background:var(--terra-soft);border-color:var(--terra)}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid var(--line-soft);margin-bottom:22px}
+.toolbar .count{font-size:15px;color:var(--ink-2)}
+.toolbar .count strong{color:var(--ink);font-weight:700}
+.sort-row{display:flex;align-items:center;gap:8px}
+.sort-row select{font:inherit;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:14px;cursor:pointer}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:20px}
+
+/* CARD */
+.card{
+  background:var(--paper);border:1px solid var(--line-soft);border-radius:var(--radius);overflow:hidden;
+  display:flex;flex-direction:column;transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s,border-color .25s;
+  position:relative;
+}
+.card:hover{transform:translateY(-6px);border-color:var(--line);box-shadow:var(--shadow-2)}
+.card .img{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--paper-2)}
+.card .img img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+.card:hover .img img{transform:scale(1.06)}
+.card .img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(11,16,16,.35) 100%);pointer-events:none}
+.tag-row{position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;gap:6px;z-index:2}
+.tag{padding:5px 12px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.02em;backdrop-filter:blur(6px)}
+.tag.verified{background:color-mix(in srgb,var(--sage) 95%,transparent);color:#fff}
+.tag.photos{background:rgba(11,16,16,.55);color:#fff}
+.body{padding:20px;display:flex;flex-direction:column;gap:8px;flex:1}
+.body h3{font-size:1.3rem;font-weight:500}
+.body .loc{font-size:13.5px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0}
+.chips span{font-size:12.5px;padding:3px 9px;border-radius:999px;background:var(--paper-2);color:var(--ink-2);border:1px solid var(--line-soft)}
+.price-row{margin-top:auto;display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding-top:14px;border-top:1px solid var(--line-soft)}
+.price{font-family:var(--serif);font-size:1.35rem;color:var(--ink)}
+.per{color:var(--muted);font-size:13px}
+.card .actions{display:flex;gap:8px;padding:0 20px 20px}
+.card .actions a{flex:1;padding:11px;border-radius:10px;text-align:center;font-weight:600;font-size:13.5px;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all .25s}
+.card .actions .view{background:var(--paper-2);color:var(--ink);border:1px solid var(--line-soft)}
+.card .actions .view:hover{background:var(--terra-soft);border-color:var(--terra)}
+.card .actions .wa{background:#25d366;color:#fff}
+.card .actions .wa:hover{background:#1ebe5c}
+
+/* image carousel arrows */
+.arr{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.95);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;font-weight:700;color:#111;z-index:3;box-shadow:0 4px 12px rgba(0,0,0,.2);opacity:0;transition:opacity .2s,background .2s}
+.card:hover .arr{opacity:1}
+.arr:hover{background:#fff}
+.arr.l{left:10px}
+.arr.r{right:10px}
+
+/* Active filters bar */
+.active-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip-active{display:inline-flex;align-items:center;gap:6px;padding:5px 10px 5px 12px;background:var(--terra-soft);color:var(--terra-deep);border-radius:999px;font-size:13px;font-weight:500}
+.chip-active button{background:none;border:none;cursor:pointer;color:inherit;font-size:14px;padding:0;line-height:1}
+
+footer.site{border-top:1px solid var(--line-soft);padding:48px 0 28px;background:var(--paper);text-align:center;color:var(--muted);font-size:13.5px}
+.foot-mark{font-family:var(--serif);font-size:clamp(2.5rem,7vw,5rem);line-height:.9;color:transparent;-webkit-text-stroke:1px var(--line);margin:24px 0 16px;letter-spacing:-0.04em;user-select:none}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <a href="index.html" class="brand"><span class="dot"></span>Rumah<em>Ya</em></a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="rentals.html" class="active">Rentals</a>
+    <a href="index.html#featured">Investments</a>
+    <a href="index.html#why">About</a>
+    <a href="index.html#contact">Contact</a>
+  </nav>
+  <div class="nav-actions">
+    <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
+    <a href="index.html#contact" class="btn btn-primary" style="padding:9px 16px;">Book a call →</a>
+  </div>
+</header>
+
+<section class="hero-c">
+  <div class="wrap">
+    <span class="kicker">Long-term rentals</span>
+    <h1>Houses that <span class="fancy">welcome you</span> in Lombok.</h1>
+    <p class="lead">Verified villas and houses curated for expatriates and long-stay residents. Every listing is visited, photographed and legally checked before it lands here.</p>
+  </div>
+</section>
+
+<section class="wrap layout">
+
+  <aside class="filters">
+    <h3>Search</h3>
+    <div class="field">
+      <label for="loc">Location</label>
+      <select id="loc">
+        <option value="">All areas</option>
+        <option>Senggigi</option>
+        <option>Kuta Lombok</option>
+        <option>Selong Belanak</option>
+        <option>Tanjung</option>
+        <option>Mangsit</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="beds">Bedrooms</label>
+      <select id="beds"><option value="">Any</option><option>1+</option><option>2+</option><option>3+</option><option>4+</option></select>
+    </div>
+    <div class="field">
+      <label for="bud">Max budget (IDR/month)</label>
+      <select id="bud"><option value="">No limit</option><option>15,000,000</option><option>25,000,000</option><option>35,000,000</option><option>50,000,000</option></select>
+    </div>
+
+    <h3>Amenities</h3>
+    <label class="checkrow"><input type="checkbox"/>🏊 Pool</label>
+    <label class="checkrow"><input type="checkbox"/>🌳 Garden</label>
+    <label class="checkrow"><input type="checkbox"/>❄️ Air conditioning</label>
+    <label class="checkrow"><input type="checkbox"/>🛋️ Furnished</label>
+    <label class="checkrow"><input type="checkbox"/>📶 WiFi</label>
+    <label class="checkrow"><input type="checkbox"/>🚗 Parking</label>
+    <label class="checkrow"><input type="checkbox"/>🔒 Private space</label>
+
+    <h3>Duration</h3>
+    <div class="field">
+      <label>Minimum stay</label>
+      <select><option>Any</option><option>3 months</option><option>6 months</option><option>12 months</option><option>24+ months</option></select>
+    </div>
+
+    <button class="reset-btn" type="button">Reset filters</button>
+  </aside>
+
+  <main>
+    <div class="active-filters">
+      <span class="chip-active">Senggigi <button aria-label="Remove">×</button></span>
+      <span class="chip-active">Pool <button aria-label="Remove">×</button></span>
+      <span class="chip-active">2+ bedrooms <button aria-label="Remove">×</button></span>
+    </div>
+
+    <div class="toolbar">
+      <p class="count"><strong>9</strong> properties available</p>
+      <div class="sort-row">
+        <span style="font-size:13px;color:var(--muted);">Sort by</span>
+        <select>
+          <option>Most recent</option>
+          <option>Price · low to high</option>
+          <option>Price · high to low</option>
+          <option>Bedrooms</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <article class="card">
+        <div class="img">
+          <div class="tag-row">
+            <span class="tag verified">✓ Verified</span>
+            <span class="tag photos">📷 8</span>
+          </div>
+          <button class="arr l" aria-label="Previous">‹</button>
+          <button class="arr r" aria-label="Next">›</button>
+          <img src="https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=900&q=70" alt="Villa Bukit Senggigi">
+        </div>
+        <div class="body">
+          <h3>Villa Bukit Senggigi</h3>
+          <p class="loc">📍 Senggigi, West Lombok</p>
+          <div class="chips"><span>3 beds</span><span>2 baths</span><span>Pool</span><span>Furnished</span><span>AC</span></div>
+          <div class="price-row">
+            <span class="price">28,000,000<span class="per"> IDR/mo</span></span>
+            <span class="per">12–60 mo</span>
+          </div>
+        </div>
+        <div class="actions">
+          <a href="#" class="view">View details →</a>
+          <a href="https://wa.me/6287873487940" target="_blank" rel="noopener" class="wa">💬 WhatsApp</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="img">
+          <div class="tag-row">
+            <span class="tag verified">✓ Verified</span>
+            <span class="tag photos">📷 12</span>
+          </div>
+          <button class="arr l">‹</button><button class="arr r">›</button>
+          <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=900&q=70" alt="Casa Pantai Kuta">
+        </div>
+        <div class="body">
+          <h3>Casa Pantai Kuta</h3>
+          <p class="loc">📍 Kuta Lombok, Central Lombok</p>
+          <div class="chips"><span>2 beds</span><span>2 baths</span><span>Garden</span><span>Furnished</span></div>
+          <div class="price-row">
+            <span class="price">18,500,000<span class="per"> IDR/mo</span></span>
+            <span class="per">6–24 mo</span>
+          </div>
+        </div>
+        <div class="actions">
+          <a href="#" class="view">View details →</a>
+          <a href="https://wa.me/6287873487940" target="_blank" rel="noopener" class="wa">💬 WhatsApp</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="img">
+          <div class="tag-row">
+            <span class="tag verified">✓ Verified</span>
+            <span class="tag photos">📷 6</span>
+          </div>
+          <button class="arr l">‹</button><button class="arr r">›</button>
+          <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=900&q=70" alt="Selong Garden House">
+        </div>
+        <div class="body">
+          <h3>Selong Garden House</h3>
+          <p class="loc">📍 Selong Belanak, South Lombok</p>
+          <div class="chips"><span>3 beds</span><span>3 baths</span><span>Pool</span><span>Garden</span><span>WiFi</span></div>
+          <div class="price-row">
+            <span class="price">32,000,000<span class="per"> IDR/mo</span></span>
+            <span class="per">12+ mo</span>
+          </div>
+        </div>
+        <div class="actions">
+          <a href="#" class="view">View details →</a>
+          <a href="https://wa.me/6287873487940" target="_blank" rel="noopener" class="wa">💬 WhatsApp</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="img">
+          <div class="tag-row">
+            <span class="tag verified">✓ Verified</span>
+            <span class="tag photos">📷 5</span>
+          </div>
+          <button class="arr l">‹</button><button class="arr r">›</button>
+          <img src="https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=900&q=70" alt="Mangsit Beach Villa">
+        </div>
+        <div class="body">
+          <h3>Mangsit Beach Villa</h3>
+          <p class="loc">📍 Mangsit, West Lombok</p>
+          <div class="chips"><span>4 beds</span><span>3 baths</span><span>Ocean view</span><span>Furnished</span></div>
+          <div class="price-row">
+            <span class="price">45,000,000<span class="per"> IDR/mo</span></span>
+            <span class="per">12+ mo</span>
+          </div>
+        </div>
+        <div class="actions">
+          <a href="#" class="view">View details →</a>
+          <a href="https://wa.me/6287873487940" target="_blank" rel="noopener" class="wa">💬 WhatsApp</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="img">
+          <div class="tag-row">
+            <span class="tag verified">✓ Verified</span>
+            <span class="tag photos">📷 9</span>
+          </div>
+          <button class="arr l">‹</button><button class="arr r">›</button>
+          <img src="https://images.unsplash.com/photo-1542866789-6427c8c0e2bc?auto=format&fit=crop&w=900&q=70" alt="Tanjung Hideaway">
+        </div>
+        <div class="body">
+          <h3>Tanjung Hideaway</h3>
+          <p class="loc">📍 Tanjung, North Lombok</p>
+          <div class="chips"><span>2 beds</span><span>1 bath</span><span>Quiet</span><span>Garden</span></div>
+          <div class="price-row">
+            <span class="price">14,000,000<span class="per"> IDR/mo</span></span>
+            <span class="per">3–24 mo</span>
+          </div>
+        </div>
+        <div class="actions">
+          <a href="#" class="view">View details →</a>
+          <a href="https://wa.me/6287873487940" target="_blank" rel="noopener" class="wa">💬 WhatsApp</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="img">
+          <div class="tag-row">
+            <span class="tag verified">✓ Verified</span>
+            <span class="tag photos">📷 7</span>
+          </div>
+          <button class="arr l">‹</button><button class="arr r">›</button>
+          <img src="https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?auto=format&fit=crop&w=900&q=70" alt="Rinjani Hill Cottage">
+        </div>
+        <div class="body">
+          <h3>Rinjani Hill Cottage</h3>
+          <p class="loc">📍 Senaru, North Lombok</p>
+          <div class="chips"><span>1 bed</span><span>1 bath</span><span>View</span><span>WiFi</span></div>
+          <div class="price-row">
+            <span class="price">9,500,000<span class="per"> IDR/mo</span></span>
+            <span class="per">3+ mo</span>
+          </div>
+        </div>
+        <div class="actions">
+          <a href="#" class="view">View details →</a>
+          <a href="https://wa.me/6287873487940" target="_blank" rel="noopener" class="wa">💬 WhatsApp</a>
+        </div>
+      </article>
+
+    </div>
+  </main>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-mark">RumahYa.</div>
+    <p>© <span id="yr"></span> RumahYa · Long-term rentals in Lombok · <a href="https://wa.me/6287873487940" target="_blank" rel="noopener" style="color:var(--terra-deep);font-weight:500;">WhatsApp us</a></p>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+const tt = document.getElementById('themeToggle');
+const root = document.documentElement;
+const stored = (function(){ try { return localStorage.getItem('ry_theme'); } catch(e) { return null; } })();
+if (stored === 'dark' || (stored === null && matchMedia('(prefers-color-scheme: dark)').matches)) root.setAttribute('data-theme','dark');
+tt.addEventListener('click',function(){
+  const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  try { localStorage.setItem('ry_theme', next); } catch(e) {}
+});
+const nav = document.getElementById('nav');
+document.addEventListener('scroll',function(){
+  if (window.scrollY > 24) nav.classList.add('scrolled'); else nav.classList.remove('scrolled');
+},{passive:true});
+</script>
+</body>
+</html>
