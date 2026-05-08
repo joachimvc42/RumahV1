@@ -149,6 +149,16 @@ export default function Header() {
               >
                 Property Mgmt
               </Link>
+              <a
+                href="https://rentals.rumahya.com"
+                className="nav-link nav-link-rentals"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="RumahYa Rentals"
+                onClick={closeMenu}
+              >
+                Rentals →
+              </a>
 
               {/* Dark mode toggle */}
               <button

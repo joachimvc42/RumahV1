@@ -14,6 +14,8 @@ const AMENITY_ICONS: Record<string, string> = {
 };
 
 /* ─────────── Types ─────────── */
+type AvailBlock = { start_date: string; end_date: string };
+
 type RentalRow = {
   id: string;
   reference?: string | null;
@@ -26,6 +28,7 @@ type RentalRow = {
   legal_checked: boolean;
   available_from: string | null;
   available_to?: string | null;
+  rental_availability_blocks?: AvailBlock[];
   properties: {
     id: string; title: string; location: string | null;
     bedrooms: number | null; bathrooms: number | null;
@@ -43,6 +46,7 @@ type Filters = {
   pool: boolean; garden: boolean; aircon: boolean;
   furnished: boolean; wifi: boolean; parking: boolean;
   privateSpace: boolean; kitchen: boolean;
+  checkIn: string; checkOut: string;
 };
 
 type SortBy = 'recent' | 'price_asc' | 'price_desc';
@@ -129,21 +133,26 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
           className="lc2-media-link"
           aria-label={p?.title ?? 'View property'}
         >
-          {images.length > 0 ? images.map((src, i) => (
-            <Image
-              key={src}
-              src={src}
-              alt={p?.title ?? ''}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              loading={i === 0 ? 'eager' : 'lazy'}
-              className="listing-img"
-              style={{
-                opacity: i === idx ? 1 : 0,
-                transform: i === idx && hover ? 'scale(1.04)' : 'scale(1)',
-              }}
-            />
-          )) : (
+          {images.length > 0 ? images.map((src, i) => {
+            const prev = (idx - 1 + images.length) % images.length;
+            const next = (idx + 1) % images.length;
+            if (i !== idx && i !== prev && i !== next) return null;
+            return (
+              <Image
+                key={src}
+                src={src}
+                alt={p?.title ?? ''}
+                fill
+                sizes="(max-width: 640px) 100vw, 460px"
+                loading={i === idx ? 'eager' : 'lazy'}
+                className="listing-img"
+                style={{
+                  opacity: i === idx ? 1 : 0,
+                  transform: i === idx && hover ? 'scale(1.04)' : 'scale(1)',
+                }}
+              />
+            );
+          }) : (
             <div className="listing-img-placeholder">Rumah<em>Ya</em></div>
           )}
         </Link>
@@ -251,11 +260,13 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
     pool: false, garden: false, aircon: false,
     furnished: false, wifi: false, parking: false,
     privateSpace: false, kitchen: false,
+    checkIn: '', checkOut: '',
   });
 
   useEffect(() => {
     supabase.from('long_term_rentals')
       .select(`id, reference, min_duration_months, max_duration_months, monthly_price_idr, yearly_price_idr, legal_checked, available_from, available_to,
+        rental_availability_blocks (start_date, end_date),
         properties (id, title, description, location, bedrooms, bathrooms, pool, garden, furnished, aircon, wifi, parking, private_space, kitchen, images, status, latitude, longitude)`)
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {
@@ -282,6 +293,19 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
     if (filters.parking && !p.parking) return false;
     if (filters.privateSpace && !p.private_space) return false;
     if (filters.kitchen && !p.kitchen) return false;
+    // Date availability filter
+    if (filters.checkIn && filters.checkOut) {
+      const ci = filters.checkIn;
+      const co = filters.checkOut;
+      // Exclude if the overall availability window doesn't cover the period
+      if (r.available_from && r.available_from > ci) return false;
+      if (r.available_to && r.available_to < co) return false;
+      // Exclude if any blocked period overlaps the requested dates
+      const hasBlock = (r.rental_availability_blocks ?? []).some(
+        b => b.start_date <= co && b.end_date >= ci
+      );
+      if (hasBlock) return false;
+    }
     return true;
   });
 
@@ -304,6 +328,8 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
   if (filters.minBeds) activeChips.push({ key: 'minBeds', label: `${filters.minBeds}+ ${t.home.beds}`, dismiss: () => setFilters(f => ({ ...f, minBeds: '' })) });
   if (filters.minBaths) activeChips.push({ key: 'minBaths', label: `${filters.minBaths}+ ${t.home.baths}`, dismiss: () => setFilters(f => ({ ...f, minBaths: '' })) });
   if (filters.maxPrice) activeChips.push({ key: 'maxPrice', label: `≤ IDR ${fmtIDR(Number(filters.maxPrice))}`, dismiss: () => setFilters(f => ({ ...f, maxPrice: '' })) });
+  if (filters.checkIn) activeChips.push({ key: 'checkIn', label: `From ${filters.checkIn}`, dismiss: () => setFilters(f => ({ ...f, checkIn: '', checkOut: '' })) });
+  if (filters.checkOut) activeChips.push({ key: 'checkOut', label: `Until ${filters.checkOut}`, dismiss: () => setFilters(f => ({ ...f, checkIn: '', checkOut: '' })) });
   (['pool', 'garden', 'aircon', 'furnished', 'kitchen', 'wifi', 'parking', 'privateSpace'] as (keyof Filters)[]).forEach(key => {
     if (filters[key]) activeChips.push({ key, label: chipLabels[key], dismiss: () => setFilters(f => ({ ...f, [key]: false })) });
   });
@@ -313,6 +339,7 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
     pool: false, garden: false, aircon: false,
     furnished: false, wifi: false, parking: false,
     privateSpace: false, kitchen: false,
+    checkIn: '', checkOut: '',
   });
   const hasActive = activeChips.length > 0;
 
@@ -369,6 +396,27 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
               <option value="3">3+</option>
               <option value="4">4+</option>
             </select>
+          </div>
+          <div className="inv-search-div" />
+          <div className="inv-search-seg">
+            <span className="eyebrow inv-search-label">Available from</span>
+            <input
+              type="date"
+              value={filters.checkIn}
+              onChange={e => setFilters(f => ({ ...f, checkIn: e.target.value, checkOut: f.checkOut && f.checkOut < e.target.value ? '' : f.checkOut }))}
+              style={{ fontSize: 14, border: 'none', background: 'transparent', outline: 'none', cursor: 'pointer', color: 'inherit' }}
+            />
+          </div>
+          <div className="inv-search-div" />
+          <div className="inv-search-seg">
+            <span className="eyebrow inv-search-label">Available until</span>
+            <input
+              type="date"
+              value={filters.checkOut}
+              min={filters.checkIn || undefined}
+              onChange={e => setFilters(f => ({ ...f, checkOut: e.target.value }))}
+              style={{ fontSize: 14, border: 'none', background: 'transparent', outline: 'none', cursor: 'pointer', color: 'inherit' }}
+            />
           </div>
         </div>
 

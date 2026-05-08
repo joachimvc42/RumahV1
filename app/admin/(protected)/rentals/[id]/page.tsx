@@ -8,6 +8,7 @@ import { urlsToGalleryItems, readFileAsDataURL, type SortableGalleryItem } from 
 import AdminImageGallery from '../../../../../components/admin/AdminImageGallery';
 import MapPicker from '../../../../../components/MapPicker';
 import LocationInput from '../../../../../components/LocationInput';
+import RentalAvailabilityCalendar from '../../../../../components/admin/RentalAvailabilityCalendar';
 
 type VideoItem = {
   id: string;
@@ -336,6 +337,12 @@ export default function EditRentalPage() {
             </select>
           </div>
           <label style={s.checkbox}><input type="checkbox" checked={legalChecked} onChange={e => setLegalChecked(e.target.checked)} /><span>✅ Legal documents verified</span></label>
+        </section>
+
+        {/* ── Availability calendar ── */}
+        <section style={s.section}>
+          <h2 style={s.sectionTitle}>📅 Availability</h2>
+          <RentalAvailabilityCalendar rentalId={id} />
         </section>
 
         {/* ── Location ── */}

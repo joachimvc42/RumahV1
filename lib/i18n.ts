@@ -68,11 +68,11 @@ export const en = {
   about: {
     heroEyebrow: 'About RumahYa',
     heroHeadlineA: 'A local point of contact for',
-    heroHeadlineB: 'long-term living',
-    heroHeadlineAnd: 'and',
+    heroHeadlineB: '',
+    heroHeadlineAnd: '',
     heroHeadlineC: 'investment in Lombok',
     heroLead:
-      'We support expatriates and investors with local context, verified information, and long-term coordination for every property project — from a six-month rental to a freehold land acquisition.',
+      'We support investors with local context, verified information, and on-the-ground coordination for every property project — from land search to freehold acquisition and long-term management.',
     pathLiveEyebrow: '01 — Live',
     pathLiveTitle: 'Live in Lombok',
     pathLiveText:
@@ -99,7 +99,7 @@ export const en = {
       ['Clear communication', 'Direct, honest, multilingual (EN · FR · ES). No pressure, no upsell.'],
       ['On-the-ground presence', 'Physical visits, photos, and coordination with local contractors.'],
       ['Long-term relationships', 'We prefer slow, solid projects. Repeat clients over fast turnover.'],
-      ['Optional management', 'Rental operations, staff coordination, bill handling — if you want it.'],
+      ['Optional management', 'Property management, staff coordination, bill handling — if you want it.'],
     ] as [string, string][],
     contactEyebrow: 'Contact',
     contactTitleA: "Let's talk about",
@@ -288,11 +288,11 @@ export const fr: typeof en = {
   about: {
     heroEyebrow: 'À propos de RumahYa',
     heroHeadlineA: 'Un point de contact local pour',
-    heroHeadlineB: "vivre longtemps",
-    heroHeadlineAnd: 'et',
+    heroHeadlineB: '',
+    heroHeadlineAnd: '',
     heroHeadlineC: 'investir à Lombok',
     heroLead:
-      "Nous accompagnons expatriés et investisseurs avec du contexte local, des informations vérifiées et une coordination sur la durée pour chaque projet immobilier — d'une location de six mois à l'acquisition d'un terrain en freehold.",
+      "Nous accompagnons les investisseurs avec du contexte local, des informations vérifiées et une coordination sur le terrain pour chaque projet immobilier — de la recherche de terrain à l'acquisition en freehold.",
     pathLiveEyebrow: '01 — Vivre',
     pathLiveTitle: 'Vivre à Lombok',
     pathLiveText:
@@ -319,7 +319,7 @@ export const fr: typeof en = {
       ['Communication claire', 'Directe, honnête, multilingue (EN · FR · ES). Sans pression, sans survente.'],
       ['Présence sur le terrain', 'Visites physiques, photos, coordination avec des artisans locaux.'],
       ['Relations long terme', 'Nous privilégions les projets lents et solides. Des clients fidèles plutôt qu\'un flux rapide.'],
-      ['Gestion en option', 'Exploitation locative, coordination du personnel, gestion des factures — si vous le souhaitez.'],
+      ['Gestion en option', 'Suivi de la propriété, coordination du personnel, gestion des factures — si vous le souhaitez.'],
     ],
     contactEyebrow: 'Contact',
     contactTitleA: 'Parlons de',
@@ -508,11 +508,11 @@ export const es: typeof en = {
   about: {
     heroEyebrow: 'Sobre RumahYa',
     heroHeadlineA: 'Un punto de contacto local para',
-    heroHeadlineB: 'vivir a largo plazo',
-    heroHeadlineAnd: 'e',
+    heroHeadlineB: '',
+    heroHeadlineAnd: '',
     heroHeadlineC: 'invertir en Lombok',
     heroLead:
-      'Acompañamos a expatriados e inversores con contexto local, información verificada y coordinación a largo plazo en cada proyecto inmobiliario — desde un alquiler de seis meses hasta la adquisición de un terreno en freehold.',
+      'Acompañamos a inversores con contexto local, información verificada y coordinación sobre el terreno en cada proyecto inmobiliario — desde la búsqueda de terreno hasta la adquisición en freehold.',
     pathLiveEyebrow: '01 — Vivir',
     pathLiveTitle: 'Vivir en Lombok',
     pathLiveText:
@@ -539,7 +539,7 @@ export const es: typeof en = {
       ['Comunicación clara', 'Directa, honesta, multilingüe (EN · FR · ES). Sin presión, sin venta forzada.'],
       ['Presencia sobre el terreno', 'Visitas físicas, fotos y coordinación con artesanos locales.'],
       ['Relaciones a largo plazo', 'Preferimos proyectos lentos y sólidos. Clientes recurrentes antes que rotación rápida.'],
-      ['Gestión opcional', 'Operaciones de alquiler, coordinación del personal, gestión de facturas — si lo deseas.'],
+      ['Gestión opcional', 'Gestión de la propiedad, coordinación del personal, gestión de facturas — si lo deseas.'],
     ],
     contactEyebrow: 'Contacto',
     contactTitleA: 'Hablemos de',

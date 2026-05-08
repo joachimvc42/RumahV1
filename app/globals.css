@@ -3996,3 +3996,12 @@ html[data-theme="dark"] .active-chip-reset {
     border-radius: 20px;
     padding: 4px 12px !important;
 }
+
+/* Rentals link in invest nav */
+.nav-link-rentals {
+    font-size: 12px;
+    opacity: 0.7;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px !important;
+}

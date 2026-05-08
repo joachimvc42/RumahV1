@@ -23,6 +23,11 @@ const nextConfig = {
       },
     ],
     formats: ['image/avif', 'image/webp'],
+    // Fewer breakpoints = fewer unique transforms generated
+    deviceSizes: [640, 1080, 1920],
+    imageSizes: [16, 128, 384],
+    // Cache transforms for 30 days (default is 60s — causes constant re-transforms)
+    minimumCacheTTL: 2592000,
   },
 
   // Route redirects — permanent moves for SEO

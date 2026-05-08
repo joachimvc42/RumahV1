@@ -89,40 +89,12 @@ export default function AboutClient({ locale = 'en' }: { locale?: Locale }) {
           <Reveal delay={100}>
             <h1 className="about-hero-headline">
               {t.about.heroHeadlineA}<br />
-              {t.about.heroHeadlineB} <em>{t.about.heroHeadlineAnd}</em> {t.about.heroHeadlineC}
+              <em>{t.about.heroHeadlineC}</em>
             </h1>
           </Reveal>
           <Reveal delay={220}>
             <p className="about-hero-lead">{t.about.heroLead}</p>
           </Reveal>
-        </div>
-      </section>
-
-      {/* ── Two paths ── */}
-      <section className="about-section">
-        <div className="container">
-          <div className="about-paths">
-            <Reveal>
-              <article className="about-path">
-                <p className="eyebrow">{t.about.pathLiveEyebrow}</p>
-                <h2 className="about-path-title">{t.about.pathLiveTitle}</h2>
-                <p className="about-path-text">{t.about.pathLiveText}</p>
-                <ul className="about-list">
-                  {t.about.pathLiveList.map((li) => <li key={li}>{li}</li>)}
-                </ul>
-              </article>
-            </Reveal>
-            <Reveal delay={160}>
-              <article className="about-path">
-                <p className="eyebrow">{t.about.pathInvestEyebrow}</p>
-                <h2 className="about-path-title">{t.about.pathInvestTitle}</h2>
-                <p className="about-path-text">{t.about.pathInvestText}</p>
-                <ul className="about-list">
-                  {t.about.pathInvestList.map((li) => <li key={li}>{li}</li>)}
-                </ul>
-              </article>
-            </Reveal>
-          </div>
         </div>
       </section>
 
@@ -205,7 +177,6 @@ export default function AboutClient({ locale = 'en' }: { locale?: Locale }) {
                       <label className="form-label">{t.about.formTopic}</label>
                       <select value={type} onChange={e => setType(e.target.value)} required>
                         <option value="">{t.about.formTopicSelect}</option>
-                        <option value="rentals">{t.about.formTopicRentals}</option>
                         <option value="investment">{t.about.formTopicInvestment}</option>
                         <option value="other">{t.about.formTopicOther}</option>
                       </select>

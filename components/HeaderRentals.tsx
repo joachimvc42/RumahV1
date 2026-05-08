@@ -69,14 +69,6 @@ export default function HeaderRentals() {
           >
             Map
           </Link>
-          <Link
-            href="/about"
-            className={isActive('/about') ? 'nav-link is-active' : 'nav-link'}
-            onClick={closeMenu}
-          >
-            About
-          </Link>
-
           <button
             type="button"
             className="theme-toggle"

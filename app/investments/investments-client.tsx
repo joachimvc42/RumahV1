@@ -118,21 +118,26 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
           className="lc2-media-link"
           aria-label={item.title}
         >
-          {item.images.length > 0 ? item.images.map((src, i) => (
-            <Image
-              key={src}
-              src={src}
-              alt={item.title}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              loading={i === 0 ? 'eager' : 'lazy'}
-              className="listing-img"
-              style={{
-                opacity: i === idx ? 1 : 0,
-                transform: i === idx && hover ? 'scale(1.04)' : 'scale(1)',
-              }}
-            />
-          )) : (
+          {item.images.length > 0 ? item.images.map((src, i) => {
+            const prevIdx = (idx - 1 + item.images.length) % item.images.length;
+            const nextIdx = (idx + 1) % item.images.length;
+            if (i !== idx && i !== prevIdx && i !== nextIdx) return null;
+            return (
+              <Image
+                key={src}
+                src={src}
+                alt={item.title}
+                fill
+                sizes="(max-width: 640px) 100vw, 460px"
+                loading={i === idx ? 'eager' : 'lazy'}
+                className="listing-img"
+                style={{
+                  opacity: i === idx ? 1 : 0,
+                  transform: i === idx && hover ? 'scale(1.04)' : 'scale(1)',
+                }}
+              />
+            );
+          }) : (
             <div className="listing-img-placeholder">Rumah<em>Ya</em></div>
           )}
         </Link>
