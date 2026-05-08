@@ -107,16 +107,26 @@ export default function NewRentalPage() {
   };
 
   const uploadVideos = async (propertyId: string): Promise<string[]> => {
+    const total = videoItems.length;
     const urls: string[] = [];
-    for (let i = 0; i < videoItems.length; i++) {
-      const { file, name } = videoItems[i];
-      const ext = name.split('.').pop();
-      const path = `rentals/${propertyId}/videos/${Date.now()}_${i}.${ext}`;
-      const { error } = await supabase.storage.from('properties').upload(path, file, { contentType: file.type });
-      if (error) throw new Error(`Video upload failed: ${error.message}`);
-      const { data } = supabase.storage.from('properties').getPublicUrl(path);
-      urls.push(data.publicUrl);
-      setVideoProgress(Math.round(((i + 1) / videoItems.length) * 100));
+    let tick: ReturnType<typeof setInterval> | null = null;
+    try {
+      for (let i = 0; i < total; i++) {
+        const { file, name } = videoItems[i];
+        const ext = name.split('.').pop();
+        const path = `rentals/${propertyId}/videos/${Date.now()}_${i}.${ext}`;
+        const trickleTarget = Math.round(((i + 0.85) / total) * 100);
+        setVideoProgress(Math.max(Math.round((i / total) * 100) + 2, 2));
+        tick = setInterval(() => setVideoProgress(p => (p < trickleTarget ? p + 1 : p)), 400);
+        const { error } = await supabase.storage.from('properties').upload(path, file, { contentType: file.type });
+        clearInterval(tick); tick = null;
+        if (error) throw new Error(`Video upload failed: ${error.message}`);
+        const { data } = supabase.storage.from('properties').getPublicUrl(path);
+        urls.push(data.publicUrl);
+        setVideoProgress(Math.round(((i + 1) / total) * 100));
+      }
+    } finally {
+      if (tick) clearInterval(tick);
     }
     return urls;
   };

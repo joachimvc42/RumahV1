@@ -193,20 +193,29 @@ export default function EditInvestmentPage() {
     let uploaded = 0;
     const out: string[] = [];
 
-    for (let i = 0; i < videoItems.length; i++) {
-      const item = videoItems[i];
-      if (item.isExisting) {
-        out.push(item.previewSrc);
-      } else if (item.file) {
-        const ext = item.name.split('.').pop();
-        const path = `investments/${investment.asset_id}/videos/${Date.now()}_${i}.${ext}`;
-        const { error } = await supabase.storage.from(bucket).upload(path, item.file, { contentType: item.file.type });
-        if (error) throw new Error(`Upload failed: ${error.message}`);
-        const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-        out.push(data.publicUrl);
-        uploaded++;
-        setVideoProgress(Math.round((uploaded / Math.max(newVideos.length, 1)) * 100));
+    let tick: ReturnType<typeof setInterval> | null = null;
+    try {
+      for (let i = 0; i < videoItems.length; i++) {
+        const item = videoItems[i];
+        if (item.isExisting) {
+          out.push(item.previewSrc);
+        } else if (item.file) {
+          const ext = item.name.split('.').pop();
+          const path = `investments/${investment.asset_id}/videos/${Date.now()}_${i}.${ext}`;
+          const trickleTarget = Math.round(((uploaded + 0.85) / Math.max(newVideos.length, 1)) * 100);
+          setVideoProgress(Math.max(Math.round((uploaded / Math.max(newVideos.length, 1)) * 100) + 2, 2));
+          tick = setInterval(() => setVideoProgress(p => (p < trickleTarget ? p + 1 : p)), 400);
+          const { error } = await supabase.storage.from(bucket).upload(path, item.file, { contentType: item.file.type });
+          clearInterval(tick); tick = null;
+          if (error) throw new Error(`Upload failed: ${error.message}`);
+          const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+          out.push(data.publicUrl);
+          uploaded++;
+          setVideoProgress(Math.round((uploaded / Math.max(newVideos.length, 1)) * 100));
+        }
       }
+    } finally {
+      if (tick) clearInterval(tick);
     }
     return out;
   };
