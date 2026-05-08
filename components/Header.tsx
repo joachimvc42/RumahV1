@@ -121,62 +121,68 @@ export default function Header() {
         <nav className={`primary-nav ${menuOpen ? 'is-open' : ''}`}>
           {!isAdmin && (
             <>
-              <Link
-                href={investmentsHref}
-                className={(isActive(homeHref) || isActive(investmentsHref)) ? 'nav-link is-active' : 'nav-link'}
-                onClick={closeMenu}
-              >
-                {t.nav.investments}
-              </Link>
-              <Link
-                href={mapHref}
-                className={isActive(mapHref) ? 'nav-link is-active' : 'nav-link'}
-                onClick={closeMenu}
-              >
-                {t.nav.map}
-              </Link>
-              <Link
-                href={aboutHref}
-                className={isActive(aboutHref) ? 'nav-link is-active' : 'nav-link'}
-                onClick={closeMenu}
-              >
-                {t.nav.about}
-              </Link>
-              <Link
-                href={propertyMgmtHref}
-                className={isActive(propertyMgmtHref) ? 'nav-link is-active' : 'nav-link'}
-                onClick={closeMenu}
-              >
-                Property Mgmt
-              </Link>
-              <a
-                href="https://rentals.rumahya.com"
-                className="nav-link nav-link-rentals"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="RumahYa Rentals"
-                onClick={closeMenu}
-              >
-                Rentals →
-              </a>
+              {/* ── Centred main links ── */}
+              <div className="nav-main-links">
+                <Link
+                  href={aboutHref}
+                  className={(isActive(homeHref) || isActive(aboutHref)) ? 'nav-link is-active' : 'nav-link'}
+                  onClick={closeMenu}
+                >
+                  {t.nav.about}
+                </Link>
+                <Link
+                  href={investmentsHref}
+                  className={isActive(investmentsHref) ? 'nav-link is-active' : 'nav-link'}
+                  onClick={closeMenu}
+                >
+                  {t.nav.investments}
+                </Link>
+                <Link
+                  href={mapHref}
+                  className={isActive(mapHref) ? 'nav-link is-active' : 'nav-link'}
+                  onClick={closeMenu}
+                >
+                  {t.nav.map}
+                </Link>
+                <Link
+                  href={propertyMgmtHref}
+                  className={isActive(propertyMgmtHref) ? 'nav-link is-active' : 'nav-link'}
+                  onClick={closeMenu}
+                >
+                  Property Mgmt
+                </Link>
+              </div>
 
-              {/* Dark mode toggle */}
-              <button
-                type="button"
-                className="theme-toggle"
-                onClick={toggleTheme}
-                aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-                title={dark ? 'Light mode' : 'Dark mode'}
-              >
-                {dark ? '☀️' : '🌙'}
-              </button>
+              {/* ── Right-side controls ── */}
+              <div className="nav-side-controls">
+                <a
+                  href="https://rentals.rumahya.com"
+                  className="nav-link nav-link-rentals"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="RumahYa Rentals"
+                  onClick={closeMenu}
+                >
+                  Rentals →
+                </a>
 
-              {/* Language switcher */}
-              <div
-                className="lang-switcher"
-                onMouseEnter={onLangEnter}
-                onMouseLeave={onLangLeave}
-              >
+                {/* Dark mode toggle */}
+                <button
+                  type="button"
+                  className="theme-toggle"
+                  onClick={toggleTheme}
+                  aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+                  title={dark ? 'Light mode' : 'Dark mode'}
+                >
+                  {dark ? '☀️' : '🌙'}
+                </button>
+
+                {/* Language switcher */}
+                <div
+                  className="lang-switcher"
+                  onMouseEnter={onLangEnter}
+                  onMouseLeave={onLangLeave}
+                >
                 <button
                   type="button"
                   className="lang-trigger"
@@ -204,7 +210,8 @@ export default function Header() {
                     ))}
                   </ul>
                 )}
-              </div>
+                </div>
+              </div>{/* end nav-side-controls */}
             </>
           )}
           {isAdmin && (

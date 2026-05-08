@@ -26,8 +26,8 @@ export function prefixFor(locale: Locale, path: string = ''): string {
 export const en = {
   nav: {
     rentals: 'Rentals',
-    investments: 'Opportunities',
-    map: 'Map',
+    investments: 'Invest Now !',
+    map: 'Check our map',
     about: 'About',
     contact: 'Contact',
   },
@@ -246,8 +246,8 @@ export const en = {
 export const fr: typeof en = {
   nav: {
     rentals: 'Locations',
-    investments: 'Opportunités',
-    map: 'Carte',
+    investments: 'Investir !',
+    map: 'Notre carte',
     about: 'À propos',
     contact: 'Contact',
   },
@@ -466,8 +466,8 @@ export const fr: typeof en = {
 export const es: typeof en = {
   nav: {
     rentals: 'Alquileres',
-    investments: 'Oportunidades',
-    map: 'Mapa',
+    investments: '¡Invertir !',
+    map: 'Nuestro mapa',
     about: 'Quiénes somos',
     contact: 'Contacto',
   },

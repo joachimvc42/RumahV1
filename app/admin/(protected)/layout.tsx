@@ -12,6 +12,11 @@ export default function AdminProtectedLayout({ children }: { children: React.Rea
   const pathname = usePathname();
   const [loading, setLoading] = useState(true);
 
+  // Force light mode in admin — dark mode makes the admin UI unreadable
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }, []);
+
   useEffect(() => {
     const checkAuth = async () => {
       const { data } = await supabase.auth.getUser();

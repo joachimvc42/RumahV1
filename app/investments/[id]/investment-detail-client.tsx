@@ -166,7 +166,7 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
               <div className="gallery-main">
                 <span className="detail-badge-type">{data.type === 'villa' ? t.inv.badgeVilla : t.inv.badgeLand}</span>
                 {cur.isVideo ? (
-                  <video key={cur.src} src={cur.src} className="gallery-media" controls autoPlay playsInline />
+                  <video key={cur.src} src={cur.src} className="gallery-media" controls autoPlay playsInline muted />
                 ) : (
                   <button className="gallery-img-btn" onClick={() => setLightbox(true)} aria-label="Open in lightbox">
                     <Image

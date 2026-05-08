@@ -244,7 +244,23 @@ html[data-theme="dark"] .brand-name span {
 .primary-nav {
     display: flex;
     align-items: center;
+    flex: 1;
+    gap: 0;
+}
+
+.nav-main-links {
+    display: flex;
+    align-items: center;
     gap: 4px;
+    flex: 1;
+    justify-content: center;
+}
+
+.nav-side-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
 }
 
 .nav-link {
@@ -782,6 +798,13 @@ textarea:focus {
         opacity: 1;
         pointer-events: auto;
         transform: translateY(0);
+    }
+
+    .nav-main-links,
+    .nav-side-controls {
+        flex-direction: column;
+        width: 100%;
+        gap: 2px;
     }
 
     .nav-link {
