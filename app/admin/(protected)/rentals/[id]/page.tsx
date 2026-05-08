@@ -156,7 +156,7 @@ export default function EditRentalPage() {
   };
 
   const buildOrderedImages = async (): Promise<string[]> => {
-    if (!propertyId) return [];
+    if (!propertyId) throw new Error('Property ID missing — save property first');
     const totalFiles = galleryItems.filter(g => g.file).length;
     let uploaded = 0;
     const out: string[] = [];
@@ -167,7 +167,7 @@ export default function EditRentalPage() {
         const ext = item.file.name.split('.').pop();
         const path = `rentals/${propertyId}/${Date.now()}_${i}.${ext}`;
         const { error } = await supabase.storage.from('properties').upload(path, item.file, { upsert: true });
-        if (error) { console.error(error); continue; }
+        if (error) throw new Error(`Image upload failed: ${error.message}`);
         const { data } = supabase.storage.from('properties').getPublicUrl(path);
         out.push(data.publicUrl);
         uploaded++;
@@ -180,7 +180,7 @@ export default function EditRentalPage() {
   };
 
   const buildOrderedVideos = async (): Promise<string[]> => {
-    if (!propertyId) return [];
+    if (!propertyId) throw new Error('Property ID missing');
     const newVideos = videoItems.filter(v => !v.isExisting && v.file);
     let uploaded = 0;
     const out: string[] = [];
@@ -193,7 +193,7 @@ export default function EditRentalPage() {
         const ext = item.name.split('.').pop();
         const path = `rentals/${propertyId}/videos/${Date.now()}_${i}.${ext}`;
         const { error } = await supabase.storage.from('properties').upload(path, item.file, { upsert: true, contentType: item.file.type });
-        if (error) { console.error(error); continue; }
+        if (error) throw new Error(`Video upload failed: ${error.message}`);
         const { data } = supabase.storage.from('properties').getPublicUrl(path);
         out.push(data.publicUrl);
         uploaded++;
@@ -214,7 +214,7 @@ export default function EditRentalPage() {
       const allImages = await buildOrderedImages();
       const allVideos = await buildOrderedVideos();
 
-      await supabase.from('properties').update({
+      const { error: propErr } = await supabase.from('properties').update({
         title, location, description,
         bedrooms: bedrooms ? Number(bedrooms) : null,
         bathrooms: bathrooms ? Number(bathrooms) : null,
@@ -228,6 +228,7 @@ export default function EditRentalPage() {
         latitude: lat,
         longitude: lng,
       }).eq('id', propertyId);
+      if (propErr) throw new Error(`Property update failed: ${propErr.message}`);
 
       const rentalUpdate: Record<string, any> = {
         monthly_price_idr: monthlyPrice ? Number(monthlyPrice) : null,

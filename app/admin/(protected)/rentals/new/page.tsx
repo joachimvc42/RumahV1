@@ -98,7 +98,7 @@ export default function NewRentalPage() {
       const ext = file.name.split('.').pop();
       const path = `rentals/${propertyId}/${Date.now()}_${i}.${ext}`;
       const { error } = await supabase.storage.from('properties').upload(path, file, { upsert: true });
-      if (error) { console.error('Image upload error:', error); continue; }
+      if (error) throw new Error(`Image upload failed: ${error.message}`);
       const { data } = supabase.storage.from('properties').getPublicUrl(path);
       urls.push(data.publicUrl);
       setUploadProgress(Math.round(((i + 1) / galleryItems.length) * 100));
@@ -113,7 +113,7 @@ export default function NewRentalPage() {
       const ext = name.split('.').pop();
       const path = `rentals/${propertyId}/videos/${Date.now()}_${i}.${ext}`;
       const { error } = await supabase.storage.from('properties').upload(path, file, { upsert: true, contentType: file.type });
-      if (error) { console.error('Video upload error:', error); continue; }
+      if (error) throw new Error(`Video upload failed: ${error.message}`);
       const { data } = supabase.storage.from('properties').getPublicUrl(path);
       urls.push(data.publicUrl);
       setVideoProgress(Math.round(((i + 1) / videoItems.length) * 100));

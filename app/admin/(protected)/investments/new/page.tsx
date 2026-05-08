@@ -97,7 +97,7 @@ export default function NewInvestmentPage() {
       const ext = file.name.split('.').pop();
       const path = `investments/${assetId}/${Date.now()}_${i}.${ext}`;
       const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
-      if (error) { console.error(error); continue; }
+      if (error) throw new Error(`Upload failed: ${error.message}`);
       const { data } = supabase.storage.from(bucket).getPublicUrl(path);
       urls.push(data.publicUrl);
       setUploadProgress(Math.round(((i + 1) / galleryItems.length) * 100));
@@ -113,7 +113,7 @@ export default function NewInvestmentPage() {
       const ext = name.split('.').pop();
       const path = `investments/${assetId}/videos/${Date.now()}_${i}.${ext}`;
       const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true, contentType: file.type });
-      if (error) { console.error(error); continue; }
+      if (error) throw new Error(`Upload failed: ${error.message}`);
       const { data } = supabase.storage.from(bucket).getPublicUrl(path);
       urls.push(data.publicUrl);
       setVideoProgress(Math.round(((i + 1) / videoItems.length) * 100));
