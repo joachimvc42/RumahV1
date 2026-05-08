@@ -97,7 +97,7 @@ export default function NewRentalPage() {
       if (!file) continue;
       const ext = file.name.split('.').pop();
       const path = `rentals/${propertyId}/${Date.now()}_${i}.${ext}`;
-      const { error } = await supabase.storage.from('properties').upload(path, file, { upsert: true });
+      const { error } = await supabase.storage.from('properties').upload(path, file);
       if (error) throw new Error(`Image upload failed: ${error.message}`);
       const { data } = supabase.storage.from('properties').getPublicUrl(path);
       urls.push(data.publicUrl);
@@ -112,7 +112,7 @@ export default function NewRentalPage() {
       const { file, name } = videoItems[i];
       const ext = name.split('.').pop();
       const path = `rentals/${propertyId}/videos/${Date.now()}_${i}.${ext}`;
-      const { error } = await supabase.storage.from('properties').upload(path, file, { upsert: true, contentType: file.type });
+      const { error } = await supabase.storage.from('properties').upload(path, file, { contentType: file.type });
       if (error) throw new Error(`Video upload failed: ${error.message}`);
       const { data } = supabase.storage.from('properties').getPublicUrl(path);
       urls.push(data.publicUrl);

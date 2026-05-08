@@ -96,7 +96,7 @@ export default function NewInvestmentPage() {
       if (!file) continue;
       const ext = file.name.split('.').pop();
       const path = `investments/${assetId}/${Date.now()}_${i}.${ext}`;
-      const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
+      const { error } = await supabase.storage.from(bucket).upload(path, file);
       if (error) throw new Error(`Upload failed: ${error.message}`);
       const { data } = supabase.storage.from(bucket).getPublicUrl(path);
       urls.push(data.publicUrl);
@@ -112,7 +112,7 @@ export default function NewInvestmentPage() {
       const { file, name } = videoItems[i];
       const ext = name.split('.').pop();
       const path = `investments/${assetId}/videos/${Date.now()}_${i}.${ext}`;
-      const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true, contentType: file.type });
+      const { error } = await supabase.storage.from(bucket).upload(path, file, { contentType: file.type });
       if (error) throw new Error(`Upload failed: ${error.message}`);
       const { data } = supabase.storage.from(bucket).getPublicUrl(path);
       urls.push(data.publicUrl);
