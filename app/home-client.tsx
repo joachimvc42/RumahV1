@@ -398,25 +398,24 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
             </select>
           </div>
           <div className="inv-search-div" />
-          <div className="inv-search-seg">
-            <span className="eyebrow inv-search-label">Available from</span>
-            <input
-              type="date"
-              value={filters.checkIn}
-              onChange={e => setFilters(f => ({ ...f, checkIn: e.target.value, checkOut: f.checkOut && f.checkOut < e.target.value ? '' : f.checkOut }))}
-              style={{ fontSize: 14, border: 'none', background: 'transparent', outline: 'none', cursor: 'pointer', color: 'inherit' }}
-            />
-          </div>
-          <div className="inv-search-div" />
-          <div className="inv-search-seg">
-            <span className="eyebrow inv-search-label">Available until</span>
-            <input
-              type="date"
-              value={filters.checkOut}
-              min={filters.checkIn || undefined}
-              onChange={e => setFilters(f => ({ ...f, checkOut: e.target.value }))}
-              style={{ fontSize: 14, border: 'none', background: 'transparent', outline: 'none', cursor: 'pointer', color: 'inherit' }}
-            />
+          <div className="inv-search-seg inv-search-dates">
+            <span className="eyebrow inv-search-label">Availability</span>
+            <div className="inv-date-range">
+              <input
+                type="date"
+                className="inv-date-input"
+                value={filters.checkIn}
+                onChange={e => setFilters(f => ({ ...f, checkIn: e.target.value, checkOut: f.checkOut && f.checkOut < e.target.value ? '' : f.checkOut }))}
+              />
+              <span className="inv-date-sep">→</span>
+              <input
+                type="date"
+                className="inv-date-input"
+                value={filters.checkOut}
+                min={filters.checkIn || undefined}
+                onChange={e => setFilters(f => ({ ...f, checkOut: e.target.value }))}
+              />
+            </div>
           </div>
         </div>
 
