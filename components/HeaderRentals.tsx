@@ -55,37 +55,40 @@ export default function HeaderRentals() {
         </button>
 
         <nav className={`primary-nav ${menuOpen ? 'is-open' : ''}`}>
-          <Link
-            href="/"
-            className={isActive('/') && pathname === '/' ? 'nav-link is-active' : 'nav-link'}
-            onClick={closeMenu}
-          >
-            Rentals
-          </Link>
-          <Link
-            href="/map"
-            className={isActive('/map') ? 'nav-link is-active' : 'nav-link'}
-            onClick={closeMenu}
-          >
-            Map
-          </Link>
-          <button
-            type="button"
-            className="theme-toggle"
-            onClick={toggleTheme}
-            aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-            title={dark ? 'Light mode' : 'Dark mode'}
-          >
-            {dark ? '☀️' : '🌙'}
-          </button>
-
-          <a
-            href="https://rumahya.com"
-            className="nav-link nav-link-invest"
-            title="RumahYa Investments"
-          >
-            Invest in Lombok →
-          </a>
+          <div className="nav-main-links">
+            <Link
+              href="/"
+              className={isActive('/') && pathname === '/' ? 'nav-link is-active' : 'nav-link'}
+              onClick={closeMenu}
+            >
+              Rentals
+            </Link>
+            <Link
+              href="/map"
+              className={isActive('/map') ? 'nav-link is-active' : 'nav-link'}
+              onClick={closeMenu}
+            >
+              Map
+            </Link>
+          </div>
+          <div className="nav-side-controls">
+            <button
+              type="button"
+              className="theme-toggle"
+              onClick={toggleTheme}
+              aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={dark ? 'Light mode' : 'Dark mode'}
+            >
+              {dark ? '☀️' : '🌙'}
+            </button>
+            <a
+              href="https://rumahya.com"
+              className="nav-link nav-link-invest"
+              title="RumahYa Investments"
+            >
+              Invest in Lombok →
+            </a>
+          </div>
         </nav>
       </div>
     </header>
