@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '../../../../../lib/supabaseClient';
 import { normalizeStatus } from '../../../../../lib/statusUtils';
 import { urlsToGalleryItems, readFileAsDataURL, type SortableGalleryItem } from '../../../../../lib/galleryUtils';
+import { fmtIDR, parseIDR } from '../../../../../lib/formatters';
 import AdminImageGallery from '../../../../../components/admin/AdminImageGallery';
 import MapPicker from '../../../../../components/MapPicker';
 import LocationInput from '../../../../../components/LocationInput';
@@ -45,7 +46,9 @@ export default function EditRentalPage() {
   const [status, setStatus] = useState<'draft' | 'published' | 'paused'>('draft');
 
   const [monthlyPrice, setMonthlyPrice] = useState('');
+  const [monthlyDisplay, setMonthlyDisplay] = useState('');
   const [yearlyPrice, setYearlyPrice] = useState('');
+  const [yearlyDisplay, setYearlyDisplay] = useState('');
   const [reference, setReference] = useState('');
   const [minDuration, setMinDuration] = useState('');
   const [maxDuration, setMaxDuration] = useState('');
@@ -73,8 +76,10 @@ export default function EditRentalPage() {
 
       if (error || !data) { setError('Rental not found'); setLoading(false); return; }
 
-      setMonthlyPrice(String(data.monthly_price_idr || ''));
-      setYearlyPrice(String(data.yearly_price_idr || ''));
+      const mp = String(data.monthly_price_idr || '');
+      const yp = String(data.yearly_price_idr || '');
+      setMonthlyPrice(mp); setMonthlyDisplay(fmtIDR(mp));
+      setYearlyPrice(yp); setYearlyDisplay(fmtIDR(yp));
       setReference(data.reference || '');
       setMinDuration(String(data.min_duration_months || ''));
       setMaxDuration(String(data.max_duration_months || ''));
@@ -278,7 +283,7 @@ export default function EditRentalPage() {
   if (loading) return <div style={{ padding: 40 }}>Loading...</div>;
 
   return (
-    <main style={s.container}>
+    <main className="adm-wrap">
       <h1 style={s.title}>Edit rental property</h1>
       {error && <div style={s.error}>{error}</div>}
 
@@ -286,7 +291,7 @@ export default function EditRentalPage() {
         {/* ── Property info ── */}
         <section style={s.section}>
           <h2 style={s.sectionTitle}>📍 Property information</h2>
-          <div style={s.grid2}>
+          <div className="adm-g2">
             <div style={s.field}><label style={s.label}>Property title *</label><input style={s.input} value={title} onChange={e => setTitle(e.target.value)} required /></div>
             <div style={s.field}><label style={s.label}>Location *</label><LocationInput value={location} onChange={setLocation} required /></div>
           </div>
@@ -299,7 +304,7 @@ export default function EditRentalPage() {
             </div>
           )}
           <div style={s.field}><label style={s.label}>Description</label><textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} rows={4} /></div>
-          <div style={s.grid4}>
+          <div className="adm-g4">
             <div style={s.field}><label style={s.label}>Bedrooms</label><input style={s.input} type="number" value={bedrooms} onChange={e => setBedrooms(e.target.value)} /></div>
             <div style={s.field}><label style={s.label}>Bathrooms</label><input style={s.input} type="number" value={bathrooms} onChange={e => setBathrooms(e.target.value)} /></div>
             <div style={s.field}><label style={s.label}>Built area (m²)</label><input style={s.input} type="number" value={builtArea} onChange={e => setBuiltArea(e.target.value)} /></div>
@@ -315,9 +320,19 @@ export default function EditRentalPage() {
         {/* ── Rental terms ── */}
         <section style={s.section}>
           <h2 style={s.sectionTitle}>💰 Rental conditions</h2>
-          <div style={s.grid2}>
-            <div style={s.field}><label style={s.label}>Monthly price (IDR)</label><input style={s.input} type="number" value={monthlyPrice} onChange={e => setMonthlyPrice(e.target.value)} placeholder="Optional if yearly set" /></div>
-            <div style={s.field}><label style={s.label}>Yearly price (IDR)</label><input style={s.input} type="number" value={yearlyPrice} onChange={e => setYearlyPrice(e.target.value)} placeholder="Optional if monthly set" /></div>
+          <div className="adm-g2">
+            <div style={s.field}>
+              <label style={s.label}>Monthly price (IDR)</label>
+              <input style={s.input} type="text" inputMode="numeric" value={monthlyDisplay}
+                placeholder="e.g. 15.000.000"
+                onChange={e => { const r = parseIDR(e.target.value); setMonthlyPrice(r); setMonthlyDisplay(fmtIDR(r)); }} />
+            </div>
+            <div style={s.field}>
+              <label style={s.label}>Yearly price (IDR)</label>
+              <input style={s.input} type="text" inputMode="numeric" value={yearlyDisplay}
+                placeholder="e.g. 150.000.000"
+                onChange={e => { const r = parseIDR(e.target.value); setYearlyPrice(r); setYearlyDisplay(fmtIDR(r)); }} />
+            </div>
           </div>
           <div style={s.field}>
             <label style={s.label}>Payment terms (free text)</label>
@@ -330,12 +345,12 @@ export default function EditRentalPage() {
             />
             <span style={s.hint}>Free text describing how and when the tenant must pay. Leave empty to hide this line on the listing.</span>
           </div>
-          <div style={s.grid3}>
+          <div className="adm-g3">
             <div style={s.field}><label style={s.label}>Min duration (months) <span style={s.optional}>— optional</span></label><input style={s.input} type="number" value={minDuration} onChange={e => setMinDuration(e.target.value)} placeholder="Leave empty to hide" /></div>
             <div style={s.field}><label style={s.label}>Max duration (months) <span style={s.optional}>— optional</span></label><input style={s.input} type="number" value={maxDuration} onChange={e => setMaxDuration(e.target.value)} placeholder="Leave empty to hide" /></div>
             <div style={s.field}><label style={s.label}>Available from</label><input style={s.input} type="date" value={availableFrom} onChange={e => setAvailableFrom(e.target.value)} /></div>
           </div>
-          <div style={s.grid3}>
+          <div className="adm-g3">
             <div style={s.field}><label style={s.label}>Available until</label><input style={s.input} type="date" value={availableTo} onChange={e => setAvailableTo(e.target.value)} /></div>
           </div>
           <div style={s.field}>
@@ -414,7 +429,7 @@ export default function EditRentalPage() {
         </section>
 
         {/* ── Actions ── */}
-        <div style={s.actions}>
+        <div className="adm-actions">
           <button type="button" onClick={handleDelete} disabled={saving} style={s.btnDanger}>🗑️ Delete</button>
           <div style={{ flex: 1 }} />
           <button type="button" onClick={() => router.back()} style={s.btnSecondary}>Cancel</button>
@@ -442,8 +457,8 @@ const s: { [key: string]: React.CSSProperties } = {
   label: { fontSize: 13, fontWeight: 600, color: '#4b5563' },
   optional: { fontWeight: 400, color: '#9ca3af', fontSize: 12 },
   hint: { fontSize: 12, color: '#6b7280', marginTop: 4 },
-  input: { padding: '12px 14px', borderRadius: 10, border: '2px solid #e5e7eb', fontSize: 15, outline: 'none' },
-  textarea: { padding: '12px 14px', borderRadius: 10, border: '2px solid #e5e7eb', fontSize: 15, resize: 'vertical' as const, fontFamily: 'inherit' },
+  input: { padding: '12px 14px', borderRadius: 10, border: '2px solid #e5e7eb', fontSize: 16, outline: 'none' },
+  textarea: { padding: '12px 14px', borderRadius: 10, border: '2px solid #e5e7eb', fontSize: 16, resize: 'vertical' as const, fontFamily: 'inherit' },
   amenities: { display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 16 },
   checkbox: { display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', background: '#f9fafb', borderRadius: 10, cursor: 'pointer', fontSize: 14, fontWeight: 500 },
   dropzone: { position: 'relative', border: '2px dashed #d1d5db', borderRadius: 16, padding: 40, textAlign: 'center', background: '#fafafa', cursor: 'pointer' },

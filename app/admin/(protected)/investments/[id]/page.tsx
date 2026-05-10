@@ -293,7 +293,7 @@ export default function EditInvestmentPage() {
   if (loading) return <div style={{ padding: 40 }}>Loading...</div>;
 
   return (
-    <main style={s.container}>
+    <main className="adm-wrap">
       <div style={s.header}>
         <h1 style={s.title}>Edit investment</h1>
         <Link href="/admin/investments" style={s.backLink}>← Back to investments</Link>
@@ -310,7 +310,7 @@ export default function EditInvestmentPage() {
         {/* ── Property/Land info ── */}
         <section style={s.section}>
           <h2 style={s.sectionTitle}>📍 {assetType === 'property' ? 'Villa' : 'Land'} information</h2>
-          <div style={s.grid2}>
+          <div className="adm-g2">
             <div style={s.field}><label style={s.label}>Title *</label><input style={s.input} value={title} onChange={e => setTitle(e.target.value)} required /></div>
             <div style={s.field}><label style={s.label}>Location *</label><LocationInput value={location} onChange={setLocation} required /></div>
           </div>
@@ -325,7 +325,7 @@ export default function EditInvestmentPage() {
           <div style={s.field}><label style={s.label}>Description</label><textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} rows={4} /></div>
           {assetType === 'property' && (
             <>
-              <div style={s.grid4}>
+              <div className="adm-g4">
                 <div style={s.field}><label style={s.label}>Bedrooms</label><input style={s.input} type="number" value={bedrooms} onChange={e => setBedrooms(e.target.value)} /></div>
                 <div style={s.field}><label style={s.label}>Bathrooms</label><input style={s.input} type="number" value={bathrooms} onChange={e => setBathrooms(e.target.value)} /></div>
                 <div style={s.field}><label style={s.label}>Surface (m²)</label><input style={s.input} type="number" value={builtArea} onChange={e => setBuiltArea(e.target.value)} /></div>
@@ -353,7 +353,7 @@ export default function EditInvestmentPage() {
         {/* ── Investment conditions ── */}
         <section style={s.section}>
           <h2 style={s.sectionTitle}>💰 Investment conditions</h2>
-          <div style={s.grid2}>
+          <div className="adm-g2">
             <div style={s.field}>
               <label style={s.label}>Price {assetType === 'land' ? '(per are)' : ''} {currency === 'IDR' ? '(IDR millions)' : '(USD)'} *</label>
               <div style={s.priceInput}>
@@ -456,7 +456,7 @@ export default function EditInvestmentPage() {
         </section>
 
         {/* ── Actions ── */}
-        <div style={s.actions}>
+        <div className="adm-actions">
           <button type="button" onClick={handleDelete} disabled={saving} style={s.btnDanger}>🗑️ Delete</button>
           <div style={{ flex: 1 }} />
           <button type="button" onClick={() => router.back()} style={s.btnSecondary}>Cancel</button>
@@ -484,10 +484,10 @@ const s: { [key: string]: React.CSSProperties } = {
   grid4: { display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 16 },
   field: { display: 'flex', flexDirection: 'column', gap: 6 },
   label: { fontSize: 13, fontWeight: 600, color: '#4b5563' },
-  input: { padding: '12px 14px', borderRadius: 10, border: '2px solid #e5e7eb', fontSize: 15, outline: 'none' },
-  textarea: { padding: '12px 14px', borderRadius: 10, border: '2px solid #e5e7eb', fontSize: 15, resize: 'vertical' as const, fontFamily: 'inherit' },
+  input: { padding: '12px 14px', borderRadius: 10, border: '2px solid #e5e7eb', fontSize: 16, outline: 'none' },
+  textarea: { padding: '12px 14px', borderRadius: 10, border: '2px solid #e5e7eb', fontSize: 16, resize: 'vertical' as const, fontFamily: 'inherit' },
   priceInput: { display: 'flex' },
-  currencySelect: { padding: '12px 14px', borderRadius: '0 10px 10px 0', border: '2px solid #e5e7eb', borderLeft: 'none', fontSize: 15, background: '#f9fafb', fontWeight: 600 },
+  currencySelect: { padding: '12px 14px', borderRadius: '0 10px 10px 0', border: '2px solid #e5e7eb', borderLeft: 'none', fontSize: 16, background: '#f9fafb', fontWeight: 600 },
   tenureSelector: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 8 },
   tenureBtn: { padding: 20, borderRadius: 12, border: '2px solid #e5e7eb', background: '#f9fafb', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, transition: 'all 0.2s' },
   tenureBtnActive: { borderColor: '#059669', background: '#ecfdf5' },

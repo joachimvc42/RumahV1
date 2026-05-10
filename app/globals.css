@@ -4069,3 +4069,58 @@ html[data-theme="dark"] .active-chip-reset {
     border-radius: 20px;
     padding: 4px 12px !important;
 }
+
+/* ============================================================
+   Admin form — responsive layout helpers
+   ============================================================ */
+
+.adm-wrap {
+    padding: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.adm-g2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.adm-g3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.adm-g4 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.adm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+@media (max-width: 640px) {
+    .adm-wrap { padding: 16px 12px; }
+
+    .adm-g2,
+    .adm-g3,
+    .adm-g4 { grid-template-columns: 1fr; }
+
+    .adm-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .adm-actions > button,
+    .adm-actions > a {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+}
