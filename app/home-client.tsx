@@ -390,21 +390,6 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
           </div>
           <div className="inv-search-div" />
           <div className="inv-search-seg">
-            <span className="eyebrow inv-search-label">{t.home.maxBudget}</span>
-            <select
-              value={filters.maxPrice}
-              onChange={e => setFilters(f => ({ ...f, maxPrice: e.target.value }))}
-            >
-              <option value="">{t.home.allBudgets}</option>
-              <option value="15000000">15 M IDR / mo</option>
-              <option value="25000000">25 M IDR / mo</option>
-              <option value="35000000">35 M IDR / mo</option>
-              <option value="50000000">50 M IDR / mo</option>
-              <option value="75000000">75 M IDR / mo</option>
-            </select>
-          </div>
-          <div className="inv-search-div" />
-          <div className="inv-search-seg">
             <span className="eyebrow inv-search-label">{t.home.duration}</span>
             <select
               value={filters.duration}
@@ -436,14 +421,6 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
               />
             </div>
           </div>
-          <div className="inv-search-div" />
-          <button
-            className="inv-search-go"
-            onClick={() => document.getElementById('inv-results')?.scrollIntoView({ behavior: 'smooth' })}
-            aria-label="Search"
-          >
-            Go
-          </button>
         </div>
 
         {loading ? (
@@ -480,17 +457,57 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
               </div>
 
               <div className="inv-sidebar-group">
+                <p className="eyebrow">{t.home.bedrooms}</p>
+                <div className="sidebar-chip-row">
+                  {['1', '2', '3'].map(v => (
+                    <button
+                      key={v}
+                      type="button"
+                      className={`sidebar-chip ${filters.minBeds === v ? 'is-active' : ''}`}
+                      onClick={() => setFilters(f => ({ ...f, minBeds: f.minBeds === v ? '' : v }))}
+                    >
+                      {v}+
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="inv-sidebar-group">
                 <p className="eyebrow">{t.home.bathrooms}</p>
-                {[['1', '1+'], ['2', '2+'], ['3', '3+']].map(([v, l]) => (
-                  <label key={v} className="inv-check-row">
-                    <input
-                      type="checkbox"
-                      checked={filters.minBaths === v}
-                      onChange={e => setFilters(f => ({ ...f, minBaths: e.target.checked ? v : '' }))}
-                    />
-                    <span className="inv-check-label">{l} {t.home.baths}</span>
-                  </label>
-                ))}
+                <div className="sidebar-chip-row">
+                  {['1', '2', '3'].map(v => (
+                    <button
+                      key={v}
+                      type="button"
+                      className={`sidebar-chip ${filters.minBaths === v ? 'is-active' : ''}`}
+                      onClick={() => setFilters(f => ({ ...f, minBaths: f.minBaths === v ? '' : v }))}
+                    >
+                      {v}+
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="inv-sidebar-group">
+                <p className="eyebrow">{t.home.budget}</p>
+                <div className="sidebar-slider-wrap">
+                  <input
+                    type="range"
+                    className="sidebar-slider"
+                    min={1}
+                    max={100}
+                    step={1}
+                    value={filters.maxPrice ? Math.min(100, Math.max(1, Math.round(Number(filters.maxPrice) / 1_000_000))) : 100}
+                    onChange={e => setFilters(f => ({ ...f, maxPrice: String(Number(e.target.value) * 1_000_000) }))}
+                  />
+                  <div className="sidebar-slider-vals">
+                    <span>1 M</span>
+                    <span className="sidebar-slider-current">
+                      {filters.maxPrice ? `≤ ${Math.round(Number(filters.maxPrice) / 1_000_000)} M IDR` : '≤ 100 M IDR'}
+                    </span>
+                    <span>100 M</span>
+                  </div>
+                </div>
               </div>
 
               {hasActive && (

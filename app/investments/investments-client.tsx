@@ -419,29 +419,33 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
                     </div>
                     <div className="inv-sidebar-group">
                       <p className="eyebrow">{t.inv.bedrooms}</p>
-                      {[['1', '1+'], ['2', '2+'], ['3', '3+'], ['4', '4+']].map(([v, l]) => (
-                        <label key={v} className="inv-check-row">
-                          <input
-                            type="checkbox"
-                            checked={villa.minBedrooms === v}
-                            onChange={e => setVilla(s => ({ ...s, minBedrooms: e.target.checked ? v : '' }))}
-                          />
-                          <span className="inv-check-label">{l} {t.inv.beds}</span>
-                        </label>
-                      ))}
+                      <div className="sidebar-chip-row">
+                        {['1', '2', '3'].map(v => (
+                          <button
+                            key={v}
+                            type="button"
+                            className={`sidebar-chip ${villa.minBedrooms === v ? 'is-active' : ''}`}
+                            onClick={() => setVilla(s => ({ ...s, minBedrooms: s.minBedrooms === v ? '' : v }))}
+                          >
+                            {v}+
+                          </button>
+                        ))}
+                      </div>
                     </div>
                     <div className="inv-sidebar-group">
                       <p className="eyebrow">{t.inv.bathrooms}</p>
-                      {[['1', '1+'], ['2', '2+'], ['3', '3+']].map(([v, l]) => (
-                        <label key={v} className="inv-check-row">
-                          <input
-                            type="checkbox"
-                            checked={villa.minBathrooms === v}
-                            onChange={e => setVilla(s => ({ ...s, minBathrooms: e.target.checked ? v : '' }))}
-                          />
-                          <span className="inv-check-label">{l} {t.inv.baths}</span>
-                        </label>
-                      ))}
+                      <div className="sidebar-chip-row">
+                        {['1', '2', '3'].map(v => (
+                          <button
+                            key={v}
+                            type="button"
+                            className={`sidebar-chip ${villa.minBathrooms === v ? 'is-active' : ''}`}
+                            onClick={() => setVilla(s => ({ ...s, minBathrooms: s.minBathrooms === v ? '' : v }))}
+                          >
+                            {v}+
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </>
                 )}
@@ -450,43 +454,60 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
                   <>
                     <div className="inv-sidebar-group">
                       <p className="eyebrow">{t.inv.utilities}</p>
-                      {([['hasWater', t.inv.water, '💧'], ['hasElectricity', t.inv.electricity, '⚡'], ['hasRoad', t.inv.road, '🛣️']] as [keyof LandSidebar, string, string][]).map(([key, label, icon]) => (
-                        <label key={key} className="inv-check-row">
-                          <input
-                            type="checkbox"
-                            checked={land[key] as boolean}
-                            onChange={e => setLand(s => ({ ...s, [key]: e.target.checked }))}
-                          />
-                          <span className="inv-check-icon" aria-hidden>{icon}</span>
-                          <span className="inv-check-label">{label}</span>
-                        </label>
-                      ))}
+                      <div className="sidebar-chip-row sidebar-chip-row--wrap">
+                        {([['hasWater', t.inv.water, '💧'], ['hasElectricity', t.inv.electricity, '⚡'], ['hasRoad', t.inv.road, '🛣️']] as [keyof LandSidebar, string, string][]).map(([key, label, icon]) => (
+                          <button
+                            key={key}
+                            type="button"
+                            className={`sidebar-chip ${land[key] ? 'is-active' : ''}`}
+                            onClick={() => setLand(s => ({ ...s, [key]: !s[key] }))}
+                          >
+                            <span aria-hidden>{icon}</span> {label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                     <div className="inv-sidebar-group">
-                      <p className="eyebrow">{t.inv.minArea}</p>
-                      {[['5', '5+'], ['10', '10+'], ['20', '20+'], ['50', '50+']].map(([v, l]) => (
-                        <label key={v} className="inv-check-row">
-                          <input
-                            type="checkbox"
-                            checked={land.minArea === v}
-                            onChange={e => setLand(s => ({ ...s, minArea: e.target.checked ? v : '' }))}
-                          />
-                          <span className="inv-check-label">{l} {t.inv.areSuffix}</span>
-                        </label>
-                      ))}
+                      <p className="eyebrow">{t.inv.size}</p>
+                      <div className="sidebar-slider-wrap">
+                        <input
+                          type="range"
+                          className="sidebar-slider"
+                          min={1}
+                          max={1000}
+                          step={1}
+                          value={land.minArea ? Math.min(1000, Math.max(1, Number(land.minArea))) : 1}
+                          onChange={e => setLand(s => ({ ...s, minArea: e.target.value }))}
+                        />
+                        <div className="sidebar-slider-vals">
+                          <span>1</span>
+                          <span className="sidebar-slider-current">
+                            ≥ {land.minArea || 1} {t.inv.areSuffix}
+                          </span>
+                          <span>1000</span>
+                        </div>
+                      </div>
                     </div>
                     <div className="inv-sidebar-group">
-                      <p className="eyebrow">{t.inv.maxPricePerAre}</p>
-                      {[['100000000', '100 M IDR'], ['200000000', '200 M IDR'], ['300000000', '300 M IDR']].map(([v, l]) => (
-                        <label key={v} className="inv-check-row">
-                          <input
-                            type="checkbox"
-                            checked={land.maxPrice === v}
-                            onChange={e => setLand(s => ({ ...s, maxPrice: e.target.checked ? v : '' }))}
-                          />
-                          <span className="inv-check-label">{l}</span>
-                        </label>
-                      ))}
+                      <p className="eyebrow">{t.inv.pricePerAre}</p>
+                      <div className="sidebar-slider-wrap">
+                        <input
+                          type="range"
+                          className="sidebar-slider"
+                          min={1}
+                          max={1000}
+                          step={1}
+                          value={land.maxPrice ? Math.min(1000, Math.max(1, Math.round(Number(land.maxPrice) / 1_000_000))) : 1000}
+                          onChange={e => setLand(s => ({ ...s, maxPrice: String(Number(e.target.value) * 1_000_000) }))}
+                        />
+                        <div className="sidebar-slider-vals">
+                          <span>1 M</span>
+                          <span className="sidebar-slider-current">
+                            {land.maxPrice ? `≤ ${Math.round(Number(land.maxPrice) / 1_000_000)} M IDR` : '≤ 1000 M IDR'}
+                          </span>
+                          <span>1000 M</span>
+                        </div>
+                      </div>
                     </div>
                   </>
                 )}
