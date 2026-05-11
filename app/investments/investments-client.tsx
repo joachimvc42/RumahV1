@@ -381,14 +381,6 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
               {locations.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
           </div>
-          <div className="inv-search-div" />
-          <button
-            className="inv-search-go"
-            onClick={() => document.getElementById('inv-results')?.scrollIntoView({ behavior: 'smooth' })}
-            aria-label="Search"
-          >
-            Go
-          </button>
         </div>
 
         {loading ? (
