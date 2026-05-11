@@ -1796,11 +1796,11 @@ textarea:focus {
 }
 
 .inv-date-input {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1px 6px;
-    background: var(--bg);
-    font-size: 0.82rem;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
+    font-size: 0.9rem;
     font-weight: 500;
     color: var(--text);
     cursor: pointer;
@@ -1808,11 +1808,10 @@ textarea:focus {
     flex: 1;
     min-width: 0;
     outline: none;
-    transition: border-color 0.15s;
 }
 
 .inv-date-input:focus {
-    border-color: var(--accent);
+    outline: none;
 }
 
 .inv-date-sep {
@@ -3270,8 +3269,7 @@ html[data-theme="dark"] .home-searchbar {
 }
 
 html[data-theme="dark"] .inv-date-input {
-    background: var(--bg-card);
-    border-color: var(--border);
+    background: transparent;
     color: var(--text);
     color-scheme: dark;
 }
