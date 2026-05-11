@@ -1718,7 +1718,7 @@ textarea:focus {
 
 .inv-searchbar--rentals {
     grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto auto;
-    max-width: 1000px;
+    max-width: 820px;
 }
 
 .inv-search-seg {
@@ -1792,15 +1792,15 @@ textarea:focus {
 .inv-date-range {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
 }
 
 .inv-date-input {
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 4px 8px;
+    padding: 3px 6px;
     background: var(--bg);
-    font-size: 0.88rem;
+    font-size: 0.78rem;
     font-weight: 500;
     color: var(--text);
     cursor: pointer;
