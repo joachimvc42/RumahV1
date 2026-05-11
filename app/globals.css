@@ -1724,8 +1724,8 @@ textarea:focus {
 .inv-search-seg {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding: 6px 12px;
+    justify-content: flex-start;
+    padding: 9px 12px 6px;
     min-width: 0;
 }
 
@@ -1797,10 +1797,10 @@ textarea:focus {
 
 .inv-date-input {
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 4px 8px;
+    border-radius: 8px;
+    padding: 1px 6px;
     background: var(--bg);
-    font-size: 0.86rem;
+    font-size: 0.82rem;
     font-weight: 500;
     color: var(--text);
     cursor: pointer;
@@ -3172,8 +3172,9 @@ textarea:focus {
 
     /* Make the whole search segment a tap target, not just the tiny select. */
     .inv-search-seg {
-        padding: 14px 16px !important;
+        padding: 14px 16px 10px !important;
         min-height: 56px;
+        justify-content: flex-start;
     }
     .inv-search-seg select { width: 100%; }
 
