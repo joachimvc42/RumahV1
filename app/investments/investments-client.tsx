@@ -381,6 +381,14 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
               {locations.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
           </div>
+          <div className="inv-search-div" />
+          <button
+            className="inv-search-go"
+            onClick={() => document.getElementById('inv-results')?.scrollIntoView({ behavior: 'smooth' })}
+            aria-label="Search"
+          >
+            Go
+          </button>
         </div>
 
         {loading ? (
@@ -506,7 +514,7 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
               )}
 
               {/* Result count + sort */}
-              <div className="inv-result-row">
+              <div className="inv-result-row" id="inv-results">
                 <p className="inv-result-count">
                   {filtered.length} {filtered.length === 1 ? t.inv.opportunityOne : t.inv.opportunityMany}
                   {hasActiveFilters && <span> · {t.inv.filtered}</span>}

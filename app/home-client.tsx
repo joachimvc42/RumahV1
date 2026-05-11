@@ -357,7 +357,7 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
 
       <div className="container">
         {/* Top quick search */}
-        <div className="inv-searchbar">
+        <div className="inv-searchbar inv-searchbar--rentals">
           <div className="inv-search-seg">
             <span className="eyebrow inv-search-label">{t.home.location}</span>
             <select

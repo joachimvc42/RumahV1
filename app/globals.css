@@ -1705,21 +1705,25 @@ textarea:focus {
 /* Search bar — shared with home but namespaced */
 .inv-searchbar {
     display: grid;
-    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto auto;
+    grid-template-columns: 1fr auto 1fr auto 1fr auto auto;
     align-items: stretch;
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 10px;
+    border-radius: 10px;
+    padding: 6px;
     margin: 12px 0 36px;
     box-shadow: var(--shadow);
+}
+
+.inv-searchbar--rentals {
+    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto auto;
 }
 
 .inv-search-seg {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 10px 18px;
+    padding: 7px 14px;
     min-width: 0;
 }
 
@@ -1791,7 +1795,7 @@ textarea:focus {
 
 .inv-date-input {
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 10px;
     padding: 4px 8px;
     background: var(--bg);
     font-size: 0.88rem;
@@ -2047,7 +2051,8 @@ textarea:focus {
         border-bottom: 1px solid var(--border);
         padding-bottom: 20px;
     }
-    .inv-searchbar { grid-template-columns: 1fr; }
+    .inv-searchbar,
+    .inv-searchbar--rentals { grid-template-columns: 1fr; }
     .inv-search-div { display: none; }
     .inv-search-seg {
         border-top: 1px solid var(--border);
