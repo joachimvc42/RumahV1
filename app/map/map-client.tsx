@@ -50,6 +50,8 @@ type Amenity = 'pool' | 'garden' | 'furnished';
 // Filters follow an "empty = everything" convention: nothing selected means
 // no restriction. Multi-select groups use OR logic — adding chips widens
 // the match set, so users never need to deselect to broaden results.
+type DurationBucket = '' | 'short' | 'monthly' | 'yearly';
+
 type Filters = {
   categories: Set<Category>;
   location: string;
@@ -58,7 +60,7 @@ type Filters = {
   minBathrooms: string;
   maxRentMonthlyIDR: string;
   maxSalePriceIDR: string;
-  minDurationMonths: string;
+  duration: DurationBucket;
   amenities: Set<Amenity>;
 };
 
@@ -70,8 +72,14 @@ const defaultFilters: Filters = {
   minBathrooms: '',
   maxRentMonthlyIDR: '',
   maxSalePriceIDR: '',
-  minDurationMonths: '',
+  duration: '',
   amenities: new Set<Amenity>(),
+};
+
+const DURATION_TARGET: Record<Exclude<DurationBucket, ''>, number> = {
+  short: 1,
+  monthly: 6,
+  yearly: 12,
 };
 
 function priceForRental(monthlyIDR: number): { label: string; idr: number } {
@@ -254,10 +262,12 @@ export default function MapClient({ locale = 'en', mode = 'all' }: { locale?: Lo
       if (item.priceIDR > Number(filters.maxSalePriceIDR)) return false;
     }
 
-    // Duration (rentals only): min user wants ≤ max available, max user wants ≥ min available
-    if (item.category === 'rental' && filters.minDurationMonths) {
-      const maxAvail = item.maxDuration ?? Infinity;
-      if (maxAvail < Number(filters.minDurationMonths)) return false;
+    // Duration bucket (rentals only): listing must accept the target month value
+    if (item.category === 'rental' && filters.duration) {
+      const target = DURATION_TARGET[filters.duration];
+      const minD = item.minDuration ?? 0;
+      const maxD = item.maxDuration ?? Infinity;
+      if (minD > target || maxD < target) return false;
     }
 
     // Amenities — OR logic: item must have at least one of the selected amenities
@@ -419,33 +429,41 @@ export default function MapClient({ locale = 'en', mode = 'all' }: { locale?: Lo
             </div>
           )}
 
-          {/* Bedrooms */}
+          {/* Bedrooms — chip row */}
           {showBedroomFilter && (
-            <div className="map-filter-group">
-              <label className="map-filter-label" htmlFor="f-bed">{t.map.minBedrooms}</label>
-              <select
-                id="f-bed"
-                value={filters.minBedrooms}
-                onChange={e => setFilters(f => ({ ...f, minBedrooms: e.target.value }))}
-              >
-                <option value="">{t.map.any}</option>
-                {['1', '2', '3', '4', '5'].map(n => <option key={n} value={n}>{n}+</option>)}
-              </select>
+            <div className="map-filter-group map-filter-group--wide">
+              <label className="map-filter-label">{t.map.minBedrooms}</label>
+              <div className="map-filter-chips">
+                {['1', '2', '3'].map(n => (
+                  <button
+                    key={n}
+                    type="button"
+                    className={`map-chip ${filters.minBedrooms === n ? 'is-active' : ''}`}
+                    onClick={() => setFilters(f => ({ ...f, minBedrooms: f.minBedrooms === n ? '' : n }))}
+                  >
+                    {n}+
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
-          {/* Bathrooms */}
+          {/* Bathrooms — chip row */}
           {showBedroomFilter && (
-            <div className="map-filter-group">
-              <label className="map-filter-label" htmlFor="f-bath">{t.map.minBathrooms}</label>
-              <select
-                id="f-bath"
-                value={filters.minBathrooms}
-                onChange={e => setFilters(f => ({ ...f, minBathrooms: e.target.value }))}
-              >
-                <option value="">{t.map.any}</option>
-                {['1', '2', '3', '4', '5'].map(n => <option key={n} value={n}>{n}+</option>)}
-              </select>
+            <div className="map-filter-group map-filter-group--wide">
+              <label className="map-filter-label">{t.map.minBathrooms}</label>
+              <div className="map-filter-chips">
+                {['1', '2', '3'].map(n => (
+                  <button
+                    key={n}
+                    type="button"
+                    className={`map-chip ${filters.minBathrooms === n ? 'is-active' : ''}`}
+                    onClick={() => setFilters(f => ({ ...f, minBathrooms: f.minBathrooms === n ? '' : n }))}
+                  >
+                    {n}+
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
@@ -468,22 +486,26 @@ export default function MapClient({ locale = 'en', mode = 'all' }: { locale?: Lo
             </div>
           )}
 
-          {/* Min rental duration */}
+          {/* Duration buckets */}
           {showRentalFilters && (
-            <div className="map-filter-group">
-              <label className="map-filter-label" htmlFor="f-min-dur">{t.map.minDuration}</label>
-              <select
-                id="f-min-dur"
-                value={filters.minDurationMonths}
-                onChange={e => setFilters(f => ({ ...f, minDurationMonths: e.target.value }))}
-              >
-                <option value="">{t.map.any}</option>
-                <option value="1">1+ {t.map.months}</option>
-                <option value="6">6+ {t.map.months}</option>
-                <option value="12">12+ {t.map.months}</option>
-                <option value="24">24+ {t.map.months}</option>
-                <option value="60">60+ {t.map.months}</option>
-              </select>
+            <div className="map-filter-group map-filter-group--wide">
+              <label className="map-filter-label">{t.map.duration}</label>
+              <div className="map-filter-chips">
+                {([
+                  ['short', t.map.durationShort],
+                  ['monthly', t.map.durationMonthly],
+                  ['yearly', t.map.durationYearly],
+                ] as [Exclude<DurationBucket, ''>, string][]).map(([key, label]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`map-chip ${filters.duration === key ? 'is-active' : ''}`}
+                    onClick={() => setFilters(f => ({ ...f, duration: f.duration === key ? '' : key }))}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 

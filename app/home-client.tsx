@@ -41,12 +41,22 @@ type RentalRow = {
   } | null;
 };
 
+type DurationBucket = '' | 'short' | 'monthly' | 'yearly';
+
 type Filters = {
   location: string; minBeds: string; minBaths: string; maxPrice: string;
+  duration: DurationBucket;
   pool: boolean; garden: boolean; aircon: boolean;
   furnished: boolean; wifi: boolean; parking: boolean;
   privateSpace: boolean; kitchen: boolean;
   checkIn: string; checkOut: string;
+};
+
+// Bucket → target months for filter logic
+const DURATION_TARGET: Record<Exclude<DurationBucket, ''>, number> = {
+  short: 1,
+  monthly: 6,
+  yearly: 12,
 };
 
 type SortBy = 'recent' | 'price_asc' | 'price_desc';
@@ -256,7 +266,7 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<SortBy>('recent');
   const [filters, setFilters] = useState<Filters>({
-    location: '', minBeds: '', minBaths: '', maxPrice: '',
+    location: '', minBeds: '', minBaths: '', maxPrice: '', duration: '',
     pool: false, garden: false, aircon: false,
     furnished: false, wifi: false, parking: false,
     privateSpace: false, kitchen: false,
@@ -285,6 +295,12 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
     if (filters.minBeds && (p.bedrooms ?? 0) < Number(filters.minBeds)) return false;
     if (filters.minBaths && (p.bathrooms ?? 0) < Number(filters.minBaths)) return false;
     if (filters.maxPrice && r.monthly_price_idr > Number(filters.maxPrice)) return false;
+    if (filters.duration) {
+      const target = DURATION_TARGET[filters.duration];
+      const minD = r.min_duration_months ?? 0;
+      const maxD = r.max_duration_months ?? Infinity;
+      if (minD > target || maxD < target) return false;
+    }
     if (filters.pool && !p.pool) return false;
     if (filters.garden && !p.garden) return false;
     if (filters.aircon && !p.aircon) return false;
@@ -328,6 +344,10 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
   if (filters.minBeds) activeChips.push({ key: 'minBeds', label: `${filters.minBeds}+ ${t.home.beds}`, dismiss: () => setFilters(f => ({ ...f, minBeds: '' })) });
   if (filters.minBaths) activeChips.push({ key: 'minBaths', label: `${filters.minBaths}+ ${t.home.baths}`, dismiss: () => setFilters(f => ({ ...f, minBaths: '' })) });
   if (filters.maxPrice) activeChips.push({ key: 'maxPrice', label: `≤ IDR ${fmtIDR(Number(filters.maxPrice))}`, dismiss: () => setFilters(f => ({ ...f, maxPrice: '' })) });
+  if (filters.duration) {
+    const lbl = filters.duration === 'short' ? t.home.durationShort : filters.duration === 'monthly' ? t.home.durationMonthly : t.home.durationYearly;
+    activeChips.push({ key: 'duration', label: lbl, dismiss: () => setFilters(f => ({ ...f, duration: '' })) });
+  }
   if (filters.checkIn) activeChips.push({ key: 'checkIn', label: `From ${filters.checkIn}`, dismiss: () => setFilters(f => ({ ...f, checkIn: '', checkOut: '' })) });
   if (filters.checkOut) activeChips.push({ key: 'checkOut', label: `Until ${filters.checkOut}`, dismiss: () => setFilters(f => ({ ...f, checkIn: '', checkOut: '' })) });
   (['pool', 'garden', 'aircon', 'furnished', 'kitchen', 'wifi', 'parking', 'privateSpace'] as (keyof Filters)[]).forEach(key => {
@@ -335,7 +355,7 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
   });
 
   const reset = () => setFilters({
-    location: '', minBeds: '', minBaths: '', maxPrice: '',
+    location: '', minBeds: '', minBaths: '', maxPrice: '', duration: '',
     pool: false, garden: false, aircon: false,
     furnished: false, wifi: false, parking: false,
     privateSpace: false, kitchen: false,
@@ -385,16 +405,15 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
           </div>
           <div className="inv-search-div" />
           <div className="inv-search-seg">
-            <span className="eyebrow inv-search-label">{t.home.bedrooms}</span>
+            <span className="eyebrow inv-search-label">{t.home.duration}</span>
             <select
-              value={filters.minBeds}
-              onChange={e => setFilters(f => ({ ...f, minBeds: e.target.value }))}
+              value={filters.duration}
+              onChange={e => setFilters(f => ({ ...f, duration: e.target.value as DurationBucket }))}
             >
               <option value="">{t.home.any}</option>
-              <option value="1">1+</option>
-              <option value="2">2+</option>
-              <option value="3">3+</option>
-              <option value="4">4+</option>
+              <option value="short">{t.home.durationShort}</option>
+              <option value="monthly">{t.home.durationMonthly}</option>
+              <option value="yearly">{t.home.durationYearly}</option>
             </select>
           </div>
           <div className="inv-search-div" />
