@@ -55,6 +55,7 @@ type Filters = {
   location: string;
   tenures: Set<Tenure>;
   minBedrooms: string;
+  minBathrooms: string;
   maxRentMonthlyIDR: string;
   maxSalePriceIDR: string;
   minDurationMonths: string;
@@ -66,6 +67,7 @@ const defaultFilters: Filters = {
   location: '',
   tenures: new Set<Tenure>(),
   minBedrooms: '',
+  minBathrooms: '',
   maxRentMonthlyIDR: '',
   maxSalePriceIDR: '',
   minDurationMonths: '',
@@ -239,6 +241,11 @@ export default function MapClient({ locale = 'en', mode = 'all' }: { locale?: Lo
       if ((item.bedrooms ?? 0) < Number(filters.minBedrooms)) return false;
     }
 
+    // Bathrooms: only applies to rental + villa-sale
+    if (filters.minBathrooms && (item.category === 'rental' || item.category === 'villa-sale')) {
+      if ((item.bathrooms ?? 0) < Number(filters.minBathrooms)) return false;
+    }
+
     // Max price
     if (item.category === 'rental' && filters.maxRentMonthlyIDR) {
       if (item.priceIDR > Number(filters.maxRentMonthlyIDR)) return false;
@@ -348,7 +355,7 @@ export default function MapClient({ locale = 'en', mode = 'all' }: { locale?: Lo
 
           {/* Categories */}
           {showCategoryFilter && (
-            <div className="map-filter-group">
+            <div className="map-filter-group map-filter-group--wide">
               <label className="map-filter-label">{t.map.type}</label>
               <div className="map-filter-chips">
                 {(([
@@ -377,7 +384,7 @@ export default function MapClient({ locale = 'en', mode = 'all' }: { locale?: Lo
 
           {/* Location */}
           {locations.length > 0 && (
-            <div className="map-filter-group">
+            <div className="map-filter-group map-filter-group--wide">
               <label className="map-filter-label" htmlFor="f-location">{t.map.location}</label>
               <select
                 id="f-location"
@@ -392,7 +399,7 @@ export default function MapClient({ locale = 'en', mode = 'all' }: { locale?: Lo
 
           {/* Tenure (investments only) */}
           {showSaleFilters && (
-            <div className="map-filter-group">
+            <div className="map-filter-group map-filter-group--wide">
               <label className="map-filter-label">{t.map.tenure}</label>
               <div className="map-filter-chips">
                 {([
@@ -420,6 +427,21 @@ export default function MapClient({ locale = 'en', mode = 'all' }: { locale?: Lo
                 id="f-bed"
                 value={filters.minBedrooms}
                 onChange={e => setFilters(f => ({ ...f, minBedrooms: e.target.value }))}
+              >
+                <option value="">{t.map.any}</option>
+                {['1', '2', '3', '4', '5'].map(n => <option key={n} value={n}>{n}+</option>)}
+              </select>
+            </div>
+          )}
+
+          {/* Bathrooms */}
+          {showBedroomFilter && (
+            <div className="map-filter-group">
+              <label className="map-filter-label" htmlFor="f-bath">{t.map.minBathrooms}</label>
+              <select
+                id="f-bath"
+                value={filters.minBathrooms}
+                onChange={e => setFilters(f => ({ ...f, minBathrooms: e.target.value }))}
               >
                 <option value="">{t.map.any}</option>
                 {['1', '2', '3', '4', '5'].map(n => <option key={n} value={n}>{n}+</option>)}
@@ -486,7 +508,7 @@ export default function MapClient({ locale = 'en', mode = 'all' }: { locale?: Lo
 
           {/* Amenities */}
           {showAmenityFilters && (
-            <div className="map-filter-group">
+            <div className="map-filter-group map-filter-group--wide">
               <label className="map-filter-label">{t.map.amenities}</label>
               <div className="map-filter-chips">
                 {([

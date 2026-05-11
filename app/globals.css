@@ -2817,7 +2817,7 @@ input[type="date"].inv-date-input {
 }
 
 .map-sidebar {
-    width: 340px;
+    width: 420px;
     flex-shrink: 0;
     background: var(--bg-card);
     border-right: 1px solid var(--border-subtle);
@@ -2827,20 +2827,31 @@ input[type="date"].inv-date-input {
 }
 
 .map-sidebar:not(.is-open) {
-    margin-left: -340px;
+    margin-left: -420px;
 }
 
 .map-sidebar-inner {
     padding: 24px 22px 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 14px;
 }
 
 .map-sidebar-head {
     border-bottom: 1px solid var(--border-subtle);
     padding-bottom: 16px;
     margin-bottom: 4px;
+    grid-column: 1 / -1;
+}
+
+/* Chip groups (Type, Tenure, Amenities) span full width */
+.map-filter-group--wide {
+    grid-column: 1 / -1;
+}
+
+/* Reset button spans both columns */
+.map-reset {
+    grid-column: 1 / -1;
 }
 
 .map-sidebar-title {
@@ -2940,7 +2951,7 @@ input[type="date"].inv-date-input {
 .map-sidebar-toggle {
     position: absolute;
     top: 16px;
-    left: 340px;
+    left: 420px;
     z-index: 3;
     width: 32px;
     height: 32px;
@@ -3162,16 +3173,40 @@ input[type="date"].inv-date-input {
         position: absolute;
         top: 0; left: 0; bottom: 0;
         z-index: 4;
-        width: min(320px, 85vw);
+        width: min(340px, 88vw);
     }
     .map-sidebar:not(.is-open) {
-        margin-left: calc(-1 * min(320px, 85vw));
+        margin-left: calc(-1 * min(340px, 88vw));
     }
     .map-sidebar-toggle {
-        left: min(320px, 85vw);
+        left: min(340px, 88vw);
     }
     .map-sidebar-toggle:not(.is-open) {
         left: 12px;
+    }
+    .map-sidebar-inner {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 20px 18px 32px;
+    }
+    .map-filter-group select {
+        padding: 14px 14px;
+        font-size: 16px;
+        min-height: 48px;
+    }
+    .map-chip {
+        padding: 10px 16px;
+        font-size: 0.92rem;
+        min-height: 40px;
+    }
+    .map-reset {
+        padding: 14px 18px;
+        font-size: 0.95rem;
+        min-height: 48px;
+    }
+    .map-sidebar-toggle {
+        width: 40px;
+        height: 40px;
     }
 }
 
