@@ -3372,7 +3372,7 @@ html[data-theme="dark"] .lc2-inv-badge-lease    { color: var(--gold); }
     font-weight: 500;
     letter-spacing: 0.07em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--text);
     margin: 0 0 7px;
     line-height: 1;
 }
@@ -3405,7 +3405,7 @@ html[data-theme="dark"] .lc2-inv-badge-lease    { color: var(--gold); }
 
 .lc2-meta-item {
     font-size: 0.83rem;
-    color: var(--text-muted);
+    color: var(--text);
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -3464,19 +3464,19 @@ html[data-theme="dark"] .lc2-pill {
 .lc2-price em {
     font-style: normal;
     font-size: 0.82rem;
-    color: var(--text-muted);
+    color: var(--text);
     font-weight: 400;
 }
 
 .lc2-price-year {
     margin: 3px 0 0;
     font-size: 0.78rem;
-    color: var(--text-subtle);
+    color: var(--text);
 }
 
 .lc2-duration {
     font-size: 0.78rem;
-    color: var(--text-muted);
+    color: var(--text);
     margin: 4px 0 0;
 }
 
