@@ -1710,26 +1710,28 @@ textarea:focus {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 6px;
-    margin: 12px 0 36px;
+    padding: 4px;
+    margin: 12px auto 36px;
+    max-width: 820px;
     box-shadow: var(--shadow);
 }
 
 .inv-searchbar--rentals {
     grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto auto;
+    max-width: 1000px;
 }
 
 .inv-search-seg {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 7px 14px;
+    padding: 6px 12px;
     min-width: 0;
 }
 
 .inv-search-label {
-    font-size: 0.65rem;
-    margin-bottom: 4px;
+    font-size: 0.6rem;
+    margin-bottom: 3px;
     color: var(--text-subtle);
 }
 
@@ -1737,7 +1739,7 @@ textarea:focus {
     border: none;
     padding: 0;
     background: transparent;
-    font-size: 0.98rem;
+    font-size: 0.9rem;
     font-weight: 500;
     color: var(--text);
     cursor: pointer;
@@ -1759,9 +1761,9 @@ textarea:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 8px 10px 8px 6px;
-    padding: 0 20px;
-    height: calc(100% - 16px);
+    margin: 5px 6px 5px 4px;
+    padding: 0 16px;
+    height: calc(100% - 10px);
     background: var(--accent);
     color: #fff;
     font-size: 0.9rem;
