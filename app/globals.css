@@ -1705,7 +1705,7 @@ textarea:focus {
 /* Search bar — shared with home but namespaced */
 .inv-searchbar {
     display: grid;
-    grid-template-columns: 1fr auto 1fr auto 1fr auto 1.8fr;
+    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto auto;
     align-items: stretch;
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -1749,6 +1749,34 @@ textarea:focus {
     width: 1px;
     background: var(--border);
     margin: 8px 0;
+}
+
+.inv-search-go {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 8px 10px 8px 6px;
+    padding: 0 20px;
+    height: calc(100% - 16px);
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, transform 0.1s;
+    flex-shrink: 0;
+}
+
+.inv-search-go:hover {
+    background: var(--accent-hover, #4F7D75);
+}
+
+.inv-search-go:active {
+    transform: scale(0.97);
 }
 
 .inv-search-dates {
@@ -2026,6 +2054,13 @@ textarea:focus {
         padding: 12px 16px;
     }
     .inv-search-seg:first-child { border-top: none; }
+    .inv-search-go {
+        margin: 0;
+        height: 48px;
+        border-radius: 0 0 12px 12px;
+        width: 100%;
+        border-top: 1px solid var(--border);
+    }
 }
 
 /* ============================================================

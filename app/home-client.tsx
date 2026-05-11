@@ -417,6 +417,14 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
               />
             </div>
           </div>
+          <div className="inv-search-div" />
+          <button
+            className="inv-search-go"
+            onClick={() => document.getElementById('inv-results')?.scrollIntoView({ behavior: 'smooth' })}
+            aria-label="Search"
+          >
+            Go
+          </button>
         </div>
 
         {loading ? (
@@ -488,7 +496,7 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
               )}
 
               {/* Result count + sort */}
-              <div className="inv-result-row">
+              <div className="inv-result-row" id="inv-results">
                 <p className="inv-result-count">
                   {filtered.length} {filtered.length === 1 ? t.home.resultOne : t.home.resultMany}
                   {hasActive && <span> · {t.home.filtered}</span>}
