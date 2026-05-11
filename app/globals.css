@@ -4320,15 +4320,13 @@ html[data-theme="dark"] .active-chip-reset {
 /* ============================================================
    Global mobile fix — no horizontal scroll on any page
    ============================================================ */
-html, body {
+body {
     overflow-x: hidden;
-    max-width: 100vw;
 }
 
 @media (max-width: 768px) {
-    body, main, section, .container, .inv-layout, .inv-sidebar, aside {
+    main, section, .container {
         max-width: 100%;
-        overflow-x: clip;
     }
 
     img, video, iframe { max-width: 100%; height: auto; }

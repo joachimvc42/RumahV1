@@ -246,7 +246,9 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
 
   useEffect(() => {
     const load = async () => {
-      const { data: investments } = await supabase.from('investments').select('*');
+      try {
+      const { data: investments, error: invErr } = await supabase.from('investments').select('*');
+      if (invErr) console.error('investments query error:', invErr.message);
       if (!investments) { setLoading(false); return; }
       const pIds = investments.filter(i => i.asset_type === 'property').map(i => i.asset_id);
       const lIds = investments.filter(i => i.asset_type === 'land').map(i => i.asset_id);
@@ -283,7 +285,12 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
           });
         }
       }
-      setItems(merged); setLoading(false);
+      setItems(merged);
+      } catch (e) {
+        console.error('invest load error:', e);
+      } finally {
+        setLoading(false);
+      }
     };
     load();
   }, [locale]);
