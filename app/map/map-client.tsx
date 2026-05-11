@@ -302,14 +302,17 @@ export default function MapClient({ locale = 'en', mode = 'all' }: { locale?: Lo
   // group stays visible. Once the user narrows to a single category the
   // groups that don't apply to it get hidden.
   const anyCategorySelected = filters.categories.size > 0;
-  const catHasRental = !anyCategorySelected || filters.categories.has('rental');
-  const catHasVilla = !anyCategorySelected || filters.categories.has('villa-sale');
-  const catHasLand = !anyCategorySelected || filters.categories.has('land-sale');
+  const isInvestMode = mode === 'invest';
+  const isRentalsMode = mode === 'rentals';
+  const catHasRental = !isInvestMode && (!anyCategorySelected || filters.categories.has('rental'));
+  const catHasVilla = !isRentalsMode && (!anyCategorySelected || filters.categories.has('villa-sale'));
+  const catHasLand = !isRentalsMode && (!anyCategorySelected || filters.categories.has('land-sale'));
 
   const showRentalFilters = catHasRental;
-  const showSaleFilters = catHasVilla || catHasLand;
+  const showSaleFilters = !isRentalsMode && (catHasVilla || catHasLand);
   const showBedroomFilter = catHasRental || catHasVilla;
   const showAmenityFilters = catHasRental || catHasVilla;
+  const showCategoryFilter = !isRentalsMode;
 
   if (!API_KEY) {
     return (
@@ -344,25 +347,33 @@ export default function MapClient({ locale = 'en', mode = 'all' }: { locale?: Lo
           </div>
 
           {/* Categories */}
-          <div className="map-filter-group">
-            <label className="map-filter-label">{t.map.type}</label>
-            <div className="map-filter-chips">
-              {([
-                ['rental', t.map.catRental],
-                ['villa-sale', t.map.catVilla],
-                ['land-sale', t.map.catLand],
-              ] as [Category, string][]).map(([key, label]) => (
-                <button
-                  key={key}
-                  className={`map-chip ${filters.categories.has(key) ? 'is-active' : ''}`}
-                  onClick={() => toggleInSet('categories', key)}
-                  type="button"
-                >
-                  {label}
-                </button>
-              ))}
+          {showCategoryFilter && (
+            <div className="map-filter-group">
+              <label className="map-filter-label">{t.map.type}</label>
+              <div className="map-filter-chips">
+                {(([
+                  ['rental', t.map.catRental],
+                  ['villa-sale', t.map.catVilla],
+                  ['land-sale', t.map.catLand],
+                ] as [Category, string][])
+                  .filter(([key]) => {
+                    if (isInvestMode && key === 'rental') return false;
+                    if (isRentalsMode && key !== 'rental') return false;
+                    return true;
+                  })
+                ).map(([key, label]) => (
+                  <button
+                    key={key}
+                    className={`map-chip ${filters.categories.has(key) ? 'is-active' : ''}`}
+                    onClick={() => toggleInSet('categories', key)}
+                    type="button"
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Location */}
           {locations.length > 0 && (
