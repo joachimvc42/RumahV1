@@ -1795,11 +1795,15 @@ textarea:focus {
     gap: 6px;
 }
 
-.inv-date-input {
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    background: transparent;
+.inv-date-input,
+input.inv-date-input,
+input[type="date"].inv-date-input {
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
     font-size: 0.9rem;
     font-weight: 500;
     color: var(--text);
@@ -1807,11 +1811,24 @@ textarea:focus {
     font-family: inherit;
     flex: 1;
     min-width: 0;
-    outline: none;
+    outline: none !important;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 .inv-date-input:focus {
-    outline: none;
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.inv-date-input::-webkit-datetime-edit {
+    padding: 0;
+}
+
+.inv-date-input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
 }
 
 .inv-date-sep {
