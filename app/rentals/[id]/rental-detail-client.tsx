@@ -157,7 +157,7 @@ export default function RentalDetailClient({ locale = 'en' }: { locale?: Locale 
             <>
               <div className="gallery-main">
                 {cur.isVideo ? (
-                  <video key={cur.src} src={cur.src} className="gallery-media" controls autoPlay playsInline muted />
+                  <video key={cur.src} src={cur.src} className="gallery-media" controls autoPlay playsInline muted loop onVolumeChange={e => { (e.currentTarget as HTMLVideoElement).muted = true; }} />
                 ) : (
                   <button className="gallery-img-btn" onClick={() => setLightbox(true)} aria-label="Open in lightbox">
                     <Image

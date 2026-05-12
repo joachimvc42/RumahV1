@@ -71,6 +71,7 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
   const t = getDict(locale);
   const [idx, setIdx] = useState(0);
   const [hover, setHover] = useState(false);
+  const touchStartX = useRef<number | null>(null);
 
   const prev = useCallback((e: React.MouseEvent) => {
     e.preventDefault(); e.stopPropagation();
@@ -81,6 +82,18 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
     e.preventDefault(); e.stopPropagation();
     setIdx(i => (i + 1) % item.images.length);
   }, [item.images.length]);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current == null || item.images.length < 2) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(delta) < 40) return;
+    if (delta > 0) setIdx(i => (i - 1 + item.images.length) % item.images.length);
+    else setIdx(i => (i + 1) % item.images.length);
+  };
 
   const waMsg = encodeURIComponent(`Hi, I'm interested in ${item.title}`);
   const waUrl = `https://wa.me/${WA_NUMBER}?text=${waMsg}`;
@@ -102,6 +115,8 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
         className="lc2-media listing-media"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
       >
         {/* Type + tenure overlay badges */}
         <div className="lc2-inv-badges">

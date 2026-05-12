@@ -3383,6 +3383,7 @@ html[data-theme="dark"] .inv-date-input {
     position: relative;
     width: 100%;
     aspect-ratio: 4 / 3;
+    touch-action: pan-y;
     background: var(--bg-alt);
     overflow: hidden;
     border-radius: 14px 14px 0 0;

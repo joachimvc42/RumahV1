@@ -104,6 +104,7 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
   const [idx, setIdx] = useState(0);
   const [hover, setHover] = useState(false);
   const p = rental.properties;
+  const touchStartX = useRef<number | null>(null);
 
   const prev = useCallback((e: React.MouseEvent) => {
     e.preventDefault(); e.stopPropagation();
@@ -114,6 +115,18 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
     e.preventDefault(); e.stopPropagation();
     setIdx(i => (i + 1) % images.length);
   }, [images.length]);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current == null || images.length < 2) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(delta) < 40) return;
+    if (delta > 0) setIdx(i => (i - 1 + images.length) % images.length);
+    else setIdx(i => (i + 1) % images.length);
+  };
 
   const chipDict: Record<string, string> = {
     pool: t.home.chip.pool, garden: t.home.chip.garden, aircon: t.home.chip.aircon,
@@ -137,6 +150,8 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
         className="lc2-media listing-media"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
       >
         <Link
           href={prefixFor(locale, `/rentals/${p?.id}`)}
