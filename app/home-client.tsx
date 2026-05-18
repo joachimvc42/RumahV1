@@ -128,6 +128,25 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
     else setIdx(i => (i + 1) % images.length);
   };
 
+  const onShare = async (e: React.MouseEvent) => {
+    e.preventDefault(); e.stopPropagation();
+    const path = prefixFor(locale, `/rentals/${p?.id}`);
+    const url = typeof window !== 'undefined' ? new URL(path, window.location.origin).toString() : path;
+    const title = p?.title ?? 'RumahYa property';
+    try {
+      if (typeof navigator !== 'undefined' && navigator.share) {
+        await navigator.share({ title, text: title, url });
+      } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        alert('Link copied!');
+      } else {
+        window.prompt('Copy link:', url);
+      }
+    } catch {
+      /* user cancelled */
+    }
+  };
+
   const chipDict: Record<string, string> = {
     pool: t.home.chip.pool, garden: t.home.chip.garden, aircon: t.home.chip.aircon,
     furnished: t.home.chip.furnished, kitchen: t.home.chip.kitchen, wifi: t.home.chip.wifi,
@@ -257,9 +276,9 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
         )}
 
         <div className="lc2-ctas">
-          <Link href={prefixFor(locale, `/rentals/${p?.id}`)} className="lc2-btn-detail">
-            View details →
-          </Link>
+          <button type="button" onClick={onShare} className="lc2-btn-detail" aria-label="Share">
+            🔗 Share
+          </button>
           <a
             href={waUrl}
             target="_blank"

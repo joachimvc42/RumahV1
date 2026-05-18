@@ -95,6 +95,24 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
     else setIdx(i => (i + 1) % item.images.length);
   };
 
+  const onShare = async (e: React.MouseEvent) => {
+    e.preventDefault(); e.stopPropagation();
+    const url = typeof window !== 'undefined' ? new URL(item.href, window.location.origin).toString() : item.href;
+    const shareData = { title: item.title, text: item.title, url };
+    try {
+      if (typeof navigator !== 'undefined' && navigator.share) {
+        await navigator.share(shareData);
+      } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        alert('Link copied!');
+      } else {
+        window.prompt('Copy link:', url);
+      }
+    } catch {
+      /* user cancelled */
+    }
+  };
+
   const waMsg = encodeURIComponent(`Hi, I'm interested in ${item.title}`);
   const waUrl = `https://wa.me/${WA_NUMBER}?text=${waMsg}`;
 
@@ -232,9 +250,9 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
         )}
 
         <div className="lc2-ctas">
-          <Link href={item.href} className="lc2-btn-detail">
-            View details →
-          </Link>
+          <button type="button" onClick={onShare} className="lc2-btn-detail" aria-label="Share">
+            🔗 Share
+          </button>
           <a
             href={waUrl}
             target="_blank"
