@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { getDict, prefixFor, type Locale } from '../lib/i18n';
+import SharePopup from '../components/SharePopup';
 
 const WA_NUMBER = '6287873487940';
 
@@ -103,8 +104,12 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
   const images = rental.properties?.images ?? [];
   const [idx, setIdx] = useState(0);
   const [hover, setHover] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const p = rental.properties;
   const touchStartX = useRef<number | null>(null);
+
+  const sharePath = prefixFor(locale, `/rentals/${p?.id}`);
+  const shareUrl = typeof window !== 'undefined' ? new URL(sharePath, window.location.origin).toString() : sharePath;
 
   const prev = useCallback((e: React.MouseEvent) => {
     e.preventDefault(); e.stopPropagation();
@@ -128,23 +133,9 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
     else setIdx(i => (i + 1) % images.length);
   };
 
-  const onShare = async (e: React.MouseEvent) => {
+  const onShare = (e: React.MouseEvent) => {
     e.preventDefault(); e.stopPropagation();
-    const path = prefixFor(locale, `/rentals/${p?.id}`);
-    const url = typeof window !== 'undefined' ? new URL(path, window.location.origin).toString() : path;
-    const title = p?.title ?? 'RumahYa property';
-    try {
-      if (typeof navigator !== 'undefined' && navigator.share) {
-        await navigator.share({ title, text: title, url });
-      } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        await navigator.clipboard.writeText(url);
-        alert('Link copied!');
-      } else {
-        window.prompt('Copy link:', url);
-      }
-    } catch {
-      /* user cancelled */
-    }
+    setShareOpen(true);
   };
 
   const chipDict: Record<string, string> = {
@@ -289,6 +280,7 @@ function RentalCard({ rental, locale }: { rental: RentalRow; locale: Locale }) {
           </a>
         </div>
       </div>
+      <SharePopup url={shareUrl} title={p?.title ?? 'RumahYa property'} open={shareOpen} onClose={() => setShareOpen(false)} />
     </div>
   );
 }

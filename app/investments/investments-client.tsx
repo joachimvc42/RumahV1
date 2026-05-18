@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { supabase } from '../../lib/supabaseClient';
 import { dualPrice } from '../../lib/priceUtils';
 import { getDict, prefixFor, type Locale } from '../../lib/i18n';
+import SharePopup from '../../components/SharePopup';
 
 const WA_NUMBER = '6287873487940';
 
@@ -71,7 +72,10 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
   const t = getDict(locale);
   const [idx, setIdx] = useState(0);
   const [hover, setHover] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const touchStartX = useRef<number | null>(null);
+
+  const shareUrl = typeof window !== 'undefined' ? new URL(item.href, window.location.origin).toString() : item.href;
 
   const prev = useCallback((e: React.MouseEvent) => {
     e.preventDefault(); e.stopPropagation();
@@ -95,22 +99,9 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
     else setIdx(i => (i + 1) % item.images.length);
   };
 
-  const onShare = async (e: React.MouseEvent) => {
+  const onShare = (e: React.MouseEvent) => {
     e.preventDefault(); e.stopPropagation();
-    const url = typeof window !== 'undefined' ? new URL(item.href, window.location.origin).toString() : item.href;
-    const shareData = { title: item.title, text: item.title, url };
-    try {
-      if (typeof navigator !== 'undefined' && navigator.share) {
-        await navigator.share(shareData);
-      } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
-        await navigator.clipboard.writeText(url);
-        alert('Link copied!');
-      } else {
-        window.prompt('Copy link:', url);
-      }
-    } catch {
-      /* user cancelled */
-    }
+    setShareOpen(true);
   };
 
   const waMsg = encodeURIComponent(`Hi, I'm interested in ${item.title}`);
@@ -263,6 +254,7 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
           </a>
         </div>
       </div>
+      <SharePopup url={shareUrl} title={item.title} open={shareOpen} onClose={() => setShareOpen(false)} />
     </div>
   );
 }
