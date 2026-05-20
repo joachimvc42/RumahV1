@@ -6,6 +6,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { getDict, prefixFor, type Locale } from '../lib/i18n';
 import SharePopup from '../components/SharePopup';
+import DualRangeSlider from '../components/DualRangeSlider';
 
 const WA_NUMBER = '6287873487940';
 
@@ -45,7 +46,8 @@ type RentalRow = {
 type DurationBucket = '' | 'short' | 'monthly' | 'yearly';
 
 type Filters = {
-  location: string; minBeds: string; minBaths: string; maxPrice: string;
+  location: string; minBeds: string; minBaths: string;
+  budgetMin: number; budgetMax: number;
   duration: DurationBucket;
   pool: boolean; garden: boolean; aircon: boolean;
   furnished: boolean; wifi: boolean; parking: boolean;
@@ -292,7 +294,7 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<SortBy>('recent');
   const [filters, setFilters] = useState<Filters>({
-    location: '', minBeds: '', minBaths: '', maxPrice: '', duration: '',
+    location: '', minBeds: '', minBaths: '', budgetMin: 1, budgetMax: 100, duration: '',
     pool: false, garden: false, aircon: false,
     furnished: false, wifi: false, parking: false,
     privateSpace: false, kitchen: false,
@@ -320,7 +322,8 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
     if (filters.location && p.location !== filters.location) return false;
     if (filters.minBeds && (p.bedrooms ?? 0) < Number(filters.minBeds)) return false;
     if (filters.minBaths && (p.bathrooms ?? 0) < Number(filters.minBaths)) return false;
-    if (filters.maxPrice && r.monthly_price_idr > Number(filters.maxPrice)) return false;
+    if (filters.budgetMin > 1 && r.monthly_price_idr < filters.budgetMin * 1_000_000) return false;
+    if (filters.budgetMax < 100 && r.monthly_price_idr > filters.budgetMax * 1_000_000) return false;
     if (filters.duration) {
       const target = DURATION_TARGET[filters.duration];
       const minD = r.min_duration_months ?? 0;
@@ -371,7 +374,6 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
   if (filters.location) activeChips.push({ key: 'location', label: filters.location, dismiss: () => setFilters(f => ({ ...f, location: '' })) });
   if (filters.minBeds) activeChips.push({ key: 'minBeds', label: `${filters.minBeds}+ ${t.home.beds}`, dismiss: () => setFilters(f => ({ ...f, minBeds: '' })) });
   if (filters.minBaths) activeChips.push({ key: 'minBaths', label: `${filters.minBaths}+ ${t.home.baths}`, dismiss: () => setFilters(f => ({ ...f, minBaths: '' })) });
-  if (filters.maxPrice) activeChips.push({ key: 'maxPrice', label: `≤ IDR ${fmtIDR(Number(filters.maxPrice))}`, dismiss: () => setFilters(f => ({ ...f, maxPrice: '' })) });
   if (filters.duration) {
     const lbl = filters.duration === 'short' ? t.home.durationShort : filters.duration === 'monthly' ? t.home.durationMonthly : t.home.durationYearly;
     activeChips.push({ key: 'duration', label: lbl, dismiss: () => setFilters(f => ({ ...f, duration: '' })) });
@@ -383,7 +385,7 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
   });
 
   const reset = () => setFilters({
-    location: '', minBeds: '', minBaths: '', maxPrice: '', duration: '',
+    location: '', minBeds: '', minBaths: '', budgetMin: 1, budgetMax: 100, duration: '',
     pool: false, garden: false, aircon: false,
     furnished: false, wifi: false, parking: false,
     privateSpace: false, kitchen: false,
@@ -404,119 +406,116 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
       </section>
 
       <div className="container">
-        {/* Top quick search */}
-        <div className="inv-searchbar inv-searchbar--rentals">
-          <div className="inv-search-seg">
-            <span className="eyebrow inv-search-label">{t.home.location}</span>
-            <select
-              value={filters.location}
-              onChange={e => setFilters(f => ({ ...f, location: e.target.value }))}
-            >
-              <option value="">{t.home.allAreas}</option>
-              {locations.map(l => <option key={l} value={l}>{l}</option>)}
-            </select>
-          </div>
-          <div className="inv-search-div" />
-          <div className="inv-search-seg">
-            <span className="eyebrow inv-search-label">{t.home.duration}</span>
-            <select
-              value={filters.duration}
-              onChange={e => setFilters(f => ({ ...f, duration: e.target.value as DurationBucket }))}
-            >
-              <option value="">{t.home.any}</option>
-              <option value="short">{t.home.durationShort}</option>
-              <option value="monthly">{t.home.durationMonthly}</option>
-              <option value="yearly">{t.home.durationYearly}</option>
-            </select>
-          </div>
-          <div className="inv-search-div" />
-          <div className="inv-search-seg inv-search-dates">
-            <span className="eyebrow inv-search-label">Availability</span>
-            <div className="inv-date-range">
-              <input
-                type="date"
-                className="inv-date-input"
-                value={filters.checkIn}
-                onChange={e => setFilters(f => ({ ...f, checkIn: e.target.value, checkOut: f.checkOut && f.checkOut < e.target.value ? '' : f.checkOut }))}
-              />
-              <span className="inv-date-sep">→</span>
-              <input
-                type="date"
-                className="inv-date-input"
-                value={filters.checkOut}
-                min={filters.checkIn || undefined}
-                onChange={e => setFilters(f => ({ ...f, checkOut: e.target.value }))}
-              />
+        {/* ── Search bar + filter bars glued in one stack ── */}
+        <div className="inv-filterstack inv-filterstack--rentals">
+          <div className="inv-searchbar inv-searchbar--rentals">
+            <div className="inv-search-seg">
+              <span className="eyebrow inv-search-label">{t.home.location}</span>
+              <select
+                value={filters.location}
+                onChange={e => setFilters(f => ({ ...f, location: e.target.value }))}
+              >
+                <option value="">{t.home.allAreas}</option>
+                {locations.map(l => <option key={l} value={l}>{l}</option>)}
+              </select>
             </div>
-          </div>
-        </div>
-
-        {/* ── Inline filter bars: shown when search bar has active filter ── */}
-        {hasSearchBarFilter && (
-          <>
-            {/* Row 2: amenity chips */}
-            <div className="inv-filter-bar inv-filter-bar--rentals">
-              {([
-                ['pool', t.home.chip.pool, '🏊'],
-                ['garden', t.home.chip.garden, '🌿'],
-                ['aircon', t.home.chip.aircon, '❄️'],
-                ['furnished', t.home.chip.furnished, '🛋️'],
-                ['kitchen', t.home.chip.kitchen, '🍳'],
-                ['wifi', t.home.chip.wifi, '📶'],
-                ['parking', t.home.chip.parking, '🅿️'],
-                ['privateSpace', t.home.chip.privateSpace, '🔒'],
-              ] as [keyof Filters, string, string][]).map(([key, label, icon]) => (
-                <button key={key} type="button"
-                  className={`filter-chip ${filters[key] ? 'is-active' : ''}`}
-                  onClick={() => setFilters(f => ({ ...f, [key]: !f[key] }))}
-                >{icon} {label}</button>
-              ))}
+            <div className="inv-search-div" />
+            <div className="inv-search-seg">
+              <span className="eyebrow inv-search-label">{t.home.duration}</span>
+              <select
+                value={filters.duration}
+                onChange={e => setFilters(f => ({ ...f, duration: e.target.value as DurationBucket }))}
+              >
+                <option value="">{t.home.any}</option>
+                <option value="short">{t.home.durationShort}</option>
+                <option value="monthly">{t.home.durationMonthly}</option>
+                <option value="yearly">{t.home.durationYearly}</option>
+              </select>
             </div>
-
-            {/* Row 3: beds / baths / budget */}
-            <div className="inv-filter-bar inv-filter-bar--rentals">
-              <div className="inv-filterbar-group">
-                <span className="inv-filterbar-label">{t.home.bedrooms}</span>
-                <div className="inv-filterbar-chips">
-                  {['1', '2', '3'].map(v => (
-                    <button key={v} type="button"
-                      className={`filter-chip ${filters.minBeds === v ? 'is-active' : ''}`}
-                      onClick={() => setFilters(f => ({ ...f, minBeds: f.minBeds === v ? '' : v }))}
-                    >{v}+</button>
-                  ))}
-                </div>
-              </div>
-              <div className="inv-filter-sep" />
-              <div className="inv-filterbar-group">
-                <span className="inv-filterbar-label">{t.home.bathrooms}</span>
-                <div className="inv-filterbar-chips">
-                  {['1', '2', '3'].map(v => (
-                    <button key={v} type="button"
-                      className={`filter-chip ${filters.minBaths === v ? 'is-active' : ''}`}
-                      onClick={() => setFilters(f => ({ ...f, minBaths: f.minBaths === v ? '' : v }))}
-                    >{v}+</button>
-                  ))}
-                </div>
-              </div>
-              <div className="inv-filter-sep" />
-              <div className="inv-filterbar-slider-full">
-                <span className="inv-filterbar-label">{t.home.budget}</span>
+            <div className="inv-search-div" />
+            <div className="inv-search-seg inv-search-dates">
+              <span className="eyebrow inv-search-label">Availability</span>
+              <div className="inv-date-range">
                 <input
-                  type="range"
-                  className="sidebar-slider"
-                  min={1}
-                  max={100}
-                  step={1}
-                  value={filters.maxPrice ? Math.min(100, Math.max(1, Math.round(Number(filters.maxPrice) / 1_000_000))) : 100}
-                  onChange={e => setFilters(f => ({ ...f, maxPrice: String(Number(e.target.value) * 1_000_000) }))}
+                  type="date"
+                  className="inv-date-input"
+                  value={filters.checkIn}
+                  onChange={e => setFilters(f => ({ ...f, checkIn: e.target.value, checkOut: f.checkOut && f.checkOut < e.target.value ? '' : f.checkOut }))}
                 />
-                <span className="inv-filterbar-slider-val">
-                  {filters.maxPrice ? `≤ ${Math.round(Number(filters.maxPrice) / 1_000_000)} M IDR` : '≤ 100 M IDR'}
-                </span>
+                <span className="inv-date-sep">→</span>
+                <input
+                  type="date"
+                  className="inv-date-input"
+                  value={filters.checkOut}
+                  min={filters.checkIn || undefined}
+                  onChange={e => setFilters(f => ({ ...f, checkOut: e.target.value }))}
+                />
               </div>
             </div>
-          </>
-        )}
+          </div>
+
+          {/* Rows 2–3: shown when search bar has active filter */}
+          {hasSearchBarFilter && (
+            <>
+              {/* Row 2: amenity chips */}
+              <div className="inv-filter-bar">
+                {([
+                  ['pool', t.home.chip.pool, '🏊'],
+                  ['garden', t.home.chip.garden, '🌿'],
+                  ['aircon', t.home.chip.aircon, '❄️'],
+                  ['furnished', t.home.chip.furnished, '🛋️'],
+                  ['kitchen', t.home.chip.kitchen, '🍳'],
+                  ['wifi', t.home.chip.wifi, '📶'],
+                  ['parking', t.home.chip.parking, '🅿️'],
+                  ['privateSpace', t.home.chip.privateSpace, '🔒'],
+                ] as [keyof Filters, string, string][]).map(([key, label, icon]) => (
+                  <button key={key} type="button"
+                    className={`filter-chip ${filters[key] ? 'is-active' : ''}`}
+                    onClick={() => setFilters(f => ({ ...f, [key]: !f[key] }))}
+                  >{icon} {label}</button>
+                ))}
+              </div>
+
+              {/* Row 3: beds / baths / budget dual slider */}
+              <div className="inv-filter-bar inv-filter-bar--sliders" style={{ gridTemplateColumns: '1fr auto 1fr auto 2fr' }}>
+                <div className="inv-filterbar-slider-seg" style={{ borderRight: 'none' }}>
+                  <span className="inv-filterbar-label">{t.home.bedrooms}</span>
+                  <div className="inv-filterbar-chips" style={{ marginTop: 4 }}>
+                    {['1', '2', '3'].map(v => (
+                      <button key={v} type="button"
+                        className={`filter-chip ${filters.minBeds === v ? 'is-active' : ''}`}
+                        onClick={() => setFilters(f => ({ ...f, minBeds: f.minBeds === v ? '' : v }))}
+                      >{v}+</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="inv-search-div" style={{ margin: '6px 0' }} />
+                <div className="inv-filterbar-slider-seg" style={{ borderRight: 'none' }}>
+                  <span className="inv-filterbar-label">{t.home.bathrooms}</span>
+                  <div className="inv-filterbar-chips" style={{ marginTop: 4 }}>
+                    {['1', '2', '3'].map(v => (
+                      <button key={v} type="button"
+                        className={`filter-chip ${filters.minBaths === v ? 'is-active' : ''}`}
+                        onClick={() => setFilters(f => ({ ...f, minBaths: f.minBaths === v ? '' : v }))}
+                      >{v}+</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="inv-search-div" style={{ margin: '6px 0' }} />
+                <div className="inv-filterbar-slider-seg">
+                  <span className="inv-filterbar-label">{t.home.budget}</span>
+                  <DualRangeSlider
+                    min={1} max={100} step={1}
+                    valueMin={filters.budgetMin} valueMax={filters.budgetMax}
+                    onChangeMin={v => setFilters(f => ({ ...f, budgetMin: v }))}
+                    onChangeMax={v => setFilters(f => ({ ...f, budgetMax: v }))}
+                    formatLabel={v => `${v} M`}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
 
         {loading ? (
           <div className="home-loading">
@@ -527,21 +526,7 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
           <div className="inv-layout">
             {/* ── Results area ── */}
             <div>
-              {/* Active filter chips */}
-              {activeChips.length > 0 && (
-                <div className="active-chips-row">
-                  {activeChips.map(chip => (
-                    <button key={chip.key} className="active-chip" onClick={chip.dismiss}>
-                      {chip.label} <span aria-hidden>×</span>
-                    </button>
-                  ))}
-                  <button className="active-chip active-chip-reset" onClick={reset}>
-                    {t.home.resetFilters}
-                  </button>
-                </div>
-              )}
-
-              {/* Result count + sort */}
+                {/* Result count + sort */}
               <div className="inv-result-row" id="inv-results">
                 <p className="inv-result-count">
                   {filtered.length} {filtered.length === 1 ? t.home.resultOne : t.home.resultMany}
