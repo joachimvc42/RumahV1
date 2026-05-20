@@ -358,6 +358,8 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
     return 0;
   });
 
+  const hasSearchBarFilter = !!filters.location || !!filters.duration || !!filters.checkIn || !!filters.checkOut;
+
   /* Active chips */
   const chipLabels: Record<string, string> = {
     pool: t.home.chip.pool, garden: t.home.chip.garden, aircon: t.home.chip.aircon,
@@ -449,6 +451,73 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
           </div>
         </div>
 
+        {/* ── Inline filter bars: shown when search bar has active filter ── */}
+        {hasSearchBarFilter && (
+          <>
+            {/* Row 2: amenity chips */}
+            <div className="inv-filter-bar inv-filter-bar--rentals">
+              {([
+                ['pool', t.home.chip.pool, '🏊'],
+                ['garden', t.home.chip.garden, '🌿'],
+                ['aircon', t.home.chip.aircon, '❄️'],
+                ['furnished', t.home.chip.furnished, '🛋️'],
+                ['kitchen', t.home.chip.kitchen, '🍳'],
+                ['wifi', t.home.chip.wifi, '📶'],
+                ['parking', t.home.chip.parking, '🅿️'],
+                ['privateSpace', t.home.chip.privateSpace, '🔒'],
+              ] as [keyof Filters, string, string][]).map(([key, label, icon]) => (
+                <button key={key} type="button"
+                  className={`filter-chip ${filters[key] ? 'is-active' : ''}`}
+                  onClick={() => setFilters(f => ({ ...f, [key]: !f[key] }))}
+                >{icon} {label}</button>
+              ))}
+            </div>
+
+            {/* Row 3: beds / baths / budget */}
+            <div className="inv-filter-bar inv-filter-bar--rentals">
+              <div className="inv-filterbar-group">
+                <span className="inv-filterbar-label">{t.home.bedrooms}</span>
+                <div className="inv-filterbar-chips">
+                  {['1', '2', '3'].map(v => (
+                    <button key={v} type="button"
+                      className={`filter-chip ${filters.minBeds === v ? 'is-active' : ''}`}
+                      onClick={() => setFilters(f => ({ ...f, minBeds: f.minBeds === v ? '' : v }))}
+                    >{v}+</button>
+                  ))}
+                </div>
+              </div>
+              <div className="inv-filter-sep" />
+              <div className="inv-filterbar-group">
+                <span className="inv-filterbar-label">{t.home.bathrooms}</span>
+                <div className="inv-filterbar-chips">
+                  {['1', '2', '3'].map(v => (
+                    <button key={v} type="button"
+                      className={`filter-chip ${filters.minBaths === v ? 'is-active' : ''}`}
+                      onClick={() => setFilters(f => ({ ...f, minBaths: f.minBaths === v ? '' : v }))}
+                    >{v}+</button>
+                  ))}
+                </div>
+              </div>
+              <div className="inv-filter-sep" />
+              <div className="inv-filterbar-slider-full">
+                <span className="inv-filterbar-label">{t.home.budget}</span>
+                <input
+                  type="range"
+                  className="sidebar-slider"
+                  min={1}
+                  max={100}
+                  step={1}
+                  value={filters.maxPrice ? Math.min(100, Math.max(1, Math.round(Number(filters.maxPrice) / 1_000_000))) : 100}
+                  onChange={e => setFilters(f => ({ ...f, maxPrice: String(Number(e.target.value) * 1_000_000) }))}
+                />
+                <span className="inv-filterbar-slider-val">
+                  {filters.maxPrice ? `≤ ${Math.round(Number(filters.maxPrice) / 1_000_000)} M IDR` : '≤ 100 M IDR'}
+                </span>
+              </div>
+            </div>
+          </>
+        )}
+
         {loading ? (
           <div className="home-loading">
             <div className="home-spinner" />
@@ -456,91 +525,6 @@ export default function HomeClient({ locale = 'en' }: { locale?: Locale }) {
           </div>
         ) : (
           <div className="inv-layout">
-            {/* ── Sidebar filters ── */}
-            <aside className="inv-sidebar">
-              <div className="inv-sidebar-group">
-                <p className="eyebrow">{t.home.amenities}</p>
-                {([
-                  ['pool', t.home.chip.pool],
-                  ['garden', t.home.chip.garden],
-                  ['aircon', t.home.chip.aircon],
-                  ['furnished', t.home.chip.furnished],
-                  ['kitchen', t.home.chip.kitchen],
-                  ['wifi', t.home.chip.wifi],
-                  ['parking', t.home.chip.parking],
-                  ['privateSpace', t.home.chip.privateSpace],
-                ] as [keyof Filters, string][]).map(([key, label]) => (
-                  <label key={key} className="inv-check-row">
-                    <input
-                      type="checkbox"
-                      checked={filters[key] as boolean}
-                      onChange={e => setFilters(f => ({ ...f, [key]: e.target.checked }))}
-                    />
-                    <span className="inv-check-icon" aria-hidden>{AMENITY_ICONS[key]}</span>
-                    <span className="inv-check-label">{label}</span>
-                  </label>
-                ))}
-              </div>
-
-              <div className="inv-sidebar-group">
-                <p className="eyebrow">{t.home.bedrooms}</p>
-                <div className="sidebar-chip-row">
-                  {['1', '2', '3'].map(v => (
-                    <button
-                      key={v}
-                      type="button"
-                      className={`sidebar-chip ${filters.minBeds === v ? 'is-active' : ''}`}
-                      onClick={() => setFilters(f => ({ ...f, minBeds: f.minBeds === v ? '' : v }))}
-                    >
-                      {v}+
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="inv-sidebar-group">
-                <p className="eyebrow">{t.home.bathrooms}</p>
-                <div className="sidebar-chip-row">
-                  {['1', '2', '3'].map(v => (
-                    <button
-                      key={v}
-                      type="button"
-                      className={`sidebar-chip ${filters.minBaths === v ? 'is-active' : ''}`}
-                      onClick={() => setFilters(f => ({ ...f, minBaths: f.minBaths === v ? '' : v }))}
-                    >
-                      {v}+
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="inv-sidebar-group">
-                <p className="eyebrow">{t.home.budget}</p>
-                <div className="sidebar-slider-wrap">
-                  <input
-                    type="range"
-                    className="sidebar-slider"
-                    min={1}
-                    max={100}
-                    step={1}
-                    value={filters.maxPrice ? Math.min(100, Math.max(1, Math.round(Number(filters.maxPrice) / 1_000_000))) : 100}
-                    onChange={e => setFilters(f => ({ ...f, maxPrice: String(Number(e.target.value) * 1_000_000) }))}
-                  />
-                  <div className="sidebar-slider-vals">
-                    <span>1 M</span>
-                    <span className="sidebar-slider-current">
-                      {filters.maxPrice ? `≤ ${Math.round(Number(filters.maxPrice) / 1_000_000)} M IDR` : '≤ 100 M IDR'}
-                    </span>
-                    <span>100 M</span>
-                  </div>
-                </div>
-              </div>
-
-              {hasActive && (
-                <button onClick={reset} className="inv-reset">{t.home.resetFilters}</button>
-              )}
-            </aside>
-
             {/* ── Results area ── */}
             <div>
               {/* Active filter chips */}
