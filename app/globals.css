@@ -2069,14 +2069,17 @@ input[type="date"].inv-date-input {
         border-bottom: 1px solid var(--border);
         padding-bottom: 20px;
     }
-    .inv-searchbar,
-    .inv-searchbar--rentals { grid-template-columns: 1fr; }
+    /* Search bar: 3 segs side-by-side on mobile, no dividers */
+    .inv-searchbar { grid-template-columns: 1fr 1fr 1fr; max-width: 100%; }
+    .inv-searchbar--rentals { grid-template-columns: 1fr 1fr 1fr; max-width: 100%; }
     .inv-search-div { display: none; }
     .inv-search-seg {
-        border-top: 1px solid var(--border);
-        padding: 12px 16px;
+        padding: 6px 8px;
+        border-right: 1px solid var(--border);
     }
-    .inv-search-seg:first-child { border-top: none; }
+    .inv-search-seg:last-child { border-right: none; }
+    .inv-search-label { font-size: 0.55rem; }
+    .inv-search-seg select { font-size: 13px !important; padding-right: 14px; }
     .inv-search-go {
         margin: 0;
         height: 48px;
@@ -2084,6 +2087,17 @@ input[type="date"].inv-date-input {
         width: 100%;
         border-top: 1px solid var(--border);
     }
+    /* Sidebar: tighter spacing on mobile */
+    .inv-sidebar-group { margin-bottom: 16px; }
+    .inv-sidebar-group .eyebrow { margin-bottom: 6px; }
+    /* 2 sliders side-by-side on mobile (invest land) */
+    .sidebar-slider-double {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    .sidebar-slider-double .inv-sidebar-group { margin-bottom: 0; min-width: 0; }
+    .sidebar-slider-vals { font-size: 0.66rem; }
 }
 
 /* ============================================================
@@ -3215,10 +3229,13 @@ input[type="date"].inv-date-input {
    ============================================================ */
 @media (max-width: 768px) {
     /* iOS zooms any form field whose font-size is below 16px when focused.
-       Force 16px across every interactive field on mobile. */
-    input, select, textarea,
-    .inv-search-seg select {
+       Force 16px across every interactive field on mobile.
+       Exception: .inv-search-seg select needs to be smaller to fit 3 cols in one row. */
+    input, select, textarea {
         font-size: 16px !important;
+    }
+    .inv-search-seg select {
+        font-size: 13px !important;
     }
 
     /* Make the whole search segment a tap target, not just the tiny select. */

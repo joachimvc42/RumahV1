@@ -491,45 +491,47 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
                         ))}
                       </div>
                     </div>
-                    <div className="inv-sidebar-group">
-                      <p className="eyebrow">{t.inv.size}</p>
-                      <div className="sidebar-slider-wrap">
-                        <input
-                          type="range"
-                          className="sidebar-slider"
-                          min={1}
-                          max={1000}
-                          step={1}
-                          value={land.minArea ? Math.min(1000, Math.max(1, Number(land.minArea))) : 1}
-                          onChange={e => setLand(s => ({ ...s, minArea: e.target.value }))}
-                        />
-                        <div className="sidebar-slider-vals">
-                          <span>1</span>
-                          <span className="sidebar-slider-current">
-                            ≥ {land.minArea || 1} {t.inv.areSuffix}
-                          </span>
-                          <span>1000</span>
+                    <div className="sidebar-slider-double">
+                      <div className="inv-sidebar-group">
+                        <p className="eyebrow">{t.inv.size}</p>
+                        <div className="sidebar-slider-wrap">
+                          <input
+                            type="range"
+                            className="sidebar-slider"
+                            min={1}
+                            max={1000}
+                            step={1}
+                            value={land.minArea ? Math.min(1000, Math.max(1, Number(land.minArea))) : 1}
+                            onChange={e => setLand(s => ({ ...s, minArea: e.target.value }))}
+                          />
+                          <div className="sidebar-slider-vals">
+                            <span>1</span>
+                            <span className="sidebar-slider-current">
+                              ≥ {land.minArea || 1} {t.inv.areSuffix}
+                            </span>
+                            <span>1000</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="inv-sidebar-group">
-                      <p className="eyebrow">{t.inv.pricePerAre}</p>
-                      <div className="sidebar-slider-wrap">
-                        <input
-                          type="range"
-                          className="sidebar-slider"
-                          min={1}
-                          max={1000}
-                          step={1}
-                          value={land.maxPrice ? Math.min(1000, Math.max(1, Math.round(Number(land.maxPrice) / 1_000_000))) : 1000}
-                          onChange={e => setLand(s => ({ ...s, maxPrice: String(Number(e.target.value) * 1_000_000) }))}
-                        />
-                        <div className="sidebar-slider-vals">
-                          <span>1 M</span>
-                          <span className="sidebar-slider-current">
-                            {land.maxPrice ? `≤ ${Math.round(Number(land.maxPrice) / 1_000_000)} M IDR` : '≤ 1000 M IDR'}
-                          </span>
-                          <span>1000 M</span>
+                      <div className="inv-sidebar-group">
+                        <p className="eyebrow">{t.inv.pricePerAre}</p>
+                        <div className="sidebar-slider-wrap">
+                          <input
+                            type="range"
+                            className="sidebar-slider"
+                            min={1}
+                            max={1000}
+                            step={1}
+                            value={land.maxPrice ? Math.min(1000, Math.max(1, Math.round(Number(land.maxPrice) / 1_000_000))) : 1000}
+                            onChange={e => setLand(s => ({ ...s, maxPrice: String(Number(e.target.value) * 1_000_000) }))}
+                          />
+                          <div className="sidebar-slider-vals">
+                            <span>1 M</span>
+                            <span className="sidebar-slider-current">
+                              {land.maxPrice ? `≤ ${Math.round(Number(land.maxPrice) / 1_000_000)} M IDR` : '≤ 1000 M IDR'}
+                            </span>
+                            <span>1000 M</span>
+                          </div>
                         </div>
                       </div>
                     </div>
