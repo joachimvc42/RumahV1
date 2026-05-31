@@ -34,5 +34,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
-  return [...staticRoutes, ...investmentRoutes];
+  const faqRoute: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/faq`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+  ];
+
+  return [...staticRoutes, ...faqRoute, ...investmentRoutes];
 }

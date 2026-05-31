@@ -90,6 +90,7 @@ export default function Header() {
   const mapHref = prefixFor(locale, '/map');
   const aboutHref = prefixFor(locale, '/about');
   const blogHref = '/blog';
+  const faqHref = '/faq';
 
   const isActive = (href: string) => {
     if (href === homeHref) return rest === '/' || rest === '';
@@ -150,6 +151,13 @@ export default function Header() {
                   onClick={closeMenu}
                 >
                   Guide
+                </Link>
+                <Link
+                  href={faqHref}
+                  className={rest.startsWith('/faq') ? 'nav-link is-active' : 'nav-link'}
+                  onClick={closeMenu}
+                >
+                  FAQ
                 </Link>
               </div>
 
