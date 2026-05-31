@@ -89,7 +89,7 @@ export default function Header() {
   const investmentsHref = prefixFor(locale, '/opportunities');
   const mapHref = prefixFor(locale, '/map');
   const aboutHref = prefixFor(locale, '/about');
-  const propertyMgmtHref = prefixFor(locale, '/property-management');
+  const blogHref = '/blog';
 
   const isActive = (href: string) => {
     if (href === homeHref) return rest === '/' || rest === '';
@@ -145,11 +145,11 @@ export default function Header() {
                   {t.nav.map}
                 </Link>
                 <Link
-                  href={propertyMgmtHref}
-                  className={isActive(propertyMgmtHref) ? 'nav-link is-active' : 'nav-link'}
+                  href={blogHref}
+                  className={rest.startsWith('/blog') ? 'nav-link is-active' : 'nav-link'}
                   onClick={closeMenu}
                 >
-                  Property Mgmt
+                  Guide
                 </Link>
               </div>
 
