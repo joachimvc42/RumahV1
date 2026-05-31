@@ -89,6 +89,7 @@ export default function Header() {
   const investmentsHref = prefixFor(locale, '/opportunities');
   const mapHref = prefixFor(locale, '/map');
   const aboutHref = prefixFor(locale, '/about');
+  const faqHref = '/faq';
   const isActive = (href: string) => {
     if (href === homeHref) return rest === '/' || rest === '';
     const checkRest = href.replace(/^\/(fr|es)/, '') || '/';
@@ -141,6 +142,13 @@ export default function Header() {
                   onClick={closeMenu}
                 >
                   {t.nav.map}
+                </Link>
+                <Link
+                  href={faqHref}
+                  className={rest.startsWith('/faq') ? 'nav-link is-active' : 'nav-link'}
+                  onClick={closeMenu}
+                >
+                  FAQ
                 </Link>
               </div>
 
