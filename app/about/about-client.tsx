@@ -120,6 +120,22 @@ export default function AboutClient({ locale = 'en' }: { locale?: Locale }) {
         </div>
       </section>
 
+      {/* ── Testimonial ── */}
+      <section className="testimonial-section">
+        <div className="container">
+          <div className="testimonial-inner">
+            <Reveal>
+              <blockquote className="testimonial-quote">
+                Buying a land with RumahYa was really easy. The process was smooth and their advice made sense without being honeyed.
+              </blockquote>
+            </Reveal>
+            <Reveal delay={120}>
+              <p className="testimonial-author">— European buyer, South Lombok · 2025</p>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
       {/* ── Contact (below About, per spec) ── */}
       <section id="contact" className="about-section contact-section">
         <div className="container">
