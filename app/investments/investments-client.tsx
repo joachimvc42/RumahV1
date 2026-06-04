@@ -109,6 +109,9 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
   const waUrl = `https://wa.me/${WA_NUMBER}?text=${waMsg}`;
 
   const { main: priceMain, approx: priceApprox } = dualPrice(item.price, item.currency, item.type === 'land' ? '/are' : '');
+  const totalPrice = item.type === 'land' && item.landSize
+    ? dualPrice(item.price * item.landSize, item.currency)
+    : null;
 
   const villaAmenities = ([
     item.pool && 'pool', item.garden && 'garden', item.furnished && 'furnished',
@@ -217,6 +220,12 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
         <div className="lc2-price-block">
           <p className="lc2-price"><span>{priceMain}</span></p>
           {priceApprox && <p className="lc2-price-year">{priceApprox}</p>}
+          {totalPrice && (
+            <p className="lc2-price-total">
+              <span className="lc2-price-total-label">Total · </span>
+              {totalPrice.main} <span className="lc2-price-total-approx">· {totalPrice.approx}</span>
+            </p>
+          )}
           {item.expectedYield && (
             <p className="lc2-yield">{item.expectedYield}{t.inv.yieldSuffix}</p>
           )}

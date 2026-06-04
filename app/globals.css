@@ -3828,6 +3828,29 @@ html[data-theme="dark"] .lc2-pill {
     color: var(--text);
 }
 
+.lc2-price-total {
+    margin: 6px 0 0;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+    border-top: 1px solid var(--border);
+    padding-top: 5px;
+}
+
+.lc2-price-total-label {
+    font-size: 0.68rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-subtle);
+}
+
+.lc2-price-total-approx {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--text-subtle);
+}
+
 .lc2-duration {
     font-size: 0.78rem;
     color: var(--text);
