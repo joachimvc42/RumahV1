@@ -128,7 +128,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const site = (headersList.get('x-site') || 'invest') as 'invest' | 'rentals';
 
   return (
-    <html lang={locale} data-theme="dark" className={`${inter.variable} ${cormorant.variable}`}>
+    <html lang={locale} data-theme="dark" className={`${inter.variable} ${cormorant.variable}`} suppressHydrationWarning>
       <body>
         {/* Anti-flash: apply stored theme before first paint (dark is default). */}
         <script
