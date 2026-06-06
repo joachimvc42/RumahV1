@@ -128,8 +128,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const site = (headersList.get('x-site') || 'invest') as 'invest' | 'rentals';
 
   return (
-    <html lang={locale} className={`${inter.variable} ${cormorant.variable}`}>
+    <html lang={locale} data-theme="dark" className={`${inter.variable} ${cormorant.variable}`}>
       <body>
+        {/* Anti-flash: apply stored theme before first paint (dark is default). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}})();`,
+          }}
+        />
         {/*
           Google Consent Mode v2 — must run BEFORE gtag.js loads, hence
           beforeInteractive. Default state = DENIED for everything except

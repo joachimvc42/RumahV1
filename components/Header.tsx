@@ -51,8 +51,8 @@ export default function Header() {
   // Initialise from localStorage on mount
   useEffect(() => {
     const stored = typeof window !== 'undefined' ? localStorage.getItem('theme') : null;
-    const prefersDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const isDark = stored ? stored === 'dark' : prefersDark;
+    // Noir & Or: dark is the default presentation; light only if explicitly chosen.
+    const isDark = stored ? stored === 'dark' : true;
     setDark(isDark);
     document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
   }, []);
@@ -105,6 +105,7 @@ export default function Header() {
     <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
       <div className="container header-inner">
         <Link href={homeHref} className="brand" onClick={closeMenu}>
+          <span className="brand-diamond" aria-hidden="true" />
           <span className="brand-name">Rumah<span>Ya</span></span>
         </Link>
 

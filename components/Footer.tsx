@@ -54,6 +54,16 @@ export default function Footer({ site = 'invest' }: FooterProps) {
           </div>
         )}
 
+        {!isRentals && (
+          <div className="footer-lockup">
+            <span className="footer-lockup-brand">
+              <span className="brand-diamond" aria-hidden="true" />
+              <span className="brand-name">Rumah<span>Ya</span></span>
+            </span>
+            <p className="footer-tagline">{t.footer.tagline}</p>
+          </div>
+        )}
+
         <div className="footer-bottom">
           <span className="footer-brand-inline">
             <span className="brand-name">Rumah<span>Ya</span></span>
