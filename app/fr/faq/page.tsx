@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
 import { getFaqs } from '@/lib/faq';
-import FaqClient from './faq-client';
+import FaqClient from '../../faq/faq-client';
 
 export const metadata: Metadata = {
-  title: 'FAQ — Buying Property in Lombok as a European | RumahYa',
+  title: 'FAQ — Acheter un bien à Lombok en tant qu\'Européen | RumahYa',
   description:
-    'Leasehold vs freehold, PT PMA setup, taxes, purchase process — an honest guide to foreign property investment in Lombok, Indonesia. For European buyers.',
+    'Leasehold vs freehold, création de PT PMA, taxes, processus d\'achat — un guide honnête sur l\'investissement immobilier étranger à Lombok, en Indonésie. Pour les acheteurs européens.',
   alternates: {
-    canonical: 'https://rumahya.com/faq',
+    canonical: 'https://rumahya.com/fr/faq',
     languages: {
       en: 'https://rumahya.com/faq',
       fr: 'https://rumahya.com/fr/faq',
@@ -16,18 +16,19 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'Lombok Property FAQ for European Investors | RumahYa',
+    title: 'FAQ immobilière à Lombok pour investisseurs européens | RumahYa',
     description:
-      'Can foreigners buy in Lombok? How does leasehold work? Do I need a PT PMA? Clear, practical answers for European property investors.',
-    url: 'https://rumahya.com/faq',
+      'Un étranger peut-il acheter à Lombok ? Comment fonctionne le leasehold ? Ai-je besoin d\'une PT PMA ? Des réponses claires et concrètes pour les investisseurs immobiliers européens.',
+    url: 'https://rumahya.com/fr/faq',
     type: 'website',
+    locale: 'fr_FR',
   },
 };
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: getFaqs('en').map(item => ({
+  mainEntity: getFaqs('fr').map(item => ({
     '@type': 'Question',
     name: item.question,
     acceptedAnswer: {
@@ -37,14 +38,14 @@ const jsonLd = {
   })),
 };
 
-export default function FaqPage() {
+export default function FaqPageFR() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <FaqClient locale="en" />
+      <FaqClient locale="fr" />
     </>
   );
 }

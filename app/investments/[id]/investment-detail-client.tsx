@@ -186,7 +186,7 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
         <button
           type="button"
           onClick={() => setShareOpen(true)}
-          aria-label="Share this listing"
+          aria-label={t.ui.share}
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
             padding: '8px 16px', borderRadius: 999,
@@ -195,7 +195,7 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
             fontFamily: 'inherit', fontSize: '0.82rem', fontWeight: 600,
           }}
         >
-          🔗 Share
+          🔗 {t.ui.share}
         </button>
       </div>
 
@@ -358,7 +358,7 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
         </div>
       </div>
 
-      <SharePopup url={shareUrl} title={data.title} open={shareOpen} onClose={() => setShareOpen(false)} />
+      <SharePopup url={shareUrl} title={data.title} open={shareOpen} onClose={() => setShareOpen(false)} locale={locale} />
 
       {/* Lightbox */}
       {lightbox && cur && !cur.isVideo && (

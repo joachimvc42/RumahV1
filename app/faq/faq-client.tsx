@@ -1,27 +1,31 @@
 'use client';
 
 import { useState } from 'react';
-import { faqs } from '@/lib/faq';
+import { getFaqs } from '@/lib/faq';
+import { getDict, type Locale } from '@/lib/i18n';
 
-export default function FaqClient() {
+const WA_NUMBER = '6287873487940';
+
+export default function FaqClient({ locale = 'en' }: { locale?: Locale }) {
   const [open, setOpen] = useState<number | null>(null);
+  const t = getDict(locale);
+  const faqs = getFaqs(locale);
 
   const toggle = (i: number) => setOpen(prev => (prev === i ? null : i));
+
+  const waHref = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(t.faq.waMsg)}`;
 
   return (
     <main>
       {/* Hero */}
       <section className="faq-hero">
         <div className="container">
-          <p className="eyebrow" style={{ marginBottom: 16 }}>Investor FAQ</p>
+          <p className="eyebrow" style={{ marginBottom: 16 }}>{t.faq.eyebrow}</p>
           <h1 className="faq-hero-title">
-            Buying Property in Lombok:<br />
-            <em>Your Questions Answered</em>
+            {t.faq.titleA}<br />
+            <em>{t.faq.titleEm}</em>
           </h1>
-          <p className="faq-hero-lead">
-            Leasehold, freehold, PT PMA, taxes — a clear, honest guide to how foreign property
-            purchase actually works in Lombok, Indonesia.
-          </p>
+          <p className="faq-hero-lead">{t.faq.lead}</p>
         </div>
       </section>
 
@@ -62,16 +66,14 @@ export default function FaqClient() {
 
           {/* Bottom CTA */}
           <div className="faq-cta">
-            <p className="faq-cta-text">
-              Still have questions about your specific situation?
-            </p>
+            <p className="faq-cta-text">{t.faq.ctaText}</p>
             <a
-              href="https://wa.me/6287873487940?text=I%20have%20a%20question%20about%20buying%20property%20in%20Lombok"
+              href={waHref}
               className="btn-primary"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Ask us directly — no obligation
+              {t.faq.ctaButton}
             </a>
           </div>
         </div>

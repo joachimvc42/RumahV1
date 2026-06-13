@@ -112,7 +112,7 @@ function InvCard({ item, locale, onOpen }: { item: Item; locale: Locale; onOpen?
     setShareOpen(true);
   };
 
-  const waMsg = encodeURIComponent(`Hi, I'm interested in ${item.title}`);
+  const waMsg = encodeURIComponent(`${t.ui.waInterested} ${item.title}`);
   const waUrl = `https://wa.me/${WA_NUMBER}?text=${waMsg}`;
 
   const { main: priceMain, approx: priceApprox } = dualPrice(item.price, item.currency, item.type === 'land' ? '/are' : '');
@@ -231,7 +231,7 @@ function InvCard({ item, locale, onOpen }: { item: Item; locale: Locale; onOpen?
           {priceApprox && <p className="lc2-price-year">{priceApprox}</p>}
           {totalPrice && (
             <p className="lc2-price-total">
-              <span className="lc2-price-total-label">Total · </span>
+              <span className="lc2-price-total-label">{t.ui.total} · </span>
               {totalPrice.main} <span className="lc2-price-total-approx">· {totalPrice.approx}</span>
             </p>
           )}
@@ -243,15 +243,15 @@ function InvCard({ item, locale, onOpen }: { item: Item; locale: Locale; onOpen?
         {item.reference && <p className="lc2-ref">{item.reference}</p>}
 
         <div className="lc2-ctas">
-          <button type="button" onClick={onShare} className="lc2-btn-detail" aria-label="Share">
-            🔗 Share
+          <button type="button" onClick={onShare} className="lc2-btn-detail" aria-label={t.ui.share}>
+            🔗 {t.ui.share}
           </button>
           <a href={waUrl} target="_blank" rel="noopener noreferrer" className="lc2-btn-wa">
             💬 WhatsApp
           </a>
         </div>
       </div>
-      <SharePopup url={shareUrl} title={item.title} open={shareOpen} onClose={() => setShareOpen(false)} />
+      <SharePopup url={shareUrl} title={item.title} open={shareOpen} onClose={() => setShareOpen(false)} locale={locale} />
     </div>
   );
 }
@@ -569,16 +569,16 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
                   {hasActiveFilters && <span> · {t.inv.filtered}</span>}
                 </p>
                 <div className="sort-row">
-                  <span className="sort-label">Sort by</span>
+                  <span className="sort-label">{t.ui.sortBy}</span>
                   <select
                     className="sort-select"
                     value={sortBy}
                     onChange={e => setSortBy(e.target.value as SortBy)}
-                    aria-label="Sort investments"
+                    aria-label={t.ui.sortBy}
                   >
-                    <option value="recent">Most recent</option>
-                    <option value="price_asc">Price ↑</option>
-                    <option value="price_desc">Price ↓</option>
+                    <option value="recent">{t.ui.sortRecent}</option>
+                    <option value="price_asc">{t.ui.sortPriceAsc}</option>
+                    <option value="price_desc">{t.ui.sortPriceDesc}</option>
                   </select>
                 </div>
               </div>

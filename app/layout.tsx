@@ -97,29 +97,48 @@ export const metadata: Metadata = {
 
 const organizationJsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'RealEstateAgent',
-  name: 'RumahYa',
-  url: BASE_URL,
-  logo: `${BASE_URL}/og-image.jpg`,
-  image: `${BASE_URL}/og-image.jpg`,
-  description:
-    'Long-term villa rentals and land investments in Lombok, Indonesia. Local expertise, verified titles, on-the-ground coordination.',
-  areaServed: {
-    '@type': 'Place',
-    name: 'Lombok, Indonesia',
-  },
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Lombok',
-    addressCountry: 'ID',
-  },
-  contactPoint: {
-    '@type': 'ContactPoint',
-    telephone: '+62-878-7348-7940',
-    contactType: 'customer service',
-    availableLanguage: ['en', 'fr', 'es'],
-  },
-  sameAs: [],
+  '@graph': [
+    {
+      '@type': 'RealEstateAgent',
+      '@id': `${BASE_URL}/#organization`,
+      name: 'RumahYa',
+      url: BASE_URL,
+      logo: `${BASE_URL}/og-image.jpg`,
+      image: `${BASE_URL}/og-image.jpg`,
+      email: 'info@rumahya.com',
+      description:
+        'Long-term villa rentals and land investments in Lombok, Indonesia. Local expertise, verified titles, on-the-ground coordination.',
+      knowsLanguage: ['en', 'fr', 'es'],
+      areaServed: {
+        '@type': 'Place',
+        name: 'Lombok, Indonesia',
+      },
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Lombok',
+        addressRegion: 'West Nusa Tenggara',
+        addressCountry: 'ID',
+      },
+      contactPoint: {
+        '@type': 'ContactPoint',
+        telephone: '+62-878-7348-7940',
+        email: 'info@rumahya.com',
+        contactType: 'customer service',
+        availableLanguage: ['en', 'fr', 'es'],
+      },
+      sameAs: [],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${BASE_URL}/#website`,
+      url: BASE_URL,
+      name: 'RumahYa',
+      description:
+        'Curated land and villa investments in Lombok, Indonesia. Verified titles, realistic yields, local coordination.',
+      publisher: { '@id': `${BASE_URL}/#organization` },
+      inLanguage: ['en', 'fr', 'es'],
+    },
+  ],
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

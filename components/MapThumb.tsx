@@ -17,7 +17,7 @@ export default function MapThumb({ lat, lng, size = 320 }: MapThumbProps) {
     <div style={s.wrapper}>
       <img
         src={src}
-        alt="Map"
+        alt="Map showing the property location in Lombok"
         style={s.img}
         loading="lazy"
       />

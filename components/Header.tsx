@@ -89,7 +89,7 @@ export default function Header() {
   const investmentsHref = prefixFor(locale, '/opportunities');
   const mapHref = prefixFor(locale, '/map');
   const aboutHref = prefixFor(locale, '/about');
-  const faqHref = '/faq';
+  const faqHref = prefixFor(locale, '/faq');
   const isActive = (href: string) => {
     if (href === homeHref) return rest === '/' || rest === '';
     const checkRest = href.replace(/^\/(fr|es)/, '') || '/';
@@ -163,7 +163,7 @@ export default function Header() {
                   title="RumahYa Rentals"
                   onClick={closeMenu}
                 >
-                  Rentals →
+                  {t.nav.rentals} →
                 </a>
 
                 {/* Dark mode toggle */}

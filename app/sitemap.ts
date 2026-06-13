@@ -16,7 +16,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}${prefix}/investments`, lastModified: new Date(), changeFrequency: 'daily', priority: prefix === '' ? 0.9 : 0.8 },
     { url: `${BASE_URL}${prefix}/map`, lastModified: new Date(), changeFrequency: 'daily', priority: prefix === '' ? 0.8 : 0.7 },
     { url: `${BASE_URL}${prefix}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: prefix === '' ? 0.7 : 0.6 },
-    { url: `${BASE_URL}/faq`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${BASE_URL}${prefix}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE_URL}${prefix}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
   ]);
@@ -35,9 +34,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
-  const faqRoute: MetadataRoute.Sitemap = [
-    { url: `${BASE_URL}/faq`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-  ];
+  // FAQ — one entry per locale (the FR/ES FAQ pages were missing from the sitemap)
+  const faqRoute: MetadataRoute.Sitemap = LOCALE_PREFIXES.map(prefix => ({
+    url: `${BASE_URL}${prefix}/faq`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: prefix === '' ? 0.8 : 0.7,
+  }));
 
   return [...staticRoutes, ...faqRoute, ...investmentRoutes];
 }

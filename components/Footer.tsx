@@ -40,16 +40,16 @@ export default function Footer({ site = 'invest' }: FooterProps) {
         {/* Cross-site link */}
         {isRentals ? (
           <div className="footer-crosslink">
-            Looking to invest in Lombok?{' '}
+            {t.footer.crosslinkInvestQ}{' '}
             <a href="https://rumahya.com" className="footer-crosslink-a">
-              Visit RumahYa Investments →
+              {t.footer.crosslinkInvestCta}
             </a>
           </div>
         ) : (
           <div className="footer-crosslink">
-            Looking for long-term rentals?{' '}
+            {t.footer.crosslinkRentalsQ}{' '}
             <a href="https://rentals.rumahya.com" className="footer-crosslink-a">
-              Visit RumahYa Rentals →
+              {t.footer.crosslinkRentalsCta}
             </a>
           </div>
         )}

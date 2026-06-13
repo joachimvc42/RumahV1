@@ -250,11 +250,11 @@ export default function AboutClient({ locale = 'en' }: { locale?: Locale }) {
           </Reveal>
           <Reveal delay={80}>
             <blockquote>
-              Buying land with RumahYa was <em>really easy</em>. The process was smooth and their advice made sense without being honeyed.
+              {t.about.testiQuoteA}<em>{t.about.testiQuoteEm}</em>{t.about.testiQuoteB}
             </blockquote>
           </Reveal>
           <Reveal delay={180}>
-            <p className="nr-testi-src">European buyer · South Lombok · 2025</p>
+            <p className="nr-testi-src">{t.about.testiSource}</p>
           </Reveal>
         </div>
       </section>

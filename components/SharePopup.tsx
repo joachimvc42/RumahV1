@@ -1,16 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getDict, type Locale } from '../lib/i18n';
 
 type Props = {
   url: string;
   title: string;
   open: boolean;
   onClose: () => void;
+  locale?: Locale;
 };
 
-export default function SharePopup({ url, title, open, onClose }: Props) {
+export default function SharePopup({ url, title, open, onClose, locale = 'en' }: Props) {
   const [copied, setCopied] = useState(false);
+  const t = getDict(locale).share;
 
   // Reset copied state on close
   useEffect(() => { if (!open) setCopied(false); }, [open]);
@@ -68,7 +71,7 @@ export default function SharePopup({ url, title, open, onClose }: Props) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      window.prompt('Copy link:', url);
+      window.prompt(t.copyPrompt, url);
     }
   };
 
@@ -78,11 +81,11 @@ export default function SharePopup({ url, title, open, onClose }: Props) {
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label="Share"
+      aria-label={t.title}
     >
       <div className="share-panel" onClick={e => e.stopPropagation()}>
-        <button className="share-close" onClick={onClose} aria-label="Close">×</button>
-        <h3 className="share-title">Share</h3>
+        <button className="share-close" onClick={onClose} aria-label={t.close}>×</button>
+        <h3 className="share-title">{t.title}</h3>
         <p className="share-subtitle">{title}</p>
 
         <div className="share-channels">
@@ -104,7 +107,7 @@ export default function SharePopup({ url, title, open, onClose }: Props) {
         <div className="share-copy-row">
           <input className="share-url" value={url} readOnly onClick={e => (e.target as HTMLInputElement).select()} />
           <button className="share-copy-btn" onClick={onCopy} type="button">
-            {copied ? '✓ Copied' : 'Copy'}
+            {copied ? t.copied : t.copy}
           </button>
         </div>
       </div>
