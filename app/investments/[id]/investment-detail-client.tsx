@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import { dualPrice } from '../../../lib/priceUtils';
 import MapView from '../../../components/MapView';
+import SharePopup from '../../../components/SharePopup';
 import { getDict, prefixFor, type Locale } from '../../../lib/i18n';
 
 const WA_NUMBER = '6287873487940';
@@ -18,7 +19,7 @@ type InvestmentData = {
   leaseYears: number | null; expectedYield: number | null; legalChecked: boolean;
   managementAvailable: boolean; media: MediaItem[];
   bedrooms?: number; bathrooms?: number; builtArea?: number; landArea?: number;
-  pool?: boolean; garden?: boolean; furnished?: boolean; landSize?: string;
+  pool?: boolean; garden?: boolean; furnished?: boolean; seaView?: boolean; landSize?: string;
   latitude?: number | null; longitude?: number | null;
 };
 
@@ -36,10 +37,15 @@ function buildMedia(images: string[], videos: string[]): MediaItem[] {
 export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Locale }) {
   const t = getDict(locale);
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [data, setData] = useState<InvestmentData | null>(null);
   const [loading, setLoading] = useState(true);
   const [idx, setIdx] = useState(0);
   const [lightbox, setLightbox] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+
+  useEffect(() => { setShareUrl(window.location.href); }, [id]);
 
   useEffect(() => {
     if (data?.title) {
@@ -66,7 +72,7 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
             media: buildMedia(prop.images || [], prop.videos || []),
             bedrooms: prop.bedrooms, bathrooms: prop.bathrooms,
             builtArea: prop.built_area, landArea: prop.land_area,
-            pool: prop.pool, garden: prop.garden, furnished: prop.furnished,
+            pool: prop.pool, garden: prop.garden, furnished: prop.furnished, seaView: prop.sea_view,
             latitude: prop.latitude, longitude: prop.longitude,
           };
         }
@@ -81,7 +87,7 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
             leaseYears: land.lease_years, expectedYield: inv.expected_yield,
             legalChecked: inv.legal_checked, managementAvailable: inv.management_available,
             media: buildMedia(land.images || [], land.videos || []),
-            landSize: land.land_size,
+            landSize: land.land_size, seaView: land.sea_view,
             latitude: land.latitude, longitude: land.longitude,
           };
         }
@@ -106,6 +112,18 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
   }, [lightbox, data]);
 
   const backHref = prefixFor(locale, '/opportunities');
+
+  // Go back without losing the visitor's place: history back returns to the
+  // listing, which restores its own filters, results and scroll position
+  // (persisted in sessionStorage by the listing page). Direct visits fall
+  // back to a normal navigation.
+  const goBack = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1 && document.referrer.startsWith(window.location.origin)) {
+      router.back();
+    } else {
+      router.push(backHref);
+    }
+  };
 
   if (loading) return (
     <main className="detail-page">
@@ -156,7 +174,30 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
   return (
     <main className="detail-page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ldJson) }} />
-      <Link href={backHref} className="detail-back">← {t.detail.investmentsBack}</Link>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+        <button
+          type="button"
+          onClick={goBack}
+          className="detail-back"
+          style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'inherit' }}
+        >
+          ← {t.detail.investmentsBack}
+        </button>
+        <button
+          type="button"
+          onClick={() => setShareOpen(true)}
+          aria-label="Share this listing"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '8px 16px', borderRadius: 999,
+            background: 'var(--bg-warm, #f7f4ee)', color: 'var(--text, #1f2937)',
+            border: '1px solid var(--border, #e5e7eb)', cursor: 'pointer',
+            fontFamily: 'inherit', fontSize: '0.82rem', fontWeight: 600,
+          }}
+        >
+          🔗 Share
+        </button>
+      </div>
 
       <div className="detail-layout">
         {/* Gallery */}
@@ -271,11 +312,18 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
             </div>
           )}
 
-          {data.type === 'villa' && (data.pool || data.garden || data.furnished) && (
+          {data.type === 'villa' && (data.pool || data.garden || data.furnished || data.seaView) && (
             <div className="detail-amenities">
               {data.pool && <span className="detail-amenity">{t.detail.amenities.pool}</span>}
               {data.garden && <span className="detail-amenity">{t.detail.amenities.garden}</span>}
               {data.furnished && <span className="detail-amenity">{t.detail.amenities.furnished}</span>}
+              {data.seaView && <span className="detail-amenity">🌊 {t.detail.amenities.seaView}</span>}
+            </div>
+          )}
+
+          {data.type === 'land' && data.seaView && (
+            <div className="detail-amenities">
+              <span className="detail-amenity">🌊 {t.detail.amenities.seaView}</span>
             </div>
           )}
 
@@ -309,6 +357,8 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
           </div>
         </div>
       </div>
+
+      <SharePopup url={shareUrl} title={data.title} open={shareOpen} onClose={() => setShareOpen(false)} />
 
       {/* Lightbox */}
       {lightbox && cur && !cur.isVideo && (

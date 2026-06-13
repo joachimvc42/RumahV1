@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '../../../../../lib/supabaseClient';
+import { uploadFileWithProgress, makeProgressTracker } from '../../../../../lib/supabaseStorage';
+import { partitionValidFiles } from '../../../../../lib/mediaValidation';
 import { normalizeStatus, type PropertyStatus } from '../../../../../lib/statusUtils';
 import { readFileAsDataURL, type SortableGalleryItem } from '../../../../../lib/galleryUtils';
 import AdminImageGallery from '../../../../../components/admin/AdminImageGallery';
@@ -33,6 +35,7 @@ export default function NewInvestmentPage() {
   const [pool, setPool] = useState(false);
   const [garden, setGarden] = useState(false);
   const [furnished, setFurnished] = useState(true);
+  const [seaView, setSeaView] = useState(false);
   const [hasWater, setHasWater] = useState(false);
   const [hasElectricity, setHasElectricity] = useState(false);
   const [hasRoad, setHasRoad] = useState(false);
@@ -50,33 +53,40 @@ export default function NewInvestmentPage() {
   const [lng, setLng] = useState<number | null>(null);
 
   const [galleryItems, setGalleryItems] = useState<SortableGalleryItem[]>([]);
-  const [uploadProgress, setUploadProgress] = useState(0);
-
   const [videoItems, setVideoItems] = useState<VideoItem[]>([]);
-  const [videoProgress, setVideoProgress] = useState(0);
+
+  // Single accurate save-progress: byte-weighted across ALL media (photos + videos).
+  const [uploadPct, setUploadPct] = useState(0);
+  const [savePhase, setSavePhase] = useState<'idle' | 'uploading' | 'finalizing'>('idle');
+  const [imageError, setImageError] = useState<string | null>(null);
+  const [videoError, setVideoError] = useState<string | null>(null);
 
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
+    const { valid, error: rejectMsg } = partitionValidFiles(files, 'image');
+    setImageError(rejectMsg);
     const added: SortableGalleryItem[] = [];
-    for (const file of files) {
+    for (const file of valid) {
       const previewSrc = await readFileAsDataURL(file);
       added.push({ id: crypto.randomUUID(), previewSrc, file, mediaType: 'image' as const });
     }
-    setGalleryItems(prev => [...prev, ...added]);
+    if (added.length > 0) setGalleryItems(prev => [...prev, ...added]);
     e.target.value = '';
   };
 
   const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
-    const added: VideoItem[] = files.map(file => ({
+    const { valid, error: rejectMsg } = partitionValidFiles(files, 'video');
+    setVideoError(rejectMsg);
+    const added: VideoItem[] = valid.map(file => ({
       id: crypto.randomUUID(),
       previewSrc: URL.createObjectURL(file),
       file,
       name: file.name,
     }));
-    setVideoItems(prev => [...prev, ...added]);
+    if (added.length > 0) setVideoItems(prev => [...prev, ...added]);
     e.target.value = '';
   };
 
@@ -88,55 +98,46 @@ export default function NewInvestmentPage() {
     });
   };
 
-  const uploadImages = async (assetId: string): Promise<string[]> => {
+  // Uploads photos + videos with REAL byte progress. The bar only reaches 100%
+  // once every byte is on the server — no more "100% while the video still uploads".
+  const uploadAllMedia = async (assetId: string): Promise<{ imageUrls: string[]; videoUrls: string[] }> => {
     const bucket = assetType === 'villa' ? 'properties' : 'lands';
-    const urls: string[] = [];
-    for (let i = 0; i < galleryItems.length; i++) {
-      const file = galleryItems[i].file;
-      if (!file) continue;
+    const imageFiles = galleryItems.filter(g => g.file).map(g => g.file!) ;
+    const videoFiles = videoItems.map(v => v.file);
+    const totalBytes = [...imageFiles, ...videoFiles].reduce((sum, f) => sum + f.size, 0);
+    const tracker = makeProgressTracker(totalBytes, setUploadPct);
+
+    const imageUrls: string[] = [];
+    for (let i = 0; i < imageFiles.length; i++) {
+      const file = imageFiles[i];
       const ext = file.name.split('.').pop();
       const path = `investments/${assetId}/${Date.now()}_${i}.${ext}`;
-      const { error } = await supabase.storage.from(bucket).upload(path, file);
-      if (error) throw new Error(`Upload failed: ${error.message}`);
-      const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-      urls.push(data.publicUrl);
-      setUploadProgress(Math.round(((i + 1) / galleryItems.length) * 100));
+      const t = tracker.track(file.size);
+      const url = await uploadFileWithProgress(bucket, path, file, t.onProgress);
+      t.done();
+      imageUrls.push(url);
     }
-    return urls;
-  };
 
-  const uploadVideos = async (assetId: string): Promise<string[]> => {
-    const bucket = assetType === 'villa' ? 'properties' : 'lands';
-    const total = videoItems.length;
-    const urls: string[] = [];
-    let tick: ReturnType<typeof setInterval> | null = null;
-    try {
-      for (let i = 0; i < total; i++) {
-        const { file, name } = videoItems[i];
-        const ext = name.split('.').pop();
-        const path = `investments/${assetId}/videos/${Date.now()}_${i}.${ext}`;
-        const trickleTarget = Math.round(((i + 0.85) / total) * 100);
-        setVideoProgress(Math.max(Math.round((i / total) * 100) + 2, 2));
-        tick = setInterval(() => setVideoProgress(p => (p < trickleTarget ? p + 1 : p)), 400);
-        const { error } = await supabase.storage.from(bucket).upload(path, file, { contentType: file.type });
-        clearInterval(tick); tick = null;
-        if (error) throw new Error(`Upload failed: ${error.message}`);
-        const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-        urls.push(data.publicUrl);
-        setVideoProgress(Math.round(((i + 1) / total) * 100));
-      }
-    } finally {
-      if (tick) clearInterval(tick);
+    const videoUrls: string[] = [];
+    for (let i = 0; i < videoFiles.length; i++) {
+      const file = videoFiles[i];
+      const ext = videoItems[i].name.split('.').pop();
+      const path = `investments/${assetId}/videos/${Date.now()}_${i}.${ext}`;
+      const t = tracker.track(file.size);
+      const url = await uploadFileWithProgress(bucket, path, file, t.onProgress);
+      t.done();
+      videoUrls.push(url);
     }
-    return urls;
+
+    return { imageUrls, videoUrls };
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setUploadProgress(0);
-    setVideoProgress(0);
+    setUploadPct(0);
+    setSavePhase('uploading');
 
     try {
       let assetId: string;
@@ -151,6 +152,7 @@ export default function NewInvestmentPage() {
             built_area: builtArea ? Number(builtArea) : null,
             land_area: landArea ? Number(landArea) : null,
             pool, garden, furnished,
+            sea_view: seaView,
             price: currency === 'IDR' ? Number(price) * 1_000_000 : Number(price),
             currency, tenure,
             lease_years: tenure === 'leasehold' ? Number(leaseDuration) : null,
@@ -165,13 +167,14 @@ export default function NewInvestmentPage() {
         if (propertyError) throw propertyError;
         assetId = propertyData.id;
 
-        const imageUrls = galleryItems.length > 0 ? await uploadImages(assetId) : [];
-        const videoUrls = videoItems.length > 0 ? await uploadVideos(assetId) : [];
+        const { imageUrls, videoUrls } = await uploadAllMedia(assetId);
+        setSavePhase('finalizing');
         const updatePayload: Record<string, any> = {};
         if (imageUrls.length > 0) updatePayload.images = imageUrls;
         if (videoUrls.length > 0) updatePayload.videos = videoUrls;
         if (Object.keys(updatePayload).length > 0) {
-          await supabase.from('properties').update(updatePayload).eq('id', assetId);
+          const { error: updateErr } = await supabase.from('properties').update(updatePayload).eq('id', assetId);
+          if (updateErr) throw updateErr;
         }
       } else {
         const { data: landData, error: landError } = await supabase
@@ -184,6 +187,7 @@ export default function NewInvestmentPage() {
             lease_years: tenure === 'leasehold' ? Number(leaseDuration) : null,
             status: normalizeStatus(status),
             zoning: 'investment',
+            sea_view: seaView,
             has_water: hasWater,
             has_electricity: hasElectricity,
             has_road: hasRoad,
@@ -196,8 +200,8 @@ export default function NewInvestmentPage() {
         if (landError) throw landError;
         assetId = landData.id;
 
-        const imageUrls = galleryItems.length > 0 ? await uploadImages(assetId) : [];
-        const videoUrls = videoItems.length > 0 ? await uploadVideos(assetId) : [];
+        const { imageUrls, videoUrls } = await uploadAllMedia(assetId);
+        setSavePhase('finalizing');
         const updatePayload: Record<string, any> = {};
         if (imageUrls.length > 0) updatePayload.images = imageUrls;
         if (videoUrls.length > 0) updatePayload.videos = videoUrls;
@@ -221,8 +225,10 @@ export default function NewInvestmentPage() {
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'Failed to create investment');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setLoading(false);
+      setSavePhase('idle');
     }
   };
 
@@ -267,6 +273,7 @@ export default function NewInvestmentPage() {
                 <label style={s.checkbox}><input type="checkbox" checked={pool} onChange={e => setPool(e.target.checked)} /><span>🏊 Pool</span></label>
                 <label style={s.checkbox}><input type="checkbox" checked={garden} onChange={e => setGarden(e.target.checked)} /><span>🌳 Garden</span></label>
                 <label style={s.checkbox}><input type="checkbox" checked={furnished} onChange={e => setFurnished(e.target.checked)} /><span>🛋️ Furnished</span></label>
+                <label style={s.checkbox}><input type="checkbox" checked={seaView} onChange={e => setSeaView(e.target.checked)} /><span>🌊 Sea view</span></label>
               </div>
             </>
           )}
@@ -277,6 +284,7 @@ export default function NewInvestmentPage() {
                 <label style={s.checkbox}><input type="checkbox" checked={hasWater} onChange={e => setHasWater(e.target.checked)} /><span>💧 Water access</span></label>
                 <label style={s.checkbox}><input type="checkbox" checked={hasElectricity} onChange={e => setHasElectricity(e.target.checked)} /><span>⚡ Electricity</span></label>
                 <label style={s.checkbox}><input type="checkbox" checked={hasRoad} onChange={e => setHasRoad(e.target.checked)} /><span>🛣️ Road access</span></label>
+                <label style={s.checkbox}><input type="checkbox" checked={seaView} onChange={e => setSeaView(e.target.checked)} /><span>🌊 Sea view</span></label>
               </div>
             </>
           )}
@@ -354,10 +362,12 @@ export default function NewInvestmentPage() {
               <span style={{ fontSize: 12, color: '#6b7280' }}>PNG, JPG up to 10MB each</span>
             </label>
           </div>
-          <AdminImageGallery items={galleryItems} onChange={setGalleryItems} />
-          {uploadProgress > 0 && uploadProgress < 100 && (
-            <div style={s.progressBar}><div style={{ ...s.progressFill, width: `${uploadProgress}%` }} /></div>
+          {imageError && (
+            <div style={s.mediaError} role="alert">
+              ⚠️ {imageError.split('\n').map((line, i) => <div key={i}>{line}</div>)}
+            </div>
           )}
+          <AdminImageGallery items={galleryItems} onChange={setGalleryItems} />
         </section>
 
         {/* ── Videos ── */}
@@ -372,6 +382,11 @@ export default function NewInvestmentPage() {
               <span style={{ fontSize: 12, color: '#6b7280' }}>MP4, MOV, WebM — max 200MB each</span>
             </label>
           </div>
+          {videoError && (
+            <div style={s.mediaError} role="alert">
+              ⚠️ {videoError.split('\n').map((line, i) => <div key={i}>{line}</div>)}
+            </div>
+          )}
           {videoItems.length > 0 && (
             <div style={s.videoGrid}>
               {videoItems.map(item => (
@@ -383,16 +398,32 @@ export default function NewInvestmentPage() {
               ))}
             </div>
           )}
-          {videoProgress > 0 && videoProgress < 100 && (
-            <div style={s.progressBar}><div style={{ ...s.progressFill, width: `${videoProgress}%`, background: 'linear-gradient(90deg,#7c3aed,#a855f7)' }} /></div>
-          )}
         </section>
 
+        {/* ── Save progress ── */}
+        {loading && (
+          <div style={s.saveProgressBox}>
+            <div style={s.saveProgressHead}>
+              <span style={s.saveProgressLabel}>
+                {savePhase === 'finalizing' ? '✓ Media uploaded — finalizing…' : 'Uploading media…'}
+              </span>
+              {savePhase === 'uploading' && <span style={s.saveProgressPct}>{uploadPct}%</span>}
+            </div>
+            <div style={s.progressBar}>
+              <div style={{ ...s.progressFill, width: savePhase === 'finalizing' ? '100%' : `${uploadPct}%` }} />
+            </div>
+            <p style={s.saveProgressHint}>Keep this page open until the save completes.</p>
+          </div>
+        )}
+
         {/* ── Actions ── */}
+        {error && <div style={s.error}>{error}</div>}
         <div className="adm-actions">
           <button type="button" onClick={() => router.back()} style={s.btnSecondary}>Cancel</button>
-          <button type="submit" disabled={loading} style={s.btnPrimary}>
-            {loading ? `Creating… (${Math.max(uploadProgress, videoProgress)}%)` : '✓ Create investment'}
+          <button type="submit" disabled={loading} style={{ ...s.btnPrimary, opacity: loading ? 0.7 : 1 }}>
+            {loading
+              ? (savePhase === 'finalizing' ? 'Finalizing…' : `Uploading… ${uploadPct}%`)
+              : '✓ Create investment'}
           </button>
         </div>
       </form>
@@ -438,8 +469,14 @@ const s: { [key: string]: React.CSSProperties } = {
   videoMeta: { display: 'flex', alignItems: 'center', padding: '8px 12px', background: '#1f2937' },
   videoName: { fontSize: 12, color: '#9ca3af', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const, flex: 1 },
   removeBtn: { position: 'absolute', top: 8, right: 8, width: 28, height: 28, borderRadius: '50%', background: 'rgba(0,0,0,0.7)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  progressBar: { height: 6, background: '#e5e7eb', borderRadius: 3, marginTop: 16, overflow: 'hidden' },
+  progressBar: { height: 8, background: '#e5e7eb', borderRadius: 4, overflow: 'hidden' },
   progressFill: { height: '100%', background: 'linear-gradient(90deg,#f59e0b,#d97706)', transition: 'width 0.3s' },
+  mediaError: { background: '#fef2f2', border: '1px solid #fca5a5', color: '#b91c1c', padding: '12px 16px', borderRadius: 10, marginTop: 12, fontSize: 13, lineHeight: 1.5, whiteSpace: 'pre-line' as const },
+  saveProgressBox: { background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 12, padding: '16px 20px', display: 'flex', flexDirection: 'column' as const, gap: 8 },
+  saveProgressHead: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
+  saveProgressLabel: { fontSize: 14, fontWeight: 600, color: '#92400e' },
+  saveProgressPct: { fontSize: 14, fontWeight: 800, color: '#b45309', fontVariantNumeric: 'tabular-nums' as const },
+  saveProgressHint: { fontSize: 12, color: '#a16207', margin: 0 },
   actions: { display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 8 },
   btnPrimary: { padding: '14px 28px', background: 'linear-gradient(135deg,#f59e0b,#d97706)', color: '#fff', border: 'none', borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 14px rgba(245,158,11,0.3)' },
   btnSecondary: { padding: '14px 28px', background: '#f3f4f6', color: '#374151', border: '2px solid #e5e7eb', borderRadius: 12, fontSize: 15, fontWeight: 600, cursor: 'pointer' },

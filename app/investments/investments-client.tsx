@@ -12,9 +12,16 @@ import DualRangeSlider from '../../components/DualRangeSlider';
 const WA_NUMBER = '6287873487940';
 
 const AMENITY_ICONS: Record<string, string> = {
-  pool: '🏊', garden: '🌿', furnished: '🛋️',
+  pool: '🏊', garden: '🌿', furnished: '🛋️', seaView: '🌊',
   water: '💧', electricity: '⚡', road: '🛣️',
 };
+
+/* sessionStorage keys: keep the visitor's filters, results and scroll position
+   so coming back from a listing detail doesn't restart the browsing session. */
+const FILTERS_KEY = 'rumahya:inv-filters';
+const SCROLL_KEY = 'rumahya:inv-scroll';
+const ITEMS_CACHE_KEY = 'rumahya:inv-items';
+const ITEMS_CACHE_TTL = 5 * 60_000;
 
 /* ─────────── Types ─────────── */
 type Item = {
@@ -23,7 +30,7 @@ type Item = {
   price: number; currency: string; tenure: 'freehold' | 'leasehold'; leaseYears?: number;
   expectedYield: number | null; images: string[]; href: string;
   bedrooms?: number | null; bathrooms?: number | null;
-  pool?: boolean; garden?: boolean; furnished?: boolean;
+  pool?: boolean; garden?: boolean; furnished?: boolean; seaView?: boolean;
   condition?: string; landSize?: number | null;
   hasWater?: boolean; hasElectricity?: boolean; hasRoad?: boolean;
   latitude?: number | null; longitude?: number | null;
@@ -31,8 +38,8 @@ type Item = {
 };
 
 type Search = { type: 'all' | 'villa' | 'land'; tenure: 'all' | 'freehold' | 'leasehold'; location: string };
-type VillaSidebar = { pool: boolean; garden: boolean; furnished: boolean; minBedrooms: string; minBathrooms: string };
-type LandSidebar = { hasWater: boolean; hasElectricity: boolean; hasRoad: boolean; sizeMin: number; sizeMax: number; priceMin: number; priceMax: number };
+type VillaSidebar = { pool: boolean; garden: boolean; furnished: boolean; seaView: boolean; minBedrooms: string; minBathrooms: string };
+type LandSidebar = { hasWater: boolean; hasElectricity: boolean; hasRoad: boolean; seaView: boolean; sizeMin: number; sizeMax: number; priceMin: number; priceMax: number };
 type SortBy = 'recent' | 'price_asc' | 'price_desc';
 
 /* ─────────── Reveal on scroll ─────────── */
@@ -69,7 +76,7 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 }
 
 /* ─────────── Investment card v2 ─────────── */
-function InvCard({ item, locale }: { item: Item; locale: Locale }) {
+function InvCard({ item, locale, onOpen }: { item: Item; locale: Locale; onOpen?: () => void }) {
   const t = getDict(locale);
   const [idx, setIdx] = useState(0);
   const [hover, setHover] = useState(false);
@@ -115,10 +122,11 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
 
   const villaAmenities = ([
     item.pool && 'pool', item.garden && 'garden', item.furnished && 'furnished',
+    item.seaView && 'seaView',
   ] as (string | false)[]).filter(Boolean) as string[];
 
   const villaAmenityLabels: Record<string, string> = {
-    pool: t.inv.pool, garden: t.inv.garden, furnished: t.inv.furnished,
+    pool: t.inv.pool, garden: t.inv.garden, furnished: t.inv.furnished, seaView: t.inv.seaView,
   };
 
   return (
@@ -139,7 +147,7 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
           </span>
         </div>
 
-        <Link href={item.href} className="lc2-media-link" aria-label={item.title}>
+        <Link href={item.href} className="lc2-media-link" aria-label={item.title} onClick={onOpen}>
           {item.images.length > 0 ? item.images.map((src, i) => {
             const prevIdx = (idx - 1 + item.images.length) % item.images.length;
             const nextIdx = (idx + 1) % item.images.length;
@@ -214,6 +222,7 @@ function InvCard({ item, locale }: { item: Item; locale: Locale }) {
             {item.hasWater && <span className="lc2-pill">{AMENITY_ICONS.water} {t.inv.water}</span>}
             {item.hasElectricity && <span className="lc2-pill">{AMENITY_ICONS.electricity} {t.inv.electricity}</span>}
             {item.hasRoad && <span className="lc2-pill">{AMENITY_ICONS.road} {t.inv.road}</span>}
+            {item.seaView && <span className="lc2-pill">{AMENITY_ICONS.seaView} {t.inv.seaView}</span>}
           </div>
         )}
 
@@ -254,10 +263,64 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<SortBy>('recent');
   const [search, setSearch] = useState<Search>({ type: 'all', tenure: 'all', location: '' });
-  const [villa, setVilla] = useState<VillaSidebar>({ pool: false, garden: false, furnished: false, minBedrooms: '', minBathrooms: '' });
-  const [land, setLand] = useState<LandSidebar>({ hasWater: false, hasElectricity: false, hasRoad: false, sizeMin: 1, sizeMax: 1000, priceMin: 1, priceMax: 1000 });
+  const [villa, setVilla] = useState<VillaSidebar>({ pool: false, garden: false, furnished: false, seaView: false, minBedrooms: '', minBathrooms: '' });
+  const [land, setLand] = useState<LandSidebar>({ hasWater: false, hasElectricity: false, hasRoad: false, seaView: false, sizeMin: 1, sizeMax: 1000, priceMin: 1, priceMax: 1000 });
+  const filtersRestored = useRef(false);
+  const scrollRestored = useRef(false);
+
+  // Restore filters/sort saved before navigating into a listing detail.
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(FILTERS_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw);
+        if (saved.search) setSearch(s => ({ ...s, ...saved.search }));
+        if (saved.villa) setVilla(v => ({ ...v, ...saved.villa }));
+        if (saved.land) setLand(l => ({ ...l, ...saved.land }));
+        if (saved.sortBy) setSortBy(saved.sortBy);
+      }
+    } catch { /* corrupt state — start fresh */ }
+    filtersRestored.current = true;
+  }, []);
+
+  // Persist filters/sort so "back" lands the visitor exactly where they were.
+  useEffect(() => {
+    if (!filtersRestored.current) return;
+    try {
+      sessionStorage.setItem(FILTERS_KEY, JSON.stringify({ search, villa, land, sortBy }));
+    } catch { /* storage full/blocked — non-blocking */ }
+  }, [search, villa, land, sortBy]);
+
+  // Once results are on screen, jump back to the saved scroll position (set when
+  // the visitor opened a listing) instead of restarting at the top of the page.
+  useEffect(() => {
+    if (loading || scrollRestored.current) return;
+    scrollRestored.current = true;
+    try {
+      const y = Number(sessionStorage.getItem(SCROLL_KEY) || 0);
+      sessionStorage.removeItem(SCROLL_KEY);
+      if (y > 0) requestAnimationFrame(() => window.scrollTo(0, y));
+    } catch { /* non-blocking */ }
+  }, [loading]);
+
+  const rememberPosition = () => {
+    try { sessionStorage.setItem(SCROLL_KEY, String(window.scrollY)); } catch { /* non-blocking */ }
+  };
 
   useEffect(() => {
+    // Serve cached results first (5 min TTL) so returning from a detail page
+    // is instant, then refresh from Supabase in the background.
+    try {
+      const raw = sessionStorage.getItem(`${ITEMS_CACHE_KEY}:${locale}`);
+      if (raw) {
+        const cached = JSON.parse(raw);
+        if (Date.now() - cached.t < ITEMS_CACHE_TTL && Array.isArray(cached.items) && cached.items.length > 0) {
+          setItems(cached.items);
+          setLoading(false);
+        }
+      }
+    } catch { /* corrupt cache — fetch normally */ }
+
     const load = async () => {
       try {
       const { data: investments, error: invErr } = await supabase.from('investments').select('*');
@@ -279,7 +342,7 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
             price: p.price || 0, currency: p.currency || 'USD', tenure: p.tenure || 'freehold',
             leaseYears: p.lease_years, expectedYield: inv.expected_yield, images: p.images || [],
             href: prefixFor(locale, `/opportunities/${inv.id}`), bedrooms: p.bedrooms, bathrooms: p.bathrooms,
-            pool: p.pool, garden: p.garden, furnished: p.furnished, condition: p.condition,
+            pool: p.pool, garden: p.garden, furnished: p.furnished, seaView: p.sea_view, condition: p.condition,
             latitude: p.latitude, longitude: p.longitude, description: p.description,
           });
         }
@@ -294,11 +357,15 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
             href: prefixFor(locale, `/opportunities/${inv.id}`),
             landSize: l.land_size ? Number(l.land_size) : null, condition: l.condition,
             hasWater: l.has_water, hasElectricity: l.has_electricity, hasRoad: l.has_road,
+            seaView: l.sea_view,
             latitude: l.latitude, longitude: l.longitude, description: l.description,
           });
         }
       }
       setItems(merged);
+      try {
+        sessionStorage.setItem(`${ITEMS_CACHE_KEY}:${locale}`, JSON.stringify({ t: Date.now(), items: merged }));
+      } catch { /* storage full/blocked — non-blocking */ }
       } catch (e) {
         console.error('invest load error:', e);
       } finally {
@@ -318,6 +385,7 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
       if (villa.pool && !item.pool) return false;
       if (villa.garden && !item.garden) return false;
       if (villa.furnished && !item.furnished) return false;
+      if (villa.seaView && !item.seaView) return false;
       if (villa.minBedrooms && (item.bedrooms ?? 0) < Number(villa.minBedrooms)) return false;
       if (villa.minBathrooms && (item.bathrooms ?? 0) < Number(villa.minBathrooms)) return false;
     }
@@ -325,6 +393,7 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
       if (land.hasWater && !item.hasWater) return false;
       if (land.hasElectricity && !item.hasElectricity) return false;
       if (land.hasRoad && !item.hasRoad) return false;
+      if (land.seaView && !item.seaView) return false;
       if (land.sizeMin > 1 && (item.landSize ?? 0) < land.sizeMin) return false;
       if (land.sizeMax < 1000 && item.landSize && item.landSize > land.sizeMax) return false;
       if (land.priceMin > 1 && item.price < land.priceMin * 1_000_000) return false;
@@ -340,12 +409,12 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
   });
 
   const resetFilters = () => {
-    setVilla({ pool: false, garden: false, furnished: false, minBedrooms: '', minBathrooms: '' });
-    setLand({ hasWater: false, hasElectricity: false, hasRoad: false, sizeMin: 1, sizeMax: 1000, priceMin: 1, priceMax: 1000 });
+    setVilla({ pool: false, garden: false, furnished: false, seaView: false, minBedrooms: '', minBathrooms: '' });
+    setLand({ hasWater: false, hasElectricity: false, hasRoad: false, seaView: false, sizeMin: 1, sizeMax: 1000, priceMin: 1, priceMax: 1000 });
   };
 
-  const hasActiveFilters = villa.pool || villa.garden || villa.furnished || !!villa.minBedrooms || !!villa.minBathrooms
-    || land.hasWater || land.hasElectricity || land.hasRoad
+  const hasActiveFilters = villa.pool || villa.garden || villa.furnished || villa.seaView || !!villa.minBedrooms || !!villa.minBathrooms
+    || land.hasWater || land.hasElectricity || land.hasRoad || land.seaView
     || land.sizeMin > 1 || land.sizeMax < 1000 || land.priceMin > 1 || land.priceMax < 1000;
 
   const resetAll = () => { resetFilters(); setSearch({ type: 'all', tenure: 'all', location: '' }); };
@@ -403,9 +472,9 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
                     <div className="inv-filterbar-group">
                       <span className="inv-filterbar-label">{t.inv.villaAmenities}</span>
                       <div className="inv-filterbar-chips">
-                        {(['pool', 'garden', 'furnished'] as const).map(key => {
-                          const icons = { pool: '🏊', garden: '🌿', furnished: '🛋️' };
-                          const labels = { pool: t.inv.pool, garden: t.inv.garden, furnished: t.inv.furnished };
+                        {(['pool', 'garden', 'furnished', 'seaView'] as const).map(key => {
+                          const icons = { pool: '🏊', garden: '🌿', furnished: '🛋️', seaView: '🌊' };
+                          const labels = { pool: t.inv.pool, garden: t.inv.garden, furnished: t.inv.furnished, seaView: t.inv.seaView };
                           return (
                             <button key={key} type="button"
                               className={`filter-chip ${villa[key] ? 'is-active' : ''}`}
@@ -445,7 +514,7 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
                   <div className="inv-filterbar-group">
                     <span className="inv-filterbar-label inv-filterbar-label--hide-mobile">{t.inv.utilities}</span>
                     <div className="inv-filterbar-chips">
-                      {([['hasWater', t.inv.water, '💧'], ['hasElectricity', t.inv.electricity, '⚡'], ['hasRoad', t.inv.road, '🛣️']] as [keyof LandSidebar, string, string][]).map(([key, label, icon]) => (
+                      {([['hasWater', t.inv.water, '💧'], ['hasElectricity', t.inv.electricity, '⚡'], ['hasRoad', t.inv.road, '🛣️'], ['seaView', t.inv.seaView, '🌊']] as [keyof LandSidebar, string, string][]).map(([key, label, icon]) => (
                         <button key={key} type="button"
                           className={`filter-chip ${land[key] ? 'is-active' : ''}`}
                           onClick={() => setLand(s => ({ ...s, [key]: !s[key] }))}
@@ -523,7 +592,7 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
                 <div className="inv-grid">
                   {sorted.map((item, i) => (
                     <Reveal key={item.id} delay={Math.min(i * 60, 400)}>
-                      <InvCard item={item} locale={locale} />
+                      <InvCard item={item} locale={locale} onOpen={rememberPosition} />
                     </Reveal>
                   ))}
                 </div>

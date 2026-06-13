@@ -27,7 +27,7 @@ type InvestmentRow = {
   landSize?: number | null;
 };
 
-type Search = { type: 'all'|'property'|'land'; tenure: 'all'|'freehold'|'leasehold'; location: string };
+type Search = { type: 'all'|'property'|'land'; tenure: 'all'|'freehold'|'leasehold'; location: string; status: 'all'|'published'|'draft'|'paused' };
 
 function fmtPrice(price: number, currency: string) {
   if (currency === 'USD') return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
@@ -40,7 +40,7 @@ export default function AdminInvestmentsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
-  const [search, setSearch] = useState<Search>({ type: 'all', tenure: 'all', location: '' });
+  const [search, setSearch] = useState<Search>({ type: 'all', tenure: 'all', location: '', status: 'all' });
 
   useEffect(() => {
     const load = async () => {
@@ -87,6 +87,7 @@ export default function AdminInvestmentsPage() {
     if (search.type !== 'all' && inv.asset_type !== search.type) return false;
     if (search.tenure !== 'all' && inv.tenure !== search.tenure) return false;
     if (search.location && inv.location !== search.location) return false;
+    if (search.status !== 'all' && normalizeStatus(inv.status) !== search.status) return false;
     return true;
   });
 
@@ -125,14 +126,24 @@ export default function AdminInvestmentsPage() {
         </div>
         <div style={s.divider} />
         <div style={s.seg}>
+          <span style={s.segLabel}>STATUS</span>
+          <select style={s.segSel} value={search.status} onChange={e => setSearch(v => ({ ...v, status: e.target.value as any }))}>
+            <option value="all">All</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+            <option value="paused">Paused</option>
+          </select>
+        </div>
+        <div style={s.divider} />
+        <div style={s.seg}>
           <span style={s.segLabel}>LOCATION</span>
           <select style={s.segSel} value={search.location} onChange={e => setSearch(v => ({ ...v, location: e.target.value }))}>
             <option value="">All areas</option>
             {locations.map(l => <option key={l} value={l}>{l}</option>)}
           </select>
         </div>
-        {(search.type !== 'all' || search.tenure !== 'all' || search.location) && (
-          <button onClick={() => setSearch({ type: 'all', tenure: 'all', location: '' })} style={s.clearBtn}>✕ Clear</button>
+        {(search.type !== 'all' || search.tenure !== 'all' || search.location || search.status !== 'all') && (
+          <button onClick={() => setSearch({ type: 'all', tenure: 'all', location: '', status: 'all' })} style={s.clearBtn}>✕ Clear</button>
         )}
       </div>
 
