@@ -171,9 +171,24 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
     },
   };
 
+  // BreadcrumbList — helps Google render localized breadcrumb rich results
+  // and reinforces the canonical /opportunities path for detail pages.
+  const SITE = 'https://rumahya.com';
+  const localePrefix = locale === 'en' ? '' : `/${locale}`;
+  const breadcrumbJson = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: t.ui.home, item: `${SITE}${localePrefix}/` },
+      { '@type': 'ListItem', position: 2, name: t.ui.opportunities, item: `${SITE}${localePrefix}/opportunities` },
+      { '@type': 'ListItem', position: 3, name: data.title, item: `${SITE}${localePrefix}/opportunities/${id}` },
+    ],
+  };
+
   return (
     <main className="detail-page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ldJson) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJson) }} />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
         <button
           type="button"
@@ -234,7 +249,7 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
                 <div className="gallery-thumbs">
                   {media.map((m, i) => (
                     <button key={i} onClick={() => setIdx(i)} className={`gallery-thumb ${i === idx ? 'is-active' : ''}`} aria-label={`Show photo ${i + 1}`}>
-                      {m.isVideo ? <div className="gallery-thumb-video">▶</div> : <img src={m.src} alt="" loading="lazy" />}
+                      {m.isVideo ? <div className="gallery-thumb-video">▶</div> : <img src={m.src} alt={`${data.title} — ${data.location} — photo ${i + 1}`} loading="lazy" />}
                     </button>
                   ))}
                 </div>
@@ -367,7 +382,7 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
           {media.length > 1 && (
             <button className="lightbox-nav lightbox-nav-left" onClick={e => { e.stopPropagation(); setIdx(i => (i - 1 + media.length) % media.length); }} aria-label="Previous">‹</button>
           )}
-          <img src={cur.src} alt="" className="lightbox-img" onClick={e => e.stopPropagation()} />
+          <img src={cur.src} alt={`${data.title} — ${data.location} — photo ${idx + 1}`} className="lightbox-img" onClick={e => e.stopPropagation()} />
           {media.length > 1 && (
             <button className="lightbox-nav lightbox-nav-right" onClick={e => { e.stopPropagation(); setIdx(i => (i + 1) % media.length); }} aria-label="Next">›</button>
           )}

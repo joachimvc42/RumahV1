@@ -6,13 +6,10 @@ export async function generateMetadata(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
   const { id } = await params;
-  const meta = await investmentMetadata(id, 'en');
-  return {
-    ...meta,
-    alternates: {
-      canonical: `https://rumahya.com/opportunities/${id}`,
-    },
-  };
+  // investmentMetadata already canonicalizes to /opportunities/[id] and supplies
+  // the EN/FR/ES + x-default hreflang block, so return it unmodified (overriding
+  // alternates here previously stripped the hreflang links).
+  return investmentMetadata(id, 'en');
 }
 
 export default function OpportunityDetailPage() {

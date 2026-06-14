@@ -8,10 +8,11 @@ export const metadata: Metadata = {
     title: 'Invest in Lombok — Villas & Land | RumahYa',
     description:
       'Freehold and leasehold land and villa investment opportunities across Lombok. Verified listings with estimated yields.',
-    url: 'https://rumahya.com/investments',
+    url: 'https://rumahya.com/opportunities',
     images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
   },
-  alternates: { canonical: 'https://rumahya.com/investments' },
+  // Legacy duplicate of /opportunities — consolidate onto the primary route.
+  alternates: { canonical: 'https://rumahya.com/opportunities' },
 };
 
 export default function InvestmentsLayout({ children }: { children: React.ReactNode }) {

@@ -184,7 +184,7 @@ export default function RentalDetailClient({ locale = 'en' }: { locale?: Locale 
                 <div className="gallery-thumbs">
                   {media.map((m, i) => (
                     <button key={i} onClick={() => setIdx(i)} className={`gallery-thumb ${i === idx ? 'is-active' : ''}`} aria-label={`Show photo ${i + 1}`}>
-                      {m.isVideo ? <div className="gallery-thumb-video">▶</div> : <img src={m.src} alt="" loading="lazy" />}
+                      {m.isVideo ? <div className="gallery-thumb-video">▶</div> : <img src={m.src} alt={`${p.title} — ${p.location ?? 'Lombok'} — photo ${i + 1}`} loading="lazy" />}
                     </button>
                   ))}
                 </div>
@@ -314,7 +314,7 @@ export default function RentalDetailClient({ locale = 'en' }: { locale?: Locale 
           {media.length > 1 && (
             <button className="lightbox-nav lightbox-nav-left" onClick={e => { e.stopPropagation(); setIdx(i => (i - 1 + media.length) % media.length); }} aria-label="Previous">‹</button>
           )}
-          <img src={cur.src} alt="" className="lightbox-img" onClick={e => e.stopPropagation()} />
+          <img src={cur.src} alt={`${p.title} — ${p.location ?? 'Lombok'} — photo ${idx + 1}`} className="lightbox-img" onClick={e => e.stopPropagation()} />
           {media.length > 1 && (
             <button className="lightbox-nav lightbox-nav-right" onClick={e => { e.stopPropagation(); setIdx(i => (i + 1) % media.length); }} aria-label="Next">›</button>
           )}

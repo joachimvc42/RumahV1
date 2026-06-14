@@ -10,10 +10,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  // Static invest pages — emit every locale prefix
+  // Static invest pages — emit every locale prefix.
+  // Note: the live, internally-linked listing route is /opportunities (the
+  // nav and listing cards link there and those pages self-canonicalize to it);
+  // /investments is a legacy duplicate that now canonicalizes to /opportunities,
+  // so the sitemap must advertise /opportunities to match every other signal.
   const staticRoutes: MetadataRoute.Sitemap = LOCALE_PREFIXES.flatMap(prefix => [
     { url: `${BASE_URL}${prefix}/`, lastModified: new Date(), changeFrequency: 'daily', priority: prefix === '' ? 1 : 0.9 },
-    { url: `${BASE_URL}${prefix}/investments`, lastModified: new Date(), changeFrequency: 'daily', priority: prefix === '' ? 0.9 : 0.8 },
+    { url: `${BASE_URL}${prefix}/opportunities`, lastModified: new Date(), changeFrequency: 'daily', priority: prefix === '' ? 0.9 : 0.8 },
     { url: `${BASE_URL}${prefix}/map`, lastModified: new Date(), changeFrequency: 'daily', priority: prefix === '' ? 0.8 : 0.7 },
     { url: `${BASE_URL}${prefix}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: prefix === '' ? 0.7 : 0.6 },
     { url: `${BASE_URL}${prefix}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
@@ -27,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const investmentRoutes: MetadataRoute.Sitemap = (investments ?? []).flatMap((i: any) =>
     LOCALE_PREFIXES.map(prefix => ({
-      url: `${BASE_URL}${prefix}/investments/${i.id}`,
+      url: `${BASE_URL}${prefix}/opportunities/${i.id}`,
       lastModified: i.updated_at ? new Date(i.updated_at) : new Date(),
       changeFrequency: 'weekly' as const,
       priority: prefix === '' ? 0.8 : 0.7,

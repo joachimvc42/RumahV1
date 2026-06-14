@@ -295,6 +295,8 @@ export const en = {
     share: 'Share',
     total: 'Total',
     waInterested: "Hi, I'm interested in",
+    home: 'Home',
+    opportunities: 'Opportunities',
   },
   share: {
     title: 'Share',
@@ -589,6 +591,8 @@ export const fr: typeof en = {
     share: 'Partager',
     total: 'Total',
     waInterested: 'Bonjour, je suis intéressé(e) par',
+    home: 'Accueil',
+    opportunities: 'Opportunités',
   },
   share: {
     title: 'Partager',
@@ -883,6 +887,8 @@ export const es: typeof en = {
     share: 'Compartir',
     total: 'Total',
     waInterested: 'Hola, me interesa',
+    home: 'Inicio',
+    opportunities: 'Oportunidades',
   },
   share: {
     title: 'Compartir',

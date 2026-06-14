@@ -105,17 +105,20 @@ export async function investmentMetadata(
     }
   }
 
-  const canonical = `${BASE_URL}${PREFIX[locale]}/investments/${id}`;
+  // The live, internally-linked detail route is /opportunities/[id]; /investments/[id]
+  // is a legacy duplicate. Canonical + hreflang therefore point to /opportunities so
+  // both route trees consolidate onto the primary URL.
+  const canonical = `${BASE_URL}${PREFIX[locale]}/opportunities/${id}`;
 
   return {
     title, description,
     alternates: {
       canonical,
       languages: {
-        en: `${BASE_URL}/investments/${id}`,
-        fr: `${BASE_URL}/fr/investments/${id}`,
-        es: `${BASE_URL}/es/investments/${id}`,
-        'x-default': `${BASE_URL}/investments/${id}`,
+        en: `${BASE_URL}/opportunities/${id}`,
+        fr: `${BASE_URL}/fr/opportunities/${id}`,
+        es: `${BASE_URL}/es/opportunities/${id}`,
+        'x-default': `${BASE_URL}/opportunities/${id}`,
       },
     },
     openGraph: {

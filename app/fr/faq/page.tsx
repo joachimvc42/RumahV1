@@ -22,6 +22,14 @@ export const metadata: Metadata = {
     url: 'https://rumahya.com/fr/faq',
     type: 'website',
     locale: 'fr_FR',
+    images: [
+      {
+        url: 'https://rumahya.com/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'RumahYa — FAQ immobilière à Lombok pour investisseurs européens',
+      },
+    ],
   },
 };
 

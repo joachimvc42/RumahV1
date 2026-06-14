@@ -21,6 +21,15 @@ export const metadata: Metadata = {
       'Can foreigners buy in Lombok? How does leasehold work? Do I need a PT PMA? Clear, practical answers for European property investors.',
     url: 'https://rumahya.com/faq',
     type: 'website',
+    locale: 'en_US',
+    images: [
+      {
+        url: 'https://rumahya.com/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'RumahYa — Lombok property FAQ for European investors',
+      },
+    ],
   },
 };
 

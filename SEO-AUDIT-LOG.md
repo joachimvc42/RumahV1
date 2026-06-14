@@ -4,6 +4,37 @@
 
 ---
 
+## 2026-06-14 — Audit hebdomadaire
+
+### Vérifié
+- `app/layout.tsx` (metadata racine, OG/Twitter, JSON-LD `@graph` RealEstateAgent + WebSite), `app/robots.ts`, `app/sitemap.ts`.
+- Cohérence des deux arbres de routes investissement : `/investments` **et** `/opportunities` (EN/FR/ES, listing + détail `[id]`), `lib/detailMetadata.ts`.
+- Liens internes réels : nav (`components/Header.tsx`) et cartes de listing (`investments-client.tsx`).
+- Pages FAQ EN/FR/ES (OpenGraph), pages d'accueil EN/FR/ES, listings.
+- Attributs `alt` des `<img>` côté public (grep global). Présence de `public/og-image.jpg`.
+
+### Problèmes trouvés
+1. **Sitemap vs liens internes incohérents (CRITIQUE)** — `app/sitemap.ts` déclarait `/investments` et `/investments/{id}` (toutes locales), alors que toute la navigation et les cartes de listing pointent vers `/opportunities/...`, et que les pages `/opportunities` se canonicalisent sur elles-mêmes. Google recevait donc dans le sitemap des URL contredites par tous les autres signaux → contenu dupliqué + signaux de ranking dispersés.
+2. **hreflang perdu sur les pages de détail PRIMAIRES (CRITIQUE)** — `/opportunities/[id]` (EN/FR/ES) faisait `{ ...investmentMetadata(), alternates: { canonical } }`, ce qui écrasait tout le bloc `alternates` et **supprimait les liens hreflang EN/FR/ES + x-default**. Les pages de détail réellement indexées n'avaient donc aucun hreflang.
+3. **Doublon `/investments` ↔ `/opportunities`** — les deux arbres étaient indexables avec auto-canonical, en concurrence.
+4. **OG image absente des pages FAQ** — `/faq`, `/fr/faq`, `/es/faq` redéfinissaient `openGraph` sans `images` ; Next.js n'hérite pas des images OG du layout parent quand un segment redéclare `openGraph` → partages sociaux de la FAQ sans visuel.
+
+### Correctifs appliqués
+- **`app/sitemap.ts`** : listing et détail réécrits de `/investments` → `/opportunities` (toutes locales), pour aligner le sitemap sur les liens internes et les canonical.
+- **`lib/detailMetadata.ts`** (`investmentMetadata`) : `canonical` + bloc `languages` (hreflang) repointés sur `/opportunities/{id}`. Consolide automatiquement les détails `/investments/[id]` (qui consomment cette fonction) vers la route primaire.
+- **`app/opportunities/[id]/page.tsx`** + variantes **`fr`** et **`es`** : suppression de l'override `alternates` qui ne contenait que `canonical` → ces pages héritent désormais du canonical **et** du hreflang complets de `investmentMetadata`. Restaure le hreflang sur les pages de détail primaires.
+- **`app/investments/page.tsx`**, **`app/investments/layout.tsx`**, **`app/fr/investments/page.tsx`**, **`app/es/investments/page.tsx`** : `canonical` + `languages` + `og:url` repointés sur `/opportunities` → consolidation du doublon de listing vers la route primaire.
+- **`app/faq/page.tsx`**, **`app/fr/faq/page.tsx`**, **`app/es/faq/page.tsx`** : ajout explicite de `openGraph.images` (og-image.jpg 1200×630, alt localisé) + `locale` sur la version EN.
+
+### À surveiller
+- **Comparaison live impossible cette semaine** : le `web_fetch` du sandbox est restreint au « provenance set » et a refusé `https://rumahya.com`. Audit mené sur le code (arbre de travail, plus à jour que le dernier déploiement). Re-vérifier le rendu en ligne après déploiement (notamment hreflang des pages `/opportunities/[id]` et OG des FAQ).
+- **Dette de routes en double** : `/investments` et `/opportunities` coexistent. Les canonical consolident désormais vers `/opportunities`, mais à terme envisager une redirection 301 `/investments(/*) → /opportunities(/*)` (changement de comportement → hors périmètre de cet audit, à décider par l'équipe).
+- Galeries de détail (`investment-detail-client.tsx`, `rental-detail-client.tsx`) : `alt=""` sur les vignettes et l'image lightbox (photos de biens). Laissé tel quel (vignettes interactives), mais un `alt` descriptif serait un léger plus.
+- `sameAs` de l'Organization toujours vide : ajouter les profils sociaux quand ils existeront.
+- Vérifier que tout asset OG référencé existe dans `/public` (og-image.jpg présent, OK).
+
+---
+
 ## 2026-06-13 — Passage « Run now » (validation du workflow)
 
 ### Vérifié

@@ -5,20 +5,21 @@ export const metadata: Metadata = {
   title: 'Lombok investment opportunities — land & villas',
   description:
     'Curated freehold land and villa investments in Lombok, Indonesia. Pre-checked titles, realistic yields, local coordination from discovery to delivery.',
+  // Legacy duplicate of /opportunities — consolidate onto the primary route.
   alternates: {
-    canonical: 'https://rumahya.com/investments',
+    canonical: 'https://rumahya.com/opportunities',
     languages: {
-      'en': 'https://rumahya.com/investments',
-      'fr': 'https://rumahya.com/fr/investments',
-      'es': 'https://rumahya.com/es/investments',
-      'x-default': 'https://rumahya.com/investments',
+      'en': 'https://rumahya.com/opportunities',
+      'fr': 'https://rumahya.com/fr/opportunities',
+      'es': 'https://rumahya.com/es/opportunities',
+      'x-default': 'https://rumahya.com/opportunities',
     },
   },
   openGraph: {
     title: 'Invest in Lombok — RumahYa',
     description:
       'Freehold land and curated villas in Lombok. Verified documents, realistic yields, local team.',
-    url: 'https://rumahya.com/investments',
+    url: 'https://rumahya.com/opportunities',
     type: 'website',
     images: [
       {
