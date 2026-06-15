@@ -24,15 +24,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}${prefix}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
   ]);
 
-  // Dynamic investment detail pages — one entry per locale
+  // Dynamic investment detail pages — one entry per locale, published assets only.
+  // Status lives on the linked asset (properties/lands), and the investments
+  // table has `created_at` (not `updated_at`) — selecting a missing column would
+  // error and silently drop every detail page from the sitemap.
   const { data: investments } = await supabase
     .from('investments')
-    .select('id, updated_at');
+    .select('id, asset_type, asset_id, created_at');
 
-  const investmentRoutes: MetadataRoute.Sitemap = (investments ?? []).flatMap((i: any) =>
+  const allInvestments = investments ?? [];
+  const propIds = allInvestments.filter((i: any) => i.asset_type === 'property').map((i: any) => i.asset_id);
+  const landIds = allInvestments.filter((i: any) => i.asset_type === 'land').map((i: any) => i.asset_id);
+  const [{ data: pubProps }, { data: pubLands }] = await Promise.all([
+    propIds.length ? supabase.from('properties').select('id').eq('status', 'published').in('id', propIds) : Promise.resolve({ data: [] as any[] }),
+    landIds.length ? supabase.from('lands').select('id').eq('status', 'published').in('id', landIds) : Promise.resolve({ data: [] as any[] }),
+  ]);
+  const publishedProp = new Set((pubProps ?? []).map((p: any) => p.id));
+  const publishedLand = new Set((pubLands ?? []).map((l: any) => l.id));
+  const publishedInvestments = allInvestments.filter((i: any) =>
+    (i.asset_type === 'property' && publishedProp.has(i.asset_id)) ||
+    (i.asset_type === 'land' && publishedLand.has(i.asset_id))
+  );
+
+  const investmentRoutes: MetadataRoute.Sitemap = publishedInvestments.flatMap((i: any) =>
     LOCALE_PREFIXES.map(prefix => ({
       url: `${BASE_URL}${prefix}/opportunities/${i.id}`,
-      lastModified: i.updated_at ? new Date(i.updated_at) : new Date(),
+      lastModified: i.created_at ? new Date(i.created_at) : new Date(),
       changeFrequency: 'weekly' as const,
       priority: prefix === '' ? 0.8 : 0.7,
     }))
