@@ -34,14 +34,14 @@ export default function AdminLoginPage() {
       .eq('id', data.user.id)
       .single();
 
-    if (!userRow || userRow.role !== 'admin') {
+    if (!userRow || (userRow.role !== 'admin' && userRow.role !== 'superadmin')) {
       await supabase.auth.signOut();
       setError('Not authorized');
       setLoading(false);
       return;
     }
 
-    router.push('/admin');
+    router.push('/admin/investments');
   };
 
   return (

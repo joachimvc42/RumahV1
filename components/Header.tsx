@@ -189,22 +189,13 @@ export default function Header() {
             </>
           )}
           {isAdmin && (
-            <>
-              <Link
-                href="/admin"
-                className={pathname === '/admin' ? 'nav-link is-active' : 'nav-link'}
-                onClick={closeMenu}
-              >
-                Rentals
-              </Link>
-              <Link
-                href="/admin/investments"
-                className={pathname?.startsWith('/admin/investments') ? 'nav-link is-active' : 'nav-link'}
-                onClick={closeMenu}
-              >
-                Investments
-              </Link>
-            </>
+            <Link
+              href="/admin/investments"
+              className={pathname?.startsWith('/admin/investments') ? 'nav-link is-active' : 'nav-link'}
+              onClick={closeMenu}
+            >
+              Listings
+            </Link>
           )}
         </nav>
       </div>

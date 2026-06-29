@@ -44,11 +44,16 @@ export default function AdminInvestmentsPage() {
 
   useEffect(() => {
     const load = async () => {
-      // Each seller only manages their own listings.
+      // Each seller manages only their own listings; a superadmin sees them all.
       const { data: auth } = await supabase.auth.getUser();
+      let isSuper = false;
+      if (auth.user) {
+        const { data: me } = await supabase.from('users').select('role').eq('id', auth.user.id).single();
+        isSuper = me?.role === 'superadmin';
+      }
       let query = supabase
         .from('investments').select('*').order('created_at', { ascending: false });
-      if (auth.user) query = query.eq('created_by', auth.user.id);
+      if (auth.user && !isSuper) query = query.eq('created_by', auth.user.id);
       const { data: invs, error: invErr } = await query;
       if (invErr || !invs) { setError('Failed to load investments'); setLoading(false); return; }
 

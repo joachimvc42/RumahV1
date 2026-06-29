@@ -32,7 +32,7 @@ export default function AdminProtectedLayout({ children }: { children: React.Rea
         .eq('id', data.user.id)
         .single();
 
-      if (error || userRow?.role !== 'admin') {
+      if (error || (userRow?.role !== 'admin' && userRow?.role !== 'superadmin')) {
         await supabase.auth.signOut();
         router.replace('/admin/login');
         return;
