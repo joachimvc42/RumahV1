@@ -423,7 +423,7 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
 
   return (
     <main>
-      <section className="page-title">
+      <section className="page-title page-title--inv">
         <div className="container">
           <Reveal>
             <h1 className="page-title-h">
