@@ -11,6 +11,7 @@ import { urlsToGalleryItems, readFileAsDataURL, type SortableGalleryItem } from 
 import AdminImageGallery from '../../../../../components/admin/AdminImageGallery';
 import MapPicker from '../../../../../components/MapPicker';
 import LocationInput from '../../../../../components/LocationInput';
+import { useAdminLang } from '../../../../../lib/adminI18n';
 
 type VideoItem = {
   id: string;
@@ -23,6 +24,7 @@ type VideoItem = {
 export default function EditInvestmentPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const { t } = useAdminLang();
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -72,7 +74,7 @@ export default function EditInvestmentPage() {
   useEffect(() => {
     const load = async () => {
       const { data: inv, error: invErr } = await supabase.from('investments').select('*').eq('id', id).single();
-      if (invErr || !inv) { setError('Investment not found'); setLoading(false); return; }
+      if (invErr || !inv) { setError(t.notFound); setLoading(false); return; }
 
       setInvestment(inv);
       setAssetType(inv.asset_type);
@@ -271,7 +273,7 @@ export default function EditInvestmentPage() {
 
       router.push('/admin/investments');
     } catch (err: any) {
-      setError(err.message || 'Failed to save');
+      setError(err.message || t.saveFail);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setSaving(false);
@@ -280,79 +282,79 @@ export default function EditInvestmentPage() {
   };
 
   const handleDelete = async () => {
-    if (!confirm('Delete this investment? This action is irreversible.')) return;
+    if (!confirm(t.deleteConfirm)) return;
     setSaving(true);
     try {
       await supabase.from('investments').delete().eq('id', id);
       router.push('/admin/investments');
     } catch (err: any) {
-      setError(err.message || 'Failed to delete');
+      setError(err.message || t.deleteFail);
       setSaving(false);
     }
   };
 
-  if (loading) return <div style={{ padding: 40 }}>Loading...</div>;
+  if (loading) return <div style={{ padding: 40 }}>{t.loadingShort}</div>;
 
   return (
     <main className="adm-wrap">
       <div style={s.header}>
-        <h1 style={s.title}>Edit investment</h1>
-        <Link href="/admin/investments" style={s.backLink}>← Back to investments</Link>
+        <h1 style={s.title}>{t.editTitle}</h1>
+        <Link href="/admin/investments" style={s.backLink}>{t.backToList}</Link>
       </div>
       {error && <div style={s.error}>{error}</div>}
 
       <form onSubmit={handleSave} style={s.form}>
         {/* ── Asset type display ── */}
         <section style={s.section}>
-          <h2 style={s.sectionTitle}>🏷️ Asset type</h2>
-          <div style={s.assetTypeDisplay}>{assetType === 'property' ? '🏠 Villa' : '🌴 Land'}</div>
+          <h2 style={s.sectionTitle}>{t.assetTypeH}</h2>
+          <div style={s.assetTypeDisplay}>{assetType === 'property' ? `🏠 ${t.villa}` : `🌴 ${t.land}`}</div>
         </section>
 
         {/* ── Property/Land info ── */}
         <section style={s.section}>
-          <h2 style={s.sectionTitle}>📍 {assetType === 'property' ? 'Villa' : 'Land'} information</h2>
+          <h2 style={s.sectionTitle}>{assetType === 'property' ? t.villaInfoH : t.landInfoH}</h2>
           <div className="adm-g2">
-            <div style={s.field}><label style={s.label}>Title *</label><input style={s.input} value={title} onChange={e => setTitle(e.target.value)} required /></div>
-            <div style={s.field}><label style={s.label}>Location *</label><LocationInput value={location} onChange={setLocation} required /></div>
+            <div style={s.field}><label style={s.label}>{t.titleL}</label><input style={s.input} value={title} onChange={e => setTitle(e.target.value)} required /></div>
+            <div style={s.field}><label style={s.label}>{t.locationFieldL}</label><LocationInput value={location} onChange={setLocation} required /></div>
           </div>
           {reference && (
             <div style={s.field}>
-              <label style={s.label}>Reference (auto-generated)</label>
+              <label style={s.label}>{t.referenceAuto}</label>
               <div style={{ padding: '10px 14px', background: '#f5eedc', border: '1px solid #DDD6C8', borderRadius: 10, fontSize: 15, fontWeight: 700, color: '#7A6030', letterSpacing: '0.05em' }}>
                 🔖 {reference}
               </div>
             </div>
           )}
-          <div style={s.field}><label style={s.label}>Description</label><textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} rows={4} /></div>
+          <div style={s.field}><label style={s.label}>{t.descriptionL}</label><textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} rows={4} /></div>
           <div style={s.field}>
-            <label style={s.label}>WhatsApp — buyer contact *</label>
+            <label style={s.label}>{t.whatsappL}</label>
             <input style={s.input} type="tel" value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="+62 812 3456 7890" required />
-            <span style={{ fontSize: 12, color: '#6b7280' }}>Shown on your listing — interested buyers contact you directly here.</span>
+            <span style={{ fontSize: 12, color: '#6b7280' }}>{t.whatsappHint}</span>
           </div>
           {assetType === 'property' && (
             <>
               <div className="adm-g4">
-                <div style={s.field}><label style={s.label}>Bedrooms</label><input style={s.input} type="number" value={bedrooms} onChange={e => setBedrooms(e.target.value)} /></div>
-                <div style={s.field}><label style={s.label}>Bathrooms</label><input style={s.input} type="number" value={bathrooms} onChange={e => setBathrooms(e.target.value)} /></div>
-                <div style={s.field}><label style={s.label}>Surface (m²)</label><input style={s.input} type="number" value={builtArea} onChange={e => setBuiltArea(e.target.value)} /></div>
-                <div style={s.field}><label style={s.label}>Land (are)</label><input style={s.input} type="number" step="0.1" value={landArea} onChange={e => setLandArea(e.target.value)} /></div>
+                <div style={s.field}><label style={s.label}>{t.bedrooms}</label><input style={s.input} type="number" value={bedrooms} onChange={e => setBedrooms(e.target.value)} /></div>
+                <div style={s.field}><label style={s.label}>{t.bathrooms}</label><input style={s.input} type="number" value={bathrooms} onChange={e => setBathrooms(e.target.value)} /></div>
+                <div style={s.field}><label style={s.label}>{t.builtArea}</label><input style={s.input} type="number" value={builtArea} onChange={e => setBuiltArea(e.target.value)} /></div>
+                <div style={s.field}><label style={s.label}>{t.landAreShort}</label><input style={s.input} type="number" step="0.1" value={landArea} onChange={e => setLandArea(e.target.value)} /></div>
               </div>
               <div style={s.amenities}>
-                <label style={s.checkbox}><input type="checkbox" checked={pool} onChange={e => setPool(e.target.checked)} /><span>🏊 Pool</span></label>
-                <label style={s.checkbox}><input type="checkbox" checked={garden} onChange={e => setGarden(e.target.checked)} /><span>🌳 Garden</span></label>
-                <label style={s.checkbox}><input type="checkbox" checked={furnished} onChange={e => setFurnished(e.target.checked)} /><span>🛋️ Furnished</span></label>
-                <label style={s.checkbox}><input type="checkbox" checked={seaView} onChange={e => setSeaView(e.target.checked)} /><span>🌊 Sea view</span></label>
+                <label style={s.checkbox}><input type="checkbox" checked={pool} onChange={e => setPool(e.target.checked)} /><span>{t.pool}</span></label>
+                <label style={s.checkbox}><input type="checkbox" checked={garden} onChange={e => setGarden(e.target.checked)} /><span>{t.garden}</span></label>
+                <label style={s.checkbox}><input type="checkbox" checked={furnished} onChange={e => setFurnished(e.target.checked)} /><span>{t.furnished}</span></label>
+                <label style={s.checkbox}><input type="checkbox" checked={seaView} onChange={e => setSeaView(e.target.checked)} /><span>{t.seaView}</span></label>
               </div>
             </>
           )}
           {assetType === 'land' && (
             <>
-              <div style={s.field}><label style={s.label}>Land area (are)</label><input style={s.input} type="number" step="0.1" value={landArea} onChange={e => setLandArea(e.target.value)} /></div>
+              <div style={s.field}><label style={s.label}>{t.landAreaL}</label><input style={s.input} type="number" step="0.1" value={landArea} onChange={e => setLandArea(e.target.value)} /></div>
               <div style={s.amenities}>
-                <label style={s.checkbox}><input type="checkbox" checked={hasWater} onChange={e => setHasWater(e.target.checked)} /><span>💧 Water access</span></label>
-                <label style={s.checkbox}><input type="checkbox" checked={hasElectricity} onChange={e => setHasElectricity(e.target.checked)} /><span>⚡ Electricity</span></label>
-                <label style={s.checkbox}><input type="checkbox" checked={hasRoad} onChange={e => setHasRoad(e.target.checked)} /><span>🛣️ Road access</span></label>
-                <label style={s.checkbox}><input type="checkbox" checked={seaView} onChange={e => setSeaView(e.target.checked)} /><span>🌊 Sea view</span></label>
+                <label style={s.checkbox}><input type="checkbox" checked={hasWater} onChange={e => setHasWater(e.target.checked)} /><span>{t.waterAccess}</span></label>
+                <label style={s.checkbox}><input type="checkbox" checked={hasElectricity} onChange={e => setHasElectricity(e.target.checked)} /><span>{t.electricity}</span></label>
+                <label style={s.checkbox}><input type="checkbox" checked={hasRoad} onChange={e => setHasRoad(e.target.checked)} /><span>{t.roadAccess}</span></label>
+                <label style={s.checkbox}><input type="checkbox" checked={seaView} onChange={e => setSeaView(e.target.checked)} /><span>{t.seaView}</span></label>
               </div>
             </>
           )}
@@ -360,10 +362,10 @@ export default function EditInvestmentPage() {
 
         {/* ── Investment conditions ── */}
         <section style={s.section}>
-          <h2 style={s.sectionTitle}>💰 Investment conditions</h2>
+          <h2 style={s.sectionTitle}>{t.conditionsH}</h2>
           <div className="adm-g2">
             <div style={s.field}>
-              <label style={s.label}>Price {assetType === 'land' ? '(per are)' : ''} {currency === 'IDR' ? '(IDR millions)' : '(USD)'} *</label>
+              <label style={s.label}>{(currency === 'IDR' ? t.priceIdr : t.priceUsd).replace('{per}', assetType === 'land' ? t.perAre : '').replace('  ', ' ')}</label>
               <div style={s.priceInput}>
                 <input style={{ ...s.input, borderTopRightRadius: 0, borderBottomRightRadius: 0 }} type="number" step={currency === 'IDR' ? '0.5' : '1'} value={price} onChange={e => setPrice(e.target.value)} required />
                 <select style={s.currencySelect} value={currency} onChange={e => setCurrency(e.target.value as any)}>
@@ -372,58 +374,58 @@ export default function EditInvestmentPage() {
                 </select>
               </div>
             </div>
-            <div style={s.field}><label style={s.label}>Estimated yield (%/year)</label><input style={s.input} type="number" step="0.1" value={expectedYield} onChange={e => setExpectedYield(e.target.value)} /></div>
+            <div style={s.field}><label style={s.label}>{t.yieldL}</label><input style={s.input} type="number" step="0.1" value={expectedYield} onChange={e => setExpectedYield(e.target.value)} /></div>
           </div>
           <div style={s.field}>
-            <label style={s.label}>Property type *</label>
+            <label style={s.label}>{t.propertyTypeFieldL}</label>
             <div style={s.tenureSelector}>
               <button type="button" onClick={() => setTenure('freehold')} style={{ ...s.tenureBtn, ...(tenure === 'freehold' ? s.tenureBtnActive : {}) }}>
                 <span style={{ fontSize: 24 }}>🔑</span>
-                <span style={s.tenureLabel}>Freehold</span>
-                <span style={s.tenureDesc}>Full ownership</span>
+                <span style={s.tenureLabel}>{t.freehold}</span>
+                <span style={s.tenureDesc}>{t.freeholdDesc}</span>
               </button>
               <button type="button" onClick={() => setTenure('leasehold')} style={{ ...s.tenureBtn, ...(tenure === 'leasehold' ? s.tenureBtnActive : {}) }}>
                 <span style={{ fontSize: 24 }}>📋</span>
-                <span style={s.tenureLabel}>Leasehold</span>
-                <span style={s.tenureDesc}>Long-term lease</span>
+                <span style={s.tenureLabel}>{t.leasehold}</span>
+                <span style={s.tenureDesc}>{t.leaseholdDesc}</span>
               </button>
             </div>
           </div>
           {tenure === 'leasehold' && (
-            <div style={s.field}><label style={s.label}>Lease duration (years)</label><input style={s.input} type="number" value={leaseDuration} onChange={e => setLeaseDuration(e.target.value)} /></div>
+            <div style={s.field}><label style={s.label}>{t.leaseDurationL}</label><input style={s.input} type="number" value={leaseDuration} onChange={e => setLeaseDuration(e.target.value)} /></div>
           )}
           <div style={s.field}>
-            <label style={s.label}>Status *</label>
+            <label style={s.label}>{t.statusFieldL}</label>
             <select style={s.input} value={status} onChange={e => setStatus(e.target.value as PropertyStatus)} required>
-              <option value="draft">Draft (not visible to public)</option>
-              <option value="published">Published (visible to public)</option>
-              <option value="paused">Paused (not visible to public)</option>
+              <option value="draft">{t.statusDraft}</option>
+              <option value="published">{t.statusPublished}</option>
+              <option value="paused">{t.statusPaused}</option>
             </select>
           </div>
           <div style={s.checkboxRow}>
-            <label style={s.checkbox}><input type="checkbox" checked={legalChecked} onChange={e => setLegalChecked(e.target.checked)} /><span>✅ Legal documents verified</span></label>
+            <label style={s.checkbox}><input type="checkbox" checked={legalChecked} onChange={e => setLegalChecked(e.target.checked)} /><span>{t.legalVerified}</span></label>
             {assetType === 'property' && (
-              <label style={s.checkbox}><input type="checkbox" checked={managementAvailable} onChange={e => setManagementAvailable(e.target.checked)} /><span>🏢 Rental management available</span></label>
+              <label style={s.checkbox}><input type="checkbox" checked={managementAvailable} onChange={e => setManagementAvailable(e.target.checked)} /><span>{t.mgmtAvailable}</span></label>
             )}
           </div>
         </section>
 
         {/* ── Location ── */}
         <section style={s.section}>
-          <h2 style={s.sectionTitle}>📍 Location on map</h2>
-          <p style={s.sectionHint}>Click on the map or search an address to pin the exact location.</p>
+          <h2 style={s.sectionTitle}>{t.locationH}</h2>
+          <p style={s.sectionHint}>{t.locationHint}</p>
           <MapPicker lat={lat} lng={lng} onChange={(la, lo) => { setLat(la); setLng(lo); }} onClear={() => { setLat(null); setLng(null); }} />
         </section>
 
         {/* ── Photos ── */}
         <section style={s.section}>
-          <h2 style={s.sectionTitle}>📸 Photo gallery</h2>
+          <h2 style={s.sectionTitle}>{t.photosH}</h2>
           <div style={s.dropzone}>
             <input type="file" accept="image/*" multiple onChange={handleImageSelect} style={s.fileInput} id="image-upload" />
             <label htmlFor="image-upload" style={s.dropzoneLabel}>
               <span style={{ fontSize: 40 }}>📷</span>
-              <span>Add images</span>
-              <span style={{ fontSize: 12, color: '#6b7280' }}>PNG, JPG up to 10MB each</span>
+              <span>{t.addImages}</span>
+              <span style={{ fontSize: 12, color: '#6b7280' }}>{t.photoHint}</span>
             </label>
           </div>
           {imageError && (
@@ -436,14 +438,14 @@ export default function EditInvestmentPage() {
 
         {/* ── Videos ── */}
         <section style={s.section}>
-          <h2 style={s.sectionTitle}>🎬 Video gallery</h2>
-          <p style={s.sectionHint}>Add or remove video tours. Existing videos are preserved unless removed.</p>
+          <h2 style={s.sectionTitle}>{t.videosH}</h2>
+          <p style={s.sectionHint}>{t.videosEditHint}</p>
           <div style={{ ...s.dropzone, borderColor: '#a5b4fc', background: '#f5f3ff' }}>
             <input type="file" accept="video/mp4,video/mov,video/quicktime,video/webm,video/avi" multiple onChange={handleVideoSelect} style={s.fileInput} id="video-upload" />
             <label htmlFor="video-upload" style={s.dropzoneLabel}>
               <span style={{ fontSize: 40 }}>🎥</span>
-              <span>Add videos</span>
-              <span style={{ fontSize: 12, color: '#6b7280' }}>MP4, MOV, WebM — max 200MB each</span>
+              <span>{t.videoDrop}</span>
+              <span style={{ fontSize: 12, color: '#6b7280' }}>{t.videoHint}</span>
             </label>
           </div>
           {videoError && (
@@ -458,9 +460,9 @@ export default function EditInvestmentPage() {
                   <video src={item.previewSrc} style={s.videoPreview} controls preload="metadata" />
                   <div style={s.videoMeta}>
                     <span style={s.videoName}>{item.name}</span>
-                    {item.isExisting && <span style={s.existingBadge}>Saved</span>}
+                    {item.isExisting && <span style={s.existingBadge}>{t.savedBadge}</span>}
                   </div>
-                  <button type="button" onClick={() => removeVideo(item.id)} style={s.removeBtn} title="Remove">✕</button>
+                  <button type="button" onClick={() => removeVideo(item.id)} style={s.removeBtn} title={t.remove}>✕</button>
                 </div>
               ))}
             </div>
@@ -472,27 +474,27 @@ export default function EditInvestmentPage() {
           <div style={s.saveProgressBox}>
             <div style={s.saveProgressHead}>
               <span style={s.saveProgressLabel}>
-                {savePhase === 'finalizing' ? '✓ Media uploaded — finalizing…' : 'Uploading media…'}
+                {savePhase === 'finalizing' ? t.finalizingMedia : t.uploadingMedia}
               </span>
               {savePhase === 'uploading' && <span style={s.saveProgressPct}>{uploadPct}%</span>}
             </div>
             <div style={s.progressBar}>
               <div style={{ ...s.progressFill, width: savePhase === 'finalizing' ? '100%' : `${uploadPct}%` }} />
             </div>
-            <p style={s.saveProgressHint}>Keep this page open until the save completes.</p>
+            <p style={s.saveProgressHint}>{t.keepOpen}</p>
           </div>
         )}
 
         {/* ── Actions ── */}
         {error && <div style={s.error}>{error}</div>}
         <div className="adm-actions">
-          <button type="button" onClick={handleDelete} disabled={saving} style={s.btnDanger}>🗑️ Delete</button>
+          <button type="button" onClick={handleDelete} disabled={saving} style={s.btnDanger}>{t.deleteBtn}</button>
           <div style={{ flex: 1 }} />
-          <button type="button" onClick={() => router.back()} style={s.btnSecondary}>Cancel</button>
+          <button type="button" onClick={() => router.back()} style={s.btnSecondary}>{t.cancel}</button>
           <button type="submit" disabled={saving} style={{ ...s.btnPrimary, opacity: saving ? 0.7 : 1 }}>
             {saving
-              ? (savePhase === 'finalizing' ? 'Finalizing…' : `Uploading… ${uploadPct}%`)
-              : '✓ Save'}
+              ? (savePhase === 'finalizing' ? t.finalizing : `${t.uploading} ${uploadPct}%`)
+              : t.saveBtn}
           </button>
         </div>
       </form>

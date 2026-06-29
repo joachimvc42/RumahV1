@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { supabase } from '../../../../lib/supabaseClient';
-import { getStatusLabel, getStatusColor, normalizeStatus } from '../../../../lib/statusUtils';
+import { getStatusColor, normalizeStatus } from '../../../../lib/statusUtils';
+import { useAdminLang } from '../../../../lib/adminI18n';
 
 const WA_NUMBER = '6287873487940';
 
@@ -36,6 +37,7 @@ function fmtPrice(price: number, currency: string) {
 }
 
 export default function AdminInvestmentsPage() {
+  const { t } = useAdminLang();
   const [investments, setInvestments] = useState<InvestmentRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +57,7 @@ export default function AdminInvestmentsPage() {
         .from('investments').select('*').order('created_at', { ascending: false });
       if (auth.user && !isSuper) query = query.eq('created_by', auth.user.id);
       const { data: invs, error: invErr } = await query;
-      if (invErr || !invs) { setError('Failed to load investments'); setLoading(false); return; }
+      if (invErr || !invs) { setError(t.loadFail); setLoading(false); return; }
 
       const propertyIds = invs.filter(i => i.asset_type === 'property').map(i => i.asset_id);
       const landIds = invs.filter(i => i.asset_type === 'land').map(i => i.asset_id);
@@ -82,11 +84,11 @@ export default function AdminInvestmentsPage() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this investment? This action is irreversible.')) return;
+    if (!confirm(t.deleteConfirm)) return;
     setDeleting(id);
     setError(null);
     const { error } = await supabase.from('investments').delete().eq('id', id);
-    if (error) { setError(`Failed to delete: ${error.message}`); setDeleting(null); }
+    if (error) { setError(`${t.deleteFail}: ${error.message}`); setDeleting(null); }
     else { setInvestments(prev => prev.filter(i => i.id !== id)); setDeleting(null); }
   };
 
@@ -100,16 +102,16 @@ export default function AdminInvestmentsPage() {
     return true;
   });
 
-  if (loading) return <div style={s.loading}>Loading investments...</div>;
+  if (loading) return <div style={s.loading}>{t.loading}</div>;
 
   return (
     <main style={s.container}>
       <div style={s.header}>
         <div>
-          <h1 style={s.title}>Investment Portfolio</h1>
-          <p style={s.subtitle}>{investments.length} investment{investments.length !== 1 ? 's' : ''} registered</p>
+          <h1 style={s.title}>{t.portfolioTitle}</h1>
+          <p style={s.subtitle}>{investments.length} {investments.length !== 1 ? t.registeredMany : t.registeredOne}</p>
         </div>
-        <Link href="/admin/investments/new" style={s.btnAdd}>+ Add investment</Link>
+        <Link href="/admin/investments/new" style={s.btnAdd}>{t.addInvestment}</Link>
       </div>
 
       {error && <div style={s.error}>{error}</div>}
@@ -117,50 +119,50 @@ export default function AdminInvestmentsPage() {
       {/* ── Search bar ── */}
       <div style={s.searchBar}>
         <div style={s.seg}>
-          <span style={s.segLabel}>ASSET TYPE</span>
+          <span style={s.segLabel}>{t.assetType}</span>
           <select style={s.segSel} value={search.type} onChange={e => setSearch(v => ({ ...v, type: e.target.value as any }))}>
-            <option value="all">All</option>
-            <option value="property">Villa</option>
-            <option value="land">Land</option>
+            <option value="all">{t.all}</option>
+            <option value="property">{t.villa}</option>
+            <option value="land">{t.land}</option>
           </select>
         </div>
         <div style={s.divider} />
         <div style={s.seg}>
-          <span style={s.segLabel}>PROPERTY TYPE</span>
+          <span style={s.segLabel}>{t.propertyTypeLabel}</span>
           <select style={s.segSel} value={search.tenure} onChange={e => setSearch(v => ({ ...v, tenure: e.target.value as any }))}>
-            <option value="all">All</option>
-            <option value="freehold">Freehold</option>
-            <option value="leasehold">Leasehold</option>
+            <option value="all">{t.all}</option>
+            <option value="freehold">{t.freehold}</option>
+            <option value="leasehold">{t.leasehold}</option>
           </select>
         </div>
         <div style={s.divider} />
         <div style={s.seg}>
-          <span style={s.segLabel}>STATUS</span>
+          <span style={s.segLabel}>{t.statusLabel}</span>
           <select style={s.segSel} value={search.status} onChange={e => setSearch(v => ({ ...v, status: e.target.value as any }))}>
-            <option value="all">All</option>
-            <option value="published">Published</option>
-            <option value="draft">Draft</option>
-            <option value="paused">Paused</option>
+            <option value="all">{t.all}</option>
+            <option value="published">{t.published}</option>
+            <option value="draft">{t.draft}</option>
+            <option value="paused">{t.paused}</option>
           </select>
         </div>
         <div style={s.divider} />
         <div style={s.seg}>
-          <span style={s.segLabel}>LOCATION</span>
+          <span style={s.segLabel}>{t.locationLabel}</span>
           <select style={s.segSel} value={search.location} onChange={e => setSearch(v => ({ ...v, location: e.target.value }))}>
-            <option value="">All areas</option>
+            <option value="">{t.allAreas}</option>
             {locations.map(l => <option key={l} value={l}>{l}</option>)}
           </select>
         </div>
         {(search.type !== 'all' || search.tenure !== 'all' || search.location || search.status !== 'all') && (
-          <button onClick={() => setSearch({ type: 'all', tenure: 'all', location: '', status: 'all' })} style={s.clearBtn}>✕ Clear</button>
+          <button onClick={() => setSearch({ type: 'all', tenure: 'all', location: '', status: 'all' })} style={s.clearBtn}>{t.clear}</button>
         )}
       </div>
 
       {filtered.length === 0 ? (
         <div style={s.empty}>
           <span style={{ fontSize: 48 }}>💰</span>
-          <p>{investments.length === 0 ? 'No investments yet' : 'No results for these filters'}</p>
-          {investments.length === 0 && <Link href="/admin/investments/new" style={s.btnAdd}>Create my first investment</Link>}
+          <p>{investments.length === 0 ? t.noneYet : t.noResults}</p>
+          {investments.length === 0 && <Link href="/admin/investments/new" style={s.btnAdd}>{t.createFirst}</Link>}
         </div>
       ) : (
         <div style={s.grid}>
@@ -172,11 +174,11 @@ export default function AdminInvestmentsPage() {
                 {/* Image — clean, no overlays */}
                 <div style={s.imageContainer}>
                   {inv.images?.[0] ? (
-                    <img src={inv.images[0]} alt={inv.title || 'Investment'} style={s.image} />
+                    <img src={inv.images[0]} alt={inv.title || t.untitled} style={s.image} />
                   ) : (
                     <div style={s.noImage}>
                       <span style={{ fontSize: 32 }}>{inv.asset_type === 'property' ? '🏠' : '🌴'}</span>
-                      <span>No image</span>
+                      <span>{t.noImage}</span>
                     </div>
                   )}
                 </div>
@@ -187,23 +189,23 @@ export default function AdminInvestmentsPage() {
                   <div style={s.metaRow}>
                     {inv.status && (
                       <span style={{ ...s.metaBadge, background: getStatusColor(normalizedStatus), color: '#fff' }}>
-                        {getStatusLabel(inv.status)}
+                        {t[normalizedStatus]}
                       </span>
                     )}
                     <span style={{ ...s.metaBadge, background: inv.asset_type === 'property' ? '#ede9fe' : '#dcfce7', color: inv.asset_type === 'property' ? '#6d28d9' : '#059669' }}>
-                      {inv.asset_type === 'property' ? 'Villa' : 'Land'}
+                      {inv.asset_type === 'property' ? t.villa : t.land}
                     </span>
                     <span style={{ ...s.metaBadge, background: inv.tenure === 'freehold' ? '#dbeafe' : '#fef3c7', color: inv.tenure === 'freehold' ? '#1d4ed8' : '#b45309' }}>
-                      {inv.tenure === 'freehold' ? 'Freehold' : inv.lease_years ? `Lease ${inv.lease_years}y` : 'Leasehold'}
+                      {inv.tenure === 'freehold' ? t.freehold : inv.lease_years ? `${t.leasehold} ${inv.lease_years}y` : t.leasehold}
                     </span>
                     {(inv.images?.length || 0) > 1 && (
                       <span style={{ ...s.metaBadge, background: '#f3f4f6', color: '#6b7280' }}>
-                        {inv.images?.length} photos
+                        {inv.images?.length} {t.photos}
                       </span>
                     )}
                   </div>
 
-                  <h3 style={s.cardTitle}>{inv.title || 'Untitled'}</h3>
+                  <h3 style={s.cardTitle}>{inv.title || t.untitled}</h3>
                   <p style={s.location}>📍 {inv.location || '—'}</p>
 
                   {inv.asset_type === 'land' && inv.landSize && (
@@ -220,16 +222,16 @@ export default function AdminInvestmentsPage() {
                   </div>
 
                   {inv.expected_yield && (
-                    <div style={s.yieldBadge}>📈 {inv.expected_yield}% est. yield</div>
+                    <div style={s.yieldBadge}>📈 {inv.expected_yield}% {t.estYield}</div>
                   )}
 
                   <div style={s.tagRow}>
-                    {inv.legal_checked && <span style={s.tag}>✅ Verified</span>}
-                    {inv.asset_type === 'property' && inv.management_available && <span style={s.tag}>🏢 Management</span>}
+                    {inv.legal_checked && <span style={s.tag}>{t.verified}</span>}
+                    {inv.asset_type === 'property' && inv.management_available && <span style={s.tag}>{t.management}</span>}
                   </div>
 
                   <div style={s.actions}>
-                    <Link href={`/admin/investments/${inv.id}`} style={s.btnEdit}>✏️ Edit</Link>
+                    <Link href={`/admin/investments/${inv.id}`} style={s.btnEdit}>{t.edit}</Link>
                     <a href={`https://wa.me/${WA_NUMBER}?text=${waMsg}`} target="_blank" rel="noopener noreferrer" style={s.btnWa} title="WhatsApp">💬</a>
                     <button onClick={() => handleDelete(inv.id)} disabled={deleting === inv.id} style={s.btnDelete}>
                       {deleting === inv.id ? '...' : '🗑️'}

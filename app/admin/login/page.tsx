@@ -3,9 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import { useAdminLang } from '@/lib/adminI18n';
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const { lang, setLang, t } = useAdminLang();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +25,7 @@ export default function AdminLoginPage() {
     });
 
     if (error || !data.user) {
-      setError('Invalid credentials');
+      setError(t.invalidCreds);
       setLoading(false);
       return;
     }
@@ -36,7 +38,7 @@ export default function AdminLoginPage() {
 
     if (!userRow || (userRow.role !== 'admin' && userRow.role !== 'superadmin')) {
       await supabase.auth.signOut();
-      setError('Not authorized');
+      setError(t.notAuthorized);
       setLoading(false);
       return;
     }
@@ -46,14 +48,18 @@ export default function AdminLoginPage() {
 
   return (
     <main style={container}>
-      <h1 style={{ marginBottom: 20 }}>Admin login</h1>
+      <div style={langRow}>
+        <button type="button" onClick={() => setLang('en')} style={langBtn(lang === 'en')}>EN</button>
+        <button type="button" onClick={() => setLang('id')} style={langBtn(lang === 'id')}>ID</button>
+      </div>
+      <h1 style={{ marginBottom: 20 }}>{t.loginTitle}</h1>
 
       {error && <p style={{ color: 'red', marginBottom: 10 }}>{error}</p>}
 
       <form onSubmit={submit} style={form}>
         <input
           type="email"
-          placeholder="Email"
+          placeholder={t.email}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -62,7 +68,7 @@ export default function AdminLoginPage() {
 
         <input
           type="password"
-          placeholder="Password"
+          placeholder={t.password}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -70,12 +76,20 @@ export default function AdminLoginPage() {
         />
 
         <button type="submit" disabled={loading} style={button}>
-          {loading ? 'Signing in…' : 'Login'}
+          {loading ? t.signingIn : t.login}
         </button>
       </form>
     </main>
   );
 }
+
+const langRow: React.CSSProperties = {
+  display: 'flex', gap: 4, marginBottom: 16,
+};
+const langBtn = (active: boolean): React.CSSProperties => ({
+  padding: '5px 12px', borderRadius: 999, border: '1px solid #e5e7eb', cursor: 'pointer',
+  fontSize: 12, fontWeight: 800, background: active ? '#2563eb' : '#fff', color: active ? '#fff' : '#6b7280',
+});
 
 const container: React.CSSProperties = {
   minHeight: '80vh',
