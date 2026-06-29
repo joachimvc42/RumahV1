@@ -117,8 +117,8 @@ export default function AdminInvestmentsPage() {
       {error && <div style={s.error}>{error}</div>}
 
       {/* ── Search bar ── */}
-      <div style={s.searchBar}>
-        <div style={s.seg}>
+      <div className="adm-filterbar" style={s.searchBar}>
+        <div className="adm-filterseg" style={s.seg}>
           <span style={s.segLabel}>{t.assetType}</span>
           <select style={s.segSel} value={search.type} onChange={e => setSearch(v => ({ ...v, type: e.target.value as any }))}>
             <option value="all">{t.all}</option>
@@ -126,8 +126,8 @@ export default function AdminInvestmentsPage() {
             <option value="land">{t.land}</option>
           </select>
         </div>
-        <div style={s.divider} />
-        <div style={s.seg}>
+        <div className="adm-filterdiv" style={s.divider} />
+        <div className="adm-filterseg" style={s.seg}>
           <span style={s.segLabel}>{t.propertyTypeLabel}</span>
           <select style={s.segSel} value={search.tenure} onChange={e => setSearch(v => ({ ...v, tenure: e.target.value as any }))}>
             <option value="all">{t.all}</option>
@@ -135,8 +135,8 @@ export default function AdminInvestmentsPage() {
             <option value="leasehold">{t.leasehold}</option>
           </select>
         </div>
-        <div style={s.divider} />
-        <div style={s.seg}>
+        <div className="adm-filterdiv" style={s.divider} />
+        <div className="adm-filterseg" style={s.seg}>
           <span style={s.segLabel}>{t.statusLabel}</span>
           <select style={s.segSel} value={search.status} onChange={e => setSearch(v => ({ ...v, status: e.target.value as any }))}>
             <option value="all">{t.all}</option>
@@ -145,8 +145,8 @@ export default function AdminInvestmentsPage() {
             <option value="paused">{t.paused}</option>
           </select>
         </div>
-        <div style={s.divider} />
-        <div style={s.seg}>
+        <div className="adm-filterdiv" style={s.divider} />
+        <div className="adm-filterseg" style={s.seg}>
           <span style={s.segLabel}>{t.locationLabel}</span>
           <select style={s.segSel} value={search.location} onChange={e => setSearch(v => ({ ...v, location: e.target.value }))}>
             <option value="">{t.allAreas}</option>

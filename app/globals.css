@@ -4966,6 +4966,28 @@ html[data-theme="dark"] .active-chip-reset {
     }
 }
 
+/* Admin filter bar (listings page): a single inline flex row on desktop. On
+   phones that row overflowed and clipped the segments, so collapse it into a
+   clean 2-column grid with thin separators. Inline styles set display:flex,
+   hence the !important overrides. */
+@media (max-width: 768px) {
+    .adm-filterbar {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+        background: #e5e7eb !important;
+    }
+    .adm-filterbar .adm-filterdiv { display: none !important; }
+    .adm-filterbar .adm-filterseg { background: #fff; min-width: 0; }
+    .adm-filterbar .adm-filterseg select { width: 100%; max-width: 100%; }
+    .adm-filterbar > button {
+        grid-column: 1 / -1;
+        background: #fff;
+        margin: 0 !important;
+        padding: 12px !important;
+    }
+}
+
 /* ============================================================
    Share popup
    ============================================================ */
