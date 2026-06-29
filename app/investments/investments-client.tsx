@@ -35,6 +35,7 @@ type Item = {
   hasWater?: boolean; hasElectricity?: boolean; hasRoad?: boolean;
   latitude?: number | null; longitude?: number | null;
   description?: string | null;
+  whatsapp?: string | null;
 };
 
 type Search = { type: 'all' | 'villa' | 'land'; tenure: 'all' | 'freehold' | 'leasehold'; location: string };
@@ -113,7 +114,8 @@ function InvCard({ item, locale, onOpen }: { item: Item; locale: Locale; onOpen?
   };
 
   const waMsg = encodeURIComponent(`${t.ui.waInterested} ${item.title}`);
-  const waUrl = `https://wa.me/${WA_NUMBER}?text=${waMsg}`;
+  const waNumber = (item.whatsapp || '').replace(/[^0-9]/g, '') || WA_NUMBER;
+  const waUrl = `https://wa.me/${waNumber}?text=${waMsg}`;
 
   const { main: priceMain, approx: priceApprox } = dualPrice(item.price, item.currency, item.type === 'land' ? '/are' : '');
   const totalPrice = item.type === 'land' && item.landSize
@@ -343,7 +345,7 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
             leaseYears: p.lease_years, expectedYield: inv.expected_yield, images: p.images || [],
             href: prefixFor(locale, `/opportunities/${inv.id}`), bedrooms: p.bedrooms, bathrooms: p.bathrooms,
             pool: p.pool, garden: p.garden, furnished: p.furnished, seaView: p.sea_view, condition: p.condition,
-            latitude: p.latitude, longitude: p.longitude, description: p.description,
+            latitude: p.latitude, longitude: p.longitude, description: p.description, whatsapp: p.whatsapp,
           });
         }
         if (inv.asset_type === 'land') {
@@ -358,7 +360,7 @@ export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }
             landSize: l.land_size ? Number(l.land_size) : null, condition: l.condition,
             hasWater: l.has_water, hasElectricity: l.has_electricity, hasRoad: l.has_road,
             seaView: l.sea_view,
-            latitude: l.latitude, longitude: l.longitude, description: l.description,
+            latitude: l.latitude, longitude: l.longitude, description: l.description, whatsapp: l.whatsapp,
           });
         }
       }

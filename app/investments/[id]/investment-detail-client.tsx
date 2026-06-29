@@ -21,6 +21,7 @@ type InvestmentData = {
   bedrooms?: number; bathrooms?: number; builtArea?: number; landArea?: number;
   pool?: boolean; garden?: boolean; furnished?: boolean; seaView?: boolean; landSize?: string;
   latitude?: number | null; longitude?: number | null;
+  whatsapp?: string | null;
 };
 
 function isVid(url: string) {
@@ -74,6 +75,7 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
             builtArea: prop.built_area, landArea: prop.land_area,
             pool: prop.pool, garden: prop.garden, furnished: prop.furnished, seaView: prop.sea_view,
             latitude: prop.latitude, longitude: prop.longitude,
+            whatsapp: prop.whatsapp,
           };
         }
       } else {
@@ -89,6 +91,7 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
             media: buildMedia(land.images || [], land.videos || []),
             landSize: land.land_size, seaView: land.sea_view,
             latitude: land.latitude, longitude: land.longitude,
+            whatsapp: land.whatsapp,
           };
         }
       }
@@ -358,7 +361,7 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
 
           <div className="detail-cta">
             <a
-              href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`${t.detail.waMsgInvestment} ${data.title}`)}`}
+              href={`https://wa.me/${(data.whatsapp || '').replace(/[^0-9]/g, '') || WA_NUMBER}?text=${encodeURIComponent(`${t.detail.waMsgInvestment} ${data.title}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="wa-button"

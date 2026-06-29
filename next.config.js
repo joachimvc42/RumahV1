@@ -40,10 +40,10 @@ const nextConfig = {
       { source: '/fr/investments/:id', destination: '/fr/opportunities/:id', permanent: true },
       { source: '/es/investments', destination: '/es/opportunities', permanent: true },
       { source: '/es/investments/:id', destination: '/es/opportunities/:id', permanent: true },
-      // /about → / (about content is now the homepage)
-      { source: '/about', destination: '/', permanent: false },
-      { source: '/fr/about', destination: '/fr', permanent: false },
-      { source: '/es/about', destination: '/es', permanent: false },
+      // /about → opportunities gallery (default landing for the marketplace)
+      { source: '/about', destination: '/opportunities', permanent: false },
+      { source: '/fr/about', destination: '/fr/opportunities', permanent: false },
+      { source: '/es/about', destination: '/es/opportunities', permanent: false },
       // Legacy contact page → contact section on homepage
       { source: '/contact', destination: '/#contact', permanent: true },
     ];

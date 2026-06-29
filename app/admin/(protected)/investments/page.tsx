@@ -44,8 +44,12 @@ export default function AdminInvestmentsPage() {
 
   useEffect(() => {
     const load = async () => {
-      const { data: invs, error: invErr } = await supabase
+      // Each seller only manages their own listings.
+      const { data: auth } = await supabase.auth.getUser();
+      let query = supabase
         .from('investments').select('*').order('created_at', { ascending: false });
+      if (auth.user) query = query.eq('created_by', auth.user.id);
+      const { data: invs, error: invErr } = await query;
       if (invErr || !invs) { setError('Failed to load investments'); setLoading(false); return; }
 
       const propertyIds = invs.filter(i => i.asset_type === 'property').map(i => i.asset_id);

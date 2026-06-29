@@ -27,6 +27,7 @@ export default function NewInvestmentPage() {
   const [assetType, setAssetType] = useState<'villa' | 'land'>('villa');
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
   const [description, setDescription] = useState('');
   const [bedrooms, setBedrooms] = useState('');
   const [bathrooms, setBathrooms] = useState('');
@@ -140,6 +141,8 @@ export default function NewInvestmentPage() {
     setSavePhase('uploading');
 
     try {
+      const { data: auth } = await supabase.auth.getUser();
+      const createdBy = auth.user?.id ?? null;
       let assetId: string;
 
       if (assetType === 'villa') {
@@ -158,6 +161,8 @@ export default function NewInvestmentPage() {
             lease_years: tenure === 'leasehold' ? Number(leaseDuration) : null,
             status: normalizeStatus(status),
             property_type: 'investment',
+            whatsapp,
+            created_by: createdBy,
             latitude: lat,
             longitude: lng,
           })
@@ -191,6 +196,8 @@ export default function NewInvestmentPage() {
             has_water: hasWater,
             has_electricity: hasElectricity,
             has_road: hasRoad,
+            whatsapp,
+            created_by: createdBy,
             latitude: lat,
             longitude: lng,
           })
@@ -217,6 +224,7 @@ export default function NewInvestmentPage() {
         expected_yield: expectedYield ? Number(expectedYield) : null,
         legal_checked: legalChecked,
         management_available: assetType === 'villa' ? managementAvailable : false,
+        created_by: createdBy,
       });
 
       if (investmentError) throw investmentError;
@@ -261,6 +269,11 @@ export default function NewInvestmentPage() {
             ℹ️ A reference (I#####) will be automatically assigned when this investment is created.
           </div>
           <div style={s.field}><label style={s.label}>Description</label><textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} placeholder="Detailed description..." rows={4} /></div>
+          <div style={s.field}>
+            <label style={s.label}>WhatsApp — buyer contact *</label>
+            <input style={s.input} type="tel" value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="+62 812 3456 7890" required />
+            <span style={{ fontSize: 12, color: '#6b7280' }}>Shown on your listing — interested buyers contact you directly here.</span>
+          </div>
           {assetType === 'villa' && (
             <>
               <div className="adm-g4">

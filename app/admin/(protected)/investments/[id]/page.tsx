@@ -34,6 +34,7 @@ export default function EditInvestmentPage() {
 
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
   const [description, setDescription] = useState('');
   const [bedrooms, setBedrooms] = useState('');
   const [bathrooms, setBathrooms] = useState('');
@@ -83,7 +84,7 @@ export default function EditInvestmentPage() {
       if (inv.asset_type === 'property') {
         const { data: prop } = await supabase.from('properties').select('*').eq('id', inv.asset_id).single();
         if (prop) {
-          setTitle(prop.title || ''); setLocation(prop.location || ''); setDescription(prop.description || '');
+          setTitle(prop.title || ''); setLocation(prop.location || ''); setDescription(prop.description || ''); setWhatsapp(prop.whatsapp || '');
           setBedrooms(String(prop.bedrooms || '')); setBathrooms(String(prop.bathrooms || ''));
           setBuiltArea(String(prop.built_area || '')); setLandArea(String(prop.land_area || ''));
           setPool(prop.pool || false); setGarden(prop.garden || false); setFurnished(prop.furnished ?? true);
@@ -107,7 +108,7 @@ export default function EditInvestmentPage() {
       } else {
         const { data: land } = await supabase.from('lands').select('*').eq('id', inv.asset_id).single();
         if (land) {
-          setTitle(land.title || ''); setLocation(land.location || ''); setDescription(land.description || '');
+          setTitle(land.title || ''); setLocation(land.location || ''); setDescription(land.description || ''); setWhatsapp(land.whatsapp || '');
           setLandArea(String(land.land_size || ''));
           setPrice(land.price_per_are ? String((land.currency || 'IDR') === 'IDR' ? Number(land.price_per_are) / 1_000_000 : land.price_per_are) : '');
           setCurrency(land.currency || 'IDR'); setTenure(land.tenure || 'freehold');
@@ -229,7 +230,7 @@ export default function EditInvestmentPage() {
 
       if (assetType === 'property') {
         const { error: propErr } = await supabase.from('properties').update({
-          title, location, description,
+          title, location, description, whatsapp,
           bedrooms: bedrooms ? Number(bedrooms) : null,
           bathrooms: bathrooms ? Number(bathrooms) : null,
           built_area: builtArea ? Number(builtArea) : null,
@@ -246,7 +247,7 @@ export default function EditInvestmentPage() {
         if (propErr) throw propErr;
       } else {
         const { error: landErr } = await supabase.from('lands').update({
-          title, location, description,
+          title, location, description, whatsapp,
           land_size: landArea ? Number(landArea) : null,
           price_per_are: currency === 'IDR' ? Number(price) * 1_000_000 : Number(price),
           currency, tenure,
@@ -323,6 +324,11 @@ export default function EditInvestmentPage() {
             </div>
           )}
           <div style={s.field}><label style={s.label}>Description</label><textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} rows={4} /></div>
+          <div style={s.field}>
+            <label style={s.label}>WhatsApp — buyer contact *</label>
+            <input style={s.input} type="tel" value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="+62 812 3456 7890" required />
+            <span style={{ fontSize: 12, color: '#6b7280' }}>Shown on your listing — interested buyers contact you directly here.</span>
+          </div>
           {assetType === 'property' && (
             <>
               <div className="adm-g4">

@@ -88,8 +88,6 @@ export default function Header() {
   const homeHref = prefixFor(locale, '/');
   const investmentsHref = prefixFor(locale, '/opportunities');
   const mapHref = prefixFor(locale, '/map');
-  const aboutHref = prefixFor(locale, '/about');
-  const faqHref = prefixFor(locale, '/faq');
   const isActive = (href: string) => {
     if (href === homeHref) return rest === '/' || rest === '';
     const checkRest = href.replace(/^\/(fr|es)/, '') || '/';
@@ -104,7 +102,7 @@ export default function Header() {
   return (
     <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
       <div className="container header-inner">
-        <Link href={homeHref} className="brand" onClick={closeMenu}>
+        <Link href={investmentsHref} className="brand" onClick={closeMenu}>
           <span className="brand-diamond" aria-hidden="true" />
           <span className="brand-name">Rumah<span>Ya</span></span>
         </Link>
@@ -124,18 +122,11 @@ export default function Header() {
               {/* ── Centred main links ── */}
               <div className="nav-main-links">
                 <Link
-                  href={aboutHref}
-                  className={(isActive(homeHref) || isActive(aboutHref)) ? 'nav-link is-active' : 'nav-link'}
-                  onClick={closeMenu}
-                >
-                  {t.nav.about}
-                </Link>
-                <Link
                   href={investmentsHref}
-                  className={isActive(investmentsHref) ? 'nav-link is-active' : 'nav-link'}
+                  className={(isActive(investmentsHref) || rest === '/' || rest === '') ? 'nav-link is-active' : 'nav-link'}
                   onClick={closeMenu}
                 >
-                  {t.nav.investments}
+                  {t.ui.opportunities}
                 </Link>
                 <Link
                   href={mapHref}
@@ -144,27 +135,10 @@ export default function Header() {
                 >
                   {t.nav.map}
                 </Link>
-                <Link
-                  href={faqHref}
-                  className={rest.startsWith('/faq') ? 'nav-link is-active' : 'nav-link'}
-                  onClick={closeMenu}
-                >
-                  FAQ
-                </Link>
               </div>
 
               {/* ── Right-side controls ── */}
               <div className="nav-side-controls">
-                <a
-                  href="https://rentals.rumahya.com"
-                  className="nav-link nav-link-rentals"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="RumahYa Rentals"
-                  onClick={closeMenu}
-                >
-                  {t.nav.rentals} →
-                </a>
 
                 {/* Dark mode toggle */}
                 <button
