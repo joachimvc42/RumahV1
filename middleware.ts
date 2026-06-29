@@ -49,7 +49,7 @@ export function middleware(request: NextRequest) {
   // ── Invest domain: default landing is the opportunities gallery ──────
   // Done here (not in next.config redirects) so it only affects the invest
   // host — the rentals subdomain keeps its own home, handled above.
-  if (pathname === '/' || pathname === '/fr' || pathname === '/es') {
+  if (pathname === '/' || pathname === '/fr' || pathname === '/es' || pathname === '/id') {
     const prefix = pathname === '/' ? '' : pathname;
     return NextResponse.redirect(new URL(`${prefix}/opportunities`, request.url));
   }
@@ -59,6 +59,8 @@ export function middleware(request: NextRequest) {
     ? 'fr'
     : pathname.startsWith('/es')
     ? 'es'
+    : pathname.startsWith('/id')
+    ? 'id'
     : 'en';
 
   const res = NextResponse.next();

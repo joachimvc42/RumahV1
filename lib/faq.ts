@@ -545,7 +545,9 @@ Trabajamos exclusivamente para los compradores — no para vendedores ni promoto
   },
 ];
 
-const byLocale: Record<Locale, FaqItem[]> = { en, fr, es };
+// 'id' intentionally omitted — the FAQ page isn't exposed to Indonesian
+// visitors yet, so getFaqs('id') falls back to English below.
+const byLocale: Partial<Record<Locale, FaqItem[]>> = { en, fr, es };
 
 export function getFaqs(locale: Locale): FaqItem[] {
   return byLocale[locale] ?? en;

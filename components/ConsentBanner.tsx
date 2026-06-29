@@ -8,7 +8,7 @@ import { getDict, type Locale } from '../lib/i18n';
 
 function parseLocale(pathname: string | null): Locale {
   if (!pathname) return 'en';
-  const m = pathname.match(/^\/(fr|es)(\/.*)?$/);
+  const m = pathname.match(/^\/(fr|es|id)(\/.*)?$/);
   return m ? (m[1] as Locale) : 'en';
 }
 

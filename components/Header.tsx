@@ -11,7 +11,7 @@ import { LOCALES, getDict, type Locale } from '../lib/i18n';
  */
 function parseLocale(pathname: string | null): { locale: Locale; rest: string } {
   if (!pathname) return { locale: 'en', rest: '/' };
-  const m = pathname.match(/^\/(fr|es)(\/.*)?$/);
+  const m = pathname.match(/^\/(fr|es|id)(\/.*)?$/);
   if (m) {
     const locale = m[1] as Locale;
     const rest = m[2] || '/';
@@ -90,7 +90,7 @@ export default function Header() {
   const mapHref = prefixFor(locale, '/map');
   const isActive = (href: string) => {
     if (href === homeHref) return rest === '/' || rest === '';
-    const checkRest = href.replace(/^\/(fr|es)/, '') || '/';
+    const checkRest = href.replace(/^\/(fr|es|id)/, '') || '/';
     return rest === checkRest || rest.startsWith(checkRest + '/');
   };
 

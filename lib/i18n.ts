@@ -6,7 +6,7 @@
  * MUST provide the same keys (TypeScript enforces it).
  */
 
-export const LOCALES = ['en', 'fr', 'es'] as const;
+export const LOCALES = ['en', 'fr', 'es', 'id'] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'en';
 
@@ -909,11 +909,169 @@ export const es: typeof en = {
 };
 
 // ─────────────────────────────────────────────────────────────
+// Bahasa Indonesia
+// Only the surfaces exposed to Indonesian visitors right now (opportunities
+// listing/detail + map + shared chrome) are translated; the rest spreads from
+// `en` since those pages have no /id route yet.
+// ─────────────────────────────────────────────────────────────
+export const id: typeof en = {
+  ...en,
+  nav: {
+    rentals: 'Sewa',
+    investments: 'Investasi Sekarang !',
+    map: 'Lihat peta',
+    about: 'Tentang',
+    contact: 'Kontak',
+  },
+  inv: {
+    heroEyebrow: 'Peluang investasi · Lombok',
+    heroTitleA: 'Tanah hak milik,',
+    heroTitleB: 'vila pilihan,',
+    heroTitleC: 'struktur jangka panjang.',
+    heroLead:
+      'Setiap peluang diperiksa di atas kertas dan di lapangan. Kami hanya menyajikan apa yang akan kami rekomendasikan kepada teman dekat — sertifikat jelas, imbal hasil realistis, dan tim lokal untuk pelaksanaan.',
+    assetType: 'Jenis aset', allAssets: 'Semua aset', villas: 'Vila', land: 'Tanah',
+    tenure: 'Kepemilikan', all: 'Semua', freehold: 'Hak Milik', leasehold: 'Hak Sewa',
+    location: 'Lokasi', allAreas: 'Semua area',
+    villaAmenities: 'Fasilitas vila',
+    pool: 'Kolam renang', garden: 'Taman', furnished: 'Berperabot',
+    seaView: 'Pemandangan laut',
+    bedrooms: 'Kamar tidur', bathrooms: 'Kamar mandi',
+    utilities: 'Utilitas',
+    water: 'Akses air', electricity: 'Listrik', road: 'Akses jalan',
+    minArea: 'Luas min (are)', maxPricePerAre: 'Harga maks / are', size: 'Luas', pricePerAre: 'Harga / are',
+    areSuffix: 'are',
+    resetFilters: 'Atur ulang filter',
+    opportunityOne: 'peluang', opportunityMany: 'peluang',
+    filtered: 'difilter',
+    empty: 'Tidak ada peluang yang cocok dengan kriteria Anda.',
+    loading: 'Memuat peluang…',
+    badgeVilla: 'Vila', badgeLand: 'Tanah',
+    leaseY: 'Sewa',
+    yieldSuffix: '% perkiraan imbal hasil / tahun',
+    bed: 'kt', beds: 'kt', bath: 'km', baths: 'km',
+  },
+  detail: {
+    back: 'Kembali',
+    rentalsBack: 'Kembali ke sewa',
+    investmentsBack: 'Kembali ke peluang',
+    loadingProperty: 'Memuat properti…',
+    loadingOpp: 'Memuat peluang…',
+    notAvailable: 'Properti tidak tersedia',
+    notFound: 'Peluang tidak ditemukan',
+    badgeVerified: '✓ Diverifikasi oleh RumahYa',
+    badgeMgmt: 'Manajemen tersedia',
+    bedrooms: 'Kamar tidur', bathrooms: 'Kamar mandi',
+    builtArea: 'Luas bangunan', landArea: 'Luas tanah', totalArea: 'Luas total',
+    perMonth: 'IDR / bulan', perYear: 'IDR / tahun',
+    months: 'bulan',
+    paymentTerms: 'Ketentuan pembayaran',
+    availableFrom: 'Tersedia mulai',
+    availableUntil: 'Tersedia hingga',
+    freeholdFull: 'Kepemilikan penuh',
+    leaseholdFor: 'tahun',
+    estYield: 'Perkiraan imbal hasil',
+    yieldSuffix: '% / thn',
+    description: 'Deskripsi',
+    location: 'Lokasi',
+    requestInfo: 'Minta informasi',
+    waPrefix: 'WhatsApp ·',
+    amenities: {
+      pool: 'Kolam renang', garden: 'Taman', furnished: 'Berperabot',
+      aircon: 'AC', wifi: 'WiFi', parking: 'Parkir',
+      kitchen: 'Dapur', privateSpace: 'Ruang pribadi', seaView: 'Pemandangan laut',
+    },
+    waMsgRental: 'Halo, saya tertarik dengan sewa:',
+    waMsgInvestment: 'Halo, saya tertarik dengan:',
+  },
+  footer: {
+    rights: 'Hak cipta dilindungi.',
+    based: 'Berbasis di Lombok, Indonesia',
+    privacy: 'Privasi',
+    terms: 'Ketentuan',
+    tagline: 'Investasi di Lombok — sertifikat terverifikasi, kehadiran lokal, struktur jangka panjang.',
+    crosslinkInvestQ: 'Ingin berinvestasi di Lombok?',
+    crosslinkInvestCta: 'Kunjungi RumahYa Investasi →',
+    crosslinkRentalsQ: 'Mencari sewa jangka panjang?',
+    crosslinkRentalsCta: 'Kunjungi RumahYa Sewa →',
+  },
+  consent: {
+    title: 'Kami menghormati privasi Anda',
+    body: 'Kami menggunakan cookie penting agar situs ini berfungsi. Dengan izin Anda, kami juga menggunakan analitik untuk memahami cara pengunjung menggunakan situs agar kami dapat meningkatkannya.',
+    learnMore: 'Baca Kebijakan Privasi kami',
+    accept: 'Terima semua',
+    reject: 'Tolak yang non-esensial',
+    showDetails: 'Tampilkan detail',
+    hideDetails: 'Sembunyikan detail',
+    necessaryLabel: 'Sangat diperlukan',
+    necessaryDesc: 'Diperlukan agar situs berfungsi (render halaman, pengiriman formulir, preferensi bahasa). Selalu aktif.',
+    analyticsLabel: 'Analitik',
+    analyticsDesc: 'Google Analytics 4. Membantu kami mengukur lalu lintas dan meningkatkan konten. Nonaktif sampai Anda menerima.',
+  },
+  map: {
+    title: 'Peta properti',
+    loading: 'Memuat properti…',
+    loadingMap: 'Memuat peta…',
+    missingKey: 'Peta tidak dapat dimuat — kunci API Google Maps tidak ada di server. Hubungi admin situs.',
+    resultOne: 'hasil',
+    resultMany: 'hasil',
+    type: 'Jenis properti',
+    catRental: 'Sewa',
+    catVilla: 'Vila',
+    catLand: 'Tanah',
+    location: 'Lokasi',
+    allAreas: 'Semua area',
+    tenure: 'Kepemilikan',
+    allLabel: 'Semua',
+    freehold: 'Hak Milik',
+    leasehold: 'Hak Sewa',
+    minBedrooms: 'Min. kamar tidur',
+    minBathrooms: 'Min. kamar mandi',
+    any: 'Semua',
+    maxMonthlyRent: 'Sewa bulanan maks',
+    allBudgets: 'Semua anggaran',
+    minDuration: 'Durasi sewa min.',
+    months: 'bulan',
+    duration: 'Durasi',
+    durationShort: 'Singkat',
+    durationMonthly: 'Bulanan',
+    durationYearly: 'Tahunan',
+    maxSalePrice: 'Harga jual maks',
+    amenities: 'Fasilitas',
+    pool: 'Kolam renang',
+    garden: 'Taman',
+    furnished: 'Berperabot',
+    resetFilters: 'Atur ulang filter',
+    hideFilters: 'Sembunyikan filter',
+    showFilters: 'Tampilkan filter',
+    viewDetails: 'Lihat detail',
+  },
+  ui: {
+    sortBy: 'Urutkan',
+    sortRecent: 'Terbaru',
+    sortPriceAsc: 'Harga ↑',
+    sortPriceDesc: 'Harga ↓',
+    share: 'Bagikan',
+    total: 'Total',
+    waInterested: 'Halo, saya tertarik dengan',
+    home: 'Beranda',
+    opportunities: 'Peluang',
+  },
+  share: {
+    title: 'Bagikan',
+    copy: 'Salin',
+    copied: '✓ Disalin',
+    close: 'Tutup',
+    copyPrompt: 'Salin tautan:',
+  },
+};
+
+// ─────────────────────────────────────────────────────────────
 // Resolver
 // ─────────────────────────────────────────────────────────────
 export type Dict = typeof en;
 
-const dicts: Record<Locale, Dict> = { en, fr, es };
+const dicts: Record<Locale, Dict> = { en, fr, es, id };
 
 export function getDict(locale: Locale): Dict {
   return dicts[locale] ?? en;
