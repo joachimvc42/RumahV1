@@ -361,7 +361,7 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
 
           <div className="detail-cta">
             <a
-              href={`https://wa.me/${(data.whatsapp || '').replace(/[^0-9]/g, '') || WA_NUMBER}?text=${encodeURIComponent(`${t.detail.waMsgInvestment} ${data.title}`)}`}
+              href={`https://wa.me/${(data.whatsapp || '').replace(/[^0-9]/g, '') || WA_NUMBER}?text=${encodeURIComponent(`${t.detail.waMsgInvestment} ${data.title}\n${shareUrl}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="wa-button"

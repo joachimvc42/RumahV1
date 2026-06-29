@@ -113,7 +113,7 @@ function InvCard({ item, locale, onOpen }: { item: Item; locale: Locale; onOpen?
     setShareOpen(true);
   };
 
-  const waMsg = encodeURIComponent(`${t.ui.waInterested} ${item.title}`);
+  const waMsg = encodeURIComponent(`${t.ui.waInterested} ${item.title}\n${shareUrl}`);
   const waNumber = (item.whatsapp || '').replace(/[^0-9]/g, '') || WA_NUMBER;
   const waUrl = `https://wa.me/${waNumber}?text=${waMsg}`;
 

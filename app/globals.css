@@ -4967,24 +4967,29 @@ html[data-theme="dark"] .active-chip-reset {
 }
 
 /* Admin filter bar (listings page): a single inline flex row on desktop. On
-   phones that row overflowed and clipped the segments, so collapse it into a
-   clean 2-column grid with thin separators. Inline styles set display:flex,
-   hence the !important overrides. */
+   phones that row overflowed and clipped the segments, so stack it into a clean
+   full-width single column — every label and select shown in full, no clipping.
+   Inline styles set display:flex + overflow:hidden, hence the !important. */
 @media (max-width: 768px) {
     .adm-filterbar {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr;
-        gap: 1px;
-        background: #e5e7eb !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: visible !important;
     }
     .adm-filterbar .adm-filterdiv { display: none !important; }
-    .adm-filterbar .adm-filterseg { background: #fff; min-width: 0; }
+    .adm-filterbar .adm-filterseg {
+        flex: 0 0 auto !important;
+        width: 100%;
+        min-width: 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    .adm-filterbar .adm-filterseg:last-of-type { border-bottom: none; }
     .adm-filterbar .adm-filterseg select { width: 100%; max-width: 100%; }
     .adm-filterbar > button {
-        grid-column: 1 / -1;
-        background: #fff;
+        width: 100%;
         margin: 0 !important;
-        padding: 12px !important;
+        padding: 14px !important;
+        border-top: 1px solid #f3f4f6;
     }
 }
 

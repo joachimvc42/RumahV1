@@ -29,7 +29,7 @@ export default function NewInvestmentPage() {
   const [assetType, setAssetType] = useState<'villa' | 'land'>('villa');
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
-  const [whatsapp, setWhatsapp] = useState('');
+  const [whatsapp, setWhatsapp] = useState('+');
   const [description, setDescription] = useState('');
   const [bedrooms, setBedrooms] = useState('');
   const [bathrooms, setBathrooms] = useState('');
@@ -273,7 +273,7 @@ export default function NewInvestmentPage() {
           <div style={s.field}><label style={s.label}>{t.descriptionL}</label><textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} placeholder={t.descriptionPh} rows={4} /></div>
           <div style={s.field}>
             <label style={s.label}>{t.whatsappL}</label>
-            <input style={s.input} type="tel" value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="+62 812 3456 7890" required />
+            <input style={s.input} type="tel" value={whatsapp} onChange={e => setWhatsapp('+' + e.target.value.replace(/[^\d ]/g, '').trimStart())} placeholder="+62 812 3456 7890" pattern="\+[0-9 ]{7,}" title={t.waCountryHint} required />
             <span style={{ fontSize: 12, color: '#6b7280' }}>{t.whatsappHint}</span>
           </div>
           {assetType === 'villa' && (

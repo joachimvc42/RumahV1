@@ -86,7 +86,7 @@ export default function EditInvestmentPage() {
       if (inv.asset_type === 'property') {
         const { data: prop } = await supabase.from('properties').select('*').eq('id', inv.asset_id).single();
         if (prop) {
-          setTitle(prop.title || ''); setLocation(prop.location || ''); setDescription(prop.description || ''); setWhatsapp(prop.whatsapp || '');
+          setTitle(prop.title || ''); setLocation(prop.location || ''); setDescription(prop.description || ''); setWhatsapp('+' + (prop.whatsapp || '').replace(/[^\d ]/g, '').trimStart());
           setBedrooms(String(prop.bedrooms || '')); setBathrooms(String(prop.bathrooms || ''));
           setBuiltArea(String(prop.built_area || '')); setLandArea(String(prop.land_area || ''));
           setPool(prop.pool || false); setGarden(prop.garden || false); setFurnished(prop.furnished ?? true);
@@ -110,7 +110,7 @@ export default function EditInvestmentPage() {
       } else {
         const { data: land } = await supabase.from('lands').select('*').eq('id', inv.asset_id).single();
         if (land) {
-          setTitle(land.title || ''); setLocation(land.location || ''); setDescription(land.description || ''); setWhatsapp(land.whatsapp || '');
+          setTitle(land.title || ''); setLocation(land.location || ''); setDescription(land.description || ''); setWhatsapp('+' + (land.whatsapp || '').replace(/[^\d ]/g, '').trimStart());
           setLandArea(String(land.land_size || ''));
           setPrice(land.price_per_are ? String((land.currency || 'IDR') === 'IDR' ? Number(land.price_per_are) / 1_000_000 : land.price_per_are) : '');
           setCurrency(land.currency || 'IDR'); setTenure(land.tenure || 'freehold');
@@ -328,7 +328,7 @@ export default function EditInvestmentPage() {
           <div style={s.field}><label style={s.label}>{t.descriptionL}</label><textarea style={s.textarea} value={description} onChange={e => setDescription(e.target.value)} rows={4} /></div>
           <div style={s.field}>
             <label style={s.label}>{t.whatsappL}</label>
-            <input style={s.input} type="tel" value={whatsapp} onChange={e => setWhatsapp(e.target.value)} placeholder="+62 812 3456 7890" required />
+            <input style={s.input} type="tel" value={whatsapp} onChange={e => setWhatsapp('+' + e.target.value.replace(/[^\d ]/g, '').trimStart())} placeholder="+62 812 3456 7890" pattern="\+[0-9 ]{7,}" title={t.waCountryHint} required />
             <span style={{ fontSize: 12, color: '#6b7280' }}>{t.whatsappHint}</span>
           </div>
           {assetType === 'property' && (
