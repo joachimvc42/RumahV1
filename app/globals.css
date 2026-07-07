@@ -775,56 +775,59 @@ textarea:focus {
 }
 
 @media (max-width: 768px) {
-    .header-inner { padding: 12px 0; gap: 10px; }
-
-    /* Mobile: nav lives inline in the header — no hamburger, no dropdown panel.
-       Just the two tabs + the language switcher, always visible. */
-    .nav-toggle { display: none !important; }
-    .site-header .theme-toggle { display: none; }
-    .brand-name { font-size: 1.15rem; }
+    .header-inner { padding: 16px 0; gap: 16px; }
 
     .primary-nav {
-        position: static;
-        flex: 1;
-        flex-direction: row;
-        align-items: center;
-        gap: 6px;
-        padding: 0;
-        background: none;
-        border: none;
-        border-radius: 0;
-        box-shadow: none;
+        position: fixed;
+        top: 66px;
+        left: 16px;
+        right: 16px;
+        flex-direction: column;
+        gap: 2px;
+        padding: 16px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        box-shadow: var(--shadow-lg);
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-8px);
+        transition: opacity 0.18s ease, transform 0.18s ease;
+        z-index: 60;
+    }
+
+    .primary-nav.is-open {
         opacity: 1;
         pointer-events: auto;
-        transform: none;
-        z-index: auto;
+        transform: translateY(0);
     }
 
     .nav-main-links,
     .nav-side-controls {
-        flex-direction: row;
-        width: auto;
-        gap: 4px;
+        flex-direction: column;
+        width: 100%;
+        gap: 2px;
     }
 
-    .nav-main-links { flex: 1; justify-content: center; gap: 2px; }
-
-    .site-header .nav-link {
-        width: auto;
-        text-align: center;
-        padding: 6px 6px;
-        font-size: 0.62rem;
-        letter-spacing: 0.01em;
-        white-space: nowrap;
+    .nav-link {
+        width: 100%;
+        text-align: left;
+        padding: 14px 16px;
     }
 
-    .nav-link.is-active::after { left: 6px; right: 6px; bottom: 2px; }
+    .nav-link.is-active::after {
+        left: 16px;
+        right: 16px;
+        bottom: 8px;
+    }
 
-    .nav-cta { margin-left: 0; margin-top: 0; width: auto; }
+    .nav-cta {
+        margin-left: 0;
+        margin-top: 6px;
+        width: 100%;
+    }
 
-    /* Hero headline ("Freehold land, curated villas") is dropped on mobile —
-       the inline nav above replaces it. */
-    .page-title--inv { display: none; }
+    .nav-toggle { display: inline-flex; }
 
     .hero-headline { font-size: 2.2rem; }
 }
@@ -832,11 +835,6 @@ textarea:focus {
 @media (max-width: 480px) {
     .container { padding: 0 16px; }
     .hero-headline { font-size: 1.9rem; }
-    .header-inner { gap: 4px; }
-    .primary-nav { gap: 2px; }
-    .brand-name { font-size: 0.9rem; }
-    .site-header .nav-link { font-size: 0.52rem; padding: 5px 3px; }
-    .site-header .lang-trigger { padding: 5px 5px; font-size: 0.68rem; }
 }
 
 /* ============================================================

@@ -11,6 +11,7 @@ export const metadata: Metadata = {
       'en': 'https://rumahya.com/opportunities',
       'fr': 'https://rumahya.com/fr/opportunities',
       'es': 'https://rumahya.com/es/opportunities',
+      'id': 'https://rumahya.com/id/opportunities',
       'x-default': 'https://rumahya.com/opportunities',
     },
   },

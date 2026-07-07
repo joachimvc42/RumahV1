@@ -11,6 +11,7 @@ export const metadata: Metadata = {
       'en': 'https://rumahya.com/map',
       'fr': 'https://rumahya.com/fr/map',
       'es': 'https://rumahya.com/es/map',
+      'id': 'https://rumahya.com/id/map',
       'x-default': 'https://rumahya.com/map',
     },
   },

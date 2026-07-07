@@ -88,6 +88,11 @@ export default function Header() {
   const homeHref = prefixFor(locale, '/');
   const investmentsHref = prefixFor(locale, '/opportunities');
   const mapHref = prefixFor(locale, '/map');
+  const aboutHref = prefixFor(locale, '/about');
+  const faqHref = prefixFor(locale, '/faq');
+  // 'id' only has translated Opportunities/Map pages so far — Home/About/FAQ/
+  // Rentals stay EN/FR/ES-only rather than 404 or silently fall back to English.
+  const showFullNav = locale !== 'id';
   const isActive = (href: string) => {
     if (href === homeHref) return rest === '/' || rest === '';
     const checkRest = href.replace(/^\/(fr|es|id)/, '') || '/';
@@ -96,13 +101,21 @@ export default function Header() {
 
   const closeMenu = () => setMenuOpen(false);
 
-  // Language switcher: swap prefix, keep rest of path
-  const switchTo = (target: Locale): string => prefixFor(target, rest);
+  // Language switcher: swap prefix, keep rest of path. 'id' only has
+  // Opportunities + Map pages — switching to it from an untranslated page
+  // (home, About, FAQ, legal) would 404, so land on the Opportunities gallery
+  // instead of the equivalent untranslated path.
+  const switchTo = (target: Locale): string => {
+    if (target === 'id' && !/^\/(opportunities|map)(\/|$)/.test(rest)) {
+      return '/id/opportunities';
+    }
+    return prefixFor(target, rest);
+  };
 
   return (
     <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
       <div className="container header-inner">
-        <Link href={investmentsHref} className="brand" onClick={closeMenu}>
+        <Link href={showFullNav ? homeHref : investmentsHref} className="brand" onClick={closeMenu}>
           <span className="brand-diamond" aria-hidden="true" />
           <span className="brand-name">Rumah<span>Ya</span></span>
         </Link>
@@ -121,9 +134,18 @@ export default function Header() {
             <>
               {/* ── Centred main links ── */}
               <div className="nav-main-links">
+                {showFullNav && (
+                  <Link
+                    href={aboutHref}
+                    className={(isActive(homeHref) || isActive(aboutHref)) ? 'nav-link is-active' : 'nav-link'}
+                    onClick={closeMenu}
+                  >
+                    {t.nav.about}
+                  </Link>
+                )}
                 <Link
                   href={investmentsHref}
-                  className={(isActive(investmentsHref) || rest === '/' || rest === '') ? 'nav-link is-active' : 'nav-link'}
+                  className={isActive(investmentsHref) ? 'nav-link is-active' : 'nav-link'}
                   onClick={closeMenu}
                 >
                   {t.ui.opportunities}
@@ -135,10 +157,31 @@ export default function Header() {
                 >
                   {t.nav.map}
                 </Link>
+                {showFullNav && (
+                  <Link
+                    href={faqHref}
+                    className={rest.startsWith('/faq') ? 'nav-link is-active' : 'nav-link'}
+                    onClick={closeMenu}
+                  >
+                    FAQ
+                  </Link>
+                )}
               </div>
 
               {/* ── Right-side controls ── */}
               <div className="nav-side-controls">
+                {showFullNav && (
+                  <a
+                    href="https://rentals.rumahya.com"
+                    className="nav-link nav-link-rentals"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="RumahYa Rentals"
+                    onClick={closeMenu}
+                  >
+                    {t.nav.rentals} →
+                  </a>
+                )}
 
                 {/* Dark mode toggle */}
                 <button

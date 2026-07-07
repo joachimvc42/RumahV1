@@ -4,6 +4,36 @@
 
 ---
 
+## 2026-07-05 — Audit hebdomadaire
+
+### Vérifié
+- `app/layout.tsx` (metadata racine, OG/Twitter, JSON-LD `@graph` RealEstateAgent + WebSite), `app/robots.ts`, `app/sitemap.ts`.
+- `lib/detailMetadata.ts` (`investmentMetadata`, `rentalMetadata`).
+- Toutes les pages `opportunities` et `map` (EN/FR/ES/ID), `app/investments/*` (legacy), pages FAQ EN/FR/ES, homepage EN/FR/ES.
+- `lib/i18n.ts` et `middleware.ts` pour comprendre l'étendue exacte du routing multilingue.
+- Attributs `alt` de tous les `<img>` (composants + pages) : rien à corriger, déjà conformes (alt descriptifs sur photos de biens, `alt=""` sur décoratif).
+- Présence des assets référencés dans `/public` (og-image.jpg, `/noir/villa-1.jpg`, `/noir/villa-10.jpg`, `/noir/land-1.jpg`) : tous présents.
+- JSON-LD (Organization/RealEstateAgent + WebSite dans le layout, FAQPage sur `/faq` EN/FR/ES, Accommodation/Offer dans `investment-detail-client.tsx` et `rental-detail-client.tsx`, partagé par toutes les locales y compris `/id`).
+
+### Problèmes trouvés
+1. **Nouvelle locale `/id` (Bahasa Indonesia) absente du sitemap (CRITIQUE)** — Un commit du 29/06 a ajouté une 4ᵉ locale scoping délibérément restreint (`/id/opportunities`, `/id/opportunities/[id]`, `/id/map` — home/about/FAQ/legal restent en anglais). Ces pages sont réellement en ligne et liées depuis le sélecteur de langue (EN/FR/ES/ID) sur tout le site, mais `app/sitemap.ts` ne générait aucune URL `/id/*` : Google n'avait aucun signal de découverte pour ces pages.
+2. **hreflang incomplet sur les pages `opportunities` et `map` (EN/FR/ES) (CRITIQUE)** — Ces pages ne référençaient pas la variante `id` dans leur bloc `alternates.languages`, alors que les pages `/id/opportunities` et `/id/map` elles-mêmes déclarent bien un retour vers en/fr/es/x-default. Le graphe hreflang était donc asymétrique (id → en/fr/es présent, en/fr/es → id absent), ce qui empêche Google de relier correctement les variantes linguistiques.
+3. `lib/detailMetadata.ts` (`investmentMetadata`) : déjà correct — inclut `id` dans `alternates.languages` depuis son ajout, aucune correction nécessaire.
+
+### Correctifs appliqués
+- **`app/sitemap.ts`** : ajout d'un bloc `idRoutes` dédié — `/id/opportunities`, `/id/map`, et une entrée `/id/opportunities/{id}` par investissement publié — sans toucher aux routes EN/FR/ES existantes. Pas d'entrées `/id/about`, `/id/faq`, etc. car ces pages n'existent pas (éviter d'annoncer des URL 404 à Google).
+- **`app/opportunities/page.tsx`, `app/fr/opportunities/page.tsx`, `app/es/opportunities/page.tsx`** : ajout de `'id': 'https://rumahya.com/id/opportunities'` dans `alternates.languages`.
+- **`app/map/page.tsx`, `app/fr/map/page.tsx`, `app/es/map/page.tsx`** : ajout de `'id': 'https://rumahya.com/id/map'` dans `alternates.languages`.
+- Résultat : le graphe hreflang EN/FR/ES/ID est maintenant symétrique sur les deux familles de pages concernées, et les 2 + N pages `/id` sont désormais découvrables via le sitemap.
+
+### À surveiller
+- **Comparaison live impossible cette semaine** : le `web_fetch` du sandbox refuse toujours `https://rumahya.com` (hors provenance set). Audit mené entièrement sur le code source. Après déploiement, vérifier `/sitemap.xml` en ligne pour confirmer la présence des URL `/id/*`, et vérifier via la Search Console que Google découvre bien ces pages.
+- **Sélecteur de langue vers `/id` depuis des pages non traduites** — Le composant `Header.tsx` (comportement/visible, hors périmètre de cet audit) propose le switch `ID` sur *toutes* les pages, y compris `/about`, `/faq`, home — qui n'ont pas d'équivalent `/id` et redirigeraient probablement vers une page manquante/anglaise. C'est un problème de comportement de composant, pas de metadata invisible : signalé ici pour décision de l'équipe produit, non corrigé (règle « jamais toucher au comportement visible »).
+- Dette de routes en double `/investments` ↔ `/opportunities` toujours présente (cf. audit du 2026-06-14) — canonical consolidés vers `/opportunities`, redirection 301 éventuelle toujours à la décision de l'équipe.
+- `sameAs` de l'Organization toujours vide.
+
+---
+
 ## 2026-06-14 — Audit hebdomadaire
 
 ### Vérifié

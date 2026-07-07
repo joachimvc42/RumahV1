@@ -63,5 +63,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: prefix === '' ? 0.8 : 0.7,
   }));
 
-  return [...staticRoutes, ...faqRoute, ...investmentRoutes];
+  // Bahasa Indonesia (/id) — deliberately scoped: only opportunities
+  // listing/detail + map exist for this locale (home, about, FAQ, legal are
+  // not translated, see lib/i18n.ts), so only those routes are advertised.
+  const idRoutes: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/id/opportunities`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
+    { url: `${BASE_URL}/id/map`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.7 },
+    ...publishedInvestments.map((i: any) => ({
+      url: `${BASE_URL}/id/opportunities/${i.id}`,
+      lastModified: i.created_at ? new Date(i.created_at) : new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    })),
+  ];
+
+  return [...staticRoutes, ...faqRoute, ...investmentRoutes, ...idRoutes];
 }

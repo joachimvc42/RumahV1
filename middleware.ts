@@ -46,12 +46,11 @@ export function middleware(request: NextRequest) {
     return res;
   }
 
-  // ── Invest domain: default landing is the opportunities gallery ──────
-  // Done here (not in next.config redirects) so it only affects the invest
-  // host — the rentals subdomain keeps its own home, handled above.
-  if (pathname === '/' || pathname === '/fr' || pathname === '/es' || pathname === '/id') {
-    const prefix = pathname === '/' ? '' : pathname;
-    return NextResponse.redirect(new URL(`${prefix}/opportunities`, request.url));
+  // ── Invest domain: 'id' locale has no home page yet (only Opportunities +
+  // Map are translated), so its bare root still lands on the gallery. EN/FR/ES
+  // keep their real home page — full site, not redirected away.
+  if (pathname === '/id') {
+    return NextResponse.redirect(new URL('/id/opportunities', request.url));
   }
 
   // ── Invest domain: locale detection ─────────────────────────────────
