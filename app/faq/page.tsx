@@ -3,7 +3,7 @@ import { getFaqs } from '@/lib/faq';
 import FaqClient from './faq-client';
 
 export const metadata: Metadata = {
-  title: 'FAQ — Buying Property in Lombok as a European | RumahYa',
+  title: 'FAQ — Buying Property in Lombok as a European',
   description:
     'Leasehold vs freehold, PT PMA setup, taxes, purchase process — an honest guide to foreign property investment in Lombok, Indonesia. For European buyers.',
   alternates: {

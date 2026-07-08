@@ -283,6 +283,11 @@ export default function InvestmentDetailClient({ locale = 'en' }: { locale?: Loc
                 ? <><strong>{t.inv.freehold}</strong> — {t.detail.freeholdFull}</>
                 : <><strong>{t.inv.leasehold}</strong> — {data.leaseYears} {t.detail.leaseholdFor}</>}
             </div>
+            {data.tenure === 'freehold' && locale !== 'id' && (
+              <Link href={`${prefixFor(locale, '/faq')}#leasehold-vs-freehold`} className="detail-freehold-note">
+                {t.inv.foreignersNote}
+              </Link>
+            )}
 
             {data.expectedYield && (
               <div className="detail-yield">

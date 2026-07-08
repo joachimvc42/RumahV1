@@ -78,6 +78,7 @@ export const en = {
     heroHeadlineC: 'investment in Lombok',
     heroLead:
       'We support investors with local context, verified information, and on-the-ground coordination for every property project — from land search to freehold acquisition and long-term management.',
+    freeholdNote: 'Freehold titles are Indonesian-held — foreign buyers typically structure via leasehold, Hak Pakai or PT PMA. See how this works →',
     pathLiveEyebrow: '01 — Live',
     pathLiveTitle: 'Live in Lombok',
     pathLiveText:
@@ -173,6 +174,7 @@ export const en = {
       'Every opportunity is pre-checked on paper and on the ground. We present only what we would recommend to a close friend — with clear titles, realistic yields, and a local team to manage delivery.',
     assetType: 'Asset type', allAssets: 'All assets', villas: 'Villas', land: 'Land',
     tenure: 'Tenure', all: 'All', freehold: 'Freehold', leasehold: 'Leasehold',
+    foreignersNote: 'Foreigners: see how this works →',
     location: 'Location', allAreas: 'All areas',
     villaAmenities: 'Villa amenities',
     pool: 'Pool', garden: 'Garden', furnished: 'Furnished',
@@ -374,6 +376,7 @@ export const fr: typeof en = {
     heroHeadlineC: 'investir à Lombok',
     heroLead:
       "Nous accompagnons les investisseurs avec du contexte local, des informations vérifiées et une coordination sur le terrain pour chaque projet immobilier — de la recherche de terrain à l'acquisition en freehold.",
+    freeholdNote: "Les titres freehold sont détenus par des Indonésiens — les acheteurs étrangers passent généralement par un leasehold, un Hak Pakai ou une PT PMA. Voir comment ça fonctionne →",
     pathLiveEyebrow: '01 — Vivre',
     pathLiveTitle: 'Vivre à Lombok',
     pathLiveText:
@@ -469,6 +472,7 @@ export const fr: typeof en = {
       "Chaque opportunité est vérifiée sur le papier et sur le terrain. Nous ne présentons que ce que nous recommanderions à un proche — titres clairs, rendements réalistes, équipe locale pour la livraison.",
     assetType: 'Type d\'actif', allAssets: 'Tous les actifs', villas: 'Villas', land: 'Terrains',
     tenure: 'Tenure', all: 'Tous', freehold: 'Freehold', leasehold: 'Leasehold',
+    foreignersNote: 'Étrangers : comment ça fonctionne →',
     location: 'Localisation', allAreas: 'Toutes les zones',
     villaAmenities: 'Équipements villa',
     pool: 'Piscine', garden: 'Jardin', furnished: 'Meublé',
@@ -670,6 +674,7 @@ export const es: typeof en = {
     heroHeadlineC: 'invertir en Lombok',
     heroLead:
       'Acompañamos a inversores con contexto local, información verificada y coordinación sobre el terreno en cada proyecto inmobiliario — desde la búsqueda de terreno hasta la adquisición en freehold.',
+    freeholdNote: 'Los títulos freehold los poseen indonesios — los compradores extranjeros suelen estructurar la compra mediante leasehold, Hak Pakai o PT PMA. Ver cómo funciona →',
     pathLiveEyebrow: '01 — Vivir',
     pathLiveTitle: 'Vivir en Lombok',
     pathLiveText:
@@ -765,6 +770,7 @@ export const es: typeof en = {
       'Cada oportunidad está verificada sobre el papel y sobre el terreno. Presentamos solo lo que recomendaríamos a un amigo cercano — títulos claros, rendimientos realistas y un equipo local para la entrega.',
     assetType: 'Tipo de activo', allAssets: 'Todos los activos', villas: 'Villas', land: 'Terrenos',
     tenure: 'Titularidad', all: 'Todas', freehold: 'Freehold', leasehold: 'Leasehold',
+    foreignersNote: 'Extranjeros: cómo funciona →',
     location: 'Ubicación', allAreas: 'Todas las zonas',
     villaAmenities: 'Equipamiento villa',
     pool: 'Piscina', garden: 'Jardín', furnished: 'Amueblado',
@@ -932,6 +938,7 @@ export const id: typeof en = {
       'Setiap peluang diperiksa di atas kertas dan di lapangan. Kami hanya menyajikan apa yang akan kami rekomendasikan kepada teman dekat — sertifikat jelas, imbal hasil realistis, dan tim lokal untuk pelaksanaan.',
     assetType: 'Jenis aset', allAssets: 'Semua aset', villas: 'Vila', land: 'Tanah',
     tenure: 'Kepemilikan', all: 'Semua', freehold: 'Hak Milik', leasehold: 'Hak Sewa',
+    foreignersNote: 'Untuk WNA: begini caranya →',
     location: 'Lokasi', allAreas: 'Semua area',
     villaAmenities: 'Fasilitas vila',
     pool: 'Kolam renang', garden: 'Taman', furnished: 'Berperabot',

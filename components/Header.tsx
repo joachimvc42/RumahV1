@@ -166,6 +166,16 @@ export default function Header() {
                     FAQ
                   </Link>
                 )}
+                {/* Guide (blog) content is EN-only for now — no FR/ES translation yet */}
+                {locale === 'en' && (
+                  <Link
+                    href="/blog"
+                    className={rest.startsWith('/blog') ? 'nav-link is-active' : 'nav-link'}
+                    onClick={closeMenu}
+                  >
+                    Guide
+                  </Link>
+                )}
               </div>
 
               {/* ── Right-side controls ── */}

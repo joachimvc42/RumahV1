@@ -46,10 +46,14 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 }
 
 /* ── Count-up, hardened: guarantees final value via timeout fallback,
-   starts immediately if already on-screen, respects reduced-motion. ── */
+   starts immediately if already on-screen, respects reduced-motion.
+   Initial state is `end` (not 0) so SSR output, no-JS browsers, and crawlers
+   doing a static extraction see the real number — the 0→end animation is a
+   progressive enhancement applied only inside the mount effect, which never
+   runs without JS. ── */
 function CountUp({ end, suffix = '' }: { end: number; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const [val, setVal] = useState(0);
+  const [val, setVal] = useState(end);
   useEffect(() => {
     const el = ref.current;
     let raf = 0;
@@ -59,10 +63,11 @@ function CountUp({ end, suffix = '' }: { end: number; suffix?: string }) {
       typeof window !== 'undefined' &&
       window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce || !el) { setVal(end); return; }
+    if (reduce || !el) return;
     const run = () => {
       if (started) return;
       started = true;
+      setVal(0);
       const dur = 1600;
       const t0 = performance.now();
       const tick = (now: number) => {
@@ -135,6 +140,11 @@ export default function AboutClient({ locale = 'en' }: { locale?: Locale }) {
           <Reveal delay={220}>
             <p className="nr-hero-lead">{t.about.heroLead}</p>
           </Reveal>
+          <Reveal delay={280}>
+            <Link href={`${prefixFor(locale, '/faq')}#leasehold-vs-freehold`} className="nr-hero-legal-note">
+              {t.about.freeholdNote}
+            </Link>
+          </Reveal>
           <Reveal delay={340}>
             <div className="nr-hero-cta">
               <Link href={oppHref} className="nr-btn-gold">{t.land.heroCtaExplore}</Link>
@@ -193,6 +203,11 @@ export default function AboutClient({ locale = 'en' }: { locale?: Locale }) {
               </Link>
             </Reveal>
           </div>
+          <Reveal delay={200}>
+            <Link href={`${prefixFor(locale, '/faq')}#leasehold-vs-freehold`} className="nr-legal-note">
+              {t.about.freeholdNote}
+            </Link>
+          </Reveal>
         </div>
       </section>
 

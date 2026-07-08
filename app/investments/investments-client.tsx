@@ -242,6 +242,12 @@ function InvCard({ item, locale, onOpen }: { item: Item; locale: Locale; onOpen?
           )}
         </div>
 
+        {item.tenure === 'freehold' && locale !== 'id' && (
+          <Link href={`${prefixFor(locale, '/faq')}#leasehold-vs-freehold`} className="lc2-freehold-note">
+            {t.inv.foreignersNote}
+          </Link>
+        )}
+
         {item.reference && <p className="lc2-ref">{item.reference}</p>}
 
         <div className="lc2-ctas">

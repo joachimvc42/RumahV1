@@ -1,10 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getFaqs } from '@/lib/faq';
 import { getDict, type Locale } from '@/lib/i18n';
 
 const WA_NUMBER = '6287873487940';
+
+// Stable anchor ids for FAQ items linked to from elsewhere on the site (index
+// is consistent across en/fr/es — the leasehold-vs-freehold question is #2
+// in every locale). Add more here if other items get deep-linked later.
+const ANCHOR_IDS: Record<number, string> = {
+  1: 'leasehold-vs-freehold',
+};
 
 export default function FaqClient({ locale = 'en' }: { locale?: Locale }) {
   const [open, setOpen] = useState<number | null>(null);
@@ -14,6 +21,18 @@ export default function FaqClient({ locale = 'en' }: { locale?: Locale }) {
   const toggle = (i: number) => setOpen(prev => (prev === i ? null : i));
 
   const waHref = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(t.faq.waMsg)}`;
+
+  // Deep link support: /faq#leasehold-vs-freehold opens that item and scrolls to it.
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (!hash) return;
+    const idx = Object.entries(ANCHOR_IDS).find(([, id]) => id === hash)?.[0];
+    if (idx == null) return;
+    setOpen(Number(idx));
+    requestAnimationFrame(() => {
+      document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, []);
 
   return (
     <main>
@@ -36,6 +55,7 @@ export default function FaqClient({ locale = 'en' }: { locale?: Locale }) {
             {faqs.map((item, i) => (
               <div
                 key={i}
+                id={ANCHOR_IDS[i]}
                 className={`faq-item ${open === i ? 'is-open' : ''}`}
                 role="listitem"
               >

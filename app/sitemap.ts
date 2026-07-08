@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import { articles } from '../lib/blog';
 
 const BASE_URL = 'https://rumahya.com';
 const LOCALE_PREFIXES = ['', '/fr', '/es'] as const;
@@ -63,6 +64,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: prefix === '' ? 0.8 : 0.7,
   }));
 
+  // Blog — EN only (no FR/ES translation of article content yet)
+  const blogRoutes: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
+    ...articles.map(a => ({
+      url: `${BASE_URL}/blog/${a.slug}`,
+      lastModified: new Date(a.date),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
+  ];
+
   // Bahasa Indonesia (/id) — deliberately scoped: only opportunities
   // listing/detail + map exist for this locale (home, about, FAQ, legal are
   // not translated, see lib/i18n.ts), so only those routes are advertised.
@@ -77,5 +89,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  return [...staticRoutes, ...faqRoute, ...investmentRoutes, ...idRoutes];
+  return [...staticRoutes, ...faqRoute, ...blogRoutes, ...investmentRoutes, ...idRoutes];
 }

@@ -3,7 +3,7 @@ import { getFaqs } from '@/lib/faq';
 import FaqClient from '../../faq/faq-client';
 
 export const metadata: Metadata = {
-  title: 'FAQ — Acheter un bien à Lombok en tant qu\'Européen | RumahYa',
+  title: 'FAQ — Acheter un bien à Lombok en tant qu\'Européen',
   description:
     'Leasehold vs freehold, création de PT PMA, taxes, processus d\'achat — un guide honnête sur l\'investissement immobilier étranger à Lombok, en Indonésie. Pour les acheteurs européens.',
   alternates: {
