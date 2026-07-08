@@ -183,6 +183,33 @@ We work exclusively for buyers — not sellers or developers — so our interest
 <br/><br/>
 <em>All information on this page is for educational purposes only and does not constitute legal or tax advice. Consult a qualified Indonesian lawyer before entering into any transaction.</em>`,
   },
+  {
+    question: 'PT PMA vs leasehold: which structure actually costs less?',
+    answer: `Both are legitimate paths for foreign investors, and the right choice depends on scale and purpose — not on which one is simply "cheaper." Here is the real cost and obligation breakdown of each, side by side.
+<br/><br/>
+<strong>Upfront cost</strong>
+<ul>
+<li><strong>Leasehold:</strong> No company to set up. Notary and legal fees typically add 1–2% of the transaction value on top of the purchase price. You can be under contract within 4–8 weeks.</li>
+<li><strong>PT PMA:</strong> Company setup costs approximately €1,200 in legal and government fees, and takes 4–8 weeks on its own — before you can even sign for the property. Total time to closing typically runs 8–16 weeks.</li>
+</ul>
+<strong>Ongoing obligations</strong>
+<ul>
+<li><strong>Leasehold:</strong> Annual land and building tax (PBB, €30–120/year) is your only recurring administrative cost. No company filings, no accountant required.</li>
+<li><strong>PT PMA:</strong> Same PBB, plus annual accounting and administration (around €500/year via a local accountant) and ongoing business licence (NIB) reporting obligations. A PT PMA is a real operating company, not a shell — treat it as one.</li>
+</ul>
+<strong>What each structure actually gets you</strong>
+<ul>
+<li><strong>Leasehold:</strong> A private notarial agreement for a fixed term (typically 25 years, renewable). Simple and cheap to set up, but the underlying title stays with the Indonesian landowner — your renewal at year 25 still depends on that relationship and how the contract was drafted.</li>
+<li><strong>PT PMA:</strong> The company itself holds Hak Guna Bangunan (HGB), a title registered at the National Land Agency (BPN) — stronger legal standing than a private lease. It is also the structure that makes obtaining a commercial short-term rental permit (<em>izin usaha akomodasi</em>) straightforward, which a leasehold does not.</li>
+</ul>
+<strong>Where they are identical: rental income tax</strong>
+<br/>
+This is the part investors most often get wrong. Whether you rent out through a leasehold or a PT PMA, Indonesia applies the same <strong>10% final tax on gross rental revenue</strong> — not net profit, and not reduced by holding a company. A PT PMA does not lower this rate; its advantage is the stronger title and easier commercial permitting, not a tax break on rental income.
+<br/><br/>
+<strong>The practical takeaway</strong>
+<br/>
+For a single villa under roughly €200,000 held mainly for personal use or long-term rental, leasehold is simpler and materially cheaper to run. For anyone developing land, holding multiple properties, or running short-term rentals commercially, the PT PMA's stronger title and easier permitting typically outweigh its extra €1,200 setup cost and €500/year in running costs.`,
+  },
 ];
 
 // ─────────────────────────────────────────────────────────────
@@ -363,6 +390,33 @@ Nous travaillons exclusivement pour les acheteurs — pas pour les vendeurs ni l
 <br/><br/>
 <em>Toutes les informations de cette page sont fournies à titre éducatif uniquement et ne constituent pas un conseil juridique ou fiscal. Consultez un avocat indonésien qualifié avant de conclure toute transaction.</em>`,
   },
+  {
+    question: 'PT PMA ou leasehold : quelle structure coûte réellement le moins cher ?',
+    answer: `Les deux sont des voies parfaitement légales pour les investisseurs étrangers, et le bon choix dépend de l'échelle et de l'objectif du projet — pas simplement de laquelle est « la moins chère ». Voici la comparaison réelle des coûts et obligations de chacune, côte à côte.
+<br/><br/>
+<strong>Coût initial</strong>
+<ul>
+<li><strong>Leasehold :</strong> Aucune société à créer. Les frais de notaire et juridiques ajoutent généralement 1 à 2 % à la valeur de la transaction. Vous pouvez être sous contrat en 4 à 8 semaines.</li>
+<li><strong>PT PMA :</strong> La création de la société coûte environ 1 200 € en frais juridiques et gouvernementaux, et prend 4 à 8 semaines à elle seule — avant même de pouvoir signer pour le bien. Le délai total jusqu'à la signature tourne généralement autour de 8 à 16 semaines.</li>
+</ul>
+<strong>Obligations récurrentes</strong>
+<ul>
+<li><strong>Leasehold :</strong> La taxe foncière annuelle (PBB, 30 à 120 €/an) est votre seul coût administratif récurrent. Aucune déclaration d'entreprise, aucun comptable requis.</li>
+<li><strong>PT PMA :</strong> Même PBB, plus une comptabilité et administration annuelles (environ 500 €/an via un comptable local) et des obligations déclaratives continues liées à la licence d'exploitation (NIB). Une PT PMA est une société réellement opérationnelle, pas une coquille vide — traitez-la comme telle.</li>
+</ul>
+<strong>Ce que chaque structure vous apporte réellement</strong>
+<ul>
+<li><strong>Leasehold :</strong> Un accord notarié privé pour une durée fixe (généralement 25 ans, renouvelable). Simple et peu coûteux à mettre en place, mais le titre sous-jacent reste entre les mains du propriétaire indonésien — votre renouvellement à l'année 25 dépend toujours de cette relation et de la façon dont le contrat a été rédigé.</li>
+<li><strong>PT PMA :</strong> La société elle-même détient le Hak Guna Bangunan (HGB), un titre enregistré à l'Agence nationale foncière (BPN) — une sécurité juridique supérieure à celle d'un bail privé. C'est aussi la structure qui permet d'obtenir facilement un permis d'exploitation commerciale de location courte durée (<em>izin usaha akomodasi</em>), ce que le leasehold ne permet pas.</li>
+</ul>
+<strong>Où elles sont identiques : la fiscalité des revenus locatifs</strong>
+<br/>
+C'est le point que les investisseurs comprennent le plus souvent mal. Que vous louiez via un leasehold ou une PT PMA, l'Indonésie applique la même <strong>taxe finale de 10 % sur les revenus locatifs bruts</strong> — pas sur le bénéfice net, et non réduite par la détention d'une société. Une PT PMA ne réduit pas ce taux ; son avantage réside dans la sécurité du titre et la facilité d'obtention du permis commercial, pas dans un allègement fiscal sur les revenus locatifs.
+<br/><br/>
+<strong>En pratique</strong>
+<br/>
+Pour une villa unique autour de 200 000 € détenue principalement pour un usage personnel ou une location longue durée, le leasehold est plus simple et nettement moins coûteux à gérer au quotidien. Pour ceux qui développent du terrain, détiennent plusieurs biens, ou exploitent des locations courte durée à titre commercial, la sécurité du titre et la facilité du permis de la PT PMA compensent généralement son surcoût de création de 1 200 € et ses 500 €/an de frais de fonctionnement.`,
+  },
 ];
 
 // ─────────────────────────────────────────────────────────────
@@ -542,6 +596,33 @@ Lombok ha promovido activamente la inversión turística y el entorno regulatori
 Trabajamos exclusivamente para los compradores — no para vendedores ni promotores — de modo que nuestros intereses están plenamente alineados con los tuyos. No sustituimos a un notario o abogado, pero nos aseguramos de que tengas el equipo adecuado a tu alrededor desde el primer día.
 <br/><br/>
 <em>Toda la información de esta página tiene únicamente fines educativos y no constituye asesoramiento legal o fiscal. Consulta a un abogado indonesio cualificado antes de formalizar cualquier transacción.</em>`,
+  },
+  {
+    question: 'PT PMA o leasehold: ¿qué estructura sale realmente más barata?',
+    answer: `Ambas son vías totalmente legales para inversores extranjeros, y la elección correcta depende de la escala y el objetivo del proyecto — no simplemente de cuál es "más barata". Aquí tienes la comparación real de costes y obligaciones de cada una, lado a lado.
+<br/><br/>
+<strong>Coste inicial</strong>
+<ul>
+<li><strong>Leasehold:</strong> No hay que constituir ninguna sociedad. Los honorarios notariales y legales suelen añadir un 1–2 % al valor de la transacción. Puedes tener el contrato firmado en 4 a 8 semanas.</li>
+<li><strong>PT PMA:</strong> La constitución de la sociedad cuesta aproximadamente 1.200 € en honorarios legales y tasas gubernamentales, y tarda de 4 a 8 semanas por sí sola — antes incluso de poder firmar por la propiedad. El tiempo total hasta el cierre suele rondar las 8 a 16 semanas.</li>
+</ul>
+<strong>Obligaciones recurrentes</strong>
+<ul>
+<li><strong>Leasehold:</strong> El impuesto anual sobre bienes inmuebles (PBB, 30–120 €/año) es tu único coste administrativo recurrente. Sin declaraciones de empresa, sin necesidad de contable.</li>
+<li><strong>PT PMA:</strong> El mismo PBB, más contabilidad y administración anuales (unos 500 €/año a través de un contable local) y obligaciones de información continuas ligadas a la licencia de negocio (NIB). Una PT PMA es una sociedad realmente operativa, no una sociedad instrumental vacía — trátala como tal.</li>
+</ul>
+<strong>Qué te da realmente cada estructura</strong>
+<ul>
+<li><strong>Leasehold:</strong> Un acuerdo notarial privado por un plazo fijo (normalmente 25 años, renovable). Sencillo y barato de establecer, pero el título subyacente permanece en manos del propietario indonesio — tu renovación en el año 25 sigue dependiendo de esa relación y de cómo se redactó el contrato.</li>
+<li><strong>PT PMA:</strong> La propia sociedad posee el Hak Guna Bangunan (HGB), un título registrado en la Agencia Nacional del Suelo (BPN) — una seguridad jurídica mayor que la de un arrendamiento privado. Es también la estructura que facilita obtener un permiso de explotación comercial de alquiler de corta duración (<em>izin usaha akomodasi</em>), algo que el leasehold no permite.</li>
+</ul>
+<strong>Dónde son idénticas: la fiscalidad de los ingresos por alquiler</strong>
+<br/>
+Este es el punto que los inversores más suelen entender mal. Ya alquiles a través de un leasehold o de una PT PMA, Indonesia aplica el mismo <strong>impuesto final del 10 % sobre los ingresos brutos por alquiler</strong> — no sobre el beneficio neto, y no se reduce por tener una sociedad. Una PT PMA no rebaja este tipo; su ventaja está en la seguridad del título y la facilidad del permiso comercial, no en un ahorro fiscal sobre los ingresos por alquiler.
+<br/><br/>
+<strong>La conclusión práctica</strong>
+<br/>
+Para una única villa de hasta unos 200.000 € destinada principalmente a uso personal o alquiler a largo plazo, el leasehold es más sencillo y notablemente más barato de mantener. Para quienes desarrollan terreno, poseen varias propiedades o explotan alquileres de corta duración a nivel comercial, la mayor seguridad del título y la facilidad del permiso de la PT PMA suelen compensar su sobrecoste de constitución de 1.200 € y sus 500 €/año de gastos de funcionamiento.`,
   },
 ];
 
