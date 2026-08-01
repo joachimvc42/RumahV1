@@ -86,6 +86,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
+  // Location landing pages (per-zone SEO) — EN/FR/ES/ID.
+  const ZONE_SLUGS = ['kuta-mandalika', 'selong-belanak', 'mawun', 'are-guling', 'tampah-hills'];
+  const zoneRoute: MetadataRoute.Sitemap = LOCALE_PREFIXES.flatMap(prefix => ZONE_SLUGS.map(slug => ({
+    url: `${BASE_URL}${prefix}/locations/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: prefix === '' ? 0.7 : 0.6,
+  }))).concat(ZONE_SLUGS.map(slug => ({
+    url: `${BASE_URL}/id/locations/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  })));
+
   // Bahasa Indonesia (/id) — deliberately scoped: only opportunities
   // listing/detail + map exist for this locale (home, about, FAQ, legal are
   // not translated, see lib/i18n.ts), so only those routes are advertised.
@@ -100,5 +114,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  return [...staticRoutes, ...faqRoute, ...guideRoute, ...blogRoutes, ...investmentRoutes, ...idRoutes];
+  return [...staticRoutes, ...faqRoute, ...guideRoute, ...zoneRoute, ...blogRoutes, ...investmentRoutes, ...idRoutes];
 }
