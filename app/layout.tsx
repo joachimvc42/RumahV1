@@ -54,6 +54,9 @@ export const metadata: Metadata = {
   authors: [{ name: 'RumahYa', url: BASE_URL }],
   creator: 'RumahYa',
   publisher: 'RumahYa',
+  verification: {
+    google: 'Uzm0lJCP4kz8q6TBYOGlYB-CR6VQrjVNBPuItbYyHSA',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
