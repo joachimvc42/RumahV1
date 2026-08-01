@@ -166,16 +166,15 @@ export default function Header() {
                     FAQ
                   </Link>
                 )}
-                {/* Guide (blog) content is EN-only for now — no FR/ES translation yet */}
-                {locale === 'en' && (
-                  <Link
-                    href="/blog"
-                    className={rest.startsWith('/blog') ? 'nav-link is-active' : 'nav-link'}
-                    onClick={closeMenu}
-                  >
-                    Guide
-                  </Link>
-                )}
+                {/* Investor guide — PT PMA / leasehold explainer, translated for
+                    all locales (en/fr/es/id). Replaces the EN-only /blog link. */}
+                <Link
+                  href={prefixFor(locale, '/guide')}
+                  className={rest.startsWith('/guide') ? 'nav-link is-active' : 'nav-link'}
+                  onClick={closeMenu}
+                >
+                  Guide
+                </Link>
               </div>
 
               {/* ── Right-side controls ── */}
