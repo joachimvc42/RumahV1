@@ -5826,3 +5826,26 @@ html[data-theme="light"] .nr-hero-legal-note { color: var(--text-muted); text-sh
 .footer-lockup-brand { display: flex; align-items: center; gap: 11px; font-family: var(--font-display); font-size: 2rem; font-weight: 500; color: var(--text); }
 .footer-lockup-brand > span > span { font-style: italic; color: var(--gold); }
 .footer-tagline { margin: 0; max-width: 34em; color: var(--text-muted); font-size: 14px; font-weight: 300; }
+
+/* ============================================================
+   Investor guide page (/guide) — Noir & Or
+   ============================================================ */
+.guide-page { background: var(--bg); color: var(--text); padding-bottom: 80px; }
+.guide-hero { padding: 88px 0 40px; max-width: 760px; }
+.guide-hero .eyebrow { color: var(--gold-deep); letter-spacing: var(--tracking-wide); text-transform: uppercase; font-size: 12px; margin: 0 0 18px; }
+.guide-hero h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(2.2rem, 4.4vw, 3.4rem); line-height: 1.08; margin: 0 0 22px; color: var(--text); }
+.guide-lead { font-size: clamp(1.05rem, 1.6vw, 1.25rem); line-height: 1.7; color: var(--text-muted); font-weight: 300; }
+.guide-lead strong { color: var(--text); font-weight: 600; }
+.guide-section { max-width: 760px; padding: 28px 0; border-top: 1px solid var(--border-subtle); }
+.guide-section h2 { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.6rem, 2.6vw, 2.1rem); margin: 0 0 16px; color: var(--text); }
+.guide-section p { font-size: 1.02rem; line-height: 1.75; color: var(--text-muted); font-weight: 300; margin: 0 0 16px; }
+.guide-section p strong { color: var(--text); font-weight: 600; }
+.guide-section ul, .guide-section ol { margin: 0 0 8px; padding-left: 22px; }
+.guide-section li { font-size: 1.02rem; line-height: 1.7; color: var(--text-muted); font-weight: 300; margin: 6px 0; }
+.guide-cta { max-width: 760px; margin-top: 36px; padding: 40px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); }
+.guide-cta h2 { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.6rem, 2.6vw, 2.1rem); margin: 0 0 10px; color: var(--text); }
+.guide-cta p { color: var(--text-muted); font-weight: 300; margin: 0 0 22px; }
+.guide-cta-buttons { display: flex; gap: 14px; flex-wrap: wrap; }
+.guide-cta-buttons .lc2-btn-wa { text-decoration: none; display: inline-flex; align-items: center; padding: 12px 22px; border-radius: 10px; background: var(--accent); color: #1c1b18; font-weight: 600; font-size: 14px; transition: background .2s ease; }
+.guide-cta-buttons .lc2-btn-wa:hover { background: var(--accent-hover); }
+@media (max-width: 700px) { .guide-hero { padding: 64px 0 24px; } .guide-cta { padding: 28px; } }

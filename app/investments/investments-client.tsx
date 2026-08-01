@@ -265,10 +265,19 @@ function InvCard({ item, locale, onOpen }: { item: Item; locale: Locale; onOpen?
 }
 
 /* ─────────── Page ─────────── */
-export default function InvestmentsClient({ locale = 'en' }: { locale?: Locale }) {
+export default function InvestmentsClient({
+  locale = 'en',
+  initialItems,
+}: {
+  locale?: Locale;
+  // Server-rendered listings so the raw HTML Googlebot receives is crawlable.
+  // When provided, we start with real data instead of an empty list; the
+  // existing sessionStorage cache + Supabase refresh still apply on the client.
+  initialItems?: Item[];
+}) {
   const t = getDict(locale);
-  const [items, setItems] = useState<Item[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [items, setItems] = useState<Item[]>(initialItems ?? []);
+  const [loading, setLoading] = useState(!initialItems || initialItems.length === 0);
   const [sortBy, setSortBy] = useState<SortBy>('recent');
   const [search, setSearch] = useState<Search>({ type: 'all', tenure: 'all', location: '' });
   const [villa, setVilla] = useState<VillaSidebar>({ pool: false, garden: false, furnished: false, seaView: false, minBedrooms: '', minBathrooms: '' });

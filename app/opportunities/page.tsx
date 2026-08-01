@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import InvestmentsClient from '../investments/investments-client';
+import { getInvestments, investmentsItemListJsonLd } from '../../lib/getInvestments';
 
 export const metadata: Metadata = {
   title: 'Lombok investment opportunities — land & villas',
@@ -32,9 +33,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function OpportunitiesPage() {
+export default async function OpportunitiesPage() {
+  // Server-render the listings so search engines receive real, crawlable data
+  // (the client component also refreshes from Supabase in the browser).
+  const items = await getInvestments('en');
+  const itemListJsonLd = investmentsItemListJsonLd(items, 'en');
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
       <div className="seo-content">
         <h1>Real estate investment opportunities in Lombok, Indonesia</h1>
         <p>
@@ -59,7 +69,7 @@ export default function OpportunitiesPage() {
           <li>Transaction support through to handover</li>
         </ul>
       </div>
-      <InvestmentsClient locale="en" />
+      <InvestmentsClient locale="en" initialItems={items} />
     </>
   );
 }

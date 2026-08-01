@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import InvestmentsClient from '../../investments/investments-client';
+import { getInvestments, investmentsItemListJsonLd } from '../../../lib/getInvestments';
 
 export const metadata: Metadata = {
   title: "Opportunités d'investissement à Lombok — terrains & villas",
@@ -32,6 +33,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function OpportunitiesPageFR() {
-  return <InvestmentsClient locale="fr" />;
+export default async function OpportunitiesPageFR() {
+  const items = await getInvestments('fr');
+  const itemListJsonLd = investmentsItemListJsonLd(items, 'fr');
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
+      <InvestmentsClient locale="fr" initialItems={items} />
+    </>
+  );
 }

@@ -64,6 +64,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: prefix === '' ? 0.8 : 0.7,
   }));
 
+  // Investor guide (PT PMA / leasehold) — one entry per locale incl. /id.
+  const guideRoute: MetadataRoute.Sitemap = [
+    ...LOCALE_PREFIXES.map(prefix => ({
+      url: `${BASE_URL}${prefix}/guide`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: prefix === '' ? 0.8 : 0.7,
+    })),
+    { url: `${BASE_URL}/id/guide`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
+  ];
+
   // Blog — EN only (no FR/ES translation of article content yet)
   const blogRoutes: MetadataRoute.Sitemap = [
     { url: `${BASE_URL}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
@@ -89,5 +100,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  return [...staticRoutes, ...faqRoute, ...blogRoutes, ...investmentRoutes, ...idRoutes];
+  return [...staticRoutes, ...faqRoute, ...guideRoute, ...blogRoutes, ...investmentRoutes, ...idRoutes];
 }
